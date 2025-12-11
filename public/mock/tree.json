@@ -1,0 +1,79 @@
+{
+  "tree": {
+    "name": "Fondo Administrativo",
+    "type": "fondo",
+    "children": [
+      {
+        "name": "Sección Recursos Humanos",
+        "type": "seccion",
+        "children": [
+          {
+            "name": "Expediente Juan Pérez (2024-001)",
+            "type": "expediente",
+            "children": [
+              {
+                "name": "Contrato_Firmado.pdf",
+                "type": "documento",
+                "filename": "Contrato_Firmado.pdf",
+                "size": "2.4 MB",
+                "version": "1.2",
+                "author": "Maria García (RH)",
+                "date": "2024-02-01",
+                "pages": 12,
+                "locked": true,
+                "metadata": {
+                  "status": "aprobado",
+                  "codigo_referencia": "MX-SADIT-RH-EXP-2024-001/05",
+                  "fondo": "Fondo Administrativo",
+                  "seccion": "Recursos Humanos",
+                  "serie": "Expedientes de Personal",
+                  "fecha_clasificacion": "2024-01-15",
+                  "vigencia_documental": "5 Años (Archivo Trámite)",
+                  "valor_documental": "Legal, Administrativo",
+                  "nivel_acceso": "Confidencial / Nivel 3",
+                  "estado_conservacion": "Bueno",
+                  "sistema": {
+                    "uuid": "550e8400-e29b-41d4-a716-446655440000",
+                    "hash_md5": "d41d8cd98f00b204e9800998ecf8427e",
+                    "mime_type": "application/pdf",
+                    "ruta_almacenamiento": "/vol/server01/docs/2024/feb/"
+                  }
+                },
+                "tags": [
+                  "Contrato",
+                  "Firmado",
+                  "Original",
+                  "Legal"
+                ],
+                "ocr_preview": "CONTRATO INDIVIDUAL DE TRABAJO...",
+                "history": [
+                  {
+                    "version": "1.2",
+                    "date": "2024-02-02 14:30",
+                    "user": "Maria García",
+                    "comment": "Corrección de cláusula 5ta por solicitud legal",
+                    "size": "2.4 MB"
+                  },
+                  {
+                    "version": "1.1",
+                    "date": "2024-02-01 10:00",
+                    "user": "Admin",
+                    "comment": "Agregado sello digital",
+                    "size": "2.3 MB"
+                  },
+                  {
+                    "version": "1.0",
+                    "date": "2024-01-30 09:15",
+                    "user": "Scanner-01",
+                    "comment": "Carga inicial digitalizada",
+                    "size": "2.1 MB"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

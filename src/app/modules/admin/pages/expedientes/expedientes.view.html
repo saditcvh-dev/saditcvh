@@ -1,930 +1,417 @@
-<!-- BUSCADOR AVANZADO | EXPEDIENTES STCH -->
-<div class="p-6">
-    
-    <!-- Título y Estadísticas -->
-    <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-800 mb-2">Expedientes Digitalizados</h1>
-        <p class="text-gray-600">30,000 expedientes | 14.19 millones de páginas | Sistema de Transporte Convencional de Hidalgo</p>
+<div class="flex h-[calc(100vh-80px)] bg-gray-50 gap-6 p-6 font-sans relative">
+
+  <div class="w-1/3 flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+
+    <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+      <h2 class="font-bold text-[#691831] text-lg flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+        Explorador
+      </h2>
+      <span class="text-[10px] uppercase font-bold text-gray-400 border px-2 py-0.5 rounded">Jerárquico</span>
     </div>
 
-    <!-- ============================================================
-         FORMULARIO DE BÚSQUEDA AVANZADA
-    ============================================================ -->
-    <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm mb-8">
-        <h2 class="font-semibold text-gray-800 mb-6 text-lg">Búsqueda Avanzada</h2>
-        
-        <form id="formBusqueda" class="space-y-6">
-            
-            <!-- Fila 1: Búsqueda General -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Campo de búsqueda principal -->
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-search mr-2"></i>Palabras clave
-                    </label>
-                    <div class="relative">
-                        <input 
-                            type="text" 
-                            id="busquedaGeneral"
-                            placeholder="Buscar en todo el contenido (nombre, número, descripción...)"
-                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        >
-                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    </div>
-                </div>
-                
-                <!-- Tipo de expediente -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-tag mr-2"></i>Tipo de expediente
-                    </label>
-                    <select title="Tipo de expediente" id="tipoExpediente" class="w-full border border-gray-300 rounded-lg py-3 px-4 focus:ring-2 focus:ring-blue-500">
-                        <option value="">Todos los tipos</option>
-                        <option value="licencia">Licencia de operación</option>
-                        <option value="renovacion">Renovación de permiso</option>
-                        <option value="inspeccion">Inspección vehicular</option>
-                        <option value="ruta">Solicitud de ruta</option>
-                        <option value="multa">Expediente de multa</option>
-                        <option value="recurso">Recurso administrativo</option>
-                    </select>
-                </div>
-            </div>
+    <div class="px-4 py-2 bg-white border-b border-gray-100">
+      <div class="relative">
+        <input type="text"
+               placeholder="Filtrar carpetas..."
+               class="w-full bg-gray-50 border border-gray-200 text-xs rounded-md pl-8 pr-2 py-1.5 focus:outline-none focus:border-[#691831] focus:ring-1 focus:ring-[#691831]/20 transition-all">
+        <svg class="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+      </div>
+    </div>
 
-            <!-- Fila 2: Fechas -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Rango de fechas -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-calendar-alt mr-2"></i>Rango de fechas
-                    </label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs text-gray-500 mb-1 block">Desde</label>
-                            <input 
-                                title="Desde"
-                                type="date" 
-                                id="fechaDesde"
-                                class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-500"
-                            >
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-500 mb-1 block">Hasta</label>
-                            <input
-                                title="Hasta"
-                                type="date" 
-                                id="fechaHasta"
-                                class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-500"
-                            >
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Fecha específica -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-calendar-day mr-2"></i>Fecha específica
-                    </label>
-                    <div class="flex space-x-3">
-                        <input
-                            title="Fecha específica" 
-                            type="date" 
-                            id="fechaEspecifica"
-                            class="flex-1 border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-500"
-                        >
-                        <button 
-                            type="button" 
-                            onclick="limpiarFechaEspecifica()"
-                            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
-                        >
-                            Limpiar
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <div class="flex-1 overflow-y-auto p-2 custom-scrollbar on-context-menu">
+      <app-tree-node
+        *ngFor="let node of tree"
+        [node]="node"
+        [selectedNode]="selectedNode"
+        (nodeSelected)="onSelectNode($event)"
+        (nodeRightClick)="onNodeRightClick($event)"> </app-tree-node>
+    </div>
+  </div>
 
-            <!-- Fila 3: Filtros adicionales -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Nombre del titular -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-user mr-2"></i>Nombre del titular
-                    </label>
-                    <input 
-                        type="text" 
-                        id="nombreTitular"
-                        placeholder="Ej: Juan Pérez González"
-                        class="w-full border border-gray-300 rounded-lg py-2 px-4 focus:ring-2 focus:ring-blue-500"
-                    >
-                </div>
-                
-                <!-- Número de expediente -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-hashtag mr-2"></i>Número de expediente
-                    </label>
-                    <input 
-                        type="text" 
-                        id="numeroExpediente"
-                        placeholder="Ej: EXP-STCH-2025-04567"
-                        class="w-full border border-gray-300 rounded-lg py-2 px-4 focus:ring-2 focus:ring-blue-500"
-                    >
-                </div>
-                
-                <!-- Estado -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-check-circle mr-2"></i>Estado
-                    </label>
-                    <select title="Estado" id="estadoExpediente" class="w-full border border-gray-300 rounded-lg py-2 px-4 focus:ring-2 focus:ring-blue-500">
-                        <option value="">Todos los estados</option>
-                        <option value="digitalizado">Digitalizado</option>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="revision">En revisión</option>
-                        <option value="archivado">Archivado</option>
-                        <option value="eliminado">Eliminado</option>
-                    </select>
-                </div>
-            </div>
 
-            <!-- Fila 4: Búsqueda por metadatos -->
-            <div class="border-t pt-6">
-                <h3 class="text-sm font-medium text-gray-700 mb-4">
-                    <i class="fas fa-database mr-2"></i>Búsqueda por metadatos específicos
+  <div class="w-2/3 flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden relative">
+
+    <div *ngIf="!selectedNode" class="flex-1 flex flex-col items-center justify-center text-gray-400 bg-gray-50/50">
+      <p>Selecciona un elemento para ver detalles</p>
+    </div>
+
+    <div *ngIf="selectedNode" class="flex flex-col h-full">
+
+      <div class="bg-white border-b border-gray-200">
+
+        <div class="px-6 pt-4 pb-0 text-xs text-gray-400 flex items-center gap-2 select-none">
+          <span class="hover:text-[#691831] cursor-pointer transition-colors">Fondo Administrativo</span>
+          <svg class="w-3 h-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <span class="hover:text-[#691831] cursor-pointer transition-colors">Recursos Humanos</span>
+          <svg class="w-3 h-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <span class="font-bold text-gray-600 truncate max-w-[200px]">{{ selectedNode.name }}</span>
+        </div>
+
+        <div class="px-6 py-4 flex justify-between items-start">
+           <div class="flex items-start gap-3">
+             <div class="mt-1 relative">
+               <img src="/assets/icons/pdf.svg" class="w-8 h-8" *ngIf="selectedNode.type === 'documento'">
+               <img src="/assets/icons/folder.svg" class="w-8 h-8" *ngIf="selectedNode.type !== 'documento'">
+               <div *ngIf="selectedNode.locked" class="absolute -bottom-1 -right-1 bg-red-500 rounded-full p-0.5 border-2 border-white">
+                 <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+               </div>
+             </div>
+
+             <div>
+               <div class="flex items-center gap-3">
+                 <h1 class="text-xl font-bold text-gray-800">{{ selectedNode.name }}</h1>
+                 <span *ngIf="selectedNode.metadata?.status === 'aprobado'" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-green-100 text-green-700 border border-green-200 tracking-wide">Aprobado</span>
+                 <span *ngIf="selectedNode.metadata?.status === 'borrador'" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-gray-100 text-gray-600 border border-gray-200 tracking-wide">Borrador</span>
+               </div>
+               <p class="text-xs text-gray-500 mt-1 uppercase">{{ selectedNode.type }}</p>
+             </div>
+           </div>
+        </div>
+
+        <div class="flex px-6 gap-6 mt-1 border-b border-gray-100">
+          <button (click)="activeTab = 'preview'" [class.border-[#691831]]="activeTab === 'preview'" [class.text-[#691831]]="activeTab === 'preview'" class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors">
+            Vista Previa
+          </button>
+          <button (click)="activeTab = 'metadata'" [class.border-[#691831]]="activeTab === 'metadata'" [class.text-[#691831]]="activeTab === 'metadata'" class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors">
+            Metadatos
+          </button>
+          <button (click)="activeTab = 'security'" [class.border-[#691831]]="activeTab === 'security'" [class.text-[#691831]]="activeTab === 'security'" class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            Seguridad
+          </button>
+          <button (click)="activeTab = 'notes'" [class.border-[#691831]]="activeTab === 'notes'" [class.text-[#691831]]="activeTab === 'notes'" class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+            Notas
+          </button>
+          <button (click)="activeTab = 'history'"
+                  [class.border-[#691831]]="activeTab === 'history'"
+                  [class.text-[#691831]]="activeTab === 'history'"
+                  class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Historial
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-1 bg-gray-50 overflow-hidden">
+
+        <div *ngIf="activeTab === 'preview'" class="h-full">
+            <div class="flex items-center justify-center h-full text-gray-400" *ngIf="!pdfUrl">Sin vista previa</div>
+            <object *ngIf="pdfUrl" [data]="pdfUrl" type="application/pdf" class="w-full h-full"></object>
+        </div>
+
+        <div *ngIf="activeTab === 'metadata'" class="h-full overflow-y-auto bg-white">
+           <div class="bg-gray-50 p-6 border-b border-gray-100">
+             <div class="flex items-start gap-4">
+               <div class="w-16 h-20 bg-white border border-gray-200 shadow-sm flex items-center justify-center rounded">
+                  <svg class="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 2H7a2 2 0 00-2 2v15a2 2 0 002 2z"/></svg>
+               </div>
+               <div class="flex-1">
+                 <h2 class="text-lg font-bold text-gray-800">{{ selectedNode.name }}</h2>
+                 <p class="text-xs text-gray-500 mt-1 font-mono select-all">{{ selectedNode.metadata?.sistema?.uuid }}</p>
+                 <div class="flex flex-wrap gap-2 mt-3">
+                   <span *ngFor="let tag of selectedNode.tags" class="px-2 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wide rounded border border-blue-100">
+                     {{ tag }}
+                   </span>
+                 </div>
+               </div>
+             </div>
+           </div>
+           <div class="p-6 space-y-8">
+             <div>
+               <h3 class="text-xs font-bold text-[#691831] uppercase tracking-widest mb-4 border-b border-gray-100 pb-2 flex items-center gap-2">
+                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                 Clasificación Archivística
+               </h3>
+               <div class="grid grid-cols-2 gap-y-4 gap-x-8">
+                 <div class="group">
+                   <label class="block text-[10px] text-gray-400 uppercase font-bold mb-1">Código de Referencia</label>
+                   <p class="text-sm font-medium text-gray-800 border-b border-transparent group-hover:border-gray-200 transition-colors">{{ selectedNode.metadata?.codigo_referencia || '-' }}</p>
+                 </div>
+                 <div>
+                   <label class="block text-[10px] text-gray-400 uppercase font-bold mb-1">Fondo / Sección</label>
+                   <p class="text-sm text-gray-700">{{ selectedNode.metadata?.fondo }} / {{ selectedNode.metadata?.seccion }}</p>
+                 </div>
+                 <div>
+                   <label class="block text-[10px] text-gray-400 uppercase font-bold mb-1">Serie Documental</label>
+                   <p class="text-sm text-gray-700">{{ selectedNode.metadata?.serie }}</p>
+                 </div>
+                 <div>
+                   <label class="block text-[10px] text-gray-400 uppercase font-bold mb-1">Vigencia</label>
+                   <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-50 text-yellow-800 border border-yellow-100">
+                     {{ selectedNode.metadata?.vigencia_documental || 'N/A' }}
+                   </span>
+                 </div>
+                 <div>
+                    <label class="block text-[10px] text-gray-400 uppercase font-bold mb-1">Valor Documental</label>
+                    <p class="text-xs text-gray-600">{{ selectedNode.metadata?.valor_documental }}</p>
+                 </div>
+                 <div>
+                    <label class="block text-[10px] text-gray-400 uppercase font-bold mb-1">Nivel de Acceso</label>
+                    <p class="text-xs text-red-600 font-bold flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        {{ selectedNode.metadata?.nivel_acceso }}
+                    </p>
+                 </div>
+               </div>
+             </div>
+             <div>
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2 flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                  Metadatos del Sistema
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Placas vehiculares -->
-                    <div>
-                        <label class="text-xs text-gray-500 mb-1 block">Placa vehicular</label>
-                        <input 
-                            type="text" 
-                            id="placaVehicular"
-                            placeholder="Ej: HGO-1234"
-                            class="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm"
-                        >
-                    </div>
-                    
-                    <!-- Número de permiso -->
-                    <div>
-                        <label class="text-xs text-gray-500 mb-1 block">Número de permiso</label>
-                        <input 
-                            type="text" 
-                            id="numeroPermiso"
-                            placeholder="Ej: PERM-2025-789"
-                            class="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm"
-                        >
-                    </div>
-                    
-                    <!-- Ruta asignada -->
-                    <div>
-                        <label class="text-xs text-gray-500 mb-1 block">Ruta asignada</label>
-                        <input 
-                            type="text" 
-                            id="rutaAsignada"
-                            placeholder="Ej: Pachuca-Mineral del Monte"
-                            class="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm"
-                        >
-                    </div>
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-100 grid grid-cols-1 gap-3">
+                   <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                      <span class="text-xs text-gray-500">Hash MD5 (Integridad)</span>
+                      <span class="text-[10px] font-mono text-gray-600 select-all">{{ selectedNode.metadata?.sistema?.hash_md5 }}</span>
+                   </div>
+                   <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                      <span class="text-xs text-gray-500">MIME Type</span>
+                      <span class="text-xs font-mono text-gray-800">{{ selectedNode.metadata?.sistema?.mime_type }}</span>
+                   </div>
+                   <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                      <span class="text-xs text-gray-500">Ruta Física</span>
+                      <span class="text-[10px] font-mono text-gray-400 truncate max-w-[200px]" title="{{ selectedNode.metadata?.sistema?.ruta_almacenamiento }}">{{ selectedNode.metadata?.sistema?.ruta_almacenamiento }}</span>
+                   </div>
+                   <div class="flex justify-between items-center">
+                      <span class="text-xs text-gray-500">Creado por</span>
+                      <span class="text-xs text-gray-800">{{ selectedNode.author }} ({{ selectedNode.date }})</span>
+                   </div>
                 </div>
-            </div>
+             </div>
+             <div *ngIf="selectedNode.ocr_preview">
+                <h3 class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Texto Extraído (OCR)
+                </h3>
+                <div class="bg-blue-50/50 border border-blue-100 p-3 rounded text-[11px] font-mono text-gray-600 leading-relaxed max-h-40 overflow-y-auto">
+                  {{ selectedNode.ocr_preview }}
+                </div>
+             </div>
+           </div>
+        </div>
 
-            <!-- Botones de acción -->
-            <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t">
-                <button 
-                    type="submit" 
-                    class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 font-medium flex items-center justify-center"
-                >
-                    <i class="fas fa-search mr-2"></i>Buscar Expedientes
-                </button>
-                
-                <button 
-                    type="button" 
-                    onclick="limpiarBusqueda()"
-                    class="flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-50 font-medium flex items-center justify-center"
-                >
-                    <i class="fas fa-eraser mr-2"></i>Limpiar Filtros
-                </button>
-                
-                <button 
-                    type="button" 
-                    onclick="guardarBusqueda()"
-                    class="flex-1 border border-blue-300 text-blue-600 py-3 px-6 rounded-lg hover:bg-blue-50 font-medium flex items-center justify-center"
-                >
-                    <i class="fas fa-save mr-2"></i>Guardar Búsqueda
-                </button>
+        <div *ngIf="activeTab === 'security'" class="h-full overflow-y-auto p-6 bg-white">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide border-l-4 border-[#BC955B] pl-2">Lista de Control de Acceso (ACL)</h3>
+            <button class="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded hover:bg-blue-100 font-medium">+ Añadir Rol/Usuario</button>
+          </div>
+          <table class="w-full text-sm text-left text-gray-500 border rounded-lg overflow-hidden">
+             <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+               <tr>
+                 <th class="px-4 py-3">Actor</th>
+                 <th class="px-4 py-3 text-center">Lectura</th>
+                 <th class="px-4 py-3 text-center">Escritura</th>
+                 <th class="px-4 py-3 text-center">Borrado</th>
+                 <th class="px-4 py-3 text-center">Seguridad</th>
+               </tr>
+             </thead>
+             <tbody>
+               <tr *ngFor="let item of securityData" class="border-b hover:bg-gray-50">
+                 <td class="px-4 py-3 font-medium text-gray-900">
+                   <div class="flex items-center gap-2">
+                     <svg *ngIf="item.type === 'Rol'" class="w-4 h-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                     <svg *ngIf="item.type === 'Usuario'" class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                     {{ item.actor }}
+                   </div>
+                 </td>
+                 <td class="px-4 py-3 text-center"><input type="checkbox" [checked]="item.read" class="accent-[#691831]"></td>
+                 <td class="px-4 py-3 text-center"><input type="checkbox" [checked]="item.write" class="accent-[#691831]"></td>
+                 <td class="px-4 py-3 text-center"><input type="checkbox" [checked]="item.delete" class="accent-[#691831]"></td>
+                 <td class="px-4 py-3 text-center"><input type="checkbox" [checked]="item.security" class="accent-[#691831]"></td>
+               </tr>
+             </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="activeTab === 'notes'" class="h-full overflow-y-auto p-6 bg-white">
+           <div class="mb-4">
+             <textarea class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-[#691831] focus:outline-none" rows="3" placeholder="Escribe una nota..."></textarea>
+             <button class="mt-2 bg-[#691831] text-white text-xs px-4 py-2 rounded hover:bg-[#501225]">Añadir Nota</button>
+           </div>
+           <div class="space-y-4">
+             <div *ngFor="let note of notesData" class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+               <div class="flex justify-between items-center mb-1">
+                 <span class="font-bold text-xs text-gray-700">{{ note.user }}</span>
+                 <span class="text-[10px] text-gray-400">{{ note.date }}</span>
+               </div>
+               <p class="text-sm text-gray-600">{{ note.text }}</p>
+             </div>
+           </div>
+        </div>
+
+        <div *ngIf="activeTab === 'history'" class="h-full overflow-y-auto p-6 bg-white">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide border-l-4 border-[#BC955B] pl-2">
+              Control de Versiones
+            </h3>
+            <button class="flex items-center gap-2 bg-gray-800 text-white text-xs px-3 py-2 rounded hover:bg-gray-700 transition-colors shadow-sm">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+              Subir Nueva Versión
+            </button>
+          </div>
+          <div class="relative pl-4 border-l border-gray-200 space-y-8 ml-2" *ngIf="selectedNode.history">
+            <div *ngFor="let ver of selectedNode.history; let first = first" class="relative group">
+              <div class="absolute -left-[21px] bg-white border-2 rounded-full w-3 h-3 mt-1.5 transition-colors"
+                   [class.border-green-500]="first" [class.bg-green-500]="first" [class.border-gray-300]="!first"></div>
+              <div class="bg-gray-50 border border-gray-100 rounded-lg p-4 hover:shadow-md transition-shadow relative">
+                <div class="absolute -top-3 right-4">
+                   <span class="px-2 py-1 rounded text-xs font-bold shadow-sm"
+                         [class.bg-green-100]="first" [class.text-green-800]="first"
+                         [class.bg-gray-200]="!first" [class.text-gray-600]="!first">
+                     v{{ ver.version }}
+                   </span>
+                </div>
+                <div class="flex justify-between items-start mb-2">
+                  <div>
+                    <p class="text-sm font-bold text-gray-800">{{ ver.user }}</p>
+                    <p class="text-xs text-gray-500 flex items-center gap-1">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                      {{ ver.date }}
+                    </p>
+                  </div>
+                </div>
+                <p class="text-xs text-gray-600 italic mb-3">"{{ ver.comment }}"</p>
+                <div class="flex items-center justify-between pt-2 border-t border-gray-200">
+                  <span class="text-[10px] text-gray-400 font-mono">{{ ver.size }}</span>
+                  <div class="flex gap-2">
+                     <button class="text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
+                       <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                       Descargar
+                     </button>
+                     <button *ngIf="!first" class="text-xs text-orange-600 hover:text-orange-800 font-medium flex items-center gap-1">
+                       <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                       Restaurar
+                     </button>
+                  </div>
+                </div>
+              </div>
             </div>
-        </form>
+          </div>
+          <div *ngIf="!selectedNode.history" class="text-center py-10 text-gray-400 text-sm">
+             No hay historial de versiones disponible para este archivo.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="contextMenu.visible"
+       [style.top.px]="contextMenu.y"
+       [style.left.px]="contextMenu.x"
+       class="fixed bg-white rounded-lg shadow-xl border border-gray-200 w-52 py-1 z-50 text-sm text-gray-700 animate-in fade-in duration-100">
+
+    <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase border-b border-gray-100 bg-gray-50 truncate">
+      {{ contextMenu.node?.name }}
     </div>
 
-    <!-- ============================================================
-         RESULTADOS DE BÚSQUEDA
-    ============================================================ -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-        
-        <!-- Header de resultados -->
-        <div class="p-6 border-b">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between">
-                <div>
-                    <h3 class="font-semibold text-gray-800">Resultados de búsqueda</h3>
-                    <p id="contadorResultados" class="text-sm text-gray-500">Mostrando 0 expedientes</p>
-                </div>
-                
-                <div class="flex items-center space-x-3 mt-3 sm:mt-0">
-                    <select title="Filtro de busqueda" id="ordenResultados" class="border border-gray-300 rounded-lg py-2 px-3 text-sm">
-                        <option value="fecha_desc">Más recientes primero</option>
-                        <option value="fecha_asc">Más antiguos primero</option>
-                        <option value="nombre_asc">Nombre (A-Z)</option>
-                        <option value="nombre_desc">Nombre (Z-A)</option>
-                    </select>
-                    
-                    <button 
-                        id="btnExportar"
-                        class="border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 text-sm font-medium flex items-center"
-                    >
-                        <i class="fas fa-file-export mr-2"></i>Exportar
-                    </button>
-                </div>
-            </div>
-        </div>
+    <button (click)="handleContextAction('open')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-gray-700">
+      <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+      Abrir / Visualizar
+    </button>
 
-        <!-- Tabla de resultados -->
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            <input title="Check para resultados" type="checkbox" class="rounded border-gray-300">
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Número de expediente
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Titular
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Tipo
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Fecha de apertura
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Estado
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Acciones
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="tbodyResultados" class="bg-white divide-y divide-gray-200">
-                    <!-- Los resultados se cargarán aquí dinámicamente -->
-                    <tr id="mensajeSinResultados">
-                        <td colspan="7" class="py-12 text-center">
-                            <i class="fas fa-search text-4xl text-gray-300 mb-3"></i>
-                            <p class="text-gray-500">Ingresa los criterios de búsqueda para encontrar expedientes</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <button (click)="handleContextAction('add_folder')" *ngIf="contextMenu.node?.type !== 'documento'" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-gray-700">
+      <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+      Nueva Carpeta
+    </button>
 
-        <!-- Paginación -->
-        <div class="px-6 py-4 border-t">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between">
-                <div class="text-sm text-gray-500 mb-3 sm:mb-0">
-                    Mostrando <span id="paginaInicio">0</span>-<span id="paginaFin">0</span> de <span id="totalRegistros">0</span> expedientes
-                </div>
-                
-                <div class="flex items-center space-x-2">
-                    <button title="Pagina" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    
-                    <div class="flex space-x-1">
-                        <button class="w-8 h-8 rounded-lg bg-blue-600 text-white">1</button>
-                        <button class="w-8 h-8 rounded-lg border border-gray-300 hover:bg-gray-50">2</button>
-                        <button class="w-8 h-8 rounded-lg border border-gray-300 hover:bg-gray-50">3</button>
-                        <span class="px-2">...</span>
-                        <button class="w-8 h-8 rounded-lg border border-gray-300 hover:bg-gray-50">10</button>
-                    </div>
-                    
-                    <button title="Pagina" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="border-t border-gray-100 my-1"></div>
 
-    <!-- ============================================================
-         BÚSQUEDAS GUARDADAS (sidebar colapsable)
-    ============================================================ -->
-    <div class="fixed right-0 top-1/2 transform -translate-y-1/2">
-        <button 
-            title="Busquedas guardadas"
-            id="btnToggleBusquedas"
-            class="bg-blue-600 text-white p-3 rounded-l-lg shadow-lg hover:bg-blue-700"
-            onclick="toggleBusquedasGuardadas()"
-        >
-            <i class="fas fa-bookmark"></i>
-        </button>
-    </div>
+    <button (click)="handleContextAction('lock')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 transition-colors">
+      <ng-container *ngIf="!contextMenu.node?.locked">
+         <svg class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+         <span>Bloquear</span>
+      </ng-container>
 
-    <div id="panelBusquedasGuardadas" class="fixed right-0 top-1/2 transform -translate-y-1/2 translate-x-full transition-transform duration-300 w-80 bg-white border-l border-gray-200 shadow-xl rounded-l-lg">
-        <div class="p-4 border-b">
-            <div class="flex justify-between items-center">
-                <h4 class="font-medium text-gray-800">Búsquedas guardadas</h4>
-                <button title="Busquedas guardadas" onclick="toggleBusquedasGuardadas()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-        <div class="p-4 space-y-3 max-h-96 overflow-y-auto">
-            <!-- Las búsquedas guardadas se cargarán aquí -->
-            <div class="text-center text-gray-500 py-8">
-                <i class="fas fa-bookmark text-2xl mb-2"></i>
-                <p class="text-sm">No hay búsquedas guardadas</p>
-            </div>
-        </div>
-    </div>
+      <ng-container *ngIf="contextMenu.node?.locked">
+         <svg class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+         <span class="text-green-700 font-medium">Desbloquear</span>
+      </ng-container>
+    </button>
+
+    <div class="border-t border-gray-100 my-1"></div>
+
+    <button (click)="handleContextAction('security')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-purple-700">
+      <svg class="w-4 h-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+      Permisos
+    </button>
+
+    <button (click)="handleContextAction('delete')" class="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      Eliminar
+    </button>
+  </div>
+
+  <div *ngIf="toast.visible"
+     class="fixed bottom-6 right-6 px-4 py-3 rounded-lg shadow-lg border flex items-center gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300 z-[100]"
+     [class.bg-green-50]="toast.type === 'success'"
+     [class.border-green-200]="toast.type === 'success'"
+     [class.text-green-800]="toast.type === 'success'"
+     [class.bg-red-50]="toast.type === 'error'"
+     [class.border-red-200]="toast.type === 'error'"
+     [class.text-red-800]="toast.type === 'error'">
+
+  <svg *ngIf="toast.type === 'success'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+  <svg *ngIf="toast.type === 'error'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+
+  <span class="text-sm font-medium">{{ toast.message }}</span>
 </div>
 
-<!-- Modal para detalles del expediente -->
-<div id="modalDetalles" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-        <div class="p-6 border-b">
-            <div class="flex justify-between items-center">
-                <h3 class="text-xl font-bold text-gray-800">Detalles del expediente</h3>
-                <button title="Detalles del expediente" onclick="cerrarModal()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-        </div>
-        <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-            <!-- Contenido del modal se cargará dinámicamente -->
-            <div id="contenidoModal"></div>
-        </div>
+<div *ngIf="modal.visible" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+
+  <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity" (click)="closeModal()"></div>
+
+  <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100">
+
+    <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+      <h3 class="text-lg font-bold text-gray-800">{{ modal.title }}</h3>
+      <button (click)="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
     </div>
+
+    <div class="p-6">
+
+      <div *ngIf="modal.type === 'delete'" class="flex gap-4">
+        <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        </div>
+        <div>
+           <p class="text-sm text-gray-600 leading-relaxed">{{ modal.message }}</p>
+           <p class="text-xs text-red-500 mt-2 font-medium">Esta acción no se puede deshacer.</p>
+        </div>
+      </div>
+
+      <div *ngIf="modal.type === 'create_folder'">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de la carpeta</label>
+        <input type="text"
+               [(ngModel)]="modal.inputValue"
+               (keyup.enter)="confirmModal()"
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#691831] focus:border-transparent text-sm"
+               placeholder="Ej. Actas 2024" autofocus>
+      </div>
+
+    </div>
+
+    <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3">
+      <button (click)="closeModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+        Cancelar
+      </button>
+
+      <button (click)="confirmModal()"
+              [class.bg-red-600]="modal.type === 'delete'"
+              [class.hover:bg-red-700]="modal.type === 'delete'"
+              [class.bg-[#691831]]="modal.type === 'create_folder'"
+              [class.hover:bg-[#501225]]="modal.type === 'create_folder'"
+              class="px-4 py-2 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">
+        {{ modal.type === 'delete' ? 'Eliminar' : 'Crear' }}
+      </button>
+    </div>
+
+  </div>
 </div>
 
-<script>
-// Datos de ejemplo para demostración
-const expedientesEjemplo = [
-    {
-        id: 1,
-        numero: "EXP-STCH-2025-04567",
-        titular: "Juan Pérez González",
-        tipo: "Licencia de operación",
-        fechaApertura: "2025-01-15",
-        fechaCierre: "2025-02-20",
-        estado: "digitalizado",
-        placa: "HGO-7890",
-        permiso: "PERM-2025-123",
-        ruta: "Pachuca-Mineral del Monte",
-        paginas: 45,
-        descripcion: "Licencia de operación para transporte de pasajeros"
-    },
-    {
-        id: 2,
-        numero: "EXP-STCH-2025-04568",
-        titular: "Transportes Hidalgo S.A. de C.V.",
-        tipo: "Renovación de permiso",
-        fechaApertura: "2025-01-20",
-        fechaCierre: null,
-        estado: "revision",
-        placa: "HGO-4567, HGO-4568",
-        permiso: "PERM-2024-789",
-        ruta: "Pachuca-Tulancingo",
-        paginas: 120,
-        descripcion: "Renovación de permiso para flotilla de 5 unidades"
-    },
-    {
-        id: 3,
-        numero: "EXP-STCH-2025-04569",
-        titular: "María González Rodríguez",
-        tipo: "Inspección vehicular",
-        fechaApertura: "2025-02-01",
-        fechaCierre: "2025-02-10",
-        estado: "digitalizado",
-        placa: "HGO-2345",
-        permiso: "PERM-2024-456",
-        ruta: "Pachuca-Actopan",
-        paginas: 32,
-        descripcion: "Inspección técnica vehicular periódica"
-    },
-    {
-        id: 4,
-        numero: "EXP-STCH-2025-04570",
-        titular: "Autobuses del Valle S.A.",
-        tipo: "Solicitud de ruta",
-        fechaApertura: "2025-02-05",
-        fechaCierre: null,
-        estado: "pendiente",
-        placa: "HGO-5678, HGO-5679",
-        permiso: "PERM-2025-789",
-        ruta: "Pachuca-Huejutla (nueva)",
-        paginas: 89,
-        descripcion: "Solicitud de nueva ruta interurbana"
-    },
-    {
-        id: 5,
-        numero: "EXP-STCH-2025-04571",
-        titular: "Carlos Martínez López",
-        tipo: "Expediente de multa",
-        fechaApertura: "2025-02-10",
-        fechaCierre: "2025-02-25",
-        estado: "archivado",
-        placa: "HGO-3456",
-        permiso: "PERM-2024-234",
-        ruta: "Pachuca-Tizayuca",
-        paginas: 67,
-        descripcion: "Multa por exceso de velocidad en ruta asignada"
-    }
-];
 
-// Variables de estado
-let busquedasGuardadas = [];
-let resultadosActuales = [];
-let paginaActual = 1;
-const resultadosPorPagina = 10;
-
-// Inicialización
-document.addEventListener('DOMContentLoaded', function() {
-    cargarBusquedasGuardadas();
-    document.getElementById('formBusqueda').addEventListener('submit', function(e) {
-        e.preventDefault();
-        realizarBusqueda();
-    });
-    
-    // Configurar fecha actual como valor por defecto
-    const hoy = new Date().toISOString().split('T')[0];
-    document.getElementById('fechaHasta').value = hoy;
-    
-    // Hace 30 días como fecha por defecto "Desde"
-    const hace30Dias = new Date();
-    hace30Dias.setDate(hace30Dias.getDate() - 30);
-    document.getElementById('fechaDesde').value = hace30Dias.toISOString().split('T')[0];
-});
-
-// Funciones principales
-function realizarBusqueda() {
-    const criterios = obtenerCriteriosBusqueda();
-    
-    // Simular búsqueda con datos de ejemplo
-    resultadosActuales = filtrarExpedientes(criterios);
-    
-    // Actualizar UI
-    actualizarResultados();
-    actualizarContador();
-    
-    // Mostrar resultados
-    document.getElementById('mensajeSinResultados').style.display = 'none';
-}
-
-function obtenerCriteriosBusqueda() {
-    return {
-        busquedaGeneral: document.getElementById('busquedaGeneral').value.toLowerCase(),
-        tipoExpediente: document.getElementById('tipoExpediente').value,
-        fechaDesde: document.getElementById('fechaDesde').value,
-        fechaHasta: document.getElementById('fechaHasta').value,
-        fechaEspecifica: document.getElementById('fechaEspecifica').value,
-        nombreTitular: document.getElementById('nombreTitular').value.toLowerCase(),
-        numeroExpediente: document.getElementById('numeroExpediente').value.toUpperCase(),
-        estadoExpediente: document.getElementById('estadoExpediente').value,
-        placaVehicular: document.getElementById('placaVehicular').value.toUpperCase(),
-        numeroPermiso: document.getElementById('numeroPermiso').value.toUpperCase(),
-        rutaAsignada: document.getElementById('rutaAsignada').value.toLowerCase()
-    };
-}
-
-function filtrarExpedientes(criterios) {
-    return expedientesEjemplo.filter(expediente => {
-        // Búsqueda general
-        if (criterios.busquedaGeneral) {
-            const textoBusqueda = criterios.busquedaGeneral;
-            const camposBusqueda = [
-                expediente.numero,
-                expediente.titular,
-                expediente.tipo,
-                expediente.descripcion,
-                expediente.placa,
-                expediente.permiso,
-                expediente.ruta
-            ].join(' ').toLowerCase();
-            
-            if (!camposBusqueda.includes(textoBusqueda)) {
-                return false;
-            }
-        }
-        
-        // Filtro por tipo
-        if (criterios.tipoExpediente && expediente.tipo.toLowerCase() !== criterios.tipoExpediente) {
-            if (!expediente.tipo.toLowerCase().includes(criterios.tipoExpediente)) {
-                return false;
-            }
-        }
-        
-        // Filtro por rango de fechas
-        if (criterios.fechaDesde && expediente.fechaApertura < criterios.fechaDesde) {
-            return false;
-        }
-        if (criterios.fechaHasta && expediente.fechaApertura > criterios.fechaHasta) {
-            return false;
-        }
-        
-        // Filtro por fecha específica
-        if (criterios.fechaEspecifica && expediente.fechaApertura !== criterios.fechaEspecifica) {
-            return false;
-        }
-        
-        // Filtro por nombre
-        if (criterios.nombreTitular && !expediente.titular.toLowerCase().includes(criterios.nombreTitular)) {
-            return false;
-        }
-        
-        // Filtro por número de expediente
-        if (criterios.numeroExpediente && !expediente.numero.includes(criterios.numeroExpediente)) {
-            return false;
-        }
-        
-        // Filtro por estado
-        if (criterios.estadoExpediente && expediente.estado !== criterios.estadoExpediente) {
-            return false;
-        }
-        
-        // Filtro por placa
-        if (criterios.placaVehicular && !expediente.placa.includes(criterios.placaVehicular)) {
-            return false;
-        }
-        
-        // Filtro por permiso
-        if (criterios.numeroPermiso && !expediente.permiso.includes(criterios.numeroPermiso)) {
-            return false;
-        }
-        
-        // Filtro por ruta
-        if (criterios.rutaAsignada && !expediente.ruta.toLowerCase().includes(criterios.rutaAsignada)) {
-            return false;
-        }
-        
-        return true;
-    });
-}
-
-function actualizarResultados() {
-    const tbody = document.getElementById('tbodyResultados');
-    tbody.innerHTML = '';
-    
-    const inicio = (paginaActual - 1) * resultadosPorPagina;
-    const fin = inicio + resultadosPorPagina;
-    const resultadosPagina = resultadosActuales.slice(inicio, fin);
-    
-    if (resultadosPagina.length === 0) {
-        document.getElementById('mensajeSinResultados').style.display = '';
-        return;
-    }
-    
-    resultadosPagina.forEach(expediente => {
-        const fila = document.createElement('tr');
-        fila.className = 'hover:bg-gray-50';
-        fila.innerHTML = `
-            <td class="py-4 px-6">
-                <input type="checkbox" class="rounded border-gray-300">
-            </td>
-            <td class="py-4 px-6">
-                <div class="font-medium text-gray-900">${expediente.numero}</div>
-                <div class="text-xs text-gray-500">${expediente.descripcion}</div>
-            </td>
-            <td class="py-4 px-6">
-                <div class="font-medium">${expediente.titular}</div>
-                <div class="text-xs text-gray-500">Placa: ${expediente.placa}</div>
-            </td>
-            <td class="py-4 px-6">
-                <span class="px-3 py-1 text-xs rounded-full ${getColorTipo(expediente.tipo)}">
-                    ${expediente.tipo}
-                </span>
-            </td>
-            <td class="py-4 px-6 text-sm text-gray-900">
-                ${formatearFecha(expediente.fechaApertura)}
-            </td>
-            <td class="py-4 px-6">
-                <span class="px-3 py-1 text-xs rounded-full ${getColorEstado(expediente.estado)}">
-                    ${getTextoEstado(expediente.estado)}
-                </span>
-            </td>
-            <td class="py-4 px-6">
-                <div class="flex space-x-2">
-                    <button onclick="verDetalles(${expediente.id})" class="text-blue-600 hover:text-blue-800" title="Ver detalles">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button onclick="descargarExpediente(${expediente.id})" class="text-green-600 hover:text-green-800" title="Descargar">
-                        <i class="fas fa-download"></i>
-                    </button>
-                    <button onclick="editarExpediente(${expediente.id})" class="text-yellow-600 hover:text-yellow-800" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(fila);
-    });
-}
-
-function actualizarContador() {
-    const total = resultadosActuales.length;
-    const inicio = Math.min((paginaActual - 1) * resultadosPorPagina + 1, total);
-    const fin = Math.min(paginaActual * resultadosPorPagina, total);
-    
-    document.getElementById('contadorResultados').textContent = 
-        `Mostrando ${inicio}-${fin} de ${total} expedientes`;
-    document.getElementById('paginaInicio').textContent = inicio;
-    document.getElementById('paginaFin').textContent = fin;
-    document.getElementById('totalRegistros').textContent = total;
-}
-
-// Funciones auxiliares
-function getColorEstado(estado) {
-    const colores = {
-        digitalizado: 'bg-green-100 text-green-800',
-        pendiente: 'bg-yellow-100 text-yellow-800',
-        revision: 'bg-blue-100 text-blue-800',
-        archivado: 'bg-gray-100 text-gray-800',
-        eliminado: 'bg-red-100 text-red-800'
-    };
-    return colores[estado] || 'bg-gray-100 text-gray-800';
-}
-
-function getTextoEstado(estado) {
-    const textos = {
-        digitalizado: 'Digitalizado',
-        pendiente: 'Pendiente',
-        revision: 'En revisión',
-        archivado: 'Archivado',
-        eliminado: 'Eliminado'
-    };
-    return textos[estado] || estado;
-}
-
-function getColorTipo(tipo) {
-    if (tipo.includes('Licencia')) return 'bg-purple-100 text-purple-800';
-    if (tipo.includes('Renovación')) return 'bg-indigo-100 text-indigo-800';
-    if (tipo.includes('Inspección')) return 'bg-teal-100 text-teal-800';
-    if (tipo.includes('Solicitud')) return 'bg-orange-100 text-orange-800';
-    if (tipo.includes('multa')) return 'bg-red-100 text-red-800';
-    return 'bg-gray-100 text-gray-800';
-}
-
-function formatearFecha(fechaISO) {
-    const fecha = new Date(fechaISO);
-    return fecha.toLocaleDateString('es-MX', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
-}
-
-// Funciones de UI
-function limpiarBusqueda() {
-    document.getElementById('formBusqueda').reset();
-    
-    // Restablecer fechas por defecto
-    const hoy = new Date().toISOString().split('T')[0];
-    const hace30Dias = new Date();
-    hace30Dias.setDate(hace30Dias.getDate() - 30);
-    
-    document.getElementById('fechaHasta').value = hoy;
-    document.getElementById('fechaDesde').value = hace30Dias.toISOString().split('T')[0];
-    
-    resultadosActuales = [];
-    actualizarResultados();
-    actualizarContador();
-    document.getElementById('mensajeSinResultados').style.display = '';
-}
-
-function limpiarFechaEspecifica() {
-    document.getElementById('fechaEspecifica').value = '';
-}
-
-function guardarBusqueda() {
-    const criterios = obtenerCriteriosBusqueda();
-    const nombre = prompt('Nombre para esta búsqueda:', `Búsqueda ${new Date().toLocaleDateString()}`);
-    
-    if (nombre) {
-        busquedasGuardadas.push({
-            nombre,
-            criterios,
-            fecha: new Date().toISOString()
-        });
-        localStorage.setItem('busquedasGuardadasSTCH', JSON.stringify(busquedasGuardadas));
-        cargarBusquedasGuardadas();
-        alert('Búsqueda guardada correctamente');
-    }
-}
-
-function cargarBusquedasGuardadas() {
-    const guardadas = localStorage.getItem('busquedasGuardadasSTCH');
-    if (guardadas) {
-        busquedasGuardadas = JSON.parse(guardadas);
-        actualizarPanelBusquedas();
-    }
-}
-
-function actualizarPanelBusquedas() {
-    const panel = document.querySelector('#panelBusquedasGuardadas > div:nth-child(2)');
-    
-    if (busquedasGuardadas.length === 0) {
-        panel.innerHTML = `
-            <div class="text-center text-gray-500 py-8">
-                <i class="fas fa-bookmark text-2xl mb-2"></i>
-                <p class="text-sm">No hay búsquedas guardadas</p>
-            </div>
-        `;
-        return;
-    }
-    
-    panel.innerHTML = busquedasGuardadas.map((busqueda, index) => `
-        <div class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer" onclick="cargarBusquedaGuardada(${index})">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="font-medium text-sm text-gray-800">${busqueda.nombre}</p>
-                    <p class="text-xs text-gray-500">${new Date(busqueda.fecha).toLocaleDateString()}</p>
-                </div>
-                <button onclick="eliminarBusquedaGuardada(${index})" class="text-gray-400 hover:text-red-500">
-                    <i class="fas fa-trash text-xs"></i>
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function cargarBusquedaGuardada(index) {
-    const busqueda = busquedasGuardadas[index];
-    
-    // Cargar criterios en el formulario
-    document.getElementById('busquedaGeneral').value = busqueda.criterios.busquedaGeneral || '';
-    document.getElementById('tipoExpediente').value = busqueda.criterios.tipoExpediente || '';
-    document.getElementById('fechaDesde').value = busqueda.criterios.fechaDesde || '';
-    document.getElementById('fechaHasta').value = busqueda.criterios.fechaHasta || '';
-    document.getElementById('fechaEspecifica').value = busqueda.criterios.fechaEspecifica || '';
-    document.getElementById('nombreTitular').value = busqueda.criterios.nombreTitular || '';
-    document.getElementById('numeroExpediente').value = busqueda.criterios.numeroExpediente || '';
-    document.getElementById('estadoExpediente').value = busqueda.criterios.estadoExpediente || '';
-    document.getElementById('placaVehicular').value = busqueda.criterios.placaVehicular || '';
-    document.getElementById('numeroPermiso').value = busqueda.criterios.numeroPermiso || '';
-    document.getElementById('rutaAsignada').value = busqueda.criterios.rutaAsignada || '';
-    
-    // Realizar la búsqueda automáticamente
-    realizarBusqueda();
-    toggleBusquedasGuardadas();
-}
-
-function eliminarBusquedaGuardada(index) {
-    if (confirm('¿Eliminar esta búsqueda guardada?')) {
-        busquedasGuardadas.splice(index, 1);
-        localStorage.setItem('busquedasGuardadasSTCH', JSON.stringify(busquedasGuardadas));
-        actualizarPanelBusquedas();
-    }
-}
-
-function toggleBusquedasGuardadas() {
-    const panel = document.getElementById('panelBusquedasGuardadas');
-    const estaVisible = !panel.classList.contains('translate-x-full');
-    
-    if (estaVisible) {
-        panel.classList.add('translate-x-full');
-    } else {
-        panel.classList.remove('translate-x-full');
-    }
-}
-
-// Funciones de expediente
-function verDetalles(id) {
-    const expediente = expedientesEjemplo.find(e => e.id === id);
-    
-    document.getElementById('contenidoModal').innerHTML = `
-        <div class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <h4 class="text-sm font-medium text-gray-500 mb-1">Número de expediente</h4>
-                    <p class="text-lg font-semibold">${expediente.numero}</p>
-                </div>
-                <div>
-                    <h4 class="text-sm font-medium text-gray-500 mb-1">Estado</h4>
-                    <span class="px-3 py-1 text-sm rounded-full ${getColorEstado(expediente.estado)}">
-                        ${getTextoEstado(expediente.estado)}
-                    </span>
-                </div>
-            </div>
-            
-            <div>
-                <h4 class="text-sm font-medium text-gray-500 mb-1">Titular</h4>
-                <p class="text-lg">${expediente.titular}</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                    <h4 class="text-sm font-medium text-gray-500 mb-1">Tipo</h4>
-                    <p>${expediente.tipo}</p>
-                </div>
-                <div>
-                    <h4 class="text-sm font-medium text-gray-500 mb-1">Fecha de apertura</h4>
-                    <p>${formatearFecha(expediente.fechaApertura)}</p>
-                </div>
-                <div>
-                    <h4 class="text-sm font-medium text-gray-500 mb-1">Páginas</h4>
-                    <p>${expediente.paginas} páginas</p>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <h4 class="text-sm font-medium text-gray-500 mb-1">Placa vehicular</h4>
-                    <p>${expediente.placa}</p>
-                </div>
-                <div>
-                    <h4 class="text-sm font-medium text-gray-500 mb-1">Número de permiso</h4>
-                    <p>${expediente.permiso}</p>
-                </div>
-            </div>
-            
-            <div>
-                <h4 class="text-sm font-medium text-gray-500 mb-1">Ruta asignada</h4>
-                <p>${expediente.ruta}</p>
-            </div>
-            
-            <div>
-                <h4 class="text-sm font-medium text-gray-500 mb-1">Descripción</h4>
-                <p class="text-gray-700">${expediente.descripcion}</p>
-            </div>
-            
-            <div class="pt-6 border-t">
-                <div class="flex space-x-3">
-                    <button onclick="descargarExpediente(${expediente.id})" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        <i class="fas fa-download mr-2"></i>Descargar PDF
-                    </button>
-                    <button onclick="editarExpediente(${expediente.id})" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                        <i class="fas fa-edit mr-2"></i>Editar
-                    </button>
-                    <button onclick="cerrarModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                        Cerrar
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.getElementById('modalDetalles').classList.remove('hidden');
-}
-
-function cerrarModal() {
-    document.getElementById('modalDetalles').classList.add('hidden');
-}
-
-function descargarExpediente(id) {
-    alert(`Iniciando descarga del expediente ${id}`);
-    // Aquí iría la lógica real de descarga
-}
-
-function editarExpediente(id) {
-    alert(`Editando expediente ${id}`);
-    // Aquí iría la navegación a la página de edición
-}
-</script>
-
-<style>
-/* Estilos adicionales para mejor UX */
-input[type="date"]::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    opacity: 0.6;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator:hover {
-    opacity: 1;
-}
-
-#panelBusquedasGuardadas {
-    height: 400px;
-    z-index: 40;
-}
-
-#btnToggleBusquedas {
-    z-index: 30;
-}
-
-/* Scroll personalizado */
-#panelBusquedasGuardadas > div:nth-child(2)::-webkit-scrollbar {
-    width: 6px;
-}
-
-#panelBusquedasGuardadas > div:nth-child(2)::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-}
-
-#panelBusquedasGuardadas > div:nth-child(2)::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 3px;
-}
-
-#panelBusquedasGuardadas > div:nth-child(2)::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-</style>
+</div>

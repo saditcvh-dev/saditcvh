@@ -1,0 +1,22 @@
+.tree-node {
+  margin-left: 14px;
+}
+
+.node-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.node-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.node-children {
+  margin-left: 18px;
+  padding-left: 6px;
+  border-left: 1px solid #ddd;
+}

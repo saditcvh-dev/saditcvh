@@ -12,6 +12,13 @@ import { RespaldosView } from './pages/respaldos/respaldos.view';
 import { UsuariosView } from './pages/usuarios/usuarios.view';
 import { Header } from './components/header/header';
 import { Sidebar } from './components/sidebar/sidebar';
+import { Explorer } from './pages/expedientes/explorer/explorer';
+import { Node } from './pages/expedientes/explorer/node/node';
+import { Metadata } from './pages/expedientes/metadata/metadata';
+import { Viewer } from './pages/expedientes/viewer/viewer';
+import { TreeNodeComponent } from './pages/expedientes/explorer/tree-node/tree-node';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -26,10 +33,18 @@ import { Sidebar } from './components/sidebar/sidebar';
     UsuariosView,
     Header,
     Sidebar,
+    Explorer,
+    Node,
+    Metadata,
+    Viewer,
+    TreeNodeComponent
   ],
   imports: [
     CommonModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
   ]
 })
 export class AdminModule { }
