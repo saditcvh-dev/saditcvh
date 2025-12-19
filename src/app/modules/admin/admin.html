@@ -1,12 +1,20 @@
-<!-- HEADER-->
+<!-- HEADER -->
 <app-header></app-header>
 
 <div class="flex flex-1 overflow-hidden">
-    <!-- SIDEBAR-->
+    <!-- SIDEBAR -->
     <app-sidebar class="w-64 bg-white border-r border-gray-200"></app-sidebar>
 
-    <!-- CONTENIDO DINÁMICO-->
-    <main class="flex-1 p-6 bg-gray-50 overflow-y-auto">
-        <router-outlet></router-outlet>
+    <!-- CONTENIDO DINÁMICO -->
+    <main class="flex-1 flex flex-col bg-gray-50 overflow-y-auto">
+        <!-- Breadcrumbs -->
+        <div class="px-6 py-4 bg-white border-b border-gray-200">
+            <app-breadcrumbs></app-breadcrumbs>
+        </div>
+        
+        <!-- Contenido principal -->
+        <div class="flex-1 p-6 overflow-y-auto">
+            <router-outlet></router-outlet>
+        </div>
     </main>
 </div>

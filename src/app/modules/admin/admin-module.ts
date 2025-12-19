@@ -15,7 +15,9 @@ import { Sidebar } from './components/sidebar/sidebar';
 import { Explorer } from './pages/expedientes/explorer/explorer';
 import { Node } from './pages/expedientes/explorer/node/node';
 import { Metadata } from './pages/expedientes/metadata/metadata';
+import { RouterModule } from '@angular/router';
 import { Viewer } from './pages/expedientes/viewer/viewer';
+import { Breadcrumbs } from './components/breadcrumbs/breadcrumbs';
 import { TreeNodeComponent } from './pages/expedientes/explorer/tree-node/tree-node';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -24,6 +26,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     Admin,
+    Breadcrumbs,
     AuditoriaView,
     DashboardView,
     DigitalizacionView,
@@ -42,6 +45,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     AdminRoutingModule,
+    RouterModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
