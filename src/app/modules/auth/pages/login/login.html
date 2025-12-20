@@ -1,194 +1,172 @@
-<!-- LOGIN | SISTEMA DE GESTIÓN DOCUMENTAL - STCH -->
-<section class="min-h-screen bg-gray-100 flex">
+<section class="min-h-screen bg-gray-100 flex relative">
 
-  <!-- ============================================================
-       COLUMNA IZQUIERDA: FORMULARIO
-  ============================================================ -->
-  <div class="w-full lg:w-1/2 bg-white flex flex-col">
+    <div class="w-full lg:w-1/2 bg-white flex flex-col z-10">
 
-    <!-- HEADER - Logo centrado -->
-    <header class="bg-white px-6 py-4 flex items-center justify-center shadow-sm">
-      <!-- Logo centrado -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-blue-900 flex items-center justify-center text-white font-bold text-base shadow">
-          STCH
-        </div>
-        <div class="text-left">
-          <h1 class="text-sm font-semibold text-gray-900">Sistema de Transporte Convencional</h1>
-          <p class="text-[11px] text-gray-500">Gestión Documental Digital</p>
-        </div>
-      </div>
-    </header>
-
-    <!-- FORMULARIO -->
-    <main class="flex-1 flex items-center justify-center p-6">
-      <div class="w-full max-w-sm bg-white p-7 rounded-2xl border border-gray-200 shadow-md space-y-6">
-
-        <!-- Título -->
-        <div class="text-center">
-          <h2 class="text-xl font-semibold text-gray-900">Acceso al Sistema</h2>
-          <p class="text-sm text-gray-500 mt-1">Credenciales exclusivas para personal autorizado</p>
-        </div>
-
-        <!-- FORM -->
-        <form class="space-y-5">
-
-          <!-- Email -->
-          <div class="space-y-1">
-            <label for="email" class="text-sm text-gray-700 font-medium">Usuario Institucional</label>
-            <div class="relative">
-              <input
-                type="email"
-                id="email"
-                required
-                placeholder="usuario@stch.hidalgo.gob.mx"
-                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg
-                 focus:outline-none focus:ring-2 focus:ring-blue-600"
-              />
-              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-width="2"
-                  d="M16 12H8m8-4H8m8 8H8M4 6h16v12H4z"/>
-              </svg>
+        <header class="bg-white px-6 py-4 flex items-center justify-between shadow-sm relative z-10">
+            <div class="flex items-center">
+                <img 
+                    src="assets/images/afhhpxszzwtttnfyyg6r.jpg" 
+                    alt="Logotipo Movilidad Hidalgo" 
+                    class="w-auto h-10"
+                >
             </div>
-          </div>
+        </header>
 
-          <!-- Password -->
-          <div class="space-y-1">
-            <label for="password" class="text-sm text-gray-700 font-medium">Contraseña</label>
-            <div class="relative">
-              <input
-                type="password"
-                id="password"
-                required
-                placeholder="••••••••"
-                class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg
-                       focus:outline-none focus:ring-2 focus:ring-blue-600"
-              />
+        <main class="flex-1 flex items-center justify-center p-6 pb-20">
+            <div class="w-full max-w-sm bg-white p-7 rounded-2xl border border-gray-200 shadow-lg space-y-6">
 
-              <!-- icono candado -->
-              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-width="2"
-                  d="M12 17a1 1 0 100-2 1 1 0 000 2zm6-6V9a6 6 0 10-12 0v2m12 0H6v8h12v-8z"/>
-              </svg>
+                <div class="flex justify-center">
+                    <img 
+                        src="assets/images/LogotipoMovilidadHidalgo.png" 
+                        alt="Logotipo Movilidad Hidalgo" 
+                        class="w-20 h-auto"
+                    >
+                </div>
 
-              <!-- botón mostrar/ocultar -->
-              <button title="eye" type="button" onclick="togglePwd()"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                <svg id="eyeOpen" class="w-5 h-5 block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm6 0s-3-7-9-7-9 7-9 7 3 7 9 7 9-7 9-7z"/>
-                </svg>
+                <div class="text-center">
+                    <h2 class="text-xl font-semibold text-[#691831]">Acceso al Sistema</h2>
+                    <p class="text-sm text-gray-500 mt-1">Credenciales exclusivas para personal autorizado</p>
+                </div>
 
-                <svg id="eyeClosed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-width="2"
-                    d="M13.875 18.825A10.05 10.05 0 0112 19c-6 0-9-7-9-7a21.8 21.8 0 014.29-5.44M9.88 9.88a3 3 0 104.24 4.24M6 6l12 12"/>
-                </svg>
-              </button>
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5"> 
+                    
+                    <app-user-input
+                        [control]="usuarioControl"
+                        label="Usuario"
+                        placeholder="usuario1"
+                        inputId="usuario"
+                        iconPath="M16 12H8m8-4H8m8 8H8M4 6h16v12H4z"
+                    ></app-user-input>
+                    
+                    <app-password-input
+                        [control]="passwordControl"
+                        label="Contraseña"
+                        placeholder="••••••••"
+                        inputId="password"
+                    ></app-password-input>
+
+                    <div *ngIf="errorMessage" class="text-red-600 text-sm font-medium bg-red-50 p-2 rounded-lg border border-red-200">
+                        {{ errorMessage }}
+                    </div>
+
+                    <button
+                        type="submit"
+                        [disabled]="loginForm.invalid || loading"
+                        class="w-full px-4 py-2 rounded-lg bg-[#691831] text-white
+                            hover:bg-[#A02142] transition shadow text-sm font-medium"
+                        [ngClass]="{
+                            'opacity-50 cursor-not-allowed': loginForm.invalid || loading
+                        }">
+
+                        <span *ngIf="!loading">Iniciar Sesión</span>
+                        <span *ngIf="loading" class="flex items-center justify-center gap-2">
+                            <svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            Cargando...
+                        </span>
+
+                    </button>
+                </form>
+
             </div>
-          </div>
-
-          <!-- Submit -->
-          <button
-            type="submit"
-            class="w-full px-4 py-2 rounded-lg bg-blue-700 text-white hover:bg-blue-800 
-                   transition shadow text-sm font-medium">
-            Iniciar Sesión
-          </button>
-        </form>
-
-        <!-- Forgot -->
-        <div class="text-center pt-2">
-          <a href="#" class="text-xs text-gray-500 hover:text-gray-700 transition">
-            ¿Problemas con el acceso? Contactar soporte
-          </a>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- ============================================================
-       COLUMNA DERECHA: INFORMACIÓN DEL SISTEMA
-  ============================================================ -->
-  <div class="hidden lg:flex w-1/2 items-center justify-center bg-gradient-to-br from-blue-50 to-gray-50 p-8">
-    <div class="max-w-lg w-full">
-
-      <div class="mb-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-3">
-          Sistema de Gestión Documental STCH
-        </h2>
-        <p class="text-gray-600 text-sm leading-relaxed">
-          Plataforma desarrollada por <span class="font-semibold text-blue-700">Grupo Álamo Alto S.A. de C.V.</span> 
-          para la catalogación, digitalización y gestión del archivo documental del Sistema de Transporte Convencional de Hidalgo.
-        </p>
-      </div>
-
-      <!-- Características -->
-      <div class="space-y-4">
-        <div class="flex items-start">
-          <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3 flex-shrink-0">
-            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-          </div>
-          <div>
-            <h4 class="font-medium text-gray-800 text-sm">30,000 expedientes digitalizados</h4>
-            <p class="text-xs text-gray-500">+14 millones de páginas procesadas con OCR</p>
-          </div>
-        </div>
-
-        <div class="flex items-start">
-          <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3 flex-shrink-0">
-            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-            </svg>
-          </div>
-          <div>
-            <h4 class="font-medium text-gray-800 text-sm">Búsqueda indexada avanzada</h4>
-            <p class="text-xs text-gray-500">Localización rápida por metadatos y contenido</p>
-          </div>
-        </div>
-
-        <div class="flex items-start">
-          <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3 flex-shrink-0">
-            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-            </svg>
-          </div>
-          <div>
-            <h4 class="font-medium text-gray-800 text-sm">Seguridad y confidencialidad</h4>
-            <p class="text-xs text-gray-500">Protección de datos personales y controles de acceso</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Información de contacto -->
-      <div class="mt-8 pt-6 border-t border-gray-200">
-        <p class="text-xs text-gray-500">
-          <span class="font-medium">Soporte técnico:</span> grupoalamoa@gmail.com | 771 532 7277
-        </p>
-      </div>
-
+        </main>
     </div>
-  </div>
+
+    <div class="hidden lg:flex w-1/2 flex-col bg-gray-50 p-8 pb-20">
+        <div class="flex items-center justify-end gap-3 mb-8">
+            <div class="w-10 h-10 rounded-xl bg-[#691831] flex items-center justify-center text-white font-bold text-base shadow">
+                STCH
+            </div>
+            <div class="text-left">
+                <h1 class="text-sm font-semibold text-gray-900">Sistema de Transporte Convencional</h1>
+                <p class="text-[11px] text-gray-500">Gestión Documental Digital</p>
+            </div>
+        </div>
+
+        <div class="flex-1 flex items-center justify-center">
+            <div class="max-w-lg w-full">
+
+                <div class="flex">
+                    <img 
+                        src="assets/images/fkg3g8g8aofojin64fdn.jpg" 
+                        alt="Logotipo Movilidad Hidalgo" 
+                        class="w-auto h-20 mb-4"
+                    >
+                </div>
+
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-[#691831] mb-3">
+                        Sistema de Gestión Documental STCH
+                    </h2>
+                    <p class="text-gray-700 text-sm leading-relaxed">
+                        Plataforma desarrollada 
+                        para la catalogación, digitalización y gestión del archivo documental del Sistema de Transporte Convencional de Hidalgo.
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 rounded-full bg-[#BC955B]/20 flex items-center justify-center mr-3 flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#BC955B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 text-sm">30,000 expedientes digitalizados</h4>
+                            <p class="text-xs text-gray-600">+14 millones de páginas procesadas con OCR</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 rounded-full bg-[#BC955B]/20 flex items-center justify-center mr-3 flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#BC955B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 text-sm">Búsqueda indexada avanzada</h4>
+                            <p class="text-xs text-gray-600">Localización rápida por metadatos y contenido</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 rounded-full bg-[#BC955B]/20 flex items-center justify-center mr-3 flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#BC955B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 text-sm">Seguridad y confidencialidad</h4>
+                            <p class="text-xs text-gray-600">Protección de datos personales y controles de acceso</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    
+    <div class="fixed bottom-2 left-0 w-full h-12 overflow-hidden z-10">
+        <div class="w-full h-full bg-repeat-x animate-pasarela" 
+              style="background-image: url('assets/images/img-pasarela.png'); background-size: auto 100%;">
+        </div>
+    </div>
 
 </section>
 
-<script>
-function togglePwd() {
-  const input = document.getElementById("password");
-  const eyeOpen = document.getElementById("eyeOpen");
-  const eyeClosed = document.getElementById("eyeClosed");
-
-  if (input.type === "password") {
-    input.type = "text";
-    eyeOpen.classList.add("hidden");
-    eyeClosed.classList.remove("hidden");
-  } else {
-    input.type = "password";
-    eyeOpen.classList.remove("hidden");
-    eyeClosed.classList.add("hidden");
-  }
+<style>
+@keyframes pasarela-scroll {
+    0% { background-position: 0 0; }
+    100% { background-position: -200vw 0; }
 }
-</script>
+
+.animate-pasarela {
+    animation: pasarela-scroll 60s linear infinite;
+    width: 200%;
+}
+</style>
