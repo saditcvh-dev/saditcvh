@@ -1,0 +1,46 @@
+<div 
+  [class]="isCustom ? 
+    'border-2 border-dashed border-gray-300 rounded-lg p-5 hover:border-blue-400 hover:bg-blue-50 transition-all flex flex-col items-center justify-center text-center cursor-pointer' : 
+    'border border-gray-200 rounded-lg p-5 hover:shadow-md transition-all cursor-pointer ' + getColorClasses().border + ' hover:border'"
+>
+  <!-- Contenido para tarjetas normales -->
+  <ng-container *ngIf="!isCustom">
+    <div class="flex items-start justify-between mb-4">
+      <div class="w-10 h-10 rounded-lg flex items-center justify-center" [class]="getColorClasses().bg">
+        <i [class]="icon + ' ' + getColorClasses().text"></i>
+      </div>
+      <span class="text-xs px-2 py-1 rounded" [class]="getColorClasses().bg + ' ' + getColorClasses().textDark">
+        {{ frequency }}
+      </span>
+    </div>
+    
+    <h4 class="font-medium text-gray-800 mb-2">{{ title }}</h4>
+    <p class="text-sm text-gray-500 mb-4">{{ description }}</p>
+    
+    <div class="flex items-center justify-between">
+      <span class="text-xs text-gray-400">Última generación: {{ lastGenerated }}</span>
+      <button 
+        (click)="onGenerateClick($event)"
+        class="text-sm font-medium flex items-center"
+        [class]="getColorClasses().text + ' hover:' + getColorClasses().textDark.replace('text-', 'text-')"
+      >
+        Generar <i class="fas fa-arrow-right ml-1"></i>
+      </button>
+    </div>
+  </ng-container>
+
+  <!-- Contenido para tarjeta custom -->
+  <ng-container *ngIf="isCustom">
+    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-3">
+      <i [class]="icon + ' text-blue-600 text-xl'"></i>
+    </div>
+    <h4 class="font-medium text-gray-800 mb-2">{{ title }}</h4>
+    <p class="text-sm text-gray-500 mb-4">{{ description }}</p>
+    <button 
+      (click)="onGenerateClick($event)"
+      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+    >
+      <i class="fas fa-cog mr-2"></i>Configurar
+    </button>
+  </ng-container>
+</div>

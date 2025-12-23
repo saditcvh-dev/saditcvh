@@ -21,7 +21,8 @@ import { Breadcrumbs } from './components/breadcrumbs/breadcrumbs';
 import { TreeNodeComponent } from './pages/expedientes/explorer/tree-node/tree-node';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { KpiCardComponent } from './components/reportes/kpi-card/kpi-card';
+import { ReportCardComponent } from './components/reportes/report-card/report-card';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     Node,
     Metadata,
     Viewer,
-    TreeNodeComponent
+    TreeNodeComponent,
+    KpiCardComponent,
   ],
   imports: [
     CommonModule,
@@ -49,6 +51,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    ReportCardComponent,
   ]
 })
 export class AdminModule { }

@@ -31,80 +31,16 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         
         <!-- Expedientes procesados -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <p class="text-sm text-gray-500">Expedientes procesados</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">20,400</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                    <i class="fas fa-archive text-blue-600 text-xl"></i>
-                </div>
-            </div>
-            <div class="text-sm">
-                <span class="text-green-600 font-medium">
-                    <i class="fas fa-arrow-up mr-1"></i>12.5%
-                </span>
-                <span class="text-gray-500 ml-2">vs período anterior</span>
-            </div>
-        </div>
+        <app-kpi-card [config]="expedientesKpi"></app-kpi-card>
         
         <!-- Páginas digitalizadas -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <p class="text-sm text-gray-500">Páginas digitalizadas</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">9.65M</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                    <i class="fas fa-file-pdf text-green-600 text-xl"></i>
-                </div>
-            </div>
-            <div class="text-sm">
-                <span class="text-green-600 font-medium">
-                    <i class="fas fa-arrow-up mr-1"></i>8.3%
-                </span>
-                <span class="text-gray-500 ml-2">vs período anterior</span>
-            </div>
-        </div>
+        <app-kpi-card [config]="paginasKpi"></app-kpi-card>
         
-        <!-- Tasa de éxito OCR -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <p class="text-sm text-gray-500">Precisión OCR promedio</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">94.2%</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-                    <i class="fas fa-font text-purple-600 text-xl"></i>
-                </div>
-            </div>
-            <div class="text-sm">
-                <span class="text-green-600 font-medium">
-                    <i class="fas fa-arrow-up mr-1"></i>1.8%
-                </span>
-                <span class="text-gray-500 ml-2">vs período anterior</span>
-            </div>
-        </div>
+        <!-- Precisión OCR -->
+        <app-kpi-card [config]="ocrKpi"></app-kpi-card>
         
-        <!-- Tiempo promedio procesamiento -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <p class="text-sm text-gray-500">Velocidad promedio</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">1,245</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
-                    <i class="fas fa-tachometer-alt text-orange-600 text-xl"></i>
-                </div>
-            </div>
-            <div class="text-sm">
-                <span class="text-red-600 font-medium">
-                    <i class="fas fa-arrow-down mr-1"></i>2.1%
-                </span>
-                <span class="text-gray-500 ml-2">páginas/hora</span>
-            </div>
-        </div>
+        <!-- Velocidad promedio -->
+        <app-kpi-card [config]="velocidadKpi"></app-kpi-card>
     </div>
 
     <!-- ============================================================
@@ -194,128 +130,45 @@
     </div>
 
     <!-- ============================================================
-         REPORTES DETALLADOS
+        REPORTES DETALLADOS
     ============================================================ -->
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-8">
         <div class="p-6 border-b">
             <div class="flex flex-col md:flex-row md:items-center justify-between">
                 <div>
                     <h2 class="font-semibold text-gray-800 text-lg">Reportes detallados</h2>
-                    <p class="text-sm text-gray-500">Selecciona y genera reportes específicos</p>
+                    <p class="text-sm text-gray-500">
+                        Selecciona y genera reportes específicos
+                    </p>
                 </div>
-                
+
                 <div class="mt-4 md:mt-0">
-                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium flex items-center">
-                        <i class="fas fa-plus mr-2"></i>Generar nuevo reporte
+                    <button
+                        (click)="openCustomReportModal()"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium flex items-center">
+                        <i class="fas fa-plus mr-2"></i>
+                        Generar nuevo reporte
                     </button>
                 </div>
             </div>
         </div>
-        
+
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <!-- Reporte de productividad -->
-                <div class="border border-gray-200 rounded-lg p-5 hover:border-blue-300 hover:shadow-md transition-all">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                            <i class="fas fa-chart-line text-blue-600"></i>
-                        </div>
-                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Mensual</span>
-                    </div>
-                    <h4 class="font-medium text-gray-800 mb-2">Productividad del equipo</h4>
-                    <p class="text-sm text-gray-500 mb-4">Métricas de rendimiento y eficiencia del personal</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs text-gray-400">Última generación: 15/12/2025</span>
-                        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                            Generar <i class="fas fa-arrow-right ml-1"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Reporte de calidad -->
-                <div class="border border-gray-200 rounded-lg p-5 hover:border-green-300 hover:shadow-md transition-all">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                            <i class="fas fa-check-circle text-green-600"></i>
-                        </div>
-                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Semanal</span>
-                    </div>
-                    <h4 class="font-medium text-gray-800 mb-2">Control de calidad</h4>
-                    <p class="text-sm text-gray-500 mb-4">Estadísticas de precisión OCR y errores detectados</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs text-gray-400">Última generación: 14/12/2025</span>
-                        <button class="text-green-600 hover:text-green-800 text-sm font-medium">
-                            Generar <i class="fas fa-arrow-right ml-1"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Reporte de inventario -->
-                <div class="border border-gray-200 rounded-lg p-5 hover:border-purple-300 hover:shadow-md transition-all">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                            <i class="fas fa-boxes text-purple-600"></i>
-                        </div>
-                        <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Trimestral</span>
-                    </div>
-                    <h4 class="font-medium text-gray-800 mb-2">Inventario digital</h4>
-                    <p class="text-sm text-gray-500 mb-4">Estado de archivos, almacenamiento y organización</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs text-gray-400">Última generación: 10/12/2025</span>
-                        <button class="text-purple-600 hover:text-purple-800 text-sm font-medium">
-                            Generar <i class="fas fa-arrow-right ml-1"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Reporte de uso del sistema -->
-                <div class="border border-gray-200 rounded-lg p-5 hover:border-orange-300 hover:shadow-md transition-all">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                            <i class="fas fa-users text-orange-600"></i>
-                        </div>
-                        <span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">Diario</span>
-                    </div>
-                    <h4 class="font-medium text-gray-800 mb-2">Uso del sistema</h4>
-                    <p class="text-sm text-gray-500 mb-4">Actividad de usuarios, búsquedas y accesos</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs text-gray-400">Última generación: Hoy</span>
-                        <button class="text-orange-600 hover:text-orange-800 text-sm font-medium">
-                            Generar <i class="fas fa-arrow-right ml-1"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Reporte de rendimiento técnico -->
-                <div class="border border-gray-200 rounded-lg p-5 hover:border-red-300 hover:shadow-md transition-all">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center">
-                            <i class="fas fa-server text-red-600"></i>
-                        </div>
-                        <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Mensual</span>
-                    </div>
-                    <h4 class="font-medium text-gray-800 mb-2">Rendimiento técnico</h4>
-                    <p class="text-sm text-gray-500 mb-4">Métricas de servidores, almacenamiento y velocidad</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs text-gray-400">Última generación: 01/12/2025</span>
-                        <button class="text-red-600 hover:text-red-800 text-sm font-medium">
-                            Generar <i class="fas fa-arrow-right ml-1"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Reporte personalizado -->
-                <div class="border-2 border-dashed border-gray-300 rounded-lg p-5 hover:border-blue-400 hover:bg-blue-50 transition-all flex flex-col items-center justify-center text-center">
-                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-3">
-                        <i class="fas fa-sliders-h text-blue-600 text-xl"></i>
-                    </div>
-                    <h4 class="font-medium text-gray-800 mb-2">Reporte personalizado</h4>
-                    <p class="text-sm text-gray-500 mb-4">Configura tus propios parámetros y métricas</p>
-                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
-                        <i class="fas fa-cog mr-2"></i>Configurar
-                    </button>
-                </div>
+
+                <app-report-card
+                    *ngFor="let reporte of reportesDetallados"
+                    [title]="reporte.title"
+                    [description]="reporte.description"
+                    [icon]="reporte.icon"
+                    [color]="reporte.color"
+                    [frequency]="reporte.frequency || ''"
+                    [lastGenerated]="reporte.lastGenerated || ''"
+                    [isCustom]="reporte.isCustom || false"
+                    (generate)="onGenerateReport(reporte)"
+                    (configure)="openCustomReportModal()">
+                </app-report-card>
+
             </div>
         </div>
     </div>
