@@ -1,911 +1,457 @@
-<!-- GESTIÓN DE USUARIOS | SISTEMA STCH -->
 <div class="p-6">
+
+  <div class="mb-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-[#691831] mb-2">Gestión de Usuarios</h1>
+        <p class="text-gray-600">
+          Administración de accesos, roles y cargos del sistema
+        </p>
+      </div>
+      <div class="mt-4 md:mt-0">
+        <button
+          (click)="openCreateModal()"
+          class="px-4 py-2 bg-[#691831] text-white rounded-lg hover:bg-[#A02142] text-sm font-medium flex items-center transition shadow-md"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          Nuevo Usuario
+        </button>
+      </div>
+    </div>
+  </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
     
-    <!-- Cabecera con acciones principales -->
-    <div class="mb-8">
-        <div class="flex flex-col md:flex-row md:items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800 mb-2">Gestión de Usuarios</h1>
-                <p class="text-gray-600">Administración de accesos y permisos del sistema</p>
-            </div>
-            <div class="mt-4 md:mt-0">
-                <button onclick="abrirModalNuevoUsuario()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium flex items-center">
-                    <i class="fas fa-user-plus mr-2"></i>Nuevo Usuario
-                </button>
-            </div>
-        </div>
+      <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm flex items-center justify-between">
+      <div>
+        <p class="text-sm font-medium text-gray-500">Total de Usuarios</p>
+        <h3 class="text-3xl font-extrabold text-[#A02142] mt-1">
+          {{ totalUsers() }}
+        </h3>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-[#BC955B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
     </div>
 
-    <!-- ============================================================
-         ESTADÍSTICAS DE USUARIOS
-    ============================================================ -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        
-        <!-- Usuarios totales -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500">Usuarios totales</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">24</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                    <i class="fas fa-users text-blue-600 text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t">
-                <p class="text-xs text-gray-500">+2 este mes</p>
-            </div>
+    <ng-container *ngFor="let roleCount of roleCounts()">
+      <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-500">Usuarios Rol: {{ roleCount.roleName | titlecase }}</p>
+          <h3 class="text-3xl font-extrabold text-green-600 mt-1">
+            {{ roleCount.count }}
+          </h3>
         </div>
-        
-        <!-- Usuarios activos -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500">Usuarios activos</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">18</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                    <i class="fas fa-user-check text-green-600 text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t">
-                <div class="flex items-center">
-                    <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                    <p class="text-xs text-gray-500">En línea ahora</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Administradores -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500">Administradores</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">3</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-                    <i class="fas fa-user-shield text-purple-600 text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t">
-                <p class="text-xs text-gray-500">Acceso completo</p>
-            </div>
-        </div>
-        
-        <!-- Usuarios inactivos -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500">Usuarios inactivos</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">6</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                    <i class="fas fa-user-clock text-gray-600 text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t">
-                <p class="text-xs text-gray-500">+30 días sin acceso</p>
-            </div>
-        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+    </ng-container>
+    
+  </div>
+
+  <div class="bg-white rounded-xl border shadow-lg border-gray-200">
+
+    <div *ngIf="isLoading()" class="text-center py-10">
+      <svg class="animate-spin h-8 w-8 text-[#A02142] mx-auto mb-3" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <p class="text-lg text-gray-600">Cargando usuarios...</p>
     </div>
 
-    <!-- ============================================================
-         TABLA DE USUARIOS
-    ============================================================ -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-8">
-        
-        <!-- Filtros y búsqueda -->
-        <div class="p-6 border-b">
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                
-                <!-- Búsqueda -->
-                <div class="flex-1">
-                    <div class="relative max-w-md">
-                        <input 
-                            type="text" 
-                            placeholder="Buscar por nombre, email o departamento..."
-                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        >
-                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    </div>
-                </div>
-                
-                <!-- Filtros -->
-                <div class="flex flex-wrap gap-3">
-                    <select title="Roles" class="border border-gray-300 rounded-lg py-2 px-3 text-sm bg-white">
-                        <option>Todos los roles</option>
-                        <option>Administrador</option>
-                        <option>Supervisor</option>
-                        <option>Operador</option>
-                        <option>Consulta</option>
-                    </select>
-                    
-                    <select title="Estados" class="border border-gray-300 rounded-lg py-2 px-3 text-sm bg-white">
-                        <option>Todos los estados</option>
-                        <option>Activo</option>
-                        <option>Inactivo</option>
-                        <option>Pendiente</option>
-                        <option>Bloqueado</option>
-                    </select>
-                    
-                    <button class="px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm">
-                        <i class="fas fa-filter mr-1"></i>Más filtros
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Tabla de usuarios -->
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Usuario
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Rol
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Departamento
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Último acceso
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Estado
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Acciones
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    
-                    <!-- Usuario 1 - Administrador -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                                        <span class="text-blue-700 font-medium">JA</span>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">Juan Ángel Bazán González</div>
-                                    <div class="text-sm text-gray-500">juan.bazan@stch.hidalgo.gob.mx</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <span class="px-3 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
-                                    <i class="fas fa-user-shield mr-1"></i>Administrador
-                                </span>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6 text-sm text-gray-900">
-                            Dirección de Registro
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">Hoy, 10:24 AM</div>
-                            <div class="text-xs text-gray-500">IP: 192.168.1.105</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                                <span class="text-sm text-gray-900">Activo</span>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex space-x-2">
-                                <button onclick="editarUsuario(1)" class="text-blue-600 hover:text-blue-800" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button onclick="verDetallesUsuario(1)" class="text-green-600 hover:text-green-800" title="Ver detalles">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button onclick="cambiarEstadoUsuario(1)" class="text-yellow-600 hover:text-yellow-800" title="Cambiar estado">
-                                    <i class="fas fa-exchange-alt"></i>
-                                </button>
-                                <button onclick="eliminarUsuario(1)" class="text-red-600 hover:text-red-800" title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                    <!-- Usuario 2 - Supervisor -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                                        <span class="text-green-700 font-medium">MG</span>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">María González Rodríguez</div>
-                                    <div class="text-sm text-gray-500">maria.gonzalez@stch.hidalgo.gob.mx</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                                    <i class="fas fa-user-tie mr-1"></i>Supervisor
-                                </span>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6 text-sm text-gray-900">
-                            Departamento de Digitalización
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">Hoy, 09:15 AM</div>
-                            <div class="text-xs text-gray-500">IP: 192.168.1.112</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                                <span class="text-sm text-gray-900">Activo</span>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex space-x-2">
-                                <button onclick="editarUsuario(2)" class="text-blue-600 hover:text-blue-800" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button onclick="verDetallesUsuario(2)" class="text-green-600 hover:text-green-800" title="Ver detalles">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button onclick="cambiarEstadoUsuario(2)" class="text-yellow-600 hover:text-yellow-800" title="Cambiar estado">
-                                    <i class="fas fa-exchange-alt"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                    <!-- Usuario 3 - Operador -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
-                                        <span class="text-orange-700 font-medium">CP</span>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">Carlos Pérez Martínez</div>
-                                    <div class="text-sm text-gray-500">carlos.perez@stch.hidalgo.gob.mx</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <span class="px-3 py-1 text-xs rounded-full bg-orange-100 text-orange-800">
-                                    <i class="fas fa-user-cog mr-1"></i>Operador
-                                </span>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6 text-sm text-gray-900">
-                            Digitalización
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">Ayer, 16:45 PM</div>
-                            <div class="text-xs text-gray-500">IP: 192.168.1.120</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                                <span class="text-sm text-gray-900">Activo</span>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex space-x-2">
-                                <button onclick="editarUsuario(3)" class="text-blue-600 hover:text-blue-800" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button onclick="verDetallesUsuario(3)" class="text-green-600 hover:text-green-800" title="Ver detalles">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button onclick="cambiarEstadoUsuario(3)" class="text-yellow-600 hover:text-yellow-800" title="Cambiar estado">
-                                    <i class="fas fa-exchange-alt"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                    <!-- Usuario 4 - Consulta -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
-                                        <span class="text-gray-700 font-medium">AR</span>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">Ana Ramírez Sánchez</div>
-                                    <div class="text-sm text-gray-500">ana.ramirez@stch.hidalgo.gob.mx</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <span class="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
-                                    <i class="fas fa-user mr-1"></i>Consulta
-                                </span>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6 text-sm text-gray-900">
-                            Archivo
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">15/12/2025</div>
-                            <div class="text-xs text-gray-500">Hace 2 días</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></div>
-                                <span class="text-sm text-gray-900">Inactivo</span>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex space-x-2">
-                                <button onclick="editarUsuario(4)" class="text-blue-600 hover:text-blue-800" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button onclick="verDetallesUsuario(4)" class="text-green-600 hover:text-green-800" title="Ver detalles">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button onclick="cambiarEstadoUsuario(4)" class="text-yellow-600 hover:text-yellow-800" title="Cambiar estado">
-                                    <i class="fas fa-exchange-alt"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                    <!-- Usuario 5 - Bloqueado -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
-                                        <span class="text-red-700 font-medium">LM</span>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">Luis Martínez Torres</div>
-                                    <div class="text-sm text-gray-500">luis.martinez@stch.hidalgo.gob.mx</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <span class="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
-                                    <i class="fas fa-user mr-1"></i>Consulta
-                                </span>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6 text-sm text-gray-900">
-                            Legal
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">05/12/2025</div>
-                            <div class="text-xs text-gray-500">Hace 12 días</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
-                                <span class="text-sm text-gray-900">Bloqueado</span>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex space-x-2">
-                                <button onclick="editarUsuario(5)" class="text-blue-600 hover:text-blue-800" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button onclick="verDetallesUsuario(5)" class="text-green-600 hover:text-green-800" title="Ver detalles">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button onclick="cambiarEstadoUsuario(5)" class="text-yellow-600 hover:text-yellow-800" title="Cambiar estado">
-                                    <i class="fas fa-exchange-alt"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Pie de tabla -->
-        <div class="px-6 py-4 border-t">
-            <div class="flex flex-col md:flex-row md:items-center justify-between">
-                <div class="text-sm text-gray-500 mb-3 md:mb-0">
-                    Mostrando 5 de 24 usuarios
-                </div>
-                
-                <div class="flex items-center space-x-2">
-                    <button title="Pagina" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    
-                    <div class="flex space-x-1">
-                        <button class="w-8 h-8 rounded-lg bg-blue-600 text-white">1</button>
-                        <button class="w-8 h-8 rounded-lg border border-gray-300 hover:bg-gray-50">2</button>
-                        <button class="w-8 h-8 rounded-lg border border-gray-300 hover:bg-gray-50">3</button>
-                        <span class="px-2">...</span>
-                        <button class="w-8 h-8 rounded-lg border border-gray-300 hover:bg-gray-50">5</button>
-                    </div>
-                    
-                    <button title="Pagina" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+    <div
+      *ngIf="error() && !isLoading()"
+      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded m-6"
+    >
+      {{ error() }}
     </div>
 
-    <!-- ============================================================
-         GESTIÓN DE ROLES Y PERMISOS
-    ============================================================ -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-8">
-        <div class="p-6 border-b">
-            <h2 class="font-semibold text-gray-800 text-lg">Roles y Permisos</h2>
+    <div *ngIf="!isLoading()">
+
+      <div class="p-6 border-b border-gray-200 flex flex-col md:flex-row flex-wrap gap-3 justify-between">
+        
+        <div class="flex relative w-full md:w-auto md:max-w-xs items-stretch">
+          <input
+            id="search-user-input"
+            type="text"
+            [ngModel]="search()"
+            (ngModelChange)="search.set($event)"
+            (keyup.enter)="applyFilters()"
+            placeholder="Buscar por nombre, email, usuario..."
+            class="border border-gray-300 rounded-l-lg py-2 px-4 text-sm w-full focus:outline-none focus:ring-2 focus:ring-[#BC955B] focus:border-[#BC955B] pr-16"
+          />
+          
+          <kbd class="absolute right-12 top-2.5 px-1.5 py-0.5 text-xs bg-gray-100 text-gray-600 rounded">Ctrl + B</kbd>
+          
+          <button 
+            (click)="applyFilters()" 
+            title="Buscar"
+            class="bg-[#691831] hover:bg-[#A02142] text-white p-2 rounded-r-lg flex items-center justify-center transition focus:outline-none focus:ring-2 focus:ring-[#BC955B]"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <select
+            [ngModel]="filterRole()"
+            (ngModelChange)="filterRole.set($event); applyFilters()"
+            class="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#BC955B] focus:border-[#BC955B]"
+          >
+            <option value="all">Todos los roles</option>
+            <option *ngFor="let role of roles()" [value]="role.id">
+              {{ role.name | titlecase }}
+            </option>
+          </select>
+
+          <select
+            [ngModel]="filterCargo()"
+            (ngModelChange)="filterCargo.set($event); applyFilters()"
+            class="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#BC955B] focus:border-[#BC955B]"
+          >
+            <option value="all">Todos los cargos</option>
+            <option *ngFor="let cargo of cargos()" [value]="cargo.id">
+              {{ cargo.nombre }}
+            </option>
+          </select>
+
+          <select
+            [ngModel]="filterStatus()"
+            (ngModelChange)="filterStatus.set($event); applyFilters()"
+            class="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#BC955B] focus:border-[#BC955B]"
+          >
+            <option value="all">Todos los estados</option>
+            <option value="true">Activo</option>
+            <option value="false">Inactivo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[900px]">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th
+                class="py-3 px-6 text-left text-xs font-medium cursor-pointer hover:bg-gray-100 transition"
+                (click)="handleSort('name')"
+                [ngClass]="{'bg-[#DDC9A3]/50 text-[#691831]': sortColumn() === 'name', 'text-gray-500': sortColumn() !== 'name'}"
+              >
+                <div class="flex items-center gap-2">
+                  Usuario
+                  <div 
+                    class="flex flex-col h-5 justify-center" 
+                    [ngClass]="{'text-[#A02142]': sortColumn() === 'name', 'text-gray-400': sortColumn() !== 'name'}"
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      class="w-3 h-3 -mb-1" 
+                      viewBox="0 0 20 20" 
+                      fill="currentColor"
+                      stroke-width="3"
+                      [ngClass]="{'text-[#A02142]': sortColumn() === 'name' && sortDirection() === 'asc', 'text-gray-300': sortColumn() !== 'name' || sortDirection() !== 'asc'}"
+                    >
+                      <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      class="w-3 h-3" 
+                      viewBox="0 0 20 20" 
+                      fill="currentColor"
+                      stroke-width="3"
+                      [ngClass]="{'text-[#A02142]': sortColumn() === 'name' && sortDirection() === 'desc', 'text-gray-300': sortColumn() !== 'name' || sortDirection() !== 'desc'}"
+                    >
+                      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+              </th>
+
+              <th class="py-3 px-6 text-left text-xs font-medium text-gray-500">Roles</th>
+              <th class="py-3 px-6 text-left text-xs font-medium text-gray-500">Cargo</th>
+              <th class="py-3 px-6 text-left text-xs font-medium text-gray-500">Estado</th>
+
+              <th
+                class="py-3 px-6 text-left text-xs font-medium cursor-pointer hover:bg-gray-100 transition"
+                (click)="handleSort('creator')"
+                [ngClass]="{'bg-[#DDC9A3]/50 text-[#691831]': sortColumn() === 'creator', 'text-gray-500': sortColumn() !== 'creator'}"
+              >
+                <div class="flex items-center gap-2">
+                  Creado por
+                  <div 
+                    class="flex flex-col h-5 justify-center" 
+                    [ngClass]="{'text-[#A02142]': sortColumn() === 'creator', 'text-gray-400': sortColumn() !== 'creator'}"
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      class="w-3 h-3 -mb-1" 
+                      viewBox="0 0 20 20" 
+                      fill="currentColor"
+                      stroke-width="3"
+                      [ngClass]="{'text-[#A02142]': sortColumn() === 'creator' && sortDirection() === 'asc', 'text-gray-300': sortColumn() !== 'creator' || sortDirection() !== 'asc'}"
+                    >
+                      <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      class="w-3 h-3" 
+                      viewBox="0 0 20 20" 
+                      fill="currentColor"
+                      stroke-width="3"
+                      [ngClass]="{'text-[#A02142]': sortColumn() === 'creator' && sortDirection() === 'desc', 'text-gray-300': sortColumn() !== 'creator' || sortDirection() !== 'desc'}"
+                    >
+                      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+              </th>
+
+              <th
+                class="py-3 px-6 text-left text-xs font-medium cursor-pointer hover:bg-gray-100 transition"
+                (click)="handleSort('editor')"
+                [ngClass]="{'bg-[#DDC9A3]/50 text-[#691831]': sortColumn() === 'editor', 'text-gray-500': sortColumn() !== 'editor'}"
+              >
+                <div class="flex items-center gap-2">
+                  Modificado por
+                  <div 
+                    class="flex flex-col h-5 justify-center" 
+                    [ngClass]="{'text-[#A02142]': sortColumn() === 'editor', 'text-gray-400': sortColumn() !== 'editor'}"
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      class="w-3 h-3 -mb-1" 
+                      viewBox="0 0 20 20" 
+                      fill="currentColor"
+                      stroke-width="3"
+                      [ngClass]="{'text-[#A02142]': sortColumn() === 'editor' && sortDirection() === 'asc', 'text-gray-300': sortColumn() !== 'editor' || sortDirection() !== 'asc'}"
+                    >
+                      <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      class="w-3 h-3" 
+                      viewBox="0 0 20 20" 
+                      fill="currentColor"
+                      stroke-width="3"
+                      [ngClass]="{'text-[#A02142]': sortColumn() === 'editor' && sortDirection() === 'desc', 'text-gray-300': sortColumn() !== 'editor' || sortDirection() !== 'desc'}"
+                    >
+                      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+              </th>
+
+              <th class="py-3 px-6 text-left text-xs font-medium text-gray-500">Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-gray-100">
+            <tr
+              *ngFor="let user of users()"
+              class="hover:bg-gray-50"
+            >
+              <td class="py-4 px-6">
+                <div class="font-medium text-gray-900">
+                  {{ user.first_name }} {{ user.last_name }} {{ user.second_last_name || '' }}
+                </div>
+                <div class="text-xs text-gray-500">
+                  {{ user.email }}
+                </div>
+                <div class="text-xs text-gray-400">
+                  @{{ user.username }}
+                </div>
+              </td>
+
+              <td class="py-4 px-6">
+                <div class="flex flex-wrap gap-1">
+                  <span
+                    *ngFor="let role of user.roles"
+                    class="px-2 py-0.5 text-xs rounded **bg-[#691831]/10 text-[#691831] font-medium border border-gray-200**"
+                  >
+                    {{ role.name }}
+                  </span>
+                </div>
+              </td>
+
+              <td class="py-4 px-6">
+                {{ user.cargo?.nombre || 'Sin cargo' }}
+              </td>
+
+              <td class="py-4 px-6">
+                <span
+                  [ngClass]="{
+                    'text-green-700 bg-green-100 border border-green-200': user.active,
+                    'text-red-700 bg-red-100 border border-red-200': !user.active
+                  }"
+                  class="px-2 py-1 text-xs font-medium rounded-full"
+                >
+                  {{ user.active ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+
+              <td class="py-4 px-6">
+                <ng-container *ngIf="user.creator">
+                    <div class="text-sm text-gray-900">
+                      {{ user.creator.first_name }} {{ user.creator.last_name }}
+                    </div>
+                    <div class="text-xs text-gray-500">@{{ user.creator.username }}</div>
+                </ng-container>
+                <ng-container *ngIf="!user.creator">
+                    <span class="text-sm text-gray-400">-</span>
+                </ng-container>
+              </td>
+
+              <td class="py-4 px-6">
+                <ng-container *ngIf="user.editor">
+                    <div class="text-sm text-gray-900">
+                      {{ user.editor.first_name }} {{ user.editor.last_name }}
+                    </div>
+                    <div class="text-xs text-gray-500">@{{ user.editor.username }}</div>
+                </ng-container>
+                <ng-container *ngIf="!user.editor">
+                    <span class="text-sm text-gray-400">-</span>
+                </ng-container>
+              </td>
+
+              <td class="py-4 px-6">
+                <div class="flex gap-2">
+                  <button 
+                    (click)="openEditModal(user)" 
+                    title="Editar" 
+                    class="p-2 **hover:bg-[#DDC9A3]/30** rounded transition"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 **text-[#691831]**" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button (click)="deleteUser(user)" title="Eliminar/Inactivar" class="p-2 hover:bg-red-50 rounded transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="p-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+        
+        <div class="flex items-center gap-2">
+          <div class="text-sm text-gray-600">
+            Mostrando
+          </div>
+          <div class="px-3 py-1 bg-[#DDC9A3]/50 text-[#691831] font-bold rounded-lg text-sm border border-[#BC955B]/50">
+            {{ users().length }}
+          </div>
+          <div class="text-sm text-gray-600">
+            de
+          </div>
+          <div class="px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg text-sm border border-gray-300">
+            {{ totalUsers() }}
+          </div>
+          <div class="text-sm text-gray-600">
+            usuarios
+          </div>
         </div>
         
-        <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                
-                <!-- Rol: Administrador -->
-                <div class="border border-gray-200 rounded-lg p-5">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                            <i class="fas fa-user-shield text-purple-600"></i>
-                        </div>
-                        <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">3 usuarios</span>
-                    </div>
-                    <h4 class="font-medium text-gray-800 mb-2">Administrador</h4>
-                    <p class="text-sm text-gray-500 mb-4">Acceso completo al sistema, gestión de usuarios y configuración.</p>
-                    <div class="space-y-2">
-                        <div class="flex items-center text-sm">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Gestión completa</span>
-                        </div>
-                        <div class="flex items-center text-sm">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Configuración sistema</span>
-                        </div>
-                        <div class="flex items-center text-sm">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Ver todos los datos</span>
-                        </div>
-                    </div>
-                    <button class="w-full mt-4 px-4 py-2 border border-purple-300 text-purple-700 rounded-lg hover:bg-purple-50 text-sm font-medium">
-                        <i class="fas fa-edit mr-2"></i>Editar rol
-                    </button>
-                </div>
-                
-                <!-- Rol: Supervisor -->
-                <div class="border border-gray-200 rounded-lg p-5">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                            <i class="fas fa-user-tie text-blue-600"></i>
-                        </div>
-                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">5 usuarios</span>
-                    </div>
-                    <h4 class="font-medium text-gray-800 mb-2">Supervisor</h4>
-                    <p class="text-sm text-gray-500 mb-4">Supervisión de procesos, reportes y gestión parcial.</p>
-                    <div class="space-y-2">
-                        <div class="flex items-center text-sm">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Ver todos los datos</span>
-                        </div>
-                        <div class="flex items-center text-sm">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Generar reportes</span>
-                        </div>
-                        <div class="flex items-center text-sm">
-                            <i class="fas fa-times text-gray-300 mr-2"></i>
-                            <span>Gestión de usuarios</span>
-                        </div>
-                    </div>
-                    <button class="w-full mt-4 px-4 py-2 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 text-sm font-medium">
-                        <i class="fas fa-edit mr-2"></i>Editar rol
-                    </button>
-                </div>
-                
-                <!-- Rol: Operador -->
-                <div class="border border-gray-200 rounded-lg p-5">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                            <i class="fas fa-user-cog text-orange-600"></i>
-                        </div>
-                        <span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">8 usuarios</span>
-                    </div>
-                    <h4 class="font-medium text-gray-800 mb-2">Operador</h4>
-                    <p class="text-sm text-gray-500 mb-4">Operaciones de digitalización y carga de documentos.</p>
-                    <div class="space-y-2">
-                        <div class="flex items-center text-sm">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Digitalización</span>
-                        </div>
-                        <div class="flex items-center text-sm">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Carga de documentos</span>
-                        </div>
-                        <div class="flex items-center text-sm">
-                            <i class="fas fa-times text-gray-300 mr-2"></i>
-                            <span>Ver datos sensibles</span>
-                        </div>
-                    </div>
-                    <button class="w-full mt-4 px-4 py-2 border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-50 text-sm font-medium">
-                        <i class="fas fa-edit mr-2"></i>Editar rol
-                    </button>
-                </div>
-                
-                <!-- Rol: Consulta -->
-                <div class="border border-gray-200 rounded-lg p-5">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                            <i class="fas fa-user text-gray-600"></i>
-                        </div>
-                        <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">8 usuarios</span>
-                    </div>
-                    <h4 class="font-medium text-gray-800 mb-2">Consulta</h4>
-                    <p class="text-sm text-gray-500 mb-4">Solo consulta de expedientes digitalizados.</p>
-                    <div class="space-y-2">
-                        <div class="flex items-center text-sm">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Buscar expedientes</span>
-                        </div>
-                        <div class="flex items-center text-sm">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Ver documentos</span>
-                        </div>
-                        <div class="flex items-center text-sm">
-                            <i class="fas fa-times text-gray-300 mr-2"></i>
-                            <span>Editar datos</span>
-                        </div>
-                    </div>
-                    <button class="w-full mt-4 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium">
-                        <i class="fas fa-edit mr-2"></i>Editar rol
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Crear nuevo rol -->
-            <div class="mt-8 pt-6 border-t">
-                <button class="flex items-center text-blue-600 hover:text-blue-800 font-medium">
-                    <i class="fas fa-plus-circle mr-2"></i>Crear nuevo rol personalizado
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         ACTIVIDAD RECIENTE
-    ============================================================ -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-        <div class="p-6 border-b">
-            <div class="flex items-center justify-between">
-                <h2 class="font-semibold text-gray-800 text-lg">Actividad Reciente</h2>
-                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium">
-                    Ver historial completo
-                </button>
-            </div>
-        </div>
-        
-        <div class="p-6">
-            <div class="space-y-4">
-                
-                <!-- Actividad 1 -->
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                            <i class="fas fa-user-plus text-blue-600 text-sm"></i>
-                        </div>
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <div class="flex justify-between">
-                            <p class="text-sm font-medium text-gray-900">Nuevo usuario creado</p>
-                            <span class="text-xs text-gray-500">Hace 2 horas</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mt-1">Juan Ángel Bazán creó el usuario "Laura Sánchez"</p>
-                        <div class="mt-2 text-xs text-gray-400">
-                            <i class="fas fa-user-circle mr-1"></i>ID: USR-2025-025 • Rol: Operador
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Actividad 2 -->
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                            <i class="fas fa-key text-green-600 text-sm"></i>
-                        </div>
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <div class="flex justify-between">
-                            <p class="text-sm font-medium text-gray-900">Contraseña restablecida</p>
-                            <span class="text-xs text-gray-500">Hoy, 11:30 AM</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mt-1">María González restableció la contraseña de Carlos Pérez</p>
-                        <div class="mt-2 text-xs text-gray-400">
-                            <i class="fas fa-envelope mr-1"></i>Correo de recuperación enviado
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Actividad 3 -->
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
-                            <i class="fas fa-exchange-alt text-yellow-600 text-sm"></i>
-                        </div>
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <div class="flex justify-between">
-                            <p class="text-sm font-medium text-gray-900">Rol actualizado</p>
-                            <span class="text-xs text-gray-500">Ayer, 16:45 PM</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mt-1">Administrador actualizó el rol de "Ana Ramírez" a Supervisor</p>
-                        <div class="mt-2 text-xs text-gray-400">
-                            <i class="fas fa-user-tie mr-1"></i>De "Consulta" a "Supervisor"
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Actividad 4 -->
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-                            <i class="fas fa-user-slash text-red-600 text-sm"></i>
-                        </div>
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <div class="flex justify-between">
-                            <p class="text-sm font-medium text-gray-900">Usuario bloqueado</p>
-                            <span class="text-xs text-gray-500">05/12/2025</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mt-1">Sistema bloqueó automáticamente a "Luis Martínez"</p>
-                        <div class="mt-2 text-xs text-gray-400">
-                            <i class="fas fa-exclamation-triangle mr-1"></i>5 intentos fallidos de acceso
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Actividad 5 -->
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-                            <i class="fas fa-shield-alt text-purple-600 text-sm"></i>
-                        </div>
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <div class="flex justify-between">
-                            <p class="text-sm font-medium text-gray-900">Permisos modificados</p>
-                            <span class="text-xs text-gray-500">04/12/2025</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mt-1">Se actualizaron permisos del rol "Operador"</p>
-                        <div class="mt-2 text-xs text-gray-400">
-                            <i class="fas fa-check-circle mr-1"></i>+2 nuevos permisos agregados
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ============================================================
-     MODALES
-============================================================ -->
-
-<!-- Modal Nuevo Usuario -->
-<div id="modalNuevoUsuario" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
-        <div class="p-6 border-b">
-            <div class="flex justify-between items-center">
-                <h3 class="text-xl font-bold text-gray-800">Crear Nuevo Usuario</h3>
-                <button title="Nuevo usuario" onclick="cerrarModal('modalNuevoUsuario')" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-        </div>
-        <div class="p-6">
-            <div class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
-                        <input type="text" class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-500" placeholder="Nombre(s)">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Apellidos</label>
-                        <input type="text" class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-500" placeholder="Apellidos">
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Correo electrónico</label>
-                    <input type="email" class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-500" placeholder="usuario@stch.hidalgo.gob.mx">
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Departamento</label>
-                        <select title="Departamento" class="w-full border border-gray-300 rounded-lg py-2 px-3">
-                            <option>Dirección de Registro</option>
-                            <option>Digitalización</option>
-                            <option>Archivo</option>
-                            <option>Legal</option>
-                            <option>Administración</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Rol</label>
-                        <select title="Roles" class="w-full border border-gray-300 rounded-lg py-2 px-3">
-                            <option>Administrador</option>
-                            <option>Supervisor</option>
-                            <option>Operador</option>
-                            <option>Consulta</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
-                        <input type="password" class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-500" placeholder="••••••••">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar contraseña</label>
-                        <input type="password" class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-500" placeholder="••••••••">
-                    </div>
-                </div>
-                
-                <div class="flex items-center">
-                    <input type="checkbox" id="enviarCredenciales" class="rounded border-gray-300 text-blue-600">
-                    <label for="enviarCredenciales" class="ml-2 text-sm text-gray-700">Enviar credenciales por correo electrónico</label>
-                </div>
-            </div>
-        </div>
-        <div class="p-6 border-t flex justify-end space-x-3">
-            <button onclick="cerrarModal('modalNuevoUsuario')" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                Cancelar
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-semibold text-gray-700 hidden sm:block">Página:</span>
+          <div class="flex gap-1 items-center">
+            <button
+              (click)="prevPage()"
+              [disabled]="pagination().page <= 1"
+              class="px-3 py-1 text-sm rounded-lg border transition flex items-center gap-1"
+              [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': pagination().page <= 1, 'bg-white hover:bg-[#DDC9A3]/20 border-gray-300 text-[#691831]': pagination().page > 1}"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
             </button>
-            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                Crear Usuario
+
+            <span class="px-3 py-1 text-sm font-bold text-[#691831] bg-[#DDC9A3] rounded-lg border border-[#BC955B]">
+              {{ pagination().page }} / {{ pagination().totalPages }}
+            </span>
+
+            <button
+              (click)="nextPage()"
+              [disabled]="pagination().page >= pagination().totalPages"
+              class="px-3 py-1 text-sm rounded-lg border transition flex items-center gap-1"
+              [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': pagination().page >= pagination().totalPages, 'bg-white hover:bg-[#DDC9A3]/20 border-gray-300 text-[#691831]': pagination().page < pagination().totalPages}"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
             </button>
+          </div>
         </div>
+      </div>
+      
     </div>
+  </div>
 </div>
 
-<!-- Modal Detalles Usuario -->
-<div id="modalDetallesUsuario" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
-        <div class="p-6 border-b">
-            <div class="flex justify-between items-center">
-                <h3 class="text-xl font-bold text-gray-800">Detalles del Usuario</h3>
-                <button title="Detalles" onclick="cerrarModal('modalDetallesUsuario')" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-        </div>
-        <div class="p-6">
-            <div class="text-center py-8">
-                <i class="fas fa-user-circle text-4xl text-gray-300 mb-3"></i>
-                <p class="text-gray-500">Detalles completos del usuario seleccionado</p>
-            </div>
-        </div>
+<app-user-form
+  [isOpen]="isModalOpen()"
+  [user]="selectedUser()"
+  [allRoles]="roles()"
+  [allCargos]="cargos()"
+  (close)="closeModal()"
+  (userSaved)="handleUserSaved($event)"
+></app-user-form>
+
+<div 
+  *ngIf="isConfirmDeleteModalOpen()" 
+  (click)="closeDeleteConfirmation()"
+  class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex justify-center items-center p-4 transition duration-300"
+>
+  <div 
+    (click)="$event.stopPropagation()"
+    class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-100 opacity-100"
+  >
+    <div class="flex justify-between items-center p-4 border-b border-gray-100 **bg-gray-100** rounded-t-xl">
+      <h3 class="text-lg font-bold text-[#691831]">Confirmar Inactivación de Usuario</h3>
+      <button (click)="closeDeleteConfirmation()" class="p-2 rounded-full hover:bg-gray-200 transition text-[#691831]">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
+    
+    <div class="p-6">
+      <div class="text-center space-y-4">
+        <div class="mx-auto w-12 h-12 flex items-center justify-center rounded-full bg-[#A02142]">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        
+        <p class="text-gray-700 text-sm">
+          ¿Está seguro que desea inactivar (eliminar) al usuario 
+          <b class="text-[#A02142]">{{ userToDelete()?.first_name }} {{ userToDelete()?.last_name }}</b
+          >? Esta acción no se puede revertir.
+        </p>
+      </div>
+      
+      <div class="mt-6 flex justify-end gap-3">
+        <button
+          (click)="closeDeleteConfirmation()"
+          class="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+        >
+          Cancelar
+        </button>
+        <button
+          (click)="performDeleteAction()"
+          class="px-4 py-2 text-sm font-medium rounded-lg text-white transition shadow-md bg-red-600 hover:bg-red-700"
+        >
+          Sí, Inactivar Usuario
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
-
-<style>
-/* Estilos personalizados */
-.flex-shrink-0 {
-    flex-shrink: 0;
-}
-
-/* Animaciones para modales */
-@keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-#modalNuevoUsuario > div,
-#modalDetallesUsuario > div {
-    animation: modalFadeIn 0.2s ease-out;
-}
-
-/* Estados de usuario */
-.w-2.h-2.rounded-full {
-    min-width: 8px;
-    min-height: 8px;
-}
-
-/* Hover effects mejorados */
-.hover\:bg-gray-50:hover {
-    transition: background-color 0.2s ease;
-}
-
-/* Scroll personalizado para tabla */
-.overflow-x-auto::-webkit-scrollbar {
-    height: 6px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 3px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-</style>
-
-<script>
-// Funciones básicas para demostración
-function abrirModalNuevoUsuario() {
-    document.getElementById('modalNuevoUsuario').classList.remove('hidden');
-}
-
-function cerrarModal(modalId) {
-    document.getElementById(modalId).classList.add('hidden');
-}
-
-function editarUsuario(id) {
-    console.log('Editar usuario ID:', id);
-    // Aquí iría la lógica real para editar usuario
-}
-
-function verDetallesUsuario(id) {
-    console.log('Ver detalles usuario ID:', id);
-    document.getElementById('modalDetallesUsuario').classList.remove('hidden');
-}
-
-function cambiarEstadoUsuario(id) {
-    console.log('Cambiar estado usuario ID:', id);
-    // Aquí iría la lógica real para cambiar estado
-}
-
-function eliminarUsuario(id) {
-    if (confirm('¿Está seguro de eliminar este usuario?')) {
-        console.log('Eliminar usuario ID:', id);
-        // Aquí iría la lógica real para eliminar
-    }
-}
-
-// Cerrar modales con Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        cerrarModal('modalNuevoUsuario');
-        cerrarModal('modalDetallesUsuario');
-    }
-});
-
-// Cerrar modal al hacer clic fuera
-document.addEventListener('click', function(e) {
-    const modales = ['modalNuevoUsuario', 'modalDetallesUsuario'];
-    modales.forEach(modalId => {
-        const modal = document.getElementById(modalId);
-        if (modal && !modal.classList.contains('hidden')) {
-            if (e.target === modal) {
-                cerrarModal(modalId);
-            }
-        }
-    });
-});
-</script>

@@ -1,8 +1,14 @@
-<div 
-  [class]="isCustom ? 
-    'border-2 border-dashed border-gray-300 rounded-lg p-5 hover:border-blue-400 hover:bg-blue-50 transition-all flex flex-col items-center justify-center text-center cursor-pointer' : 
-    'border border-gray-200 rounded-lg p-5 hover:shadow-md transition-all cursor-pointer ' + getColorClasses().border + ' hover:border'"
+<div
+  class="rounded-lg p-5 transition-all cursor-pointer"
+  [ngClass]="isCustom
+    ? 'border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 flex flex-col items-center justify-center text-center'
+    : 'border border-gray-200 hover:shadow-md ' + getColorClasses().border"
+  (click)="onCardClick()"
+  role="button"
+  tabindex="0"
+  (keydown.enter)="onCardClick()"
 >
+
   <!-- Contenido para tarjetas normales -->
   <ng-container *ngIf="!isCustom">
     <div class="flex items-start justify-between mb-4">
