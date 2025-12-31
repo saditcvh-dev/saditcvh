@@ -8,6 +8,7 @@ import { ExpedientesView } from './pages/expedientes/expedientes.view';
 import { ReportesView } from './pages/reportes/reportes.view';
 import { RespaldosView } from './pages/respaldos/respaldos.view';
 import { UsuariosView } from './pages/usuarios/usuarios.view';
+import { PermissionMatrixComponent } from './components/permission-matrix/permission-matrix';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -102,6 +103,19 @@ const routes: Routes = [
             {
               label: 'usuarios',
               path: '/admin/usuarios',
+            },
+          ],
+        },
+      },
+      {
+        path: 'permisos',
+        component: PermissionMatrixComponent,
+        data: {
+          title: 'permisos',
+          breadcrumb: [
+            {
+              label: 'permisos',
+              path: '/admin/permisos',
             },
           ],
         },

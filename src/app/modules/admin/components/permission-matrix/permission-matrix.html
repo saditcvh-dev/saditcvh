@@ -1,0 +1,184 @@
+<div class="h-full flex bg-gray-50 overflow-hidden font-sans border-t border-gray-200">
+
+  <aside class="w-80 bg-white border-r border-gray-200 flex flex-col shrink-0 z-10 shadow-xl md:shadow-none">
+
+    <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50 space-y-3">
+        <div class="flex items-center justify-between">
+            <h3 class="text-[#691831] font-bold text-lg">Directorio</h3>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-[#691831]/10 text-[#691831]">
+                {{ filteredUsers.length }} / {{ allUsers.length }}
+            </span>
+        </div>
+
+        <div class="relative">
+            <input type="text" [(ngModel)]="searchUserTerm" (input)="filterUsers()" placeholder="Buscar por nombre..." class="w-full pl-9 pr-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#691831]/20 focus:border-[#691831] outline-none transition-all placeholder-gray-400">
+            <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+        </div>
+
+        <div class="relative">
+            <select [(ngModel)]="selectedRoleId" (change)="filterUsers()" class="w-full pl-9 pr-8 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#691831]/20 focus:border-[#691831] outline-none transition-all appearance-none text-gray-600 cursor-pointer hover:bg-gray-50">
+                <option [ngValue]="null">Todos los roles</option>
+                <option *ngFor="let role of rolesList" [ngValue]="role.id">{{ role.name | titlecase }}</option>
+            </select>
+            <div class="absolute left-3 top-2.5 pointer-events-none"><svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg></div>
+            <div class="absolute right-3 top-2.5 pointer-events-none"><svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></div>
+        </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto custom-scroll p-2 space-y-1">
+        <div *ngIf="loadingUsers" class="flex justify-center py-8">
+            <svg class="animate-spin h-6 w-6 text-[#691831]" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        </div>
+
+        <ng-container *ngIf="!loadingUsers">
+            <div *ngFor="let user of filteredUsers" (click)="selectUser(user.id)"
+                 class="group flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border border-transparent"
+                 [ngClass]="selectedUserId === user.id ? 'bg-[#691831]/5 border-[#691831]/10 shadow-sm' : 'hover:bg-gray-50 hover:border-gray-100'">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors shadow-sm ring-2 ring-white"
+                     [ngClass]="selectedUserId === user.id ? 'bg-[#691831] text-white' : 'bg-gray-100 text-gray-500 group-hover:bg-white group-hover:text-[#691831]'">
+                    {{ getInitials(user) }}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold truncate transition-colors" [ngClass]="selectedUserId === user.id ? 'text-[#691831]' : 'text-gray-700'">{{ user.first_name }} {{ user.last_name }}</p>
+                    <p class="text-xs text-gray-400 truncate flex items-center gap-1">
+                        <svg class="w-3 h-3 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        <span *ngIf="user.roles && user.roles.length > 0; else noRole">{{ user.roles[0].name | titlecase }} <span *ngIf="user.roles.length > 1">+{{ user.roles.length - 1 }}</span></span>
+                        <ng-template #noRole>Sin rol</ng-template>
+                    </p>
+                </div>
+                <div *ngIf="selectedUserId === user.id" class="animate-fadeIn"><svg class="w-4 h-4 text-[#691831]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg></div>
+            </div>
+            <div *ngIf="filteredUsers.length === 0" class="flex flex-col items-center justify-center py-10 text-gray-400 text-xs"><p>No se encontraron usuarios</p></div>
+        </ng-container>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 bg-white relative">
+
+    <div *ngIf="saving" class="absolute inset-0 z-50 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center transition-all animate-fadeIn">
+        <div class="flex flex-col items-center gap-3">
+            <svg class="animate-spin h-10 w-10 text-[#691831]" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <span class="text-[#691831] font-bold text-lg animate-pulse">Aplicando cambios...</span>
+        </div>
+    </div>
+
+    <div class="px-8 py-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white/80 backdrop-blur-sm sticky top-0 z-20">
+        <div class="flex items-center gap-4 w-full sm:w-auto">
+            <div class="p-2.5 bg-gradient-to-br from-[#691831] to-[#80203a] rounded-lg text-white shadow-md shadow-[#691831]/20">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+            </div>
+            <div>
+                <h2 class="text-lg font-bold text-gray-800 leading-tight">Configuración Territorial</h2>
+                <p class="text-xs text-gray-500 font-medium">
+                    <span *ngIf="selectedUserId" class="text-[#BC955B] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#BC955B]"></span>Usuario seleccionado</span>
+                    <span *ngIf="!selectedUserId">Seleccione un usuario para comenzar</span>
+                </p>
+            </div>
+        </div>
+        <div *ngIf="selectedUserId" class="flex items-center gap-3 w-full sm:w-auto animate-fadeIn">
+            <div class="relative w-full sm:w-60 group">
+                <input type="text" [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Filtrar municipios..." class="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-[#691831]/20 focus:border-[#691831] outline-none transition-all group-hover:bg-white">
+                <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5 group-hover:text-[#691831] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </div>
+            <button (click)="openAssignModal()" [disabled]="hasChanges" class="bg-[#691831] hover:bg-[#501225] text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all transform active:scale-95 flex items-center gap-2 disabled:opacity-50 disabled:transform-none disabled:shadow-none">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Asignar
+            </button>
+        </div>
+    </div>
+
+    <div class="flex-1 overflow-auto bg-white custom-scroll relative">
+        <div *ngIf="!selectedUserId" class="h-full flex flex-col items-center justify-center text-gray-300 select-none bg-gray-50/30">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4"><svg class="w-10 h-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg></div>
+            <p class="text-sm font-medium text-gray-500">Seleccione un usuario del panel izquierdo<br>para visualizar su matriz de permisos.</p>
+        </div>
+        <table *ngIf="selectedUserId" class="w-full text-sm text-left transition-opacity duration-200" [class.opacity-50]="isRefreshing">
+            <thead class="bg-gray-50/90 backdrop-blur-sm text-gray-500 uppercase text-[10px] font-bold tracking-wider sticky top-0 z-10 border-b border-gray-200">
+                <tr>
+                    <th class="px-8 py-3 text-[#691831]">Municipio</th>
+                    <th *ngFor="let perm of permissionsColumns" class="px-2 py-3 text-center w-24 border-l border-gray-100">{{ perm.name }}</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                <tr *ngFor="let muni of displayedRows; trackBy: trackByMuni" class="hover:bg-[#FFFBF2] transition-colors group">
+                    <td class="px-8 py-3 font-medium text-gray-700">
+                        <div class="flex items-center gap-3">
+                            <span class="inline-flex items-center justify-center w-8 h-6 rounded-md bg-gray-100 text-[10px] font-bold text-gray-500 border border-gray-200 group-hover:border-[#BC955B] group-hover:text-[#691831] transition-all">{{ muni.num }}</span>
+                            {{ muni.nombre }}
+                        </div>
+                    </td>
+                    <td *ngFor="let perm of permissionsColumns" class="px-2 py-3 text-center border-l border-dashed border-gray-100">
+                        <div class="flex justify-center">
+                            <input type="checkbox" class="w-4 h-4 text-[#691831] border-gray-300 rounded focus:ring-[#BC955B] focus:ring-offset-0 cursor-pointer transition-transform transform active:scale-95 checked:bg-[#691831] checked:border-transparent hover:border-[#691831]" [checked]="hasPermission(muni.id, perm.id)" (change)="toggle(muni.id, perm.id, $event)">
+                        </div>
+                    </td>
+                </tr>
+                <tr *ngIf="!isRefreshing && displayedRows.length === 0">
+                    <td [attr.colspan]="permissionsColumns.length + 1" class="px-6 py-20 text-center text-gray-400">
+                        <div class="flex flex-col items-center">
+                            <div class="p-3 bg-gray-50 rounded-full mb-3"><svg class="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></div>
+                            <p class="text-sm mb-2 font-medium text-gray-500">Sin asignaciones activas</p>
+                            <button (click)="openAssignModal()" class="text-[#691831] font-bold text-xs hover:underline uppercase tracking-wide">Asignar municipios</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="selectedUserId && (allMunicipiosRows.length > 0 || hasChanges)" class="px-8 py-4 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0 shadow-[0_-4px_10px_-2px_rgba(0,0,0,0.03)] z-20">
+        <div class="flex items-center gap-3">
+            <button (click)="saveChanges()" [disabled]="!hasChanges || saving" class="flex items-center gap-2 px-6 py-2 rounded-lg font-bold text-white shadow-sm transition-all transform active:scale-95 disabled:opacity-50 disabled:shadow-none disabled:transform-none" [ngClass]="hasChanges ? 'bg-[#691831] hover:bg-[#501225] shadow-[#691831]/20' : 'bg-gray-400 cursor-not-allowed'">
+                <span *ngIf="!saving">Guardar Cambios</span>
+                <span *ngIf="saving">Guardando...</span>
+            </button>
+            <button (click)="cancelChanges()" [disabled]="!hasChanges || saving" class="px-4 py-2 rounded-lg font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 hover:text-gray-900 transition-colors disabled:opacity-50">Cancelar</button>
+            <span *ngIf="hasChanges && !saving" class="text-[#BC955B] text-[10px] font-bold uppercase tracking-wider animate-pulse ml-2 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#BC955B]"></span> Pendiente</span>
+        </div>
+        <div *ngIf="allMunicipiosRows.length > 0" class="flex items-center gap-2 text-sm font-medium text-gray-500">
+            <span class="hidden sm:inline mr-2 text-xs uppercase tracking-wide">Total: <b>{{ pagination.total }}</b></span>
+            <button (click)="changePage(pagination.page - 1)" [disabled]="pagination.page === 1" class="p-1.5 rounded-md bg-white border border-gray-200 hover:bg-gray-100 disabled:opacity-40 transition"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>
+            <span class="px-2 text-[#691831] font-bold">{{ pagination.page }}</span>
+            <button (click)="changePage(pagination.page + 1)" [disabled]="pagination.page >= totalPages" class="p-1.5 rounded-md bg-white border border-gray-200 hover:bg-gray-100 disabled:opacity-40 transition"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg></button>
+        </div>
+    </div>
+  </main>
+</div>
+
+<div *ngIf="isAssignModalOpen" class="fixed inset-0 z-[60] overflow-y-auto" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" (click)="closeAssignModal()"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+      <div class="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[85vh] animate-fadeIn">
+        <div class="bg-gradient-to-r from-[#691831] to-[#80203a] px-6 py-4 flex justify-between items-center rounded-t-2xl shrink-0">
+          <h3 class="text-lg font-bold text-white tracking-wide">Asignar Municipios</h3>
+          <span class="text-xs font-bold bg-white/20 text-white px-3 py-1 rounded-full border border-white/10">{{ catalogMunicipios.length }} Disponibles</span>
+        </div>
+        <div class="p-4 border-b border-gray-100 bg-gray-50">
+             <div class="relative">
+                 <input type="text" [(ngModel)]="modalSearchTerm" (input)="filterLocalModal()" class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white shadow-sm focus:ring-2 focus:ring-[#691831] focus:border-transparent outline-none transition-all" placeholder="Buscar por nombre o número...">
+                 <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+             </div>
+             <p class="mt-2 text-xs text-right font-semibold text-[#691831]">Seleccionados: {{ selectedMunicipiosIds.size }}</p>
+        </div>
+        <div class="px-4 py-2 overflow-y-auto flex-1 bg-white min-h-[300px] custom-scroll" (scroll)="onModalScroll($event)">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 py-2">
+                <div *ngFor="let muni of displayedCatalog; trackBy: trackByMuni" (click)="toggleSelection(muni.id)"
+                     class="flex items-center p-3 rounded-xl border cursor-pointer transition-all select-none group"
+                     [ngClass]="{'border-[#691831] bg-[#691831]/5 shadow-inner': selectedMunicipiosIds.has(muni.id), 'border-gray-200 hover:border-[#691831]/50 hover:shadow-sm': !selectedMunicipiosIds.has(muni.id)}">
+                    <div class="w-5 h-5 rounded border flex items-center justify-center mr-3 transition-colors"
+                         [ngClass]="{'bg-[#691831] border-[#691831]': selectedMunicipiosIds.has(muni.id), 'bg-white border-gray-300 group-hover:border-[#BC955B]': !selectedMunicipiosIds.has(muni.id)}">
+                        <svg *ngIf="selectedMunicipiosIds.has(muni.id)" class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7" /></svg>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-extrabold text-gray-400 block uppercase tracking-wider">#{{ muni.num }}</span>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-[#691831] transition-colors">{{ muni.nombre }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3 rounded-b-2xl border-t border-gray-200 shrink-0">
+          <button (click)="saveAssignments()" class="px-6 py-2.5 rounded-xl bg-[#691831] text-white font-bold hover:bg-[#501225] shadow-md transition-all transform active:scale-95">Aplicar Selección</button>
+          <button (click)="closeAssignModal()" class="px-6 py-2.5 rounded-xl bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 font-bold transition-colors">Cancelar</button>
+        </div>
+      </div>
+    </div>
+</div>
