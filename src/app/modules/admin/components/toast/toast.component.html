@@ -1,0 +1,14 @@
+<div *ngIf="toast.visible" [class]="toastClasses" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
+	<div [innerHTML]="iconSvg" class="flex-shrink-0"></div>
+	<div class="flex-1">
+		<span class="text-sm font-medium">{{ toast.message }}</span>
+	</div>
+	<button (click)="onClose()" class="ml-2 text-current hover:opacity-70 transition-opacity p-1 rounded-full hover:bg-black/5">
+		<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+		</svg>
+	</button>
+</div>
+<div *ngIf="toast.visible" class="fixed bottom-6 right-6 z-[99] flex flex-col gap-2">
+	<!-- Los toasts se apilan aquí automáticamente -->
+</div>

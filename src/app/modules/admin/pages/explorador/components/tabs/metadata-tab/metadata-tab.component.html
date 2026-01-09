@@ -1,0 +1,86 @@
+<div class="h-full overflow-y-auto bg-white">
+  <!-- Header con información del documento -->
+  <div *ngIf="selectedNode && selectedNode.type === 'autorizacion'" 
+       class="bg-gray-50 p-6 border-b border-gray-100">
+    <div class="flex items-start gap-4">
+      <div class="w-16 h-20 bg-white border border-gray-200 shadow-sm flex items-center justify-center rounded">
+        <svg class="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 2H7a2 2 0 00-2 2v15a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+          <h3 class="text-lg font-bold text-gray-800">{{ selectedNode.nombre }}</h3>
+          <span class="px-2 py-0.5 rounded text-xs font-bold uppercase bg-green-100 text-green-700 border border-green-200">
+            {{ selectedNode.data?.estado || 'ACTIVO' }}
+          </span>
+        </div>
+        <p class="text-sm text-gray-600">{{ selectedNode.data?.descripcion || 'Sin descripción' }}</p>
+        <div class="flex gap-4 mt-2 text-xs text-gray-500">
+          <!-- <span class="flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Creado: {{ formatDate(selectedNode.data?.fecha_creacion) }}
+          </span> -->
+          <span class="flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            Por: {{ selectedNode.data?.creado_por || 'Usuario' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metadatos -->
+  <div class="p-6 space-y-8">
+    <!-- Información básica -->
+    <div>
+      <h3 class="text-xs font-bold text-[#691831] uppercase tracking-widest mb-4 border-b border-gray-100 pb-2">
+        Información Básica
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div *ngFor="let item of metadata" class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+          <div class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getIcon(item.icon)" />
+            </svg>
+            <div class="flex-1">
+              <div class="text-xs font-medium text-gray-500 mb-1">{{ item.label }}</div>
+              <div class="text-sm text-gray-800 font-medium">{{ item.value || 'No disponible' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información adicional para autorizaciones -->
+    <div *ngIf="selectedNode && selectedNode.type === 'autorizacion'">
+      <h3 class="text-xs font-bold text-[#691831] uppercase tracking-widest mb-4 border-b border-gray-100 pb-2">
+        Información Adicional
+      </h3>
+      <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+        <div class="grid grid-cols-2 gap-4">
+          <!-- <div>
+            <div class="text-xs font-medium text-gray-500 mb-1">Modalidad ID</div>
+            <div class="text-sm text-gray-800">{{ selectedNode.data?.modalidad_id || 'N/A' }}</div>
+          </div>
+          <div>
+            <div class="text-xs font-medium text-gray-500 mb-1">Tipo ID</div>
+            <div class="text-sm text-gray-800">{{ selectedNode.data?.tipo_id || 'N/A' }}</div>
+          </div>
+          <div>
+            <div class="text-xs font-medium text-gray-500 mb-1">Municipio ID</div>
+            <div class="text-sm text-gray-800">{{ selectedNode.data?.municipio_id || 'N/A' }}</div>
+          </div> -->
+          <div>
+            <div class="text-xs font-medium text-gray-500 mb-1">Última actualización</div>
+            <!-- <div class="text-sm text-gray-800">{{ formatDate(selectedNode.data?.fecha_actualizacion) }}</div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

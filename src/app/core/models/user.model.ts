@@ -111,3 +111,8 @@ export interface UserTerritory {
   nombre: string;
   permisos: string[]; // Ejemplo: ['ver', 'editar', 'descargar']
 }
+export interface MunicipioResponseTerritory {
+  success: boolean;
+  data: UserTerritory | UserTerritory[];
+  message?: string;
+}

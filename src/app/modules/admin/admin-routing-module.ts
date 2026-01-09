@@ -4,12 +4,12 @@ import { Admin } from './admin';
 import { DashboardView } from './pages/dashboard/dashboard.view';
 import { AuditoriaView } from './pages/auditoria/auditoria.view';
 import { DigitalizacionView } from './pages/digitalizacion/digitalizacion.view';
-import { ExpedientesView } from './pages/expedientes/expedientes.view';
 import { ReportesView } from './pages/reportes/reportes.view';
 import { RespaldosView } from './pages/respaldos/respaldos.view';
 import { UsuariosView } from './pages/usuarios/usuarios.view';
 import { PermissionMatrixComponent } from './components/permission-matrix/permission-matrix';
 import { roleGuard } from '../../core/guards/role.guard';
+import { ExploradorView } from './pages/explorador/explorador.view';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -33,14 +33,28 @@ const routes: Routes = [
           breadcrumb: [{ label: 'digitalizacion', path: '/admin/digitalizacion' }],
         },
       },
-      {
-        path: 'expedientes',
-        component: ExpedientesView,
+      // {
+      //   path: 'expedientes',
+      //   component: ExpedientesView,
+      //   data: {
+      //     title: 'expedientes',
+      //     breadcrumb: [{ label: 'expedientes', path: '/admin/expedientes' }],
+      //   },
+      // },
+         {
+        path: 'explorador',
+        component: ExploradorView,
         data: {
-          title: 'expedientes',
-          breadcrumb: [{ label: 'expedientes', path: '/admin/expedientes' }],
+          title: 'explorador',
+          breadcrumb: [
+            {
+              label: 'explorador',
+              path: '/admin/explorador',
+            },
+          ],
         },
       },
+
       {
         path: 'reportes',
         component: ReportesView,
