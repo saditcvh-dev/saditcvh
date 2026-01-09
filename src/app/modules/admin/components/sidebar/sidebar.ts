@@ -1,6 +1,5 @@
-// src\app\modules\admin\components\sidebar\sidebar.ts
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../../../../core/services/auth'; // Asegúrate de que la ruta sea correcta
+import { AuthService } from '../../../../core/services/auth';
 
 @Component({
   selector: 'app-sidebar',
@@ -29,5 +28,12 @@ export class Sidebar {
         console.error('Error al cerrar sesión', err);
       }
     });
+  }
+
+  /**
+   * Verifica si el usuario actual tiene rol de administrador
+   */
+  isAdmin(): boolean {
+    return this.authService.hasRole('administrador');
   }
 }

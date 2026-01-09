@@ -86,6 +86,8 @@ export interface User {
   password?: string;
   roleIds?: number[];
   municipios?: number[];
+
+  requires_permission_check?: boolean;
 }
 
 // Interfaz para la data de Creación/Actualización (Payload al Backend)
@@ -101,4 +103,11 @@ export interface UserPayload {
   cargo_id?: number | null;
   roles?: number[]; // IDs de los roles
   municipios?: number[]; // IDs de los municipios
+}
+
+export interface UserTerritory {
+  id: number;
+  num: number;
+  nombre: string;
+  permisos: string[]; // Ejemplo: ['ver', 'editar', 'descargar']
 }

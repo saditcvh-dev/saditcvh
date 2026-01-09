@@ -7,7 +7,7 @@ import { combineLatest, of, Subject, switchMap, debounceTime, tap, startWith } f
 import { catchError } from 'rxjs/operators';
 import { ApiResponse } from '../../../../core/models/api-response.model';
 import { Pagination, PaginatedResponse } from '../../../../core/models/paginated-response.model';
-import { Router } from "@angular/router"; // Router ya estaba importado
+import { Router } from "@angular/router";
 
 type SortColumn = 'name' | 'creator' | 'editor';
 type SortDirection = 'asc' | 'desc';
@@ -29,7 +29,6 @@ export class UsuariosView implements OnInit {
   public users = signal<User[]>([]);
   public roles = signal<Role[]>([]);
   public cargos = signal<Cargo[]>([]);
-
   public realRoleCounts = signal<RoleCount[]>([]);
 
   public isLoading = signal<boolean>(true);
@@ -57,17 +56,12 @@ export class UsuariosView implements OnInit {
   public isModalOpen = signal<boolean>(false);
   public selectedUser = signal<User | null>(null);
 
-  // --- NUEVAS SEÑALES PARA MODAL DE ELIMINACIÓN/CONFIRMACIÓN ---
+  // Modal de eliminación
   public isConfirmDeleteModalOpen = signal<boolean>(false);
   public userToDelete = signal<User | null>(null);
-  // -------------------------------------------------------------
 
   public totalUsers = computed(() => this.pagination().total);
-
-  public roleCounts = computed<RoleCount[]>(() => {;
-    return this.realRoleCounts();
-  });
-
+  public roleCounts = computed<RoleCount[]>(() => this.realRoleCounts());
 
   ngOnInit(): void {
     this.loadCatalogs();
@@ -78,7 +72,6 @@ export class UsuariosView implements OnInit {
       switchMap(() => {
         this.isLoading.set(true);
         this.error.set(null);
-
         const params = this.buildSearchParams();
 
         return this.userService.getUsers(params).pipe(
@@ -89,7 +82,7 @@ export class UsuariosView implements OnInit {
           }),
           catchError(err => {
             console.error('Error cargando usuarios:', err);
-            this.error.set('Error al cargar la lista de usuarios. Intente recargar la página.');
+            this.error.set('Error al cargar la lista de usuarios.');
             this.users.set([]);
             this.isLoading.set(false);
             return of({} as PaginatedResponse<User>);
@@ -114,8 +107,8 @@ export class UsuariosView implements OnInit {
           this.realRoleCounts.set(roleCounts);
         }),
         catchError(err => {
-          console.error('Error cargando catálogos/conteos:', err);
-          this.error.set('Error al cargar los catálogos (Roles/Cargos) y conteos.');
+          console.error('Error cargando catálogos:', err);
+          this.error.set('Error al cargar catálogos y conteos.');
           return of(null);
         })
       )
@@ -126,12 +119,11 @@ export class UsuariosView implements OnInit {
     const roleId = this.filterRole() === 'all' ? undefined : parseInt(this.filterRole());
     const cargoId = this.filterCargo() === 'all' ? undefined : parseInt(this.filterCargo());
     const active = this.filterStatus() === 'all' ? undefined : this.filterStatus() === 'true';
-    const search = this.search() === '' ? undefined : this.search();
 
     return {
       page: this.pagination().page,
       limit: this.pagination().limit,
-      search: search,
+      search: this.search() || undefined,
       role_id: roleId,
       cargo_id: cargoId,
       active: active,
@@ -141,19 +133,14 @@ export class UsuariosView implements OnInit {
   }
 
   handleSearchOnEnter(event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
-      this.applyFilters();
-    }
+    if (event.key === 'Enter') this.applyFilters();
   }
 
   setupKeyboardShortcut(): void {
     document.addEventListener('keydown', (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === 'b') {
         event.preventDefault();
-        const searchInput = document.getElementById('search-user-input');
-        if (searchInput) {
-          (searchInput as HTMLInputElement).focus();
-        }
+        document.getElementById('search-user-input')?.focus();
       }
     });
   }
@@ -164,8 +151,7 @@ export class UsuariosView implements OnInit {
 
   handleSort(column: SortColumn): void {
     if (this.sortColumn() === column) {
-      const newDirection = this.sortDirection() === 'asc' ? 'desc' : 'asc';
-      this.sortDirection.set(newDirection);
+      this.sortDirection.set(this.sortDirection() === 'asc' ? 'desc' : 'asc');
     } else {
       this.sortColumn.set(column);
       this.sortDirection.set('asc');
@@ -175,24 +161,14 @@ export class UsuariosView implements OnInit {
   }
 
   goToPage(page: number): void {
-    const totalPages = this.pagination().totalPages;
-    if (page >= 1 && page <= totalPages) {
+    if (page >= 1 && page <= this.pagination().totalPages) {
       this.pagination.update(pag => ({ ...pag, page }));
       this.applyFilters();
     }
   }
 
-  nextPage(): void {
-    this.goToPage(this.pagination().page + 1);
-  }
-
-  prevPage(): void {
-    this.goToPage(this.pagination().page - 1);
-  }
-
-  getAuditUserName(userId: number | null): User | undefined {
-    return this.users().find(u => u.id === userId);
-  }
+  nextPage(): void { this.goToPage(this.pagination().page + 1); }
+  prevPage(): void { this.goToPage(this.pagination().page - 1); }
 
   openCreateModal(): void {
     this.selectedUser.set(null);
@@ -209,33 +185,46 @@ export class UsuariosView implements OnInit {
     this.selectedUser.set(null);
   }
 
-  // MODIFICACIÓN CLAVE PARA REDIRECCIÓN
+  /**
+   * LÓGICA DE GUARDADO CON REDIRECCIÓN INTELIGENTE
+   */
   handleUserSaved(event: { success: boolean; message: string; data?: User }): void {
-    // 1. Verificar si era creación (no había usuario seleccionado al abrir el modal)
     const wasCreating = this.selectedUser() === null;
-
     this.closeModal();
 
-    if (event.success) {
-      console.log('Usuario guardado:', event.message);
+    if (event.success && event.data) {
+      const user = event.data;
+      console.log('Usuario procesado:', event.message);
 
-      // 2. Si fue creación y tenemos el objeto data (con el ID), redirigimos
-      if (wasCreating && event.data && event.data.id) {
-          console.log('Redirigiendo a permisos del usuario:', event.data.id);
-          // Timeout pequeño para dar tiempo visual
-          setTimeout(() => {
-              this.router.navigate(['/admin/permisos'], {
-                  queryParams: { userId: event.data!.id }
-              });
-          }, 150);
+      // 1. Caso: Usuario nuevo que NO es Administrador (Fase 5)
+      const isNewNonAdmin = wasCreating && !user.roles?.some(r => r.id === 1);
+
+      // 2. Caso: Edición donde el usuario dejó de ser Admin (Flag del Backend)
+      const needsDowngradeRedirect = !wasCreating && user.requires_permission_check;
+
+      if (isNewNonAdmin || needsDowngradeRedirect) {
+        if (needsDowngradeRedirect) {
+            console.warn('El usuario ha dejado de ser Administrador. Redirigiendo a matriz territorial.');
+        }
+        this.redirectToMatrix(user.id);
       } else {
-          // Si fue edición, comportamiento normal (refrescar tabla)
-          this.pagination.update(pag => ({ ...pag, page: 1 }));
-          this.applyFilters();
+        // Para Admins nuevos o ediciones normales, solo refrescamos
+        this.refreshTable();
       }
-    } else {
+    } else if (!event.success) {
       console.error('Error al guardar usuario:', event.message);
     }
+  }
+
+  private refreshTable(): void {
+    this.pagination.update(pag => ({ ...pag, page: 1 }));
+    this.applyFilters();
+  }
+
+  private redirectToMatrix(userId: number): void {
+    setTimeout(() => {
+      this.router.navigate(['/admin/permisos'], { queryParams: { userId } });
+    }, 150);
   }
 
   deleteUser(user: User): void {
@@ -251,35 +240,22 @@ export class UsuariosView implements OnInit {
   performDeleteAction(): void {
     const user = this.userToDelete();
     this.closeDeleteConfirmation();
+    if (!user) return;
 
-    if (!user) {
-      console.error("No hay usuario seleccionado para eliminar.");
-      return;
-    }
-
-    this.userService
-      .deleteUser(user.id)
-      .pipe(
-        tap((response: ApiResponse<void>) => {
-          console.log('Usuario eliminado:', response.message);
-          this.applyFilters();
-        }),
-        catchError(err => {
-          console.error('Error al eliminar usuario:', err);
-          this.error.set(`Error al eliminar ${user.first_name}.`);
-          return of(null);
-        })
-      )
-      .subscribe();
-  }
-
-
-  viewUserDetails(user: User): void {
-    console.log('Ver detalles de usuario:', user);
+    this.userService.deleteUser(user.id).pipe(
+      tap(() => {
+        this.applyFilters();
+        this.loadCatalogs(); // Recargar conteos por rol
+      }),
+      catchError(err => {
+        console.error('Error al eliminar usuario:', err);
+        this.error.set(`Error al eliminar a ${user.first_name}.`);
+        return of(null);
+      })
+    ).subscribe();
   }
 
   managePermissions(user: User): void {
-    // Navega a la ruta de permisos enviando el ID como parámetro
     this.router.navigate(['/admin/permisos'], { queryParams: { userId: user.id } });
   }
 }

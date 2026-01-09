@@ -9,6 +9,7 @@ import { ReportesView } from './pages/reportes/reportes.view';
 import { RespaldosView } from './pages/respaldos/respaldos.view';
 import { UsuariosView } from './pages/usuarios/usuarios.view';
 import { PermissionMatrixComponent } from './components/permission-matrix/permission-matrix';
+import { roleGuard } from '../../core/guards/role.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -21,25 +22,7 @@ const routes: Routes = [
         component: DashboardView,
         data: {
           title: 'dashboard',
-          breadcrumb: [
-            {
-              label: 'dashboard',
-              path: '/admin/dashboard',
-            },
-          ],
-        },
-      },
-      {
-        path: 'auditoria',
-        component: AuditoriaView,
-        data: {
-          title: 'auditoria',
-          breadcrumb: [
-            {
-              label: 'auditoria',
-              path: '/admin/auditoria',
-            },
-          ],
+          breadcrumb: [{ label: 'dashboard', path: '/admin/dashboard' }],
         },
       },
       {
@@ -47,12 +30,7 @@ const routes: Routes = [
         component: DigitalizacionView,
         data: {
           title: 'digitalizacion',
-          breadcrumb: [
-            {
-              label: 'digitalizacion',
-              path: '/admin/digitalizacion',
-            },
-          ],
+          breadcrumb: [{ label: 'digitalizacion', path: '/admin/digitalizacion' }],
         },
       },
       {
@@ -60,12 +38,7 @@ const routes: Routes = [
         component: ExpedientesView,
         data: {
           title: 'expedientes',
-          breadcrumb: [
-            {
-              label: 'expedientes',
-              path: '/admin/expedientes',
-            },
-          ],
+          breadcrumb: [{ label: 'expedientes', path: '/admin/expedientes' }],
         },
       },
       {
@@ -73,12 +46,7 @@ const routes: Routes = [
         component: ReportesView,
         data: {
           title: 'reportes',
-          breadcrumb: [
-            {
-              label: 'reportes',
-              path: '/admin/reportes',
-            },
-          ],
+          breadcrumb: [{ label: 'reportes', path: '/admin/reportes' }],
         },
       },
       {
@@ -86,38 +54,38 @@ const routes: Routes = [
         component: RespaldosView,
         data: {
           title: 'respaldos',
-          breadcrumb: [
-            {
-              label: 'respaldos',
-              path: '/admin/respaldos',
-            },
-          ],
+          breadcrumb: [{ label: 'respaldos', path: '/admin/respaldos' }],
         },
       },
+      // --- RUTAS PROTEGIDAS PARA ADMINISTRADORES ---
       {
         path: 'usuarios',
         component: UsuariosView,
+        canActivate: [roleGuard],
         data: {
+          role: 'administrador',
           title: 'usuarios',
-          breadcrumb: [
-            {
-              label: 'usuarios',
-              path: '/admin/usuarios',
-            },
-          ],
+          breadcrumb: [{ label: 'usuarios', path: '/admin/usuarios' }],
+        },
+      },
+      {
+        path: 'auditoria',
+        component: AuditoriaView,
+        canActivate: [roleGuard],
+        data: {
+          role: 'administrador',
+          title: 'auditoria',
+          breadcrumb: [{ label: 'auditoria', path: '/admin/auditoria' }],
         },
       },
       {
         path: 'permisos',
         component: PermissionMatrixComponent,
+        canActivate: [roleGuard],
         data: {
+          role: 'administrador',
           title: 'permisos',
-          breadcrumb: [
-            {
-              label: 'permisos',
-              path: '/admin/permisos',
-            },
-          ],
+          breadcrumb: [{ label: 'permisos', path: '/admin/permisos' }],
         },
       },
       {
@@ -126,7 +94,6 @@ const routes: Routes = [
       },
     ],
   },
-
 ];
 
 @NgModule({
