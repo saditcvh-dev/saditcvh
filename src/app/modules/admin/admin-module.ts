@@ -32,7 +32,7 @@ import { TreeNodeComponent } from './pages/explorador/components/tree-node/tree-
 import { ModalContainerComponent } from './pages/explorador/components/modals/modal-container/modal-container.component';
 import { FechaLocalPipe } from '../../core/pipes/fecha-local/fecha-local.pipe';
 import { ExploradorView } from './pages/explorador/explorador.view';
-
+import { PdfViewerView } from './components/pdf-viewer/pdf-viewer.view';
 
 @NgModule({
   declarations: [
@@ -40,7 +40,7 @@ import { ExploradorView } from './pages/explorador/explorador.view';
     AuditoriaView,
     DashboardView,
     DigitalizacionView,
-    
+    PdfViewerView,
     ReportesView,
     RespaldosView,
     UsuariosView,

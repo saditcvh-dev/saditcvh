@@ -35,13 +35,13 @@ const routes: Routes = [
       },
       // {
       //   path: 'expedientes',
-      //   component: ExpedientesView,
+      //   component: ExploradorView,
       //   data: {
       //     title: 'expedientes',
       //     breadcrumb: [{ label: 'expedientes', path: '/admin/expedientes' }],
       //   },
       // },
-         {
+      {
         path: 'explorador',
         component: ExploradorView,
         data: {
