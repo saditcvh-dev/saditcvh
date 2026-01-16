@@ -72,7 +72,26 @@ export class MunicipioService {
       })
     );
   }
+  // Métodos para manejar el estado local
+  setCurrentMunicipio(municipio: UserTerritory | null): void {
+    this.currentMunicipioSignal.set(municipio);
+  }
 
+  clearCurrentMunicipio(): void {
+    this.currentMunicipioSignal.set(null);
+  }
+
+  clearError(): void {
+    this.errorSignal.set(null);
+  }
+
+  // Función para resetear el estado
+  reset(): void {
+    this.municipiosSignal.set([]);
+    this.currentMunicipioSignal.set(null);
+    this.loadingSignal.set(false);
+    this.errorSignal.set(null);
+  }
   // obtenerTodos(): Observable<MunicipioResponse> {
   //   this.loadingSignal.set(true);
   //   this.errorSignal.set(null);
@@ -223,24 +242,5 @@ export class MunicipioService {
   //   );
   // }
 
-  // Métodos para manejar el estado local
-  setCurrentMunicipio(municipio: UserTerritory | null): void {
-    this.currentMunicipioSignal.set(municipio);
-  }
 
-  clearCurrentMunicipio(): void {
-    this.currentMunicipioSignal.set(null);
-  }
-
-  clearError(): void {
-    this.errorSignal.set(null);
-  }
-
-  // Función para resetear el estado
-  reset(): void {
-    this.municipiosSignal.set([]);
-    this.currentMunicipioSignal.set(null);
-    this.loadingSignal.set(false);
-    this.errorSignal.set(null);
-  }
 }

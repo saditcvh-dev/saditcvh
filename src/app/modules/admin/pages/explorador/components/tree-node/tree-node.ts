@@ -1,5 +1,13 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { AutorizacionTreeNode } from '../../../../../../core/models/autorizacion-tree.model';
+
+export interface FloatingTreeState {
+  visible: boolean;
+  x: number;
+  y: number;
+  node: AutorizacionTreeNode | null;
+}
+
 
 @Component({
   selector: 'app-tree-node',
@@ -12,6 +20,21 @@ export class TreeNodeComponent {
 
   @Output() nodeSelected = new EventEmitter<AutorizacionTreeNode>();
   @Output() nodeRightClick = new EventEmitter<{ mouseEvent: MouseEvent, node: AutorizacionTreeNode }>();
+  @Input() collapsed = false;
+  @Input() floatingNodeId: string | null = null;
+  @Output() floatingChange = new EventEmitter<string | null>();
+  floatingPosition: { x: number; y: number } | null = null;
+  // isFloatingOpen = false;
+  @Output() floatingOpen = new EventEmitter<{
+    node: AutorizacionTreeNode;
+    x: number;
+    y: number;
+  }>();
+
+  @Output() openFloating = new EventEmitter<{
+    node: AutorizacionTreeNode;
+    event: MouseEvent;
+  }>();
 
   toggle(event: MouseEvent, n: AutorizacionTreeNode) {
     event.stopPropagation();
@@ -53,8 +76,55 @@ export class TreeNodeComponent {
     }
   }
 
+  onIconClick(event: MouseEvent, node: AutorizacionTreeNode) {
+    event.stopPropagation();
+
+    if (this.collapsed) {
+      this.onNodeClick(event, node);
+    } else {
+      this.toggle(event, node);
+    }
+  }
 
   getChildCount(node: AutorizacionTreeNode): number {
     return node.children?.length || 0;
   }
+onNodeClick(event: MouseEvent, n: AutorizacionTreeNode) {
+  event.stopPropagation();
+  event.preventDefault();
+
+  if (this.collapsed && n.children?.length) {
+    this.floatingOpen.emit({
+      node: n,
+      x: event.clientX,
+      y: event.clientY
+    });
+    return;
+  }
+
+  if (!this.collapsed && n.children?.length) {
+    n._open = !n._open;
+  }
+
+  this.nodeSelected.emit(n);
+}
+
+@HostListener('document:click', ['$event'])
+onClickOutside(event: MouseEvent) {
+  const target = event.target as HTMLElement;
+
+  if (this.collapsed && this.floatingNodeId) {
+    // si el click fue dentro del flotante o del nodo, no cerrar
+    if (target.closest('.floating-node') || target.closest('[data-tree-node]')) {
+      return;
+    }
+
+    this.floatingChange.emit(null);
+    this.floatingPosition = null;
+  }
+}
+
+
+
+
 }

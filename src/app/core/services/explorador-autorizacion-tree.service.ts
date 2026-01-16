@@ -17,43 +17,95 @@ export class AutorizacionTreeService {
   private openState = new Map<string, boolean>();
   private lastTree: AutorizacionTreeNode[] | null = null;
 
-  constructor() {
+
+  init(): void {
     this.municipioService.loadMyTerritories().subscribe();
     this.tipoService.getAll();
-    this.autorizacionService.autorizacionesPaginadas();
-
+    this.autorizacionService.refresh();
+    // this.autorizacionService.autorizacionesPaginadas();
   }
   tree$ = combineLatest([
-    this.municipioService.municipios$,
-    this.tipoService.tipos$,
-    this.autorizacionService.autorizaciones$
-  ]).pipe(
-    map(([municipios, tipos, autorizaciones]) => {
-      if (this.lastTree) {
-        this.saveOpenState(this.lastTree);
-      }
-      const newTree = this.buildCompleteTree(municipios, tipos, autorizaciones);
+  this.municipioService.municipios$,
+  this.tipoService.tipos$,
+  this.autorizacionService.autorizaciones$
+]).pipe(
+  map(([municipios, tipos, autorizaciones]) => {
 
+    if (this.lastTree) {
+      this.saveOpenState(this.lastTree);
+    }
 
-      this.restoreOpenState(newTree);
+    const hasFiltro = this.autorizacionService.filtros() !== null;
 
-      this.lastTree = newTree;
+    const newTree = this.buildCompleteTree(
+      municipios,
+      tipos,
+      autorizaciones,
+      hasFiltro
+    );
 
-      return newTree;
-    })
-  );
+    this.restoreOpenState(newTree);
+    this.lastTree = newTree;
+
+    return newTree;
+  })
+);
+
+  // tree$ = combineLatest([
+  //   this.municipioService.municipios$,
+  //   this.tipoService.tipos$,
+  //   this.autorizacionService.autorizaciones$,
+  //   this.autorizacionService.filtros$
+  // ]).pipe(
+  //   map(([municipios, tipos, autorizaciones, filtros]) => {
+  //     if (this.lastTree) {
+  //       this.saveOpenState(this.lastTree);
+  //     }
+
+  //     const newTree = this.buildCompleteTree(
+  //       municipios,
+  //       tipos,
+  //       autorizaciones,
+  //       !!filtros
+  //     );
+
+  //     this.restoreOpenState(newTree);
+  //     this.lastTree = newTree;
+
+  //     return newTree;
+  //   })
+  // );
+
+  reset(): void {
+    this.municipioService.reset();
+    this.autorizacionService.reset();
+    this.tipoService.reset();
+    this.openState.clear();
+    this.lastTree = null;
+  }
 
 
   private buildCompleteTree(
     municipios: UserTerritory[],
     tipos: TipoAutorizacion[],
-    autorizaciones: any[]
+    autorizaciones: any[],
+    hasFiltro: boolean
   ): AutorizacionTreeNode[] {
+
+
     const tree: AutorizacionTreeNode[] = [];
 
     const sortedMunicipios = [...municipios].sort((a, b) => a.id - b.id);
 
-    sortedMunicipios.forEach(municipio => {
+    const municipiosFinales = hasFiltro
+      ? sortedMunicipios.filter(m =>
+        autorizaciones.some(a => a.municipioId === m.id)
+      )
+      : sortedMunicipios;
+
+
+
+    municipiosFinales.forEach(municipio => {
       const municipioNode: AutorizacionTreeNode = {
         id: `municipio-${municipio.id}`,
         nombre: `${municipio.id.toString().padStart(2, '0')}_${municipio.nombre}`,
@@ -86,7 +138,11 @@ export class AutorizacionTreeService {
         const autorizacionesTipo = autorizacionesMunicipio.filter(
           auth => auth.tipoId === tipo.id
         );
-        if (autorizacionesTipo.length === 0) return;
+        if (autorizacionesTipo.length === 0) {
+          return;
+        }
+
+        // if (autorizacionesTipo.length === 0) return;
         if (autorizacionesTipo.length === 0) {
           tipoNode.children = [
             {

@@ -27,6 +27,11 @@ export class TiposAutorizacionService {
   readonly error = computed(() => this.errorSignal());
 
   readonly tipos$ = toObservable(this.tipos);
+  reset(): void {
+    this.tiposSignal.set([]);
+    this.loadingSignal.set(false);
+    this.errorSignal.set(null);
+  }
 
   getAll(): void {
     if (this.tiposSignal().length > 0) {
@@ -36,7 +41,7 @@ export class TiposAutorizacionService {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
-    this.http.get<any>(this.apiUrl).pipe(
+    this.http.get<any>(this.apiUrl,{withCredentials: true}).pipe(
       tap({
         next: resp => {
           this.tiposSignal.set(resp?.data ?? []);

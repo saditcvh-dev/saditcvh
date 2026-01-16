@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { Breadcrumb } from '../../models/explorador-state.model';
@@ -8,6 +8,7 @@ import { MetadataTabComponent } from '../tabs/metadata-tab/metadata-tab.componen
 import { SecurityTabComponent } from '../tabs/security-tab/security-tab.component';
 import { HistoryTabComponent } from '../tabs/history-tab/history-tab.component';
 import { AutorizacionTreeNode } from '../../../../../../core/models/autorizacion-tree.model';
+import { DocumentoService } from '../../../../../../core/services/explorador-documento.service';
 
 @Component({
   selector: 'app-viewer-panel',
@@ -29,7 +30,7 @@ export class ViewerPanelComponent {
   @Output() restoreVersion = new EventEmitter<any>();
 
   constructor(private sanitizer: DomSanitizer) {}
-
+  private documentoService = inject(DocumentoService);
   get nodeTypeLabel(): string {
     if (!this.selectedNode) return '';
     
@@ -93,10 +94,26 @@ export class ViewerPanelComponent {
   onOpenUploadModal(): void {
     this.openUploadModal.emit();
   }
-
   onDownloadVersion(version: any): void {
-    this.downloadVersion.emit(version);
-  }
+  const archivo = version.archivosDigitales?.[0];
+  if (!archivo) return;
+
+  this.documentoService.descargarArchivo(archivo.id)
+    .subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = archivo.nombre_archivo;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+}
+
+  // onDownloadVersion(version: any): void {
+  //   console.log("version")
+  //   console.log(version)
+  //   this.downloadVersion.emit(version);
+  // }
 
   onRestoreVersion(version: any): void {
     this.restoreVersion.emit(version);

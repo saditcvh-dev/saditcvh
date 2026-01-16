@@ -13,7 +13,7 @@ export class PreviewTabComponent {
 
   @Input() selectedNode: AutorizacionTreeNode | null = null;
   @Input() pdfUrl: SafeResourceUrl | null = null;
-  // Estado interno
+ 
   isLoading = signal(true);
   hasError = signal(false);
   ngOnChanges(changes: SimpleChanges): void {

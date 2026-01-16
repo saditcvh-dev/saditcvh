@@ -1,7 +1,9 @@
-import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { debounceTime, fromEvent, Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth';
+import { MunicipioService } from '../../../../core/services/explorador-municipio.service';
+import { AutorizacionTreeService } from '../../../../core/services/explorador-autorizacion-tree.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,7 +14,7 @@ export class Sidebar {
   sidebarOpen = true;
   isMobile = false;
   private resizeSubscription!: Subscription;
-
+  private treeService = inject(AutorizacionTreeService);
 
 
 
@@ -242,6 +244,9 @@ export class Sidebar {
     // y redirige al usuario a la página de login.
     this.authService.logout().subscribe({
       next: (success) => {
+        // this.municipioService.reset();
+        // this.treeService.reset();
+        this.treeService.reset();
         // Opcional: Puedes añadir un console.log o un toast de éxito
         console.log('Sesión cerrada exitosamente');
       },

@@ -47,6 +47,7 @@ export interface PaginatedResponse<T> {
 }
 
 export interface BusquedaAutorizacion {
+    search?: string; 
   numeroAutorizacion?: string;
   solicitante?: string;
   municipioId?: number;

@@ -35,6 +35,22 @@ export class ExploradorView implements OnInit {
   // pdfUrl = this.stateService.pdfUrl;
   contextMenu = this.stateService.contextMenu;
   toast = this.stateService.toast;
+  floatingNodeState: {
+    visible: boolean;
+    node: AutorizacionTreeNode | null;
+    x: number;
+    y: number;
+  } = {
+      visible: false,
+      node: null,
+      x: 0,
+      y: 0
+    };
+  floatingState: {
+    node: AutorizacionTreeNode | null;
+    x: number;
+    y: number;
+  } | null = null;
 
   // Signals expuestos del modal service
   modalState = this.modalService.modalState;
@@ -58,7 +74,11 @@ export class ExploradorView implements OnInit {
       .filter(d => d.autorizacionId === autorizacionId)
       .sort((a, b) => b.version - a.version);
   });
+  isCollapsed = false;
 
+  toggleExplorer() {
+    this.isCollapsed = !this.isCollapsed;
+  }
   // En ExploradorView
   pdfUrl = computed(() => {
     const autorizacionId = this.selectedAutorizacionId();
@@ -99,8 +119,8 @@ export class ExploradorView implements OnInit {
 
     return url;
   });
-
   ngOnInit() {
+    this.treeService.init();
     this.initializeServices();
     this.subscribeToTree();
   }
@@ -108,7 +128,9 @@ export class ExploradorView implements OnInit {
   private initializeServices(): void {
     this.tiposAutorizacionSvc.getAll();
     this.modalidadSvc.loadModalidades();
-    this.autorizacionService.autorizacionesPaginadas;
+    this.autorizacionService.autorizacionesPaginadas();
+
+    // this.autorizacionService.autorizacionesPaginadas;
   }
 
   private subscribeToTree(): void {
@@ -120,9 +142,7 @@ export class ExploradorView implements OnInit {
 
   // Event Handlers
   onSelectNode(node: AutorizacionTreeNode): void {
-    this.stateService.selectNode(node, true); 
-    // console.log("node")
-    // console.log(node)
+    this.stateService.selectNode(node, true);
     if (node.type === 'autorizacion') {
 
       this.selectedAutorizacionId.set(node.data.id);
@@ -215,7 +235,7 @@ export class ExploradorView implements OnInit {
       return;
     }
 
-    this.modalService.openUploadModal(autorizacionId,this.selectedNode());
+    this.modalService.openUploadModal(autorizacionId, this.selectedNode());
   }
 
   handleModalAction(data: any): void {

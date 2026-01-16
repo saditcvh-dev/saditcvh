@@ -65,6 +65,25 @@ export class DocumentoService {
   loading = this.loadingState.asReadonly();
   error = this.errorState.asReadonly();
   selectedDocumento = this.selectedDocumentoState.asReadonly();
+    // Método para descargar archivo
+  descargarArchivo(archivoId: number): Observable<Blob> {
+    this.loadingState.set(true);
+    this.errorState.set(null);
+
+    return this.http.get(`${this.apiUrl}/archivo/${archivoId}/descargar`, {
+      responseType: 'blob',
+      withCredentials: true
+    }).pipe(
+      tap(() => this.loadingState.set(false)),
+      catchError((error: HttpErrorResponse) => {
+        this.errorState.set(error.message);
+        this.loadingState.set(false);
+        return throwError(() => error);
+      })
+    );
+  }
+
+
   verificarDocumentosPorAutorizacion(autorizacionId: number): Observable<boolean> {
     return this.http.get<ApiResponse<Documento[]>>(`${this.apiUrl}/autorizacion/${autorizacionId}`,{withCredentials: true}).pipe(
       map(response => response.data && response.data.length > 0),
@@ -275,22 +294,6 @@ export class DocumentoService {
       });
   }
 
-  // Método para descargar archivo
-  descargarArchivo(archivoId: number): Observable<Blob> {
-    this.loadingState.set(true);
-    this.errorState.set(null);
-
-    return this.http.get(`${this.apiUrl}/archivo/${archivoId}/descargar`, {
-      responseType: 'blob'
-    }).pipe(
-      tap(() => this.loadingState.set(false)),
-      catchError((error) => {
-        this.errorState.set(error.message);
-        this.loadingState.set(false);
-        return throwError(() => error);
-      })
-    );
-  }
 
   // Método para obtener estadísticas
   obtenerEstadisticas(): Observable<ApiResponse<any>> {

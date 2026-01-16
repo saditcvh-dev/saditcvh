@@ -41,7 +41,7 @@ export class AutorizacionService {
     error: null,
     filtros: null
   });
-
+// public filtros$ = toObservable(this.filtros);
 
   public autorizaciones = computed(() => this.state().autorizaciones);
   autorizaciones$ = toObservable(this.autorizaciones);
@@ -55,6 +55,7 @@ export class AutorizacionService {
   public error = computed(() => this.state().error);
 
   public filtros = computed(() => this.state().filtros);
+  public filtros$ = toObservable(this.filtros);
 
   private page = signal(1);
   private limit = signal(10);
@@ -76,7 +77,7 @@ export class AutorizacionService {
 
       switchMap(({ page, limit, filtros }) => {
         return filtros
-          ? this.buscarAutorizacionesApi(filtros, page, limit)
+          ? this.buscarAutorizacionesApi(filtros, page, limit,)
           : this.getAutorizacionesApi(page, limit);
       }),
 
@@ -114,7 +115,45 @@ export class AutorizacionService {
     this.filtrosSignal.set(filtros);
     this.page.set(1); 
     this.updateState({ filtros });
+    
   }
+// reset(): void {
+//   // señales internas
+//   this.page.set(1);
+//   this.limit.set(10);
+//   this.filtrosSignal.set(null);
+
+//   // estado observable (ESTO ES CLAVE)
+//   this.state.set({
+//     autorizaciones: [],
+//     autorizacionActual: null,
+//     pagination: {
+//       page: 1,
+//       limit: 10,
+//       total: 0,
+//       totalPages: 0
+//     },
+//     loading: false,
+//     error: null,
+//     filtros: null
+//   });
+
+//   // fuerza recarga limpia
+//   this.refreshTrigger.update(v => v + 1);
+// }
+reset(): void {
+  this.page.set(1);
+  this.limit.set(10);
+  this.filtrosSignal.set(null);
+
+  this.updateState({
+    autorizaciones: [],
+    autorizacionActual: null,
+    filtros: null,
+    loading: false,
+    error: null
+  });
+}
 
   refresh(): void {
     this.refreshTrigger.update(v => v + 1);
@@ -126,7 +165,7 @@ export class AutorizacionService {
       .set('page', page.toString())
       .set('limit', limit.toString());
 
-    return this.http.get<PaginatedResponse<Autorizacion>>(this.apiUrl, { params });
+    return this.http.get<PaginatedResponse<Autorizacion>>(this.apiUrl, { params ,withCredentials: true });
   }
 
   private buscarAutorizacionesApi(filtros: BusquedaAutorizacion, page: number, limit: number): Observable<PaginatedResponse<Autorizacion>> {
@@ -134,13 +173,13 @@ export class AutorizacionService {
       .set('page', page.toString())
       .set('limit', limit.toString());
 
-    return this.http.post<PaginatedResponse<Autorizacion>>(`${this.apiUrl}/buscar`, filtros, { params });
+    return this.http.post<PaginatedResponse<Autorizacion>>(`${this.apiUrl}/buscar`, filtros, { params ,withCredentials: true });
   }
 
   getAutorizacionPorId(id: number): Observable<{ success: boolean; message: string; data: Autorizacion }> {
     this.updateState({ loading: true, error: null });
 
-    return this.http.get<{ success: boolean; message: string; data: Autorizacion }>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.get<{ success: boolean; message: string; data: Autorizacion }>(`${this.apiUrl}/${id}`,{ withCredentials: true }).pipe(
       tap(response => {
         if (response.success) {
           this.updateState({
@@ -161,7 +200,7 @@ export class AutorizacionService {
   getAutorizacionPorNumero(numero: string): Observable<{ success: boolean; message: string; data: Autorizacion }> {
     this.updateState({ loading: true, error: null });
 
-    return this.http.get<{ success: boolean; message: string; data: Autorizacion }>(`${this.apiUrl}/numero/${numero}`).pipe(
+    return this.http.get<{ success: boolean; message: string; data: Autorizacion }>(`${this.apiUrl}/numero/${numero}`,{ withCredentials: true }).pipe(
       tap(response => {
         if (response.success) {
           this.updateState({
@@ -177,12 +216,15 @@ export class AutorizacionService {
       })
     );
   }
-
+// , {
+//     responseType: 'blob',
+//     withCredentials: true
+//   }
   // Crear nueva autorización (con refresh automático)
   crearAutorizacion(datos: CrearAutorizacionDto): Observable<{ success: boolean; message: string; data: Autorizacion }> {
     this.updateState({ loading: true, error: null });
 
-    return this.http.post<{ success: boolean; message: string; data: Autorizacion }>(this.apiUrl, datos).pipe(
+    return this.http.post<{ success: boolean; message: string; data: Autorizacion }>(this.apiUrl, datos,{ withCredentials: true }).pipe(
       tap(response => {
         this.updateState({ loading: false });
         if (response.success) {
