@@ -1,0 +1,145 @@
+<!-- Gráfica de Distribución por Tipo de Documento -->
+<div class="bg-white rounded-xl border border-[#99999A]/20 p-6 shadow-sm">
+    
+    <!-- Encabezado -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h3 class="font-semibold text-[#691B31]">Distribución por tipo de documento</h3>
+            <p class="text-sm text-[#6F7271]">
+                <i class="fas fa-clock mr-1 text-xs"></i>
+                Actualizado: {{ getLastUpdateTime() }}
+                <span *ngIf="getUpdateAgo()"> ({{ getUpdateAgo() }})</span>
+            </p>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+            <!-- Indicador de carga -->
+            <div *ngIf="isLoading" class="flex items-center text-xs text-[#6F7271]">
+                <div class="animate-spin rounded-full h-3 w-3 border-b-2 border-[#691831] mr-1"></div>
+                Cargando...
+            </div>
+            
+            <!-- Botón de recarga -->
+            <button 
+                (click)="refreshChart()" 
+                [disabled]="isLoading"
+                class="p-1.5 text-[#691B31] hover:bg-[#691B31]/10 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Actualizar distribución"
+            >
+                <i class="fas fa-sync-alt text-sm" [class.fa-spin]="isLoading"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mensaje de error -->
+    <div *ngIf="hasError && !isLoading" class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-700">
+        <i class="fas fa-exclamation-triangle mr-2"></i>
+        {{ errorMessage }} - Mostrando datos de ejemplo
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="h-64 flex items-center justify-center">
+        
+        <!-- Indicador de carga -->
+        <div *ngIf="isLoading" class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#691831] mx-auto mb-4"></div>
+            <p class="text-sm font-medium text-[#6F7271]">Cargando datos...</p>
+        </div>
+        
+        <!-- Sin datos -->
+        <div *ngIf="!isLoading && tiposData.length === 0" class="text-center text-[#6F7271]">
+            <i class="fas fa-chart-pie text-4xl mb-3 text-[#BC955B]"></i>
+            <p>No hay datos disponibles</p>
+        </div>
+        
+        <!-- Gráfica con datos -->
+        <div *ngIf="!isLoading && tiposData.length > 0" class="w-full text-center">
+            
+            <!-- Total de documentos - MOSTRAR EL TOTAL REAL DEL API -->
+            <div class="mb-6">
+                <div class="text-3xl font-bold text-[#691B31]">{{ formatNumber(totalDocumentos) }}</div>
+                <div class="text-sm text-[#6F7271]">Total de documentos</div>
+            </div>
+            
+            <!-- Gráfica circular -->
+            <div class="relative inline-block">
+                <!-- Círculo base -->
+                <div class="w-40 h-40 rounded-full border-8 border-gray-100 relative">
+                    <!-- Sectores circulares -->
+                    <div *ngFor="let tipo of tiposData; let i = index" 
+                         class="absolute inset-0 rounded-full"
+                         [style]="getCircleStyle(i)">
+                    </div>
+                    
+                    <!-- Círculo central blanco -->
+                    <div class="absolute inset-8 bg-white rounded-full"></div>
+                    
+                    <!-- Porcentaje en el centro -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center">
+                            <div *ngIf="tiposData.length === 2" class="text-lg font-bold text-[#691B31]">
+                                {{ formatPorcentaje(tiposData[0].porcentaje) }}%
+                            </div>
+                            <div class="text-xs text-[#6F7271]">
+                                {{ tiposData[0]?.tipo || 'Principal' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Icono de gráfica -->
+                <div class="absolute -top-2 -right-2 bg-[#BC955B] text-white rounded-full w-10 h-10 flex items-center justify-center">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leyenda y estadísticas -->
+    <div class="pt-6 border-t border-[#99999A]/20 mt-6">
+        
+        <!-- Totales por tipo -->
+        <div class="mb-4">
+            <div class="text-center text-sm text-[#6F7271] mb-3">Distribución detallada</div>
+            <div class="grid grid-cols-1 gap-2">
+                <div *ngFor="let tipo of tiposData" class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 rounded-full mr-3" 
+                             [style.backgroundColor]="tipo.color"></div>
+                        <span class="text-sm font-medium text-[#6F7271]">{{ tipo.tipo }}</span>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-bold text-[#691B31]">{{ formatNumber(tipo.count) }}</div>
+                        <div class="text-xs text-[#6F7271]">{{ formatPorcentaje(tipo.porcentaje) }}%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resumen porcentual -->
+        <div *ngIf="tiposData.length === 2" class="mt-4 pt-4 border-t border-[#99999A]/20">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                    <div class="text-xl font-bold" [style.color]="getTipoColor('Permiso')">
+                        {{ formatPorcentaje(getTipoPorcentaje('Permiso')) }}%
+                    </div>
+                    <div class="text-xs text-[#6F7271] mt-1">Permisos</div>
+                </div>
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                    <div class="text-xl font-bold" [style.color]="getTipoColor('Concesión')">
+                        {{ formatPorcentaje(getTipoPorcentaje('Concesión')) }}%
+                    </div>
+                    <div class="text-xs text-[#6F7271] mt-1">Concesiones</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Proporción -->
+        <div *ngIf="tiposData.length === 2" class="mt-4 text-center">
+            <div class="text-sm text-[#6F7271]">
+                Proporción: {{ formatNumber(getTipoCount('Permiso')) }} Permisos / 
+                {{ formatNumber(getTipoCount('Concesión')) }} Concesiones
+            </div>
+        </div>
+    </div>
+</div>

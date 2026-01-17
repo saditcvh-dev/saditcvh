@@ -1,0 +1,81 @@
+<!-- ============================================================
+    REPORTES DETALLADOS
+============================================================ -->
+<div class="bg-white rounded-xl border border-[#99999A]/20 shadow-sm mb-8">
+    <div class="p-6 border-b border-[#99999A]/20">
+        <div class="flex flex-col md:flex-row md:items-center justify-between">
+            <div>
+                <h2 class="font-semibold text-[#691B31] text-lg">Reportes detallados</h2>
+                <p class="text-sm text-[#6F7271]">
+                    Haz clic en una tarjeta para descargar el reporte en PDF
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Reporte 1 - Documentos -->
+            <div 
+                class="border border-[#BC955B]/30 rounded-lg p-5 hover:border-[#BC955B] hover:shadow-md transition-all cursor-pointer"
+                (click)="generarReporteDocumentos()"
+                [class.opacity-50]="isLoadingDocumentos"
+                [class.cursor-wait]="isLoadingDocumentos"
+            >
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-lg bg-[#DDC9A3]/20 flex items-center justify-center mr-3">
+                        <i 
+                            class="fas text-[#BC955B]" 
+                            [class.fa-search]="!isLoadingDocumentos"
+                            [class.fa-spinner]="isLoadingDocumentos"
+                            [class.fa-spin]="isLoadingDocumentos"
+                        ></i>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-[#BC955B]">
+                            Actividad de documentos
+                            <span *ngIf="isLoadingDocumentos" class="text-xs ml-2">(Generando...)</span>
+                        </h4>
+                        <p class="text-xs text-[#6F7271]">Procesamiento de documentos</p>
+                    </div>
+                </div>
+                <div class="text-xs text-[#6F7271] mt-2">
+                    <i class="fas fa-file-pdf mr-1"></i>
+                    Descargar PDF
+                </div>
+            </div>
+
+            <!-- Reporte 2 - Actividad de usuarios -->
+            <div 
+                class="border border-[#A02142]/20 rounded-lg p-5 hover:border-[#A02142] hover:shadow-md transition-all cursor-pointer"
+                (click)="generarReporteUsuarios()"
+                [class.opacity-50]="isLoadingUsuarios"
+                [class.cursor-wait]="isLoadingUsuarios"
+            >
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-[#A02142]/10 flex items-center justify-center mr-3">
+                            <i 
+                                class="fas text-[#A02142]" 
+                                [class.fa-users]="!isLoadingUsuarios"
+                                [class.fa-spinner]="isLoadingUsuarios"
+                                [class.fa-spin]="isLoadingUsuarios"
+                            ></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-[#A02142]">
+                                Actividad de usuarios
+                                <span *ngIf="isLoadingUsuarios" class="text-xs ml-2">(Generando...)</span>
+                            </h4>
+                            <p class="text-xs text-[#6F7271]">Uso del sistema</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-xs text-[#6F7271] mt-2">
+                    <i class="fas fa-file-pdf mr-1"></i>
+                    Descargar PDF
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

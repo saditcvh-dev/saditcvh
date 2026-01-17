@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+/* Efectos hover */
+.cursor-pointer:hover {
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+}
+
+/* Animación de carga */
+.fa-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Estados deshabilitados */
+.cursor-wait {
+  cursor: wait !important;
+}
+
+.opacity-50 {
+  opacity: 0.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+}
