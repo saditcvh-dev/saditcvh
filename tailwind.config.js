@@ -6,19 +6,6 @@ module.exports = {
   ],
   theme: {
     extend: {
-<<<<<<< HEAD
-      animation: {
-        'bounce': 'bounce 1s infinite',
-        'spin': 'spin 1s linear infinite',
-      },
-      keyframes: {
-        bounce: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
-        }
-      }
-    }
-=======
 
       // Agregamos los colores institucionales aquí para usar:
       // bg-guinda, text-dorado, border-gris, etc.
@@ -38,7 +25,6 @@ module.exports = {
       }
 
     },
->>>>>>> 17d8b98ecbaa333bc2d0ea581392739df1dc7a56
   },
   plugins: [
     require('@tailwindcss/forms')

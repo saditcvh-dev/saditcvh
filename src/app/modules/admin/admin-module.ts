@@ -14,18 +14,13 @@ import { Header } from './components/header/header';
 import { Sidebar } from './components/sidebar/sidebar';
 import { UserFormComponent } from './components/user-form/user-form';
 import { PasswordToggleComponent } from './components/password-toggle/password-toggle';
-<<<<<<< HEAD
 import { Breadcrumbs } from './components/breadcrumbs/breadcrumbs';
 import { KpiCardComponent } from './components/reportes/kpi-card/kpi-card';
 import { ReportCard } from './components/reportes/report-card/report-card';
-import { Explorer } from './pages/expedientes/explorer/explorer';
-import { Node } from './pages/expedientes/explorer/node/node';
-import { TreeNodeComponent } from './pages/expedientes/explorer/tree-node/tree-node';
 import { CardsComponent } from './components/dashboard/cards/cards';
 import { GraphicComponent } from './components/dashboard/graphic/graphic';
 import { ExpRecentComponent } from './components/dashboard/exp-recent/exp-recent';
 import { GraphicCircle } from './components/reportes/graphic-circle/graphic-circle';
-=======
 import { PermissionMatrixComponent } from './components/permission-matrix/permission-matrix';
 import { ActionBadgeComponent } from './components/action-badge/action-badge';
 import { LogDetailModalComponent } from './components/log-detail-modal/log-detail-modal';
@@ -45,7 +40,6 @@ import { ModalContainerComponent } from './pages/explorador/components/modals/mo
 import { FechaLocalPipe } from '../../core/pipes/fecha-local/fecha-local.pipe';
 import { ExploradorView } from './pages/explorador/explorador.view';
 import { PdfViewerView } from './components/pdf-viewer/pdf-viewer.view';
->>>>>>> 17d8b98ecbaa333bc2d0ea581392739df1dc7a56
 
 @NgModule({
   declarations: [
@@ -59,20 +53,16 @@ import { PdfViewerView } from './components/pdf-viewer/pdf-viewer.view';
     UsuariosView,
     Header,
     Sidebar,
-<<<<<<< HEAD
     Breadcrumbs,
     KpiCardComponent,
     UserFormComponent,
     PasswordToggleComponent,
-    Explorer,
-    Node,
     TreeNodeComponent,
     CardsComponent,
     GraphicComponent,
     ExpRecentComponent,
     GraphicCircle,
     ReportCard,
-=======
     UserFormComponent,
     PasswordToggleComponent,
     PermissionMatrixComponent,
@@ -81,7 +71,6 @@ import { PdfViewerView } from './components/pdf-viewer/pdf-viewer.view';
     ViewerPanelComponent, ToastComponent
     , TabsNavigationComponent, SecurityTabComponent, PreviewTabComponent, MetadataTabComponent, UploadModalComponent, CreateAutorizacionModalComponent, ModalContainerComponent
     , ContextMenuComponent,HistoryTabComponent,TreeNodeComponent,
->>>>>>> 17d8b98ecbaa333bc2d0ea581392739df1dc7a56
   ],
   imports: [
     CommonModule,
