@@ -4,7 +4,7 @@ import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizac
 
 @Component({
   selector: 'app-metadata-tab',
-    standalone: false,
+  standalone: false,
   templateUrl: './metadata-tab.component.html',
   styleUrls: ['./metadata-tab.component.css']
 })
@@ -13,26 +13,34 @@ export class MetadataTabComponent {
 
   get metadata(): any[] {
     if (!this.selectedNode) return [];
-
     const baseMetadata = [
       { label: 'Nombre', value: this.selectedNode.nombre || 'Sin nombre', icon: 'tag' },
       { label: 'ID', value: this.selectedNode.id || 'Sin ID', icon: 'hash' },
       { label: 'Tipo', value: this.getTypeLabel(this.selectedNode.type), icon: 'type' },
-      { label: 'Fecha de creación', value: this.formatDate(this.selectedNode.data?.fecha_creacion), icon: 'calendar' }
+      {
+        label: 'Fecha de creación',
+        value: this.formatDate(this.selectedNode.data?.fechaCreacion),
+        icon: 'calendar'
+      }
     ];
 
     if (this.selectedNode.type === 'autorizacion') {
       return [
         ...baseMetadata,
         { label: 'Solicitante', value: this.selectedNode.data?.solicitante, icon: 'user' },
-        { label: 'Modalidad', value: this.selectedNode.data?.modalidad_nombre, icon: 'folder' },
-        { label: 'Estado', value: this.selectedNode.data?.estado, icon: 'circle' },
-        { label: 'Municipio', value: this.selectedNode.data?.municipio_nombre, icon: 'map' }
+        { label: 'Modalidad', value: this.selectedNode.data?.modalidad?.nombre, icon: 'folder' },
+        { label: 'Municipio', value: this.selectedNode.data?.municipio?.nombre, icon: 'map' },
+        {
+          label: 'Estado',
+          value: this.selectedNode.data?.activo ? 'ACTIVO' : 'INACTIVO',
+          icon: 'circle'
+        }
       ];
     }
 
     return baseMetadata;
   }
+
 
   private getTypeLabel(type: string): string {
     const typeMap: { [key: string]: string } = {
@@ -45,7 +53,7 @@ export class MetadataTabComponent {
 
   private formatDate(dateString?: string): string {
     if (!dateString) return 'No disponible';
-    
+
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString('es-ES', {
@@ -71,7 +79,7 @@ export class MetadataTabComponent {
       'circle': 'M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z',
       'map': 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7'
     };
-    
+
     return icons[iconName] || '';
   }
 }

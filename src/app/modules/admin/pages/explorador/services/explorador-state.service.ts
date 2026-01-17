@@ -3,13 +3,14 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 import { ToastState, ContextMenuState, Breadcrumb } from '../models/explorador-state.model';
 import { AutorizacionTreeNode } from '../../../../../core/models/autorizacion-tree.model';
+import { ViewerTab } from '../../../../../core/helpers/tabs-permissions.helper';
 
 @Injectable()
 export class ExploradorStateService {
   private _tree = signal<AutorizacionTreeNode[]>([]);
   private _selectedNode = signal<AutorizacionTreeNode | null>(null);
   private _breadcrumbs = signal<Breadcrumb[]>([]);
-  private _activeTab = signal<'preview' | 'metadata' | 'security' | 'notes' | 'history'>('metadata');
+  private _activeTab = signal<ViewerTab>('metadata');
   private _pdfUrl = signal<SafeResourceUrl | null>(null);
   private _contextMenu = signal<ContextMenuState>({ visible: false, x: 0, y: 0, node: null });
   private _toast = signal<ToastState>({ visible: false, message: '', type: 'success' });
@@ -28,9 +29,14 @@ export class ExploradorStateService {
     this._tree.set(tree);
   }
 
-  selectNode(node: AutorizacionTreeNode, closeMenu: boolean = true): void {
+  selectNode(node: AutorizacionTreeNode, closeMenu: boolean = true,expand: boolean = false
+): void {
     this._selectedNode.set(node);
     this.updateBreadcrumbs(node);
+
+    if (expand && node.children) {
+      node._open = true;
+    }
 
     if (closeMenu) {
       this.closeContextMenu();
@@ -38,7 +44,7 @@ export class ExploradorStateService {
   }
 
 
-  setActiveTab(tab: 'preview' | 'metadata' | 'security' | 'notes' | 'history'): void {
+  setActiveTab(tab: ViewerTab): void {
     this._activeTab.set(tab);
   }
 

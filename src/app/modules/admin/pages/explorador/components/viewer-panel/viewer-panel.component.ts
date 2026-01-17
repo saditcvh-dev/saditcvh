@@ -1,14 +1,10 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
 import { Breadcrumb } from '../../models/explorador-state.model';
-import { TabsNavigationComponent } from '../tabs/tabs-navigation/tabs-navigation.component';
-import { PreviewTabComponent } from '../tabs/preview-tab/preview-tab.component';
-import { MetadataTabComponent } from '../tabs/metadata-tab/metadata-tab.component';
-import { SecurityTabComponent } from '../tabs/security-tab/security-tab.component';
-import { HistoryTabComponent } from '../tabs/history-tab/history-tab.component';
 import { AutorizacionTreeNode } from '../../../../../../core/models/autorizacion-tree.model';
 import { DocumentoService } from '../../../../../../core/services/explorador-documento.service';
+import { AuthService } from '../../../../../../core/services/auth';
+import { getAllowedTabsByRoles, ViewerTab } from '../../../../../../core/helpers/tabs-permissions.helper';
 
 @Component({
   selector: 'app-viewer-panel',
@@ -19,16 +15,17 @@ import { DocumentoService } from '../../../../../../core/services/explorador-doc
 export class ViewerPanelComponent {
   @Input() selectedNode: AutorizacionTreeNode | null = null;
   @Input() breadcrumbs: Breadcrumb[] = [];
-  @Input() activeTab: 'preview' | 'metadata' | 'security' | 'notes' | 'history' = 'metadata';
+  @Input() activeTab: ViewerTab = 'metadata';
+
   @Input() pdfUrl: SafeResourceUrl | null = null;
   @Input() documentVersions: any[] = [];
   
   @Output() breadcrumbClick = new EventEmitter<AutorizacionTreeNode | null>();
-  @Output() tabChange = new EventEmitter<'preview' | 'metadata' | 'security' | 'notes' | 'history'>();
+  @Output() tabChange = new EventEmitter<ViewerTab>();
   @Output() openUploadModal = new EventEmitter<void>();
   @Output() downloadVersion = new EventEmitter<any>();
   @Output() restoreVersion = new EventEmitter<any>();
-
+  private authService = inject(AuthService);
   constructor(private sanitizer: DomSanitizer) {}
   private documentoService = inject(DocumentoService);
   get nodeTypeLabel(): string {
@@ -86,8 +83,7 @@ export class ViewerPanelComponent {
   onBreadcrumbClick(node: AutorizacionTreeNode | null): void {
     this.breadcrumbClick.emit(node);
   }
-
-  onTabChange(tab: 'preview' | 'metadata' | 'security' | 'notes' | 'history'): void {
+  onTabChange(tab: ViewerTab): void {
     this.tabChange.emit(tab);
   }
 
@@ -109,11 +105,6 @@ export class ViewerPanelComponent {
     });
 }
 
-  // onDownloadVersion(version: any): void {
-  //   console.log("version")
-  //   console.log(version)
-  //   this.downloadVersion.emit(version);
-  // }
 
   onRestoreVersion(version: any): void {
     this.restoreVersion.emit(version);
@@ -175,4 +166,13 @@ export class ViewerPanelComponent {
       icon: 'file'
     };
   }
+  // -----accesos a tabs  por rol
+  get userRoles(): string[] {
+    return this.authService.currentUser()?.roles ?? [];
+  }
+  get allowedTabs(): ViewerTab[] {
+    return getAllowedTabsByRoles(this.userRoles);
+  }
+
+
 }

@@ -53,7 +53,7 @@
 			</div>
 		</div>
 		<!-- Navegación de pestañas -->
-		<app-tabs-navigation *ngIf="shouldShowTabs()" [selectedNode]="selectedNode" [activeTab]="activeTab" (tabChange)="onTabChange($event)">
+		<app-tabs-navigation *ngIf="shouldShowTabs()" [selectedNode]="selectedNode" [activeTab]="activeTab"   [allowedTabs]="allowedTabs" (tabChange)="onTabChange($event)">
 		</app-tabs-navigation>
 	</div>
 	<!-- Contenido de la pestaña activa -->
