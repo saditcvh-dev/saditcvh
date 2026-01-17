@@ -1,0 +1,30 @@
+<div class="select-none text-gray-700 text-sm relative overflow-visible">
+
+
+  <!-- <div data-tree-node class="flex items-center gap-2 px-2 py-1.5 cursor-pointer rounded transition-colors duration-200"
+    [class.justify-center]="collapsed" [class.bg-red-50]="node === selectedNode" (click)="onNodeClick($event, node)"
+    (contextmenu)="onRightClick($event, node)" [attr.title]="collapsed ? node.nombre : null"> -->
+  <div data-tree-node   class="flex items-center gap-2 px-2 py-1.5 cursor-pointer rounded
+         hover:bg-gray-100 transition-colors duration-200"
+
+    [class.justify-center]="collapsed" [class.bg-red-50]="node === selectedNode" (click)="onNodeClick($event, node)"
+    (contextmenu)="onRightClick($event, node)" [attr.title]="collapsed ? node.nombre : null">
+    <!-- <img [src]="getIcon(node)" class="w-4 h-4 cursor-pointer" (click)="toggle($event, node)" /> -->
+  <img [src]="getIcon(node)"
+     class="w-4 h-4 cursor-pointer"
+     (click)="onIconClick($event, node)" />
+
+    <span *ngIf="!collapsed" class="truncate cursor-pointer" (click)="nodeSelected.emit(node)">
+      {{ node.nombre }}
+    </span>
+
+  </div>
+
+  <div *ngIf="!collapsed && node._open && node.children?.length"
+    class="ml-2.5 pl-3 border-l border-gray-200 space-y-0.5">
+    <app-tree-node *ngFor="let child of node.children" [node]="child" [selectedNode]="selectedNode"
+      [collapsed]="collapsed" (nodeSelected)="onChildSelected($event)" (nodeRightClick)="onChildRightClick($event)">
+    </app-tree-node>
+  </div>
+
+</div>

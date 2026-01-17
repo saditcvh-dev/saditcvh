@@ -26,6 +26,31 @@ export interface Role {
   name: string; // 'administrador', 'operador', etc.
 }
 
+// Interfaz para Permission
+export interface Permission {
+  id: number;
+  name: string; // 'ver', 'editar', 'imprimir', etc.
+  description?: string;
+}
+
+// Interfaz para Municipio
+export interface Municipio {
+  id: number;
+  num: number;
+  nombre: string;
+}
+
+// Representa la relación que viene en "municipality_access"
+export interface MunicipalityAccess {
+  id: number;
+  user_id: number;
+  municipio_id: number;
+  permission_id: number;
+  is_exception: boolean;
+  permission?: Permission;
+  municipio?: Municipio;
+}
+
 // Interfaz extendida para Usuario
 export interface User {
   id: number;
@@ -36,11 +61,14 @@ export interface User {
   email: string;
   phone: string | null;
   active: boolean;
-  
+
   // Relaciones
   cargo_id: number | null; // ID del cargo
   cargo?: Cargo;          // Objeto Cargo
   roles: Role[];          // Array de objetos Role
+
+
+  municipality_access?: MunicipalityAccess[];
 
   // Auditoría (Actualizado basado en el log)
   created_by: number | null; // El ID sigue viniendo, lo mantenemos por seguridad.
@@ -48,15 +76,18 @@ export interface User {
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
-  
+
   // Objetos de Auditoría (CONFIRMADO POR LOG)
   creator: UserAuditMini | null; // <-- OBJETO COMPLETO
   editor: UserAuditMini | null; // <-- OBJETO COMPLETO
-  
+
 
   // Propiedades opcionales para el formulario de Creación/Edición
   password?: string;
-  roleIds?: number[]; 
+  roleIds?: number[];
+  municipios?: number[];
+
+  requires_permission_check?: boolean;
 }
 
 // Interfaz para la data de Creación/Actualización (Payload al Backend)
@@ -71,4 +102,17 @@ export interface UserPayload {
   active?: boolean;
   cargo_id?: number | null;
   roles?: number[]; // IDs de los roles
+  municipios?: number[]; // IDs de los municipios
+}
+
+export interface UserTerritory {
+  id: number;
+  num: number;
+  nombre: string;
+  permisos: string[]; // Ejemplo: ['ver', 'editar', 'descargar']
+}
+export interface MunicipioResponseTerritory {
+  success: boolean;
+  data: UserTerritory | UserTerritory[];
+  message?: string;
 }

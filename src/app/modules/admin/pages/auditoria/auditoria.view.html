@@ -1,1077 +1,152 @@
-<!-- AUDITORÍA DEL SISTEMA | SISTEMA STCH -->
-<div class="p-6">
+<div class="p-6 animate-fadeIn">
+  <header class="mb-8">
+    <h1 class="text-2xl font-bold text-[#691831] mb-2">Centro de Auditoría</h1>
+    <p class="text-gray-600 font-medium">Historial detallado de operaciones y acceso al sistema.</p>
+  </header>
+
+  <div class="bg-white rounded-xl border shadow-lg border-gray-200 overflow-hidden">
     
-    <!-- Cabecera con información del sistema -->
-    <div class="mb-8">
-        <div class="flex flex-col md:flex-row md:items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800 mb-2">Auditoría del Sistema</h1>
-                <p class="text-gray-600">Registro completo de actividades y eventos de seguridad</p>
-            </div>
-            <div class="mt-4 md:mt-0">
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <button onclick="generarReporteAuditoria()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium flex items-center">
-                        <i class="fas fa-file-export mr-2"></i>Exportar Reporte
-                    </button>
-                    <button onclick="configurarAuditoria()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium flex items-center">
-                        <i class="fas fa-cog mr-2"></i>Configurar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         ESTADÍSTICAS DE AUDITORÍA
-    ============================================================ -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="p-6 border-b border-gray-200 bg-gray-50/50 flex flex-col gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
         
-        <!-- Eventos totales -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500">Eventos registrados (30d)</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">24,587</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                    <i class="fas fa-history text-blue-600 text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t">
-                <p class="text-xs text-gray-500">+2,345 vs mes anterior</p>
-            </div>
-        </div>
-        
-        <!-- Intentos de acceso -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500">Intentos de acceso</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">3,842</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                    <i class="fas fa-sign-in-alt text-green-600 text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t">
-                <p class="text-xs text-gray-500">18 fallidos</p>
-            </div>
-        </div>
-        
-        <!-- Modificaciones críticas -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500">Modificaciones críticas</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">156</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
-                    <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t">
-                <p class="text-xs text-gray-500">+12 este mes</p>
-            </div>
-        </div>
-        
-        <!-- Alertas de seguridad -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500">Alertas activas</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">7</h3>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                    <i class="fas fa-bell text-red-600 text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t">
-                <p class="text-xs text-gray-500">3 requieren atención</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         FILTROS DE BÚSQUEDA AVANZADA
-    ============================================================ -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-8">
-        
-        <!-- Header de filtros -->
-        <div class="p-6 border-b">
-            <h2 class="font-semibold text-gray-800 text-lg">Filtros de Búsqueda Avanzada</h2>
-        </div>
-        
-        <!-- Formulario de filtros -->
-        <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <!-- Columna 1: Fechas y tipo -->
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-calendar-alt mr-2"></i>Rango de fechas
-                        </label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-xs text-gray-500 mb-1 block">Desde</label>
-                                <input
-                                    title="Desde" 
-                                    type="date" 
-                                    class="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm"
-                                    value="2025-12-01"
-                                >
-                            </div>
-                            <div>
-                                <label class="text-xs text-gray-500 mb-1 block">Hasta</label>
-                                <input 
-                                    title="Hasta"
-                                    type="date" 
-                                    class="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm"
-                                    value="2025-12-17"
-                                >
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-filter mr-2"></i>Tipo de evento
-                        </label>
-                        <select title="Tipo de evento" class="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm">
-                            <option value="">Todos los tipos</option>
-                            <option value="login">Inicio de sesión</option>
-                            <option value="logout">Cierre de sesión</option>
-                            <option value="create">Creación</option>
-                            <option value="update">Modificación</option>
-                            <option value="delete">Eliminación</option>
-                            <option value="access">Acceso a datos</option>
-                            <option value="security">Eventos de seguridad</option>
-                            <option value="system">Eventos del sistema</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <!-- Columna 2: Usuario y severidad -->
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-user mr-2"></i>Usuario
-                        </label>
-                        <select title="Tipo de usuario" class="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm">
-                            <option value="">Todos los usuarios</option>
-                            <option value="admin">Administradores</option>
-                            <option value="supervisor">Supervisores</option>
-                            <option value="operator">Operadores</option>
-                            <option value="viewer">Consultas</option>
-                            <option value="specific">Usuario específico...</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-exclamation-circle mr-2"></i>Nivel de severidad
-                        </label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button class="px-3 py-2 bg-blue-600 text-white rounded text-xs font-medium">Info</button>
-                            <button class="px-3 py-2 border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50">Advertencia</button>
-                            <button class="px-3 py-2 border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50">Error</button>
-                            <button class="px-3 py-2 border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50">Crítico</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Columna 3: Módulo y acciones -->
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-cube mr-2"></i>Módulo/Recurso
-                        </label>
-                        <select title="Modulo/Recurso" class="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm">
-                            <option value="">Todos los módulos</option>
-                            <option value="auth">Autenticación</option>
-                            <option value="users">Gestión de usuarios</option>
-                            <option value="expedientes">Expedientes</option>
-                            <option value="digitalizacion">Digitalización</option>
-                            <option value="reportes">Reportes</option>
-                            <option value="respaldos">Respaldos</option>
-                            <option value="config">Configuración</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-search mr-2"></i>Búsqueda por texto
-                        </label>
-                        <div class="relative">
-                            <input 
-                                type="text" 
-                                placeholder="IP, descripción, detalles..."
-                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm"
-                            >
-                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Botones de acción -->
-            <div class="mt-6 pt-6 border-t flex flex-col sm:flex-row gap-3">
-                <button class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 text-sm font-medium flex items-center justify-center">
-                    <i class="fas fa-search mr-2"></i>Aplicar Filtros
-                </button>
-                <button class="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 text-sm font-medium flex items-center justify-center">
-                    <i class="fas fa-eraser mr-2"></i>Limpiar Filtros
-                </button>
-                <button class="flex-1 border border-blue-300 text-blue-600 py-2 px-4 rounded-lg hover:bg-blue-50 text-sm font-medium flex items-center justify-center">
-                    <i class="fas fa-save mr-2"></i>Guardar Búsqueda
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         REGISTROS DE AUDITORÍA
-    ============================================================ -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-8">
-        <div class="p-6 border-b">
-            <div class="flex flex-col md:flex-row md:items-center justify-between">
-                <div>
-                    <h2 class="font-semibold text-gray-800 text-lg">Registros de Auditoría</h2>
-                    <p class="text-sm text-gray-500">Eventos registrados ordenados cronológicamente</p>
-                </div>
-                
-                <div class="mt-4 md:mt-0">
-                    <div class="flex items-center space-x-3">
-                        <select title="Ordenar por:" class="border border-gray-300 rounded-lg py-2 px-3 text-sm">
-                            <option>Ordenar por: Más recientes primero</option>
-                            <option>Ordenar por: Más antiguos primero</option>
-                            <option>Ordenar por: Nivel de severidad</option>
-                            <option>Ordenar por: Tipo de evento</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Fecha/Hora
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Evento
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Usuario
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            IP/Origen
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Nivel
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Detalles
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Acciones
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    
-                    <!-- Evento 1: Inicio de sesión exitoso -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="font-medium text-gray-900">Hoy, 10:24 AM</div>
-                            <div class="text-xs text-gray-500">17/12/2025</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-sign-in-alt text-green-600 text-sm"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900">Inicio de sesión exitoso</div>
-                                    <div class="text-xs text-gray-500">Sistema de autenticación</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                                    <span class="text-blue-700 text-xs font-medium">JA</span>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-medium">Juan Ángel Bazán</div>
-                                    <div class="text-xs text-gray-500">Administrador</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">192.168.1.105</div>
-                            <div class="text-xs text-gray-500">Pachuca, HGO</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                                <i class="fas fa-info-circle mr-1"></i>Información
-                            </span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">Sesión iniciada desde navegador Chrome</div>
-                            <div class="text-xs text-gray-500">Duración: 02:15:30</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <button onclick="verDetallesEvento(1)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                <i class="fas fa-search mr-1"></i>Inspeccionar
-                            </button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Evento 2: Modificación de expediente -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="font-medium text-gray-900">Hoy, 09:45 AM</div>
-                            <div class="text-xs text-gray-500">17/12/2025</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-lg bg-yellow-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-edit text-yellow-600 text-sm"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900">Expediente modificado</div>
-                                    <div class="text-xs text-gray-500">Gestión documental</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-2">
-                                    <span class="text-green-700 text-xs font-medium">MG</span>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-medium">María González</div>
-                                    <div class="text-xs text-gray-500">Supervisor</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">192.168.1.112</div>
-                            <div class="text-xs text-gray-500">Intranet STCH</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
-                                <i class="fas fa-exclamation-triangle mr-1"></i>Advertencia
-                            </span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">EXP-STCH-2025-04568 actualizado</div>
-                            <div class="text-xs text-gray-500">Cambios en metadatos del titular</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <button onclick="verDetallesEvento(2)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                <i class="fas fa-search mr-1"></i>Inspeccionar
-                            </button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Evento 3: Intento de acceso fallido -->
-                    <tr class="hover:bg-gray-50 bg-red-50">
-                        <td class="py-4 px-6">
-                            <div class="font-medium text-gray-900">Hoy, 03:15 AM</div>
-                            <div class="text-xs text-gray-500">17/12/2025</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-times-circle text-red-600 text-sm"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900">Intento de acceso fallido</div>
-                                    <div class="text-xs text-gray-500">Autenticación</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center mr-2">
-                                    <span class="text-gray-700 text-xs font-medium">?</span>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-medium">Usuario desconocido</div>
-                                    <div class="text-xs text-gray-500">Credenciales inválidas</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">201.175.34.89</div>
-                            <div class="text-xs text-gray-500">CDMX, CDMX</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-800">
-                                <i class="fas fa-skull-crossbones mr-1"></i>Crítico
-                            </span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">5 intentos fallidos consecutivos</div>
-                            <div class="text-xs text-gray-500">IP bloqueada temporalmente</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <button onclick="verDetallesEvento(3)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                <i class="fas fa-search mr-1"></i>Inspeccionar
-                            </button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Evento 4: Respaldo completado -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="font-medium text-gray-900">Hoy, 02:00 AM</div>
-                            <div class="text-xs text-gray-500">17/12/2025</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-database text-blue-600 text-sm"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900">Respaldo automático completado</div>
-                                    <div class="text-xs text-gray-500">Sistema de respaldos</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center mr-2">
-                                    <span class="text-gray-700 text-xs font-medium">SYS</span>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-medium">Sistema</div>
-                                    <div class="text-xs text-gray-500">Tarea programada</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">localhost</div>
-                            <div class="text-xs text-gray-500">Servidor STCH-PROD</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                                <i class="fas fa-info-circle mr-1"></i>Información
-                            </span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">Respaldo incremental de 215.4 GB</div>
-                            <div class="text-xs text-gray-500">Duración: 01:24:18, integridad verificada</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <button onclick="verDetallesEvento(4)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                <i class="fas fa-search mr-1"></i>Inspeccionar
-                            </button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Evento 5: Exportación masiva -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="font-medium text-gray-900">Ayer, 16:30 PM</div>
-                            <div class="text-xs text-gray-500">16/12/2025</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-file-export text-purple-600 text-sm"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900">Exportación masiva de datos</div>
-                                    <div class="text-xs text-gray-500">Reportes y análisis</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                                    <span class="text-blue-700 text-xs font-medium">JA</span>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-medium">Juan Ángel Bazán</div>
-                                    <div class="text-xs text-gray-500">Administrador</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">192.168.1.105</div>
-                            <div class="text-xs text-gray-500">Pachuca, HGO</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
-                                <i class="fas fa-exclamation-triangle mr-1"></i>Advertencia
-                            </span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">5,000 expedientes exportados a Excel</div>
-                            <div class="text-xs text-gray-500">Solicitud de auditoría externa</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <button onclick="verDetallesEvento(5)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                <i class="fas fa-search mr-1"></i>Inspeccionar
-                            </button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Evento 6: Cambio de permisos -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="font-medium text-gray-900">15/12/2025, 14:20 PM</div>
-                            <div class="text-xs text-gray-500">Hace 2 días</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-user-shield text-orange-600 text-sm"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900">Cambio de permisos de usuario</div>
-                                    <div class="text-xs text-gray-500">Gestión de usuarios</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                                    <span class="text-blue-700 text-xs font-medium">JA</span>
-                                </div>
-                                <div>
-                                    <div class="text-sm font-medium">Juan Ángel Bazán</div>
-                                    <div class="text-xs text-gray-500">Administrador</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">192.168.1.105</div>
-                            <div class="text-xs text-gray-500">Pachuca, HGO</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
-                                <i class="fas fa-exclamation-triangle mr-1"></i>Advertencia
-                            </span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">Usuario "Ana Ramírez" elevado a Supervisor</div>
-                            <div class="text-xs text-gray-500">+15 nuevos permisos otorgados</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <button onclick="verDetallesEvento(6)" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                <i class="fas fa-search mr-1"></i>Inspeccionar
-                            </button>
-                        </td>
-                    </tr>
-                    
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Pie de tabla -->
-        <div class="px-6 py-4 border-t">
-            <div class="flex flex-col md:flex-row md:items-center justify-between">
-                <div class="text-sm text-gray-500 mb-3 md:mb-0">
-                    Mostrando 6 de 24,587 eventos
-                </div>
-                
-                <div class="flex items-center space-x-2">
-                    <button title="Pagina" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    
-                    <div class="flex space-x-1">
-                        <button class="w-8 h-8 rounded-lg bg-blue-600 text-white">1</button>
-                        <button class="w-8 h-8 rounded-lg border border-gray-300 hover:bg-gray-50">2</button>
-                        <button class="w-8 h-8 rounded-lg border border-gray-300 hover:bg-gray-50">3</button>
-                        <span class="px-2">...</span>
-                        <button class="w-8 h-8 rounded-lg border border-gray-300 hover:bg-gray-50">410</button>
-                    </div>
-                    
-                    <button title="Pagina" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         ANÁLISIS Y REPORTES
-    ============================================================ -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-8">
-        <div class="p-6 border-b">
-            <h2 class="font-semibold text-gray-800 text-lg">Análisis y Tendencias</h2>
-        </div>
-        
-        <div class="p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                
-                <!-- Gráfica de actividad -->
-                <div>
-                    <h3 class="font-medium text-gray-800 mb-6">Actividad por hora del día</h3>
-                    <div class="h-64 flex items-center justify-center text-gray-400">
-                        <!-- Aquí iría una gráfica real -->
-                        <div class="text-center">
-                            <i class="fas fa-chart-line text-4xl mb-3"></i>
-                            <p>Gráfica de actividad por hora</p>
-                            <div class="mt-4 flex items-end justify-center space-x-1">
-                                <div class="w-6 bg-gray-300 h-8 rounded-t"></div>
-                                <div class="w-6 bg-gray-300 h-12 rounded-t"></div>
-                                <div class="w-6 bg-gray-300 h-6 rounded-t"></div>
-                                <div class="w-6 bg-gray-300 h-20 rounded-t"></div>
-                                <div class="w-6 bg-blue-500 h-32 rounded-t"></div>
-                                <div class="w-6 bg-blue-500 h-40 rounded-t"></div>
-                                <div class="w-6 bg-blue-500 h-36 rounded-t"></div>
-                                <div class="w-6 bg-blue-500 h-28 rounded-t"></div>
-                                <div class="w-6 bg-gray-300 h-18 rounded-t"></div>
-                                <div class="w-6 bg-gray-300 h-10 rounded-t"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-4 text-sm text-gray-500">
-                        <p><i class="fas fa-info-circle mr-2 text-blue-500"></i>Pico de actividad: 10:00 AM - 12:00 PM</p>
-                    </div>
-                </div>
-                
-                <!-- Distribución por tipo -->
-                <div>
-                    <h3 class="font-medium text-gray-800 mb-6">Distribución por tipo de evento</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm font-medium text-gray-700">Inicios de sesión</span>
-                                <span class="text-sm font-medium text-gray-900">42%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-600 h-2 rounded-full" style="width: 42%"></div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm font-medium text-gray-700">Operaciones CRUD</span>
-                                <span class="text-sm font-medium text-gray-900">28%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-600 h-2 rounded-full" style="width: 28%"></div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm font-medium text-gray-700">Eventos de sistema</span>
-                                <span class="text-sm font-medium text-gray-900">18%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-purple-600 h-2 rounded-full" style="width: 18%"></div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm font-medium text-gray-700">Eventos de seguridad</span>
-                                <span class="text-sm font-medium text-gray-900">12%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-red-600 h-2 rounded-full" style="width: 12%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Estadísticas adicionales -->
-                    <div class="mt-8 grid grid-cols-2 gap-4">
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="text-sm text-gray-500 mb-1">Eventos críticos</div>
-                            <div class="text-xl font-bold text-red-600">23</div>
-                            <div class="text-xs text-gray-400">este mes</div>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="text-sm text-gray-500 mb-1">IPs bloqueadas</div>
-                            <div class="text-xl font-bold text-orange-600">7</div>
-                            <div class="text-xs text-gray-400">activas</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         ALERTAS Y MONITOREO
-    ============================================================ -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-        <div class="p-6 border-b">
-            <div class="flex items-center justify-between">
-                <h2 class="font-semibold text-gray-800 text-lg">Alertas y Monitoreo</h2>
-                <button onclick="configurarAlertas()" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
-                    <i class="fas fa-bell mr-1"></i>Configurar alertas
-                </button>
-            </div>
-        </div>
-        
-        <div class="p-6">
-            <div class="space-y-4">
-                
-                <!-- Alerta 1: Múltiples intentos fallidos -->
-                <div class="flex items-start p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <div class="flex-shrink-0">
-                        <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                            <i class="fas fa-skull-crossbones text-red-600"></i>
-                        </div>
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <div class="flex justify-between">
-                            <p class="text-sm font-medium text-red-800">Múltiples intentos de acceso fallidos</p>
-                            <span class="text-xs text-red-600">Hoy, 03:15 AM</span>
-                        </div>
-                        <p class="text-sm text-red-600 mt-1">IP 201.175.34.89 bloqueada por 24 horas</p>
-                        <div class="mt-2 flex space-x-3">
-                            <button onclick="verDetallesAlerta(1)" class="text-xs text-red-700 hover:text-red-900 font-medium">
-                                <i class="fas fa-search mr-1"></i>Investigar
-                            </button>
-                            <button onclick="desbloquearIP('201.175.34.89')" class="text-xs text-red-700 hover:text-red-900 font-medium">
-                                <i class="fas fa-unlock mr-1"></i>Desbloquear IP
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Alerta 2: Exportación masiva -->
-                <div class="flex items-start p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <div class="flex-shrink-0">
-                        <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
-                            <i class="fas fa-exclamation-triangle text-yellow-600"></i>
-                        </div>
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <div class="flex justify-between">
-                            <p class="text-sm font-medium text-yellow-800">Exportación masiva de datos</p>
-                            <span class="text-xs text-yellow-600">Ayer, 16:30 PM</span>
-                        </div>
-                        <p class="text-sm text-yellow-600 mt-1">5,000 expedientes exportados por administrador</p>
-                        <div class="mt-2">
-                            <button onclick="verDetallesAlerta(2)" class="text-xs text-yellow-700 hover:text-yellow-900 font-medium">
-                                <i class="fas fa-search mr-1"></i>Revisar justificación
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Alerta 3: Cambio de permisos -->
-                <div class="flex items-start p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div class="flex-shrink-0">
-                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                            <i class="fas fa-user-shield text-blue-600"></i>
-                        </div>
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <div class="flex justify-between">
-                            <p class="text-sm font-medium text-blue-800">Cambio significativo de permisos</p>
-                            <span class="text-xs text-blue-600">15/12/2025</span>
-                        </div>
-                        <p class="text-sm text-blue-600 mt-1">Usuario elevado de "Consulta" a "Supervisor"</p>
-                        <div class="mt-2">
-                            <button onclick="verDetallesAlerta(3)" class="text-xs text-blue-700 hover:text-blue-900 font-medium">
-                                <i class="fas fa-search mr-1"></i>Ver detalles
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Alerta 4: Respaldo fuera de horario -->
-                <div class="flex items-start p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <div class="flex-shrink-0">
-                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                            <i class="fas fa-database text-green-600"></i>
-                        </div>
-                    </div>
-                    <div class="ml-4 flex-1">
-                        <div class="flex justify-between">
-                            <p class="text-sm font-medium text-green-800">Respaldo manual ejecutado</p>
-                            <span class="text-xs text-green-600">10/12/2025</span>
-                        </div>
-                        <p class="text-sm text-green-600 mt-1">Respaldo completo de 3.8 TB fuera del horario programado</p>
-                        <div class="mt-2">
-                            <button onclick="verDetallesAlerta(4)" class="text-xs text-green-700 hover:text-green-900 font-medium">
-                                <i class="fas fa-search mr-1"></i>Ver registro
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Historial de alertas -->
-            <div class="mt-8 pt-6 border-t">
-                <button class="flex items-center text-blue-600 hover:text-blue-800 font-medium">
-                    <i class="fas fa-history mr-2"></i>Ver historial completo de alertas
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ============================================================
-     MODALES
-============================================================ -->
-
-<!-- Modal Detalles del Evento -->
-<div id="modalDetallesEvento" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-        <div class="p-6 border-b">
-            <div class="flex justify-between items-center">
-                <h3 class="text-xl font-bold text-gray-800">Detalles del Evento de Auditoría</h3>
-                <button title="Eventos" onclick="cerrarModal('modalDetallesEvento')" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-        </div>
-        <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-            <div class="space-y-6">
-                <!-- Contenido dinámico se cargaría aquí -->
-                <div class="text-center py-8">
-                    <i class="fas fa-search text-4xl text-gray-300 mb-3"></i>
-                    <p class="text-gray-500">Detalles completos del evento seleccionado</p>
-                </div>
-            </div>
-        </div>
-        <div class="p-6 border-t flex justify-end space-x-3">
-            <button onclick="cerrarModal('modalDetallesEvento')" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                Cerrar
+        <div class="md:col-span-3">
+            <label class="text-[11px] font-bold text-gray-500 uppercase mb-1 block">Búsqueda libre</label>
+            <div class="flex relative">
+            <input type="text" [(ngModel)]="filters.search" (keyup.enter)="onSearch()"
+                    placeholder="Usuario, acción o ID..."
+                    class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#BC955B] focus:border-[#BC955B]">
+            <button (click)="onSearch()" class="absolute right-0 top-0 h-full px-3 bg-[#691831] text-white rounded-r-lg hover:bg-[#A02142] transition">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </button>
-            <button onclick="exportarEvento()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                <i class="fas fa-download mr-2"></i>Exportar
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Configuración de Auditoría -->
-<div id="modalConfigAuditoria" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
-        <div class="p-6 border-b">
-            <div class="flex justify-between items-center">
-                <h3 class="text-xl font-bold text-gray-800">Configuración de Auditoría</h3>
-                <button title="Configuracion" onclick="cerrarModal('modalConfigAuditoria')" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
             </div>
         </div>
-        <div class="p-6">
-            <div class="text-center py-8">
-                <i class="fas fa-cogs text-4xl text-gray-300 mb-3"></i>
-                <p class="text-gray-500">Configuración de parámetros de auditoría y alertas</p>
+
+        <div class="md:col-span-2">
+            <label class="text-[11px] font-bold text-gray-500 uppercase mb-1 block">Módulo</label>
+            <select [(ngModel)]="filters.module" (change)="onSearch()"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#BC955B] outline-none">
+            <option value="ALL">Todos</option>
+            <option value="USER">Usuarios</option>
+            <option value="AUTH">Accesos</option>
+            </select>
+        </div>
+
+        <div class="md:col-span-2">
+            <label class="text-[11px] font-bold text-gray-500 uppercase mb-1 block">Rol Ejecutor</label>
+            <select [(ngModel)]="filters.roleId" (change)="onSearch()"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#BC955B] outline-none">
+            <option value="ALL">Cualquier Rol</option>
+            <option *ngFor="let role of roles()" [value]="role.id">{{ role.name | titlecase }}</option>
+            </select>
+        </div>
+
+        <div class="md:col-span-2">
+            <label class="text-[11px] font-bold text-gray-500 uppercase mb-1 block">Orden</label>
+            <select [(ngModel)]="filters.sort" (change)="onSearch()"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#BC955B] outline-none font-medium">
+            <option value="DESC">Más recientes</option>
+            <option value="ASC">Más antiguos</option>
+            </select>
+        </div>
+
+        <div class="md:col-span-3 flex gap-2">
+            <div class="flex-1">
+            <label class="text-[11px] font-bold text-gray-500 uppercase mb-1 block">Desde</label>
+            <input type="date" [(ngModel)]="filters.startDate" (change)="onSearch()"
+                    class="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-[#BC955B] outline-none">
+            </div>
+            <div class="flex-1">
+            <label class="text-[11px] font-bold text-gray-500 uppercase mb-1 block">Hasta</label>
+            <input type="date" [(ngModel)]="filters.endDate" (change)="onSearch()"
+                    class="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-[#BC955B] outline-none">
             </div>
         </div>
+        </div>
     </div>
+
+    <div class="overflow-x-auto relative">
+      <div *ngIf="isLoading" class="absolute inset-0 bg-white/60 backdrop-blur-[1px] z-10 flex items-center justify-center">
+        <svg class="animate-spin h-8 w-8 text-[#A02142]" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+      </div>
+
+      <table class="w-full text-left">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr class="text-[#691831] text-xs font-bold uppercase tracking-wider">
+            <th class="px-6 py-4">Ejecutor</th>
+            <th class="px-6 py-4">Módulo</th>
+            <th class="px-6 py-4">Actividad</th>
+            <th class="px-6 py-4">Fecha y Hora</th>
+            <th class="px-6 py-4 text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr *ngFor="let log of logs" class="hover:bg-gray-50 transition-colors group">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-[#DDC9A3]/30 text-[#691831] flex items-center justify-center text-xs font-bold border border-[#BC955B]/20 shadow-sm">
+                  {{ getInitials(log.user) }}
+                </div>
+                <div>
+                  <p class="text-sm font-bold text-gray-800">{{ log.user?.username || 'Sistema' }}</p>
+                  <p class="text-[10px] text-gray-400 font-mono tracking-tighter">{{ log.ip_address }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-xs font-black text-gray-500 uppercase">
+              <span class="px-2 py-1 bg-gray-100 rounded text-[10px]">{{ log.module }}</span>
+            </td>
+            <td class="px-6 py-4">
+              <app-action-badge [action]="log.action"></app-action-badge>
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-600 font-medium">
+              {{ log.created_at | date:'dd/MM/yyyy' }} 
+              <span class="text-[#BC955B] text-xs ml-1">{{ log.created_at | date:'HH:mm' }}</span>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button (click)="openDetail(log)" 
+                      class="p-2 hover:bg-[#DDC9A3]/30 text-[#691831] rounded-lg transition-all shadow-sm border border-transparent hover:border-[#BC955B]/30">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="p-6 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-sm text-gray-600">Mostrando</span>
+        <div class="px-3 py-1 bg-[#DDC9A3]/50 text-[#691831] font-bold rounded-lg text-sm border border-[#BC955B]/50">
+          {{ logs.length }}
+        </div>
+        <span class="text-sm text-gray-600">de</span>
+        <div class="px-3 py-1 bg-white text-gray-700 font-bold rounded-lg text-sm border border-gray-300">
+          {{ pagination.total }}
+        </div>
+        <span class="text-sm text-gray-600">registros</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button (click)="changePage(pagination.page - 1)" [disabled]="pagination.page === 1"
+                class="px-3 py-1 rounded-lg border transition flex items-center gap-1 text-sm font-medium"
+                [ngClass]="{'bg-gray-100 text-gray-400 cursor-not-allowed': pagination.page === 1, 'bg-white hover:bg-[#DDC9A3]/20 border-gray-300 text-[#691831]': pagination.page > 1}">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+          Anterior
+        </button>
+
+        <span class="px-4 py-1 text-sm font-bold text-[#691831] bg-[#DDC9A3] rounded-lg border border-[#BC955B]">
+          {{ pagination.page }} / {{ pagination.totalPages }}
+        </span>
+
+        <button (click)="changePage(pagination.page + 1)" [disabled]="pagination.page === pagination.totalPages"
+                class="px-3 py-1 rounded-lg border transition flex items-center gap-1 text-sm font-medium"
+                [ngClass]="{'bg-gray-100 text-gray-400 cursor-not-allowed': pagination.page === pagination.totalPages, 'bg-white hover:bg-[#DDC9A3]/20 border-gray-300 text-[#691831]': pagination.page < pagination.totalPages}">
+          Siguiente
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<style>
-/* Estilos personalizados para auditoría */
-.bg-red-50 {
-    background-color: #fef2f2;
-}
-
-.border-red-200 {
-    border-color: #fecaca;
-}
-
-.bg-yellow-50 {
-    background-color: #fffbeb;
-}
-
-.border-yellow-200 {
-    border-color: #fde68a;
-}
-
-.bg-blue-50 {
-    background-color: #eff6ff;
-}
-
-.border-blue-200 {
-    border-color: #bfdbfe;
-}
-
-.bg-green-50 {
-    background-color: #f0fdf4;
-}
-
-.border-green-200 {
-    border-color: #bbf7d0;
-}
-
-/* Estilos para niveles de severidad */
-.bg-red-100 {
-    background-color: #fee2e2;
-}
-
-.bg-yellow-100 {
-    background-color: #fef3c7;
-}
-
-.bg-blue-100 {
-    background-color: #dbeafe;
-}
-
-/* Animaciones para modales */
-@keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-#modalDetallesEvento > div,
-#modalConfigAuditoria > div {
-    animation: modalFadeIn 0.2s ease-out;
-}
-
-/* Estilos para la tabla de auditoría */
-.flex-shrink-0 {
-    flex-shrink: 0;
-}
-
-.w-8.h-8.rounded-lg {
-    min-width: 32px;
-    min-height: 32px;
-}
-
-/* Scroll personalizado */
-.overflow-x-auto::-webkit-scrollbar {
-    height: 6px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 3px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
-/* Efectos hover para filas */
-.hover\:bg-gray-50:hover {
-    transition: background-color 0.2s ease;
-}
-</style>
-
-<script>
-// Funciones básicas para demostración
-function generarReporteAuditoria() {
-    console.log('Generando reporte de auditoría...');
-    // Aquí iría la lógica real para generar reporte
-}
-
-function configurarAuditoria() {
-    document.getElementById('modalConfigAuditoria').classList.remove('hidden');
-}
-
-function configurarAlertas() {
-    console.log('Configurando alertas de auditoría...');
-    // Aquí iría la lógica real para configurar alertas
-}
-
-function verDetallesEvento(id) {
-    console.log('Viendo detalles del evento ID:', id);
-    document.getElementById('modalDetallesEvento').classList.remove('hidden');
-}
-
-function verDetallesAlerta(id) {
-    console.log('Viendo detalles de la alerta ID:', id);
-    // Aquí iría la lógica real para ver detalles de alerta
-}
-
-function desbloquearIP(ip) {
-    if (confirm(`¿Está seguro de desbloquear la IP ${ip}?`)) {
-        console.log('Desbloqueando IP:', ip);
-        // Aquí iría la lógica real para desbloquear IP
-    }
-}
-
-function cerrarModal(modalId) {
-    document.getElementById(modalId).classList.add('hidden');
-}
-
-function exportarEvento() {
-    console.log('Exportando evento...');
-    // Aquí iría la lógica real para exportar evento
-}
-
-// Cerrar modales con Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        cerrarModal('modalDetallesEvento');
-        cerrarModal('modalConfigAuditoria');
-    }
-});
-
-// Cerrar modal al hacer clic fuera
-document.addEventListener('click', function(e) {
-    const modales = ['modalDetallesEvento', 'modalConfigAuditoria'];
-    modales.forEach(modalId => {
-        const modal = document.getElementById(modalId);
-        if (modal && !modal.classList.contains('hidden')) {
-            if (e.target === modal) {
-                cerrarModal(modalId);
-            }
-        }
-    });
-});
-
-// Configuración interactiva de filtros
-document.addEventListener('DOMContentLoaded', function() {
-    // Cambiar nivel de severidad
-    const botonesSeveridad = document.querySelectorAll('.grid.grid-cols-2 button');
-    botonesSeveridad.forEach(boton => {
-        boton.addEventListener('click', function() {
-            const texto = this.textContent.trim();
-            
-            // Si ya está activo, desactivarlo
-            if (this.classList.contains('bg-blue-600')) {
-                this.classList.remove('bg-blue-600', 'text-white');
-                this.classList.add('border', 'border-gray-300', 'text-gray-700', 'hover:bg-gray-50');
-            } else {
-                // Activar solo este botón
-                this.classList.remove('border', 'border-gray-300', 'text-gray-700', 'hover:bg-gray-50');
-                this.classList.add('bg-blue-600', 'text-white');
-            }
-            
-            console.log('Nivel de severidad seleccionado:', texto);
-        });
-    });
-    
-    // Aplicar filtros
-    const btnAplicarFiltros = document.querySelector('button:contains("Aplicar Filtros")');
-    if (btnAplicarFiltros) {
-        btnAplicarFiltros.addEventListener('click', function() {
-            console.log('Aplicando filtros de auditoría...');
-            // Aquí iría la lógica real para aplicar filtros
-        });
-    }
-    
-    // Limpiar filtros
-    const btnLimpiarFiltros = document.querySelector('button:contains("Limpiar Filtros")');
-    if (btnLimpiarFiltros) {
-        btnLimpiarFiltros.addEventListener('click', function() {
-            console.log('Limpiando filtros...');
-            // Aquí iría la lógica real para limpiar filtros
-        });
-    }
-});
-</script>
+<app-log-detail-modal [log]="selectedLog" [isOpen]="isModalOpen" (close)="closeDetail()"></app-log-detail-modal>

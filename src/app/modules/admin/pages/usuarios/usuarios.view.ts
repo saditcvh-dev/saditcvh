@@ -1,12 +1,13 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { User, Role, Cargo, RoleCount } from '../../../../core/models/user.model'; 
+import { User, Role, Cargo, RoleCount } from '../../../../core/models/user.model';
 import { UserService } from '../../../../core/services/user.service';
 import { RoleService } from '../../../../core/services/role.service';
 import { CargoService } from '../../../../core/services/cargo.service';
-import { combineLatest, of, Subject, switchMap, debounceTime, tap, startWith } from 'rxjs'; 
+import { combineLatest, of, Subject, switchMap, debounceTime, tap, startWith } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ApiResponse } from '../../../../core/models/api-response.model';
 import { Pagination, PaginatedResponse } from '../../../../core/models/paginated-response.model';
+import { Router } from "@angular/router";
 
 type SortColumn = 'name' | 'creator' | 'editor';
 type SortDirection = 'asc' | 'desc';
@@ -21,14 +22,14 @@ export class UsuariosView implements OnInit {
   private userService = inject(UserService);
   private roleService = inject(RoleService);
   private cargoService = inject(CargoService);
+  private router = inject(Router);
 
   private filterTrigger = new Subject<void>();
 
   public users = signal<User[]>([]);
   public roles = signal<Role[]>([]);
   public cargos = signal<Cargo[]>([]);
-
-  public realRoleCounts = signal<RoleCount[]>([]); 
+  public realRoleCounts = signal<RoleCount[]>([]);
 
   public isLoading = signal<boolean>(true);
   public error = signal<string | null>(null);
@@ -43,52 +44,45 @@ export class UsuariosView implements OnInit {
 
   // Filtros/Búsqueda
   public search = signal<string>('');
-  public filterRole = signal<string>('all'); 
-  public filterCargo = signal<string>('all'); 
+  public filterRole = signal<string>('all');
+  public filterCargo = signal<string>('all');
   public filterStatus = signal<string>('all');
 
   // Ordenamiento
   public sortColumn = signal<SortColumn>('name');
-  public sortDirection = signal<SortDirection>('asc'); 
+  public sortDirection = signal<SortDirection>('asc');
 
   // Modal CRUD (Crear/Editar)
   public isModalOpen = signal<boolean>(false);
   public selectedUser = signal<User | null>(null);
 
-  // --- NUEVAS SEÑALES PARA MODAL DE ELIMINACIÓN/CONFIRMACIÓN ---
+  // Modal de eliminación
   public isConfirmDeleteModalOpen = signal<boolean>(false);
   public userToDelete = signal<User | null>(null);
-  // -------------------------------------------------------------
 
   public totalUsers = computed(() => this.pagination().total);
-
-  public roleCounts = computed<RoleCount[]>(() => {;
-    return this.realRoleCounts();
-  });
-
+  public roleCounts = computed<RoleCount[]>(() => this.realRoleCounts());
 
   ngOnInit(): void {
     this.loadCatalogs();
 
     this.filterTrigger.pipe(
-      startWith(null), 
-      debounceTime(300), 
+      startWith(null),
+      debounceTime(300),
       switchMap(() => {
         this.isLoading.set(true);
         this.error.set(null);
-
         const params = this.buildSearchParams();
 
         return this.userService.getUsers(params).pipe(
           tap((response: PaginatedResponse<User>) => {
             this.users.set(response.data);
-            console.log('Usuarios cargados:', response.data);
             this.pagination.set(response.pagination);
             this.isLoading.set(false);
           }),
           catchError(err => {
             console.error('Error cargando usuarios:', err);
-            this.error.set('Error al cargar la lista de usuarios. Intente recargar la página.');
+            this.error.set('Error al cargar la lista de usuarios.');
             this.users.set([]);
             this.isLoading.set(false);
             return of({} as PaginatedResponse<User>);
@@ -104,69 +98,60 @@ export class UsuariosView implements OnInit {
     combineLatest([
       this.cargoService.getCargos(),
       this.roleService.getRoles(),
-      this.roleService.getRoleCounts(), 
+      this.roleService.getRoleCounts(),
     ])
       .pipe(
         tap(([cargos, roles, roleCounts]) => {
           this.cargos.set(cargos);
           this.roles.set(roles);
-          console.log('roles cargados', roles);
-          this.realRoleCounts.set(roleCounts); 
-           console.log('roles cargados', roleCounts);
+          this.realRoleCounts.set(roleCounts);
         }),
         catchError(err => {
-          console.error('Error cargando catálogos/conteos:', err);
-          this.error.set('Error al cargar los catálogos (Roles/Cargos) y conteos.');
+          console.error('Error cargando catálogos:', err);
+          this.error.set('Error al cargar catálogos y conteos.');
           return of(null);
         })
       )
       .subscribe();
   }
-  
+
   private buildSearchParams(): any {
     const roleId = this.filterRole() === 'all' ? undefined : parseInt(this.filterRole());
     const cargoId = this.filterCargo() === 'all' ? undefined : parseInt(this.filterCargo());
     const active = this.filterStatus() === 'all' ? undefined : this.filterStatus() === 'true';
-    const search = this.search() === '' ? undefined : this.search();
 
     return {
       page: this.pagination().page,
       limit: this.pagination().limit,
-      search: search,
+      search: this.search() || undefined,
       role_id: roleId,
       cargo_id: cargoId,
       active: active,
-      sortBy: this.sortColumn(), 
+      sortBy: this.sortColumn(),
       order: this.sortDirection(),
     };
   }
 
   handleSearchOnEnter(event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
-      this.applyFilters();
-    }
+    if (event.key === 'Enter') this.applyFilters();
   }
 
   setupKeyboardShortcut(): void {
     document.addEventListener('keydown', (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === 'b') {
         event.preventDefault();
-        const searchInput = document.getElementById('search-user-input');
-        if (searchInput) {
-          (searchInput as HTMLInputElement).focus();
-        }
+        document.getElementById('search-user-input')?.focus();
       }
     });
   }
-  
+
   applyFilters(): void {
     this.filterTrigger.next();
   }
 
   handleSort(column: SortColumn): void {
     if (this.sortColumn() === column) {
-      const newDirection = this.sortDirection() === 'asc' ? 'desc' : 'asc';
-      this.sortDirection.set(newDirection);
+      this.sortDirection.set(this.sortDirection() === 'asc' ? 'desc' : 'asc');
     } else {
       this.sortColumn.set(column);
       this.sortDirection.set('asc');
@@ -176,25 +161,14 @@ export class UsuariosView implements OnInit {
   }
 
   goToPage(page: number): void {
-    const totalPages = this.pagination().totalPages;
-    if (page >= 1 && page <= totalPages) {
+    if (page >= 1 && page <= this.pagination().totalPages) {
       this.pagination.update(pag => ({ ...pag, page }));
       this.applyFilters();
     }
   }
 
-  nextPage(): void {
-    this.goToPage(this.pagination().page + 1);
-  }
-
-  prevPage(): void {
-    this.goToPage(this.pagination().page - 1);
-  }
-
-  // Utilidad para obtener el nombre completo de un usuario de auditoría
-  getAuditUserName(userId: number | null): User | undefined {
-    return this.users().find(u => u.id === userId);
-  }
+  nextPage(): void { this.goToPage(this.pagination().page + 1); }
+  prevPage(): void { this.goToPage(this.pagination().page - 1); }
 
   openCreateModal(): void {
     this.selectedUser.set(null);
@@ -211,64 +185,77 @@ export class UsuariosView implements OnInit {
     this.selectedUser.set(null);
   }
 
-  handleUserSaved(event: { success: boolean; message: string }): void {
+  /**
+   * LÓGICA DE GUARDADO CON REDIRECCIÓN INTELIGENTE
+   */
+  handleUserSaved(event: { success: boolean; message: string; data?: User }): void {
+    const wasCreating = this.selectedUser() === null;
     this.closeModal();
 
-    if (event.success) {
-      console.log('Usuario guardado:', event.message);
-      this.pagination.update(pag => ({ ...pag, page: 1 }));
-      this.applyFilters();
-    } else {
+    if (event.success && event.data) {
+      const user = event.data;
+      console.log('Usuario procesado:', event.message);
+
+      // 1. Caso: Usuario nuevo que NO es Administrador (Fase 5)
+      const isNewNonAdmin = wasCreating && !user.roles?.some(r => r.id === 1);
+
+      // 2. Caso: Edición donde el usuario dejó de ser Admin (Flag del Backend)
+      const needsDowngradeRedirect = !wasCreating && user.requires_permission_check;
+
+      if (isNewNonAdmin || needsDowngradeRedirect) {
+        if (needsDowngradeRedirect) {
+            console.warn('El usuario ha dejado de ser Administrador. Redirigiendo a matriz territorial.');
+        }
+        this.redirectToMatrix(user.id);
+      } else {
+        // Para Admins nuevos o ediciones normales, solo refrescamos
+        this.refreshTable();
+      }
+    } else if (!event.success) {
       console.error('Error al guardar usuario:', event.message);
     }
   }
 
-  /**
-   * Abre el modal de confirmación de eliminación/inactivación.
-   */
+  private refreshTable(): void {
+    this.pagination.update(pag => ({ ...pag, page: 1 }));
+    this.applyFilters();
+  }
+
+  private redirectToMatrix(userId: number): void {
+    setTimeout(() => {
+      this.router.navigate(['/admin/permisos'], { queryParams: { userId } });
+    }, 150);
+  }
+
   deleteUser(user: User): void {
     this.userToDelete.set(user);
     this.isConfirmDeleteModalOpen.set(true);
   }
 
-  /**
-   * Cierra el modal de confirmación de eliminación/inactivación.
-   */
   closeDeleteConfirmation(): void {
     this.isConfirmDeleteModalOpen.set(false);
     this.userToDelete.set(null);
   }
-  
-  /**
-   * Ejecuta la eliminación (inactivación) del usuario después de la confirmación.
-   */
+
   performDeleteAction(): void {
     const user = this.userToDelete();
-    this.closeDeleteConfirmation(); // Cierra el modal
+    this.closeDeleteConfirmation();
+    if (!user) return;
 
-    if (!user) {
-      console.error("No hay usuario seleccionado para eliminar.");
-      return;
-    }
-
-    this.userService
-      .deleteUser(user.id)
-      .pipe(
-        tap((response: ApiResponse<void>) => {
-          console.log('Usuario eliminado:', response.message);
-          this.applyFilters();
-        }),
-        catchError(err => {
-          console.error('Error al eliminar usuario:', err);
-          this.error.set(`Error al eliminar ${user.first_name}.`); // Feedback de error
-          return of(null);
-        })
-      )
-      .subscribe();
+    this.userService.deleteUser(user.id).pipe(
+      tap(() => {
+        this.applyFilters();
+        this.loadCatalogs(); // Recargar conteos por rol
+      }),
+      catchError(err => {
+        console.error('Error al eliminar usuario:', err);
+        this.error.set(`Error al eliminar a ${user.first_name}.`);
+        return of(null);
+      })
+    ).subscribe();
   }
 
-
-  viewUserDetails(user: User): void {
-    console.log('Ver detalles de usuario:', user);
+  managePermissions(user: User): void {
+    this.router.navigate(['/admin/permisos'], { queryParams: { userId: user.id } });
   }
 }

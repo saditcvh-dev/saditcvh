@@ -1,0 +1,62 @@
+<div class="h-full overflow-y-auto bg-white p-6">
+  <div class="mb-6">
+    <h3 class="text-lg font-bold text-gray-900 mb-2">Configuración de Permisos</h3>
+    <p class="text-sm text-gray-600">Gestiona quién puede acceder y qué acciones pueden realizar en este elemento.</p>
+  </div>
+
+  <!-- Permisos Globales -->
+  <div class="mb-8">
+    <h4 class="text-sm font-bold text-gray-700 mb-4">Permisos Globales</h4>
+    <div class="space-y-3">
+      <div *ngFor="let permission of permissions" 
+           class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+        <div>
+          <div class="font-medium text-gray-800">{{ permission.label }}</div>
+          <div class="text-xs text-gray-500">{{ permission.description }}</div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" 
+                 [checked]="permission.granted"
+                 (change)="togglePermission(permission.id)"
+                 class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#691831]"></div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Usuarios con Acceso -->
+  <div>
+    <div class="flex justify-between items-center mb-4">
+      <h4 class="text-sm font-bold text-gray-700">Usuarios con Acceso</h4>
+      <button (click)="addUser()" 
+              class="px-3 py-1.5 bg-[#691831] text-white text-xs rounded hover:bg-[#501225] transition-colors">
+        + Añadir Usuario
+      </button>
+    </div>
+
+    <div class="space-y-3">
+      <div *ngFor="let user of users" 
+           class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
+            {{ user.name.charAt(0) }}
+          </div>
+          <div>
+            <div class="font-medium text-gray-800">{{ user.name }}</div>
+            <div class="text-xs text-gray-500">{{ user.email }} • {{ user.role }}</div>
+          </div>
+        </div>
+        <button (click)="removeUser(user.id)" 
+                class="text-red-600 hover:text-red-800 text-sm font-medium">
+          Remover
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="users.length === 0" 
+         class="text-center py-8 text-gray-400 text-sm">
+      No hay usuarios con acceso configurado
+    </div>
+  </div>
+</div>

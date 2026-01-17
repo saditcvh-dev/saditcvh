@@ -1,0 +1,53 @@
+:host {
+  display: block;
+}
+
+/* Animación para el área de drop */
+.border-dashed {
+  animation: pulseBorder 2s infinite;
+}
+
+@keyframes pulseBorder {
+  0%, 100% {
+    border-color: #d1d5db; /* gray-300 */
+  }
+  50% {
+    border-color: #9ca3af; /* gray-400 */
+  }
+}
+
+/* Animación para el estado de dragging */
+.border-\[\#691831\] {
+  animation: pulsePrimary 1.5s infinite;
+}
+
+@keyframes pulsePrimary {
+  0%, 100% {
+    border-color: #691831;
+    box-shadow: 0 0 0 0 rgba(105, 24, 49, 0.1);
+  }
+  50% {
+    border-color: #8b2c4e;
+    box-shadow: 0 0 0 4px rgba(105, 24, 49, 0.1);
+  }
+}
+
+/* Animación para archivo seleccionado */
+.border-green-300 {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Estilos para el scroll en móviles */
+@media (max-width: 640px) {
+  :host {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+}
+
+/* Transiciones suaves */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}

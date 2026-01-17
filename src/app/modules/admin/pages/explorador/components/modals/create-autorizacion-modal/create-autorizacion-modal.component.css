@@ -1,0 +1,11 @@
+/* :host {
+  display: block;
+}
+
+select, input {
+  transition: all 0.2s ease;
+}
+
+select:focus, input:focus {
+  box-shadow: 0 0 0 3px rgba(105, 24, 49, 0.1);
+} */
