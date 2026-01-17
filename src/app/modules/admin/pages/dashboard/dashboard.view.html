@@ -1,205 +1,287 @@
-<!-- COMPONENTES DASHBOARD | SIN HEADER/SIDEBAR -->
+<!-- DASHBOARD STCH | CON PREDOMINIO DE COLOR VINO (#691831) -->
 <!-- ============================================================
      ESTADÍSTICAS PRINCIPALES
 ============================================================ -->
 <div class="p-6">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        
-        <!-- Tarjeta 1: Expedientes Totales -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500">Expedientes Digitalizados</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">30,000</h3>
-                    <p class="text-xs text-green-600 mt-2">
-                        <i class="fas fa-check-circle mr-1"></i>
-                        Proyecto completo
-                    </p>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                    <i class="fas fa-archive text-blue-600 text-xl"></i>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Tarjeta 2: Páginas Procesadas -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500">Páginas Procesadas</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">14.19M</h3>
-                    <p class="text-xs text-blue-600 mt-2">
-                        <i class="fas fa-file-alt mr-1"></i>
-                        Con OCR aplicado
-                    </p>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                    <i class="fas fa-file-pdf text-green-600 text-xl"></i>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Tarjeta 3: Usuarios Activos -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500">Usuarios Activos</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">24</h3>
-                    <p class="text-xs text-gray-600 mt-2">
-                        <i class="fas fa-user-check mr-1"></i>
-                        18 en línea
-                    </p>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-                    <i class="fas fa-users text-purple-600 text-xl"></i>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Tarjeta 4: Búsquedas Hoy -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500">Búsquedas Hoy</p>
-                    <h3 class="text-2xl font-bold text-gray-800 mt-1">342</h3>
-                    <p class="text-xs text-orange-600 mt-2">
-                        <i class="fas fa-search mr-1"></i>
-                        +12% vs ayer
-                    </p>
-                </div>
-                <div class="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
-                    <i class="fas fa-search text-orange-600 text-xl"></i>
-                </div>
-            </div>
-        </div>
+    
+    <!-- Título del Dashboard con color vino -->
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-[#691831] mb-2">Dashboard STCH</h1>
+        <p class="text-gray-600">Sistema de Transporte Convencional de Hidalgo - Panel de control principal</p>
     </div>
 
+    <app-cards></app-cards>
+    
     <!-- ============================================================
-         GRÁFICAS Y TABLAS
+         GRÁFICAS Y TABLAS (con acentos vino)
     ============================================================ -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         
-        <!-- Gráfica de Actividad -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="font-semibold text-gray-800">Actividad del Sistema</h3>
-                <select title="filtro" class="text-sm border border-gray-300 rounded-lg px-3 py-1 bg-white">
-                    <option>Últimos 7 días</option>
-                    <option>Últimos 30 días</option>
-                    <option>Últimos 90 días</option>
-                </select>
-            </div>
-            <div class="h-64 flex items-center justify-center text-gray-400">
-                <!-- Aquí iría una gráfica real (Chart.js, etc.) -->
-                <div class="text-center">
-                    <i class="fas fa-chart-line text-4xl mb-3"></i>
-                    <p>Gráfica de actividad del sistema</p>
-                </div>
-            </div>
-        </div>
+        <app-graphic></app-graphic>
         
-        <!-- Expedientes Recientes -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h3 class="font-semibold text-gray-800 mb-6">Expedientes Recientes</h3>
-            <div class="space-y-4">
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-                    <div>
-                        <p class="font-medium text-sm">EXP-STCH-2025-04567</p>
-                        <p class="text-xs text-gray-500">Licencia de operación | Juan Pérez</p>
-                    </div>
-                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Digitalizado</span>
-                </div>
-                
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-                    <div>
-                        <p class="font-medium text-sm">EXP-STCH-2025-04568</p>
-                        <p class="text-xs text-gray-500">Renovación de permiso | Transportes Hidalgo</p>
-                    </div>
-                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">En revisión</span>
-                </div>
-                
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-                    <div>
-                        <p class="font-medium text-sm">EXP-STCH-2025-04569</p>
-                        <p class="text-xs text-gray-500">Inspección vehicular | Unidad 2345</p>
-                    </div>
-                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Digitalizado</span>
-                </div>
-                
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-                    <div>
-                        <p class="font-medium text-sm">EXP-STCH-2025-04570</p>
-                        <p class="text-xs text-gray-500">Solicitud nueva ruta | Ruta Pachuca-Mineral</p>
-                    </div>
-                    <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Pendiente</span>
-                </div>
-                
-                <div class="text-center pt-2">
-                    <button class="text-sm text-blue-600 hover:text-blue-800 font-medium">
-                        Ver todos los expedientes →
-                    </button>
-                </div>
-            </div>
-        </div>
+        <app-exp-recent></app-exp-recent>
+
     </div>
 
     <!-- ============================================================
-         ACCIONES RÁPIDAS
+         ACCIONES RÁPIDAS (botones con color vino)
     ============================================================ -->
     <div class="mb-8">
-        <h3 class="font-semibold text-gray-800 mb-4">Acciones Rápidas</h3>
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-[#691831] text-lg">Acciones Rápidas</h3>
+            <button class="text-sm text-[#691831] hover:text-[#691831]/80 flex items-center">
+                <i class="fas fa-history mr-2"></i> Ver historial
+            </button>
+        </div>
+        
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button class="bg-white border border-gray-200 rounded-lg p-4 flex items-center space-x-4 hover:shadow-md transition-shadow">
-                <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                    <i class="fas fa-search text-blue-600"></i>
+            <!-- Acción 1 - Búsqueda (vino) -->
+            <button (click)="irABusquedaAvanzada($event)" 
+                    class="bg-white rounded-lg border border-gray-200 p-4 flex items-start space-x-4 hover:shadow-md transition-all duration-200 hover:border-[#691831] group relative overflow-hidden">
+                <div class="absolute inset-0 bg-[#691831] opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
+                <div class="w-12 h-12 rounded-lg bg-[#691831]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#691831]/20 transition-colors z-10">
+                    <i class="fas fa-search text-[#691831] text-lg"></i>
                 </div>
-                <div class="text-left">
-                    <p class="font-medium text-sm">Búsqueda Avanzada</p>
-                    <p class="text-xs text-gray-500">Buscar en 30,000 expedientes</p>
-                </div>
-            </button>
-            
-            <button class="bg-white border border-gray-200 rounded-lg p-4 flex items-center space-x-4 hover:shadow-md transition-shadow">
-                <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                    <i class="fas fa-upload text-green-600"></i>
-                </div>
-                <div class="text-left">
-                    <p class="font-medium text-sm">Subir Documentos</p>
-                    <p class="text-xs text-gray-500">Agregar nuevos expedientes</p>
+                <div class="text-left flex-1 min-w-0 z-10">
+                    <p class="font-medium text-gray-800 text-sm mb-1 group-hover:text-[#691831]">Búsqueda Avanzada</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Buscar en 30,000 expedientes digitalizados</p>
+                    <div class="mt-2 flex items-center text-xs text-[#691831] font-medium">
+                        <span>Ir al buscador</span>
+                        <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                    </div>
                 </div>
             </button>
             
-            <button class="bg-white border border-gray-200 rounded-lg p-4 flex items-center space-x-4 hover:shadow-md transition-shadow">
-                <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                    <i class="fas fa-file-export text-purple-600"></i>
+            <!-- Acción 2 - Subir documentos (vino) -->
+            <button (click)="abrirModalSubida($event)" 
+                    class="bg-white rounded-lg border border-gray-200 p-4 flex items-start space-x-4 hover:shadow-md transition-all duration-200 hover:border-[#691831] group relative overflow-hidden">
+                <div class="absolute inset-0 bg-[#691831] opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
+                <div class="w-12 h-12 rounded-lg bg-[#691831]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#691831]/20 transition-colors z-10">
+                    <i class="fas fa-upload text-[#691831] text-lg"></i>
                 </div>
-                <div class="text-left">
-                    <p class="font-medium text-sm">Generar Reporte</p>
-                    <p class="text-xs text-gray-500">Estadísticas y métricas</p>
+                <div class="text-left flex-1 min-w-0 z-10">
+                    <p class="font-medium text-gray-800 text-sm mb-1 group-hover:text-[#691831]">Subir Documentos</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Agregar nuevos expedientes al sistema</p>
+                    <div class="mt-2 flex items-center text-xs text-[#691831] font-medium">
+                        <span>Comenzar subida</span>
+                        <i class="fas fa-plus ml-1 text-xs"></i>
+                    </div>
+                </div>
+            </button>
+            
+            <!-- Acción 3 - Generar reporte (vino) -->
+            <button (click)="generarReporte($event)" 
+                    class="bg-white rounded-lg border border-gray-200 p-4 flex items-start space-x-4 hover:shadow-md transition-all duration-200 hover:border-[#691831] group relative overflow-hidden">
+                <div class="absolute inset-0 bg-[#691831] opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
+                <div class="w-12 h-12 rounded-lg bg-[#691831]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#691831]/20 transition-colors z-10">
+                    <i class="fas fa-file-export text-[#691831] text-lg"></i>
+                </div>
+                <div class="text-left flex-1 min-w-0 z-10">
+                    <p class="font-medium text-gray-800 text-sm mb-1 group-hover:text-[#691831]">Generar Reporte</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">Reportes de estadísticas y métricas</p>
+                    <div class="mt-2 flex items-center text-xs text-[#691831] font-medium">
+                        <span>Descargar PDF</span>
+                        <i class="fas fa-download ml-1 text-xs"></i>
+                    </div>
                 </div>
             </button>
         </div>
     </div>
+</div>
 
+<!-- ============================================================
+     SCRIPT DASHBOARD (con coherencia vino)
+============================================================ -->
 <script>
-// Funcionalidades específicas del dashboard
-document.addEventListener('DOMContentLoaded', function() {
-    // Interacción con tarjetas de expedientes
-    const expedienteCards = document.querySelectorAll('.cursor-pointer');
-    expedienteCards.forEach(card => {
-        card.addEventListener('click', function() {
-            // Aquí iría la navegación al expediente detallado
-            console.log('Navegar a expediente');
-        });
-    });
-    
-    // Interacción con botones de acciones rápidas
-    const actionButtons = document.querySelectorAll('.bg-white.border');
-    actionButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const actionText = this.querySelector('.font-medium').textContent;
-            console.log('Acción seleccionada:', actionText);
-        });
-    });
-});
+function irABusquedaAvanzada(event) {
+    const boton = event.currentTarget;
+    boton.classList.add('ring-2', 'ring-[#691831]');
+
+    setTimeout(() => {
+        boton.classList.remove('ring-2', 'ring-[#691831]');
+        window.location.href = '/admin/expedientes';
+    }, 300);
+}
+
+function abrirModalSubida(event) {
+    const boton = event.currentTarget;
+    boton.classList.add('ring-2', 'ring-[#691831]');
+
+    setTimeout(() => {
+        boton.classList.remove('ring-2', 'ring-[#691831]');
+        window.location.href = '/admin/digitalizacion';
+    }, 300);
+}
+
+function generarReporte() {
+    const boton = event.currentTarget;
+    boton.classList.add('ring-2', 'ring-[#691831]');
+
+    setTimeout(() => {
+        boton.classList.remove('ring-2', 'ring-[#691831]');
+        window.location.href = '/admin/reportes';
+    }, 300);
+}
 </script>
+
+<!-- ============================================================
+     ESTILOS ESPECÍFICOS CON COLOR VINO
+============================================================ -->
+<style>
+/* Variables CSS para el color vino y sus variantes */
+:root {
+    --color-vino: #691831;
+    --color-vino-light: rgba(105, 24, 49, 0.1);
+    --color-vino-medium: rgba(105, 24, 49, 0.3);
+    --color-vino-dark: #4d1124;
+    --color-vino-hover: rgba(105, 24, 49, 0.05);
+}
+
+/* Clases utilitarias para el color vino */
+.text-vino {
+    color: var(--color-vino);
+}
+
+.bg-vino {
+    background-color: var(--color-vino);
+}
+
+.bg-vino-light {
+    background-color: var(--color-vino-light);
+}
+
+.border-vino {
+    border-color: var(--color-vino);
+}
+
+.hover\:bg-vino:hover {
+    background-color: var(--color-vino);
+}
+
+.hover\:text-vino:hover {
+    color: var(--color-vino);
+}
+
+/* Animaciones específicas para elementos vino */
+@keyframes pulse-vino {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(105, 24, 49, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(105, 24, 49, 0);
+    }
+}
+
+.pulse-vino {
+    animation: pulse-vino 2s infinite;
+}
+
+/* Efecto de brillo para elementos interactivos */
+.hover-glow-vino:hover {
+    filter: drop-shadow(0 0 8px rgba(105, 24, 49, 0.3));
+}
+
+/* Gradientes con color vino */
+.bg-gradient-vino {
+    background: linear-gradient(135deg, var(--color-vino) 0%, var(--color-vino-dark) 100%);
+}
+
+/* Scrollbar personalizado con color vino */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-vino-light);
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-vino-medium);
+}
+
+/* Estados de focus con color vino */
+.focus-vino:focus {
+    outline: 2px solid var(--color-vino);
+    outline-offset: 2px;
+    ring-color: var(--color-vino);
+}
+
+/* Transiciones suaves para cambios de color vino */
+.transition-vino {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efecto de elevación para cards con acento vino */
+.card-vino {
+    position: relative;
+}
+
+.card-vino::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-vino);
+    border-radius: 8px 8px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-vino:hover::before {
+    opacity: 1;
+}
+
+/* Responsive adjustments para elementos vino */
+@media (max-width: 768px) {
+    .text-vino {
+        font-size: 0.9em;
+    }
+    
+    .bg-vino-light {
+        background-color: rgba(105, 24, 49, 0.05);
+    }
+}
+
+/* Efecto de onda para botones vino */
+.btn-vino-ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-vino-ripple:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.btn-vino-ripple:focus:after {
+    animation: ripple-vino 1s ease-out;
+}
+
+@keyframes ripple-vino {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
+</style>

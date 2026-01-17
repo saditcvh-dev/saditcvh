@@ -1,0 +1,135 @@
+:host {
+  display: block;
+}
+
+/* Asegurar que las barras se vean */
+.bg-\[\#691831\] {
+  background-color: #691831;
+}
+
+.bg-\[\#691831\]\/20 {
+  background-color: rgba(105, 24, 49, 0.2);
+}
+
+.bg-\[\#691831\]\/50 {
+  background-color: rgba(105, 24, 49, 0.5);
+}
+
+.bg-\[\#691831\]\/80 {
+  background-color: rgba(105, 24, 49, 0.8);
+}
+
+/* Animaciones */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Transiciones suaves */
+.transition-all {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tooltip styling */
+.tooltip {
+  position: relative;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Estilos específicos para la gráfica - CRECIMIENTO DESDE ABAJO */
+.chart-bar-container {
+  display: flex;
+  align-items: flex-end; /* Esto hace que las barras crezcan desde abajo */
+  height: 100%;
+}
+
+/* Para asegurar que las barras tengan una altura mínima */
+.min-h-bar {
+  min-height: 2px;
+}
+
+/* Asegurar que el contenido dentro de las barras esté bien posicionado */
+.bar-content {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Efecto hover para barras */
+.bar-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(105, 24, 49, 0.2);
+}
+
+/* Deshabilitar estados */
+.disabled\:opacity-50:disabled {
+  opacity: 0.5;
+}
+
+.disabled\:cursor-not-allowed:disabled {
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .text-2xl {
+    font-size: 1.25rem;
+  }
+  
+  .h-72 {
+    height: 250px;
+  }
+  
+  .text-xs {
+    font-size: 0.7rem;
+  }
+  
+  /* Ajustar ancho de barras en móvil */
+  .w-10 {
+    width: 2rem;
+  }
+  
+  /* Ajustar espaciado en móvil */
+  .px-1 {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .h-72 {
+    height: 220px;
+  }
+  
+  .w-10 {
+    width: 1.5rem;
+  }
+  
+  .text-2xl {
+    font-size: 1.1rem;
+  }
+  
+  /* Ajustar grid de estadísticas en móvil */
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .p-3 {
+    padding: 0.5rem;
+  }
+}

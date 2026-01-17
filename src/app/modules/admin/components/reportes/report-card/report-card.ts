@@ -1,81 +1,87 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+/**
+ * Simple browser download helper to replace file-saver usage.
+ */
+function downloadBlob(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
 
 @Component({
   selector: 'app-report-card',
-  standalone: true,
-  imports: [CommonModule],
+  standalone: false,
   templateUrl: './report-card.html',
 })
-export class ReportCardComponent {
-  @Input() title: string = '';
-  @Input() description: string = '';
-  @Input() icon: string = 'fas fa-chart-line';
-  @Input() color: 'blue' | 'green' | 'purple' | 'orange' | 'red' = 'blue';
-  @Input() frequency: string = 'Mensual';
-  @Input() lastGenerated: string = '15/12/2025';
-  @Input() isCustom: boolean = false;
+export class ReportCard {
+  // URLs de los endpoints
+  private reporteDocumentosUrl = 'http://localhost:4000/api/reports/reporte-digitalizacion/pdf';
+  private reporteUsuariosUrl = 'http://localhost:4000/api/reports/reporte-usuarios/pdf';
   
-  @Output() generate = new EventEmitter<void>();
-  @Output() configure = new EventEmitter<void>();
+  // Estados de carga
+  isLoadingDocumentos = false;
+  isLoadingUsuarios = false;
 
-  // En report-card.ts, actualiza el método getColorClasses:
-  getColorClasses() {
-    const colorMap = {
-      blue: {
-        bg: 'bg-blue-100',
-        text: 'text-blue-700', // Cambiado de text-blue-600
-        border: 'border-blue-400', // Cambiado de border-blue-300
-        bgLight: 'bg-blue-50',
-        textDark: 'text-blue-900' // Cambiado de text-blue-800
-      },
-      green: {
-        bg: 'bg-green-100',
-        text: 'text-green-700',
-        border: 'border-green-400',
-        bgLight: 'bg-green-50',
-        textDark: 'text-green-900'
-      },
-      purple: {
-        bg: 'bg-purple-100',
-        text: 'text-purple-700',
-        border: 'border-purple-400',
-        bgLight: 'bg-purple-50',
-        textDark: 'text-purple-900'
-      },
-      orange: {
-        bg: 'bg-orange-100',
-        text: 'text-orange-700',
-        border: 'border-orange-400',
-        bgLight: 'bg-orange-50',
-        textDark: 'text-orange-900'
-      },
-      red: {
-        bg: 'bg-red-100',
-        text: 'text-red-700',
-        border: 'border-red-400',
-        bgLight: 'bg-red-50',
-        textDark: 'text-red-900'
-      }
-    };
+  constructor(private http: HttpClient) {}
 
-    return colorMap[this.color];
+  /** ===============================
+   *  GENERAR REPORTE DE DOCUMENTOS
+   *  =============================== */
+  generarReporteDocumentos(): void {
+    if (this.isLoadingDocumentos) return;
+    
+    this.isLoadingDocumentos = true;
+    console.log('📄 Generando reporte de documentos...');
+    
+    this.http.get(this.reporteDocumentosUrl, { responseType: 'blob' })
+      .subscribe({
+        next: (blob: Blob) => {
+          const fecha = new Date().toISOString().split('T')[0];
+          const filename = `reporte-documentos-${fecha}.pdf`;
+          
+          downloadBlob(blob, filename);
+          this.isLoadingDocumentos = false;
+          
+          console.log('✅ Reporte de documentos descargado:', filename);
+        },
+        error: (error) => {
+          console.error('❌ Error generando reporte de documentos:', error);
+          this.isLoadingDocumentos = false;
+        }
+      });
   }
 
-  onGenerateClick(event: MouseEvent) {
-    event.stopPropagation();
-    if (this.isCustom) {
-      this.configure.emit();
-    } else {
-      this.generate.emit();
-    }
-  }
-
-  onCardClick() {
-    if (this.isCustom) {
-      this.configure.emit();
-    } else {
-      this.generate.emit();
-    }
+  /** ===============================
+   *  GENERAR REPORTE DE USUARIOS
+   *  =============================== */
+  generarReporteUsuarios(): void {
+    if (this.isLoadingUsuarios) return;
+    
+    this.isLoadingUsuarios = true;
+    console.log('👥 Generando reporte de usuarios...');
+    
+    this.http.get(this.reporteUsuariosUrl, { responseType: 'blob' })
+      .subscribe({
+        next: (blob: Blob) => {
+          const fecha = new Date().toISOString().split('T')[0];
+          const filename = `reporte-usuarios-${fecha}.pdf`;
+          
+          downloadBlob(blob, filename);
+          this.isLoadingUsuarios = false;
+          
+          console.log('✅ Reporte de usuarios descargado:', filename);
+        },
+        error: (error) => {
+          console.error('❌ Error generando reporte de usuarios:', error);
+          this.isLoadingUsuarios = false;
+        }
+      });
   }
 }
