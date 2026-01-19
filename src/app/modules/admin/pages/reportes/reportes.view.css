@@ -1,0 +1,40 @@
+/* Estilos para gráficas de ejemplo */
+.clip-path-pie-45 {
+    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 50%);
+}
+
+.clip-path-pie-90 {
+    clip-path: polygon(50% 50%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%);
+}
+
+.clip-path-pie-135 {
+    clip-path: polygon(50% 50%, 100% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 50%);
+}
+
+.clip-path-pie-180 {
+    clip-path: polygon(50% 50%, 100% 100%, 0% 100%, 0% 50%, 50% 50%);
+}
+
+/* Animaciones sutiles */
+.transition-all {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Scroll personalizado con colores institucionales */
+.overflow-x-auto::-webkit-scrollbar {
+    height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+    background: rgba(105, 27, 49, 0.05);
+    border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #691B31, #A02142, #BC955B);
+    border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #A02142, #BC955B, #6F7271);
+}

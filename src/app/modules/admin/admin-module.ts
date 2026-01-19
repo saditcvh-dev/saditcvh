@@ -15,12 +15,13 @@ import { Sidebar } from './components/sidebar/sidebar';
 import { UserFormComponent } from './components/user-form/user-form';
 import { PasswordToggleComponent } from './components/password-toggle/password-toggle';
 import { Breadcrumbs } from './components/breadcrumbs/breadcrumbs';
-import { KpiCardComponent } from './components/reportes/kpi-card/kpi-card';
 import { ReportCard } from './components/reportes/report-card/report-card';
 import { CardsComponent } from './components/dashboard/cards/cards';
 import { GraphicComponent } from './components/dashboard/graphic/graphic';
 import { ExpRecentComponent } from './components/dashboard/exp-recent/exp-recent';
 import { GraphicCircle } from './components/reportes/graphic-circle/graphic-circle';
+import { GraphicModalidadBarsComponent } from './components/reportes/graphic-modalidad/graphic-modalidad';
+import { GraphicMunicipioMapComponent } from './components/reportes/graphic-municipio/graphic-municipio';
 import { PermissionMatrixComponent } from './components/permission-matrix/permission-matrix';
 import { ActionBadgeComponent } from './components/action-badge/action-badge';
 import { LogDetailModalComponent } from './components/log-detail-modal/log-detail-modal';
@@ -54,12 +55,13 @@ import { PdfViewerView } from './components/pdf-viewer/pdf-viewer.view';
     Header,
     Sidebar,
     Breadcrumbs,
-    KpiCardComponent,
     UserFormComponent,
     PasswordToggleComponent,
     TreeNodeComponent,
     CardsComponent,
     GraphicComponent,
+    GraphicModalidadBarsComponent,
+    GraphicMunicipioMapComponent,
     ExpRecentComponent,
     GraphicCircle,
     ReportCard,
