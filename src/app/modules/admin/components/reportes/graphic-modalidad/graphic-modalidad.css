@@ -1,0 +1,136 @@
+:host {
+  display: block;
+}
+
+/* Animación de giro */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Transiciones suaves para las barras */
+.transition-all {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scroll personalizado para el contenedor de barras */
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Efecto hover para las barras */
+.w-16 .relative:hover .rounded-t-lg {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .w-24 {
+    width: 5rem;
+  }
+  
+  .w-16 {
+    width: 3.5rem;
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+  
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .w-24 {
+    width: 4rem;
+  }
+  
+  .w-16 {
+    width: 3rem;
+  }
+  
+  .text-lg {
+    font-size: 1rem;
+  }
+  
+  .flex-col.sm\:flex-row {
+    flex-direction: column;
+  }
+  
+  .gap-4 {
+    gap: 0.75rem;
+  }
+  
+  .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 0;
+    margin-right: 0.25rem;
+    margin-left: 0.25rem;
+  }
+}
+
+/* Animación de entrada para las barras */
+@keyframes barRise {
+  from { height: 0; }
+  to { height: var(--final-height); }
+}
+
+.w-16 .rounded-t-lg {
+  animation: barRise 0.6s ease-out forwards;
+}
+
+/* Mejora de accesibilidad */
+button:focus-visible {
+  outline: 2px solid #691B31;
+  outline-offset: 2px;
+}
+
+/* Tooltip para nombres largos */
+[title] {
+  position: relative;
+}
+
+[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 50;
+}

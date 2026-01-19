@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
   standalone: false,
   selector: 'app-dashboard-view',
   templateUrl: './dashboard.view.html',
+  styleUrls: ['./dashboard.view.css']
 })
 export class DashboardView {
 
@@ -16,7 +17,7 @@ export class DashboardView {
 
     setTimeout(() => {
       boton.classList.remove('ring-2', 'ring-[#691831]');
-      this.router.navigate(['/admin/expedientes']);
+      this.router.navigate(['/admin/explorador']);
     }, 300);
   }
 

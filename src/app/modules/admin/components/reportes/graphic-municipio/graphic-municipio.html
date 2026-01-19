@@ -1,0 +1,212 @@
+<!-- Gráfica de Documentos por Municipio -->
+<div class="bg-white rounded-xl border border-[#99999A]/20 p-6 shadow-sm">
+    
+    <!-- Encabezado -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+        <div>
+            <h3 class="font-semibold text-[#691B31]">Documentos por Municipio</h3>
+            <p class="text-sm text-[#6F7271]">
+                <i class="fas fa-clock mr-1 text-xs"></i>
+                Actualizado: {{ getLastUpdateTime() }}
+                <span *ngIf="getUpdateAgo()"> ({{ getUpdateAgo() }})</span>
+            </p>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+            <!-- Indicador de carga -->
+            <div *ngIf="isLoading" class="flex items-center text-xs text-[#6F7271]">
+                <div class="animate-spin rounded-full h-3 w-3 border-b-2 border-[#691831] mr-1"></div>
+                Cargando...
+            </div>
+            
+            <!-- Botón de recarga -->
+            <button 
+                (click)="refreshChart()" 
+                [disabled]="isLoading"
+                class="p-1.5 text-[#691B31] hover:bg-[#691B31]/10 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Actualizar datos"
+            >
+                <i class="fas fa-sync-alt text-sm" [class.fa-spin]="isLoading"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mensaje de error -->
+    <div *ngIf="hasError && !isLoading" class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-700">
+        <i class="fas fa-exclamation-triangle mr-2"></i>
+        {{ errorMessage }} - Mostrando datos de ejemplo
+    </div>
+
+    <!-- Estadísticas generales -->
+    <div *ngIf="!isLoading && municipiosData.length > 0" class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-[#691B31]">{{ formatNumber(totalDocumentos) }}</div>
+            <div class="text-sm text-[#6F7271]">Documentos</div>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-[#691B31]">{{ formatNumber(totalPaginas) }}</div>
+            <div class="text-sm text-[#6F7271]">Páginas</div>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-[#691B31]">{{ totalMunicipios }}</div>
+            <div class="text-sm text-[#6F7271]">Municipios</div>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="text-2xl font-bold text-[#691B31]">
+                {{ formatNumber(municipiosData[0]?.documentos?.total || 0) }}
+            </div>
+            <div class="text-sm text-[#6F7271] truncate">{{ municipiosData[0]?.nombre || 'Sin datos' }}</div>
+        </div>
+    </div>
+
+    <!-- Selector de vista y regiones -->
+    <div class="mb-6 flex flex-wrap gap-2">
+        <!-- Tipo de vista (solo lista, seleccionada por defecto) -->
+        <div class="flex space-x-1 bg-gray-100 rounded-lg p-1">
+            <button 
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all bg-white text-[#691B31] shadow-sm"
+            >
+                <i class="fas fa-list mr-2"></i>Lista
+            </button>
+        </div>
+        
+        <!-- Filtro por regiones -->
+        <div class="flex flex-wrap gap-2 ml-auto">
+            <button 
+                (click)="selectRegion(null)"
+                [class.bg-[#691B31]]="selectedRegion === null"
+                [class.text-white]="selectedRegion === null"
+                class="px-3 py-1.5 text-xs rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+                Todos ({{ totalMunicipios }})
+            </button>
+            <button 
+                *ngFor="let region of regiones"
+                (click)="selectRegion(region.id)"
+                [class.bg-[#691B31]]="selectedRegion === region.id"
+                [class.text-white]="selectedRegion === region.id"
+                class="px-3 py-1.5 text-xs rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                [title]="'Municipios: ' + getRegionMunicipiosCount(region.id) + ' | Documentos: ' + getRegionTotalDocuments(region.id)"
+            >
+                {{ region.nombre.split(' ')[1] }} ({{ getRegionMunicipiosCount(region.id) }})
+            </button>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="h-96">
+        
+        <!-- Indicador de carga -->
+        <div *ngIf="isLoading" class="h-full flex flex-col items-center justify-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#691831] mx-auto mb-4"></div>
+            <p class="text-sm font-medium text-[#6F7271]">Cargando datos de municipios...</p>
+        </div>
+        
+        <!-- Sin datos -->
+        <div *ngIf="!isLoading && municipiosData.length === 0" class="h-full flex flex-col items-center justify-center text-[#6F7271]">
+            <i class="fas fa-map-marked-alt text-4xl mb-3 text-[#BC955B]"></i>
+            <p>No hay datos disponibles</p>
+            <p class="text-sm mt-2">No se encontraron documentos por municipio</p>
+        </div>
+        
+        <!-- Vista de lista (siempre visible cuando hay datos) -->
+        <div *ngIf="!isLoading && municipiosData.length > 0" class="h-full overflow-y-auto">
+            <div class="space-y-3">
+                <div *ngFor="let municipio of getMunicipiosToShow()" 
+                     class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold mr-3"
+                                 [class]="getMapColorClass(getMapIntensity(municipio))">
+                                {{ municipio.numero }}
+                            </div>
+                            <div>
+                                <div class="font-medium text-[#691B31]">{{ municipio.nombre }}</div>
+                                <div class="text-xs text-[#6F7271]">
+                                    {{ municipio.modalidades_diferentes }} modalidad(es)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-[#691B31]">
+                                {{ formatNumber(municipio.documentos.total) }}
+                            </div>
+                            <div class="text-sm text-[#6F7271]">
+                                {{ formatPorcentaje(getMunicipioCompletadosPercentage(municipio)) }}% completado
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Barra de progreso -->
+                    <div class="mt-3">
+                        <div class="flex justify-between text-xs text-[#6F7271] mb-1">
+                            <span>Completados: {{ formatNumber(municipio.documentos.completados) }}</span>
+                            <span>{{ formatPorcentaje(municipio.porcentaje) }}% del total</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full transition-all duration-500"
+                                 [style.width]="getMunicipioCompletadosPercentage(municipio) + '%'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas por región -->
+    <div *ngIf="!isLoading && municipiosData.length > 0" class="pt-6 border-t border-[#99999A]/20 mt-6">
+        <h4 class="font-medium text-[#691B31] mb-4">Distribución por Región</h4>
+        
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div *ngFor="let region of regiones" 
+                 (click)="selectRegion(region.id)"
+                 [class.ring-2]="selectedRegion === region.id"
+                 [class.ring-[#691B31]]="selectedRegion === region.id"
+                 class="p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-all">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-[#691B31]">
+                        {{ formatNumber(getRegionTotalDocuments(region.id)) }}
+                    </div>
+                    <div class="text-sm text-[#6F7271]">{{ region.nombre.split(' ')[1] }}</div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        {{ getRegionMunicipiosCount(region.id) }} municipio(s)
+                    </div>
+                    <div class="text-xs text-[#BC955B] font-medium mt-1">
+                        {{ formatPorcentaje(getRegionPercentage(region.id)) }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Leyenda del mapa de calor -->
+        <div class="mt-6 pt-6 border-t border-gray-200">
+            <div class="flex items-center justify-between text-sm text-[#6F7271]">
+                <span>Intensidad de documentos:</span>
+                <div class="flex items-center space-x-2">
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 rounded bg-blue-400 mr-1"></div>
+                        <span class="text-xs">Muy baja</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 rounded bg-green-400 mr-1"></div>
+                        <span class="text-xs">Baja</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 rounded bg-yellow-400 mr-1"></div>
+                        <span class="text-xs">Media</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 rounded bg-orange-400 mr-1"></div>
+                        <span class="text-xs">Alta</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 rounded bg-red-500 mr-1"></div>
+                        <span class="text-xs">Muy alta</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

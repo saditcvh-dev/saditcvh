@@ -1,0 +1,154 @@
+:root {
+    --color-vino: #691831;
+    --color-vino-light: rgba(105, 24, 49, 0.1);
+    --color-vino-medium: rgba(105, 24, 49, 0.3);
+    --color-vino-dark: #4d1124;
+    --color-vino-hover: rgba(105, 24, 49, 0.05);
+}
+
+/* Clases utilitarias para el color vino */
+.text-vino {
+    color: var(--color-vino);
+}
+
+.bg-vino {
+    background-color: var(--color-vino);
+}
+
+.bg-vino-light {
+    background-color: var(--color-vino-light);
+}
+
+.border-vino {
+    border-color: var(--color-vino);
+}
+
+.hover\:bg-vino:hover {
+    background-color: var(--color-vino);
+}
+
+.hover\:text-vino:hover {
+    color: var(--color-vino);
+}
+
+/* Animaciones específicas para elementos vino */
+@keyframes pulse-vino {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(105, 24, 49, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(105, 24, 49, 0);
+    }
+}
+
+.pulse-vino {
+    animation: pulse-vino 2s infinite;
+}
+
+/* Efecto de brillo para elementos interactivos */
+.hover-glow-vino:hover {
+    filter: drop-shadow(0 0 8px rgba(105, 24, 49, 0.3));
+}
+
+/* Gradientes con color vino */
+.bg-gradient-vino {
+    background: linear-gradient(135deg, var(--color-vino) 0%, var(--color-vino-dark) 100%);
+}
+
+/* Scrollbar personalizado con color vino */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-vino-light);
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-vino-medium);
+}
+
+/* Estados de focus con color vino */
+.focus-vino:focus {
+    outline: 2px solid var(--color-vino);
+    outline-offset: 2px;
+}
+
+/* Transiciones suaves para cambios de color vino */
+.transition-vino {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efecto de elevación para cards con acento vino */
+.card-vino {
+    position: relative;
+}
+
+.card-vino::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-vino);
+    border-radius: 8px 8px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-vino:hover::before {
+    opacity: 1;
+}
+
+/* Responsive adjustments para elementos vino */
+@media (max-width: 768px) {
+    .text-vino {
+        font-size: 0.9em;
+    }
+    
+    .bg-vino-light {
+        background-color: rgba(105, 24, 49, 0.05);
+    }
+}
+
+/* Efecto de onda para botones vino */
+.btn-vino-ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-vino-ripple:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.btn-vino-ripple:focus:after {
+    animation: ripple-vino 1s ease-out;
+}
+
+@keyframes ripple-vino {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
