@@ -10,6 +10,7 @@ import { ModalService } from './services/modal.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ArchivoUrlService } from './services/archivo-url.service';
 import { LoadingService } from '../../../../core/services/explorador-loading.service';
+import { ViewerTab } from '../../../../core/helpers/tabs-permissions.helper';
 
 @Component({
   selector: 'app-explorador', standalone: false,
@@ -163,8 +164,15 @@ export class ExploradorView implements OnInit {
 
     switch (action) {
       case 'open':
-        this.stateService.selectNode(node, false);
+        this.stateService.selectNode(node, true, true);
+
+        if (node.children) {
+          this.stateService.showToast('Carpeta expandida');
+        } else {
+          this.stateService.showToast('Documento cargado en visor');
+        }
         break;
+
 
       case 'add_autorizacion':
         this.modalService.openCreateAutorizacionModal(node);
@@ -191,8 +199,7 @@ export class ExploradorView implements OnInit {
       this.stateService.clearSelection();
     }
   }
-
-  onTabChange(tab: 'preview' | 'metadata' | 'security' | 'notes' | 'history'): void {
+  onTabChange(tab: ViewerTab): void {
     this.stateService.setActiveTab(tab);
   }
 
