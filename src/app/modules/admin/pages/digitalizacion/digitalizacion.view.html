@@ -1,628 +1,925 @@
-<!-- PANTALLA DE DIGITALIZACIÓN | SISTEMA STCH -->
-<div class="p-6">
-    
-    <!-- Cabecera con información del proyecto -->
-    <div class="mb-8">
-        <div class="flex flex-col md:flex-row md:items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800 mb-2">Proceso de Digitalización</h1>
-                <p class="text-gray-600">LPN EA-913003989-N856-2025 | Grupo Álamo Alto S.A. de C.V.</p>
+<app-toast [toast]="toast()" (close)="closeToast()"></app-toast>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Header con Logo y Tabs -->
+  <header class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Logo y Titulo -->
+      <div class="flex items-center justify-between py-4">
+        <div class="flex items-center space-x-3">
+          
+          <div>
+            <h1 class="text-xl font-bold text-gray-900">Digitalización</h1>
+            <p class="text-xs text-gray-500">Procesamiento OCR</p>
+          </div>
+        </div>
+
+        <!-- Estadisticas y Actualizar -->
+        <div class="flex items-center space-x-6">
+          <div class="hidden md:flex items-center space-x-4 text-sm">
+            <span class="text-gray-600">Total: <span class="font-semibold text-gray-900">{{ totalPdfsCount }}</span></span>
+            <span class="text-gray-600">Completados: <span class="font-semibold text-green-600">{{ completedPdfsCount() }}</span></span>
+            <span class="text-gray-600">En proceso: <span class="font-semibold text-yellow-600">{{ processingPdfsCount() }}</span></span>
+            <span class="text-gray-600">Con OCR: <span class="font-semibold text-blue-600">{{ withOcrCount() }}</span></span>
+          </div>
+          <button (click)="loadPdfsList()"
+            class="px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors flex items-center space-x-2 font-medium">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            <span>Actualizar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <nav class="flex space-x-1 border-t border-gray-100 pt-2">
+        <button (click)="activeTab = 'upload'"
+          [class]="activeTab === 'upload' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'"
+          class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 16v-8m0 0l-3 3m3-3l3 3M20 16.5a4.5 4.5 0 00-4.5-4.5h-.75A6.75 6.75 0 105.25 18h8.5" />
+          </svg>
+          <span>Subir PDF</span>
+        </button>
+
+        <button (click)="activeTab = 'search'"
+          [class]="activeTab === 'search' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'"
+          class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          </svg>
+          <span>Buscar en PDFs</span>
+        </button>
+
+        <button (click)="activeTab = 'quick'"
+          [class]="activeTab === 'quick' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'"
+          class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" />
+          </svg>
+          <span>Busqueda Rapida</span>
+        </button>
+
+        <button (click)="activeTab = 'global'"
+          [class]="activeTab === 'global' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'"
+          class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
+          </svg>
+          <span>Busqueda Global</span>
+        </button>
+
+        <button (click)="activeTab = 'files'"
+          [class]="activeTab === 'files' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'"
+          class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+          </svg>
+          <span>Archivos ({{ totalPdfsCount }})</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- UPLOAD SECTION -->
+    <section *ngIf="activeTab === 'upload'" class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Upload Form -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
+            <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center">
+              
+              Seleccionar Archivo PDF
+            </h3>
+
+            <!-- File Upload Area -->
+            <div
+              class="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center transition-all hover:border-blue-500 hover:bg-blue-50/30 cursor-pointer group"
+              (click)="fileInput.click()">
+              <input #fileInput type="file" accept=".pdf" class="hidden"  (change)="onFilesSelected($event)"  multiple/>
+              <div class="text-blue-500 mb-4 group-hover:scale-110 transition-transform">
+                <svg class="w-20 h-20 mx-auto" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 16v-8m0 0l-3 3m3-3l3 3M20 16.5a4.5 4.5 0 00-4.5-4.5h-.75A6.75 6.75 0 105.25 18h8.5" />
+                </svg>
+              </div>
+              <p class="text-gray-900 mb-2 font-semibold text-lg">
+                {{ selectedFiles.length > 0 
+                    ? selectedFiles.length + ' PDFs seleccionados'
+                    : 'Arrastra o haz clic para seleccionar uno o más PDFs' }}
+              </p>
+
+              <!-- <p class="text-gray-900 mb-2 font-semibold text-lg">
+                {{ selectedFile?.name || 'Arrastra o haz clic para seleccionar' }}
+              </p> -->
+              <p class="text-sm text-gray-500">Tamano maximo: 50MB - Formatos: PDF</p>
             </div>
-            <div class="mt-4 md:mt-0">
+            <div *ngIf="selectedFiles.length > 0"
+                class="mt-6 space-y-3">
+              <div *ngFor="let file of selectedFiles; let i = index"
+                  class="p-4 bg-green-50 rounded-xl border border-green-200 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium">
-                        <i class="fas fa-check-circle mr-1"></i>En progreso
+                  <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" stroke-width="2"
+                      viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75" />
+                  </svg>
+                  <div>
+                    <p class="font-semibold text-gray-900">{{ file.name }}</p>
+                    <p class="text-xs text-gray-600">{{ formatBytes(file.size) }}</p>
+                  </div>
+                </div>
+
+                <button (click)="removeSelectedFile(i)"
+                        class="text-red-500 hover:text-red-700 text-sm font-medium">
+                  Quitar
+                </button>
+              </div>
+            </div>
+<!-- 
+            <div *ngIf="selectedFile" class="mt-6 p-5 bg-green-50 rounded-xl border border-green-200">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                  <div class="w-14 h-14 border-2 border-green-500 rounded-xl flex items-center justify-center">
+                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-semibold text-gray-900">{{ selectedFile.name }}</p>
+                    <p class="text-sm text-gray-600">{{ formatBytes(selectedFile.size) }}</p>
+                  </div>
+                </div>
+                <p class="text-sm font-semibold text-green-600">Listo para subir</p>
+              </div>
+            </div> -->
+
+            <!-- OCR Option -->
+            <div class="mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200">
+              <label class="flex items-center space-x-4 cursor-pointer">
+                <div class="relative">
+                  <input type="checkbox" [(ngModel)]="useOcr" class="sr-only peer" />
+                  <div class="w-12 h-7 bg-gray-300 rounded-full peer peer-checked:bg-blue-500 transition-colors"></div>
+                  <div class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+                </div>
+                <div class="flex-1">
+                  <span class="text-gray-900 font-semibold">Usar OCR para extraccion de texto</span>
+                  <p class="text-sm text-gray-600 mt-1">Recomendado para PDFs escaneados. El proceso puede tardar mas tiempo.</p>
+                </div>
+              </label>
+            </div>
+
+            <!-- Upload Button -->
+            <button (click)="uploadFile()" [disabled]="selectedFiles.length === 0 || isUploading()"
+              class="w-full mt-6 py-4 border-2 border-blue-500 bg-blue-500 text-white font-bold rounded-xl transition-all hover:bg-blue-600 hover:border-blue-600 disabled:border-gray-300 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center">
+              <span *ngIf="!isUploading()" class="flex items-center space-x-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <span>Subir y procesar PDF</span>
+              </span>
+              <span *ngIf="isUploading()" class="flex items-center space-x-3">
+                <div class="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Procesando...</span>
+              </span>
+            </button>
+
+            <!-- Upload Status -->
+            <div *ngIf="isUploading()" class="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+              <div class="flex items-center justify-between text-sm mb-3">
+                <span class="text-gray-700 font-medium">Estado del procesamiento:</span>
+                <span class="font-semibold text-blue-500">En progreso</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-3">
+                <div class="bg-blue-500 h-3 rounded-full animate-pulse" style="width: 70%"></div>
+              </div>
+              <p class="text-xs text-gray-600 text-center mt-3">El archivo aparecera en la lista cuando termine el procesamiento.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Uploads -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Procesos Recientes
+            </h3>
+
+            <div *ngIf="recentUploads.length === 0" class="text-center py-8">
+              <div class="w-16 h-16 mx-auto mb-3 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <p class="text-sm text-gray-500">No hay procesos recientes</p>
+            </div>
+
+            <div *ngIf="recentUploads.length > 0" class="space-y-3 max-h-96 overflow-y-auto">
+              <div *ngFor="let upload of recentUploads" class="p-3 border border-gray-200 rounded-lg">
+                <div class="flex items-center justify-between mb-2">
+                  <p class="text-sm font-medium text-gray-900 truncate flex-1">{{ upload.filename }}</p>
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ml-2" [ngClass]="{
+                      'bg-green-100 text-green-800': upload.status === 'completed',
+                      'bg-yellow-100 text-yellow-800': upload.status === 'processing',
+                      'bg-blue-100 text-blue-800': upload.status === 'uploading',
+                      'bg-red-100 text-red-800': upload.status === 'failed'
+                    }">
+                    {{ upload.status === 'uploading' ? 'Subiendo' : upload.status === 'processing' ? 'Procesando' : upload.status === 'completed' ? 'Completado' : 'Error' }}
+                  </span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                  <div class="h-1.5 rounded-full transition-all duration-300" [ngClass]="{
+                      'bg-green-500': upload.status === 'completed',
+                      'bg-yellow-500': upload.status === 'processing',
+                      'bg-blue-500': upload.status === 'uploading',
+                      'bg-red-500': upload.status === 'failed'
+                    }" [style.width.%]="upload.progress"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEARCH SECTION -->
+    <section *ngIf="activeTab === 'search'" class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- PDF Selection -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+              <svg class="w-6 h-6 text-blue-500 mr-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375" />
+              </svg>
+              Seleccionar PDF
+            </h3>
+
+            <div class="relative mb-4">
+              <select [(ngModel)]="selectedPdfId" (change)="onPdfSelect(selectedPdfId)"
+                class="w-full p-4 pl-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white text-gray-900 font-medium">
+                <option value="">-- Selecciona un PDF --</option>
+                <option *ngFor="let pdf of pdfsList" [value]="pdf.id">
+                  {{ pdf.filename }} ({{ pdf.pages }} pags.)
+                </option>
+              </select>
+              <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- PDF Info -->
+            <div *ngIf="selectedPdfInfo" class="p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <h4 class="font-bold text-gray-900 mb-3 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                </svg>
+                Informacion
+              </h4>
+              <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Subido:</span>
+                  <span class="font-semibold text-gray-900">{{ formatDate(selectedPdfInfo.upload_date.toString()) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Tamano:</span>
+                  <span class="font-semibold text-gray-900">{{ formatBytes(selectedPdfInfo.size) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Texto extraido:</span>
+                  <span class="font-semibold" [class]="selectedPdfInfo.has_text ? 'text-green-600' : 'text-yellow-600'">
+                    {{ selectedPdfInfo.has_text ? 'Disponible' : 'No disponible' }}
+                  </span>
+                </div>
+                <div class="flex flex-col space-y-2 mt-4 pt-3 border-t border-gray-200">
+                  <button (click)="viewText(selectedPdfInfo!.id)"
+                    class="w-full px-3 py-2 text-sm border-2 border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors font-medium">
+                    Ver texto
+                  </button>
+                  <button (click)="downloadText(selectedPdfInfo!.id)"
+                    class="w-full px-3 py-2 text-sm border-2 border-green-500 text-green-500 rounded-lg hover:bg-green-50 transition-colors font-medium">
+                    Descargar TXT
+                  </button>
+                  <button (click)="downloadSearchablePDF(selectedPdfInfo!.id)"
+                    class="w-full px-3 py-2 text-sm border-2 border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors font-medium">
+                    Descargar PDF con texto
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search Form and Results -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Search Form -->
+          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Buscar en documento</h3>
+            <div class="space-y-4">
+              <div class="relative">
+                <input type="text" [(ngModel)]="searchTerm" placeholder="Escribe el texto a buscar..."
+                  class="w-full p-4 pl-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <label class="flex items-center space-x-3 cursor-pointer">
+                  <div class="relative">
+                    <input type="checkbox" [(ngModel)]="caseSensitive" class="sr-only peer" />
+                    <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-500 transition-colors"></div>
+                    <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                  </div>
+                  <span class="text-gray-700 font-medium">Coincidir mayusculas/minusculas</span>
+                </label>
+                <button (click)="searchInPdf()" [disabled]="!selectedPdfId || !searchTerm.trim() || isSearching()"
+                  class="px-6 py-3 border-2 border-blue-500 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 hover:border-blue-600 disabled:border-gray-300 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center space-x-2">
+                  <span *ngIf="!isSearching()">Buscar</span>
+                  <span *ngIf="isSearching()" class="flex items-center space-x-2">
+                    <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Buscando...</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Search Results -->
+          <div *ngIf="searchResults" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-blue-500 p-5">
+              <div class="flex justify-between items-center">
+                <h4 class="font-bold text-white text-lg">Resultados: "{{ searchResults.term }}"</h4>
+                <div class="flex items-center space-x-3 bg-white/20 px-4 py-2 rounded-full">
+                  <span class="text-sm font-semibold text-white">{{ searchResults.total_matches }} coincidencias</span>
+                  <span class="text-xs text-white/80">{{ searchResults.execution_time | number:'1.3-3' }}s</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-6">
+              <div *ngIf="searchResults.results.length > 0" class="space-y-3 max-h-[500px] overflow-y-auto">
+                <div *ngFor="let result of searchResults.results; let i = index"
+                  class="p-4 bg-gray-50 border-2 border-gray-200 rounded-xl hover:border-blue-500 transition-all">
+                  <div class="flex justify-between items-start mb-3">
+                    <span class="inline-flex items-center px-3 py-1 text-xs font-bold border-2 border-blue-500 text-blue-500 rounded-full">
+                      Pagina {{ result.page }}
+                      <span class="ml-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">{{ i + 1 }}</span>
                     </span>
-                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
-                        <i class="fas fa-play mr-2"></i>Iniciar lote
-                    </button>
+                    <span class="text-sm text-gray-600 font-medium">Pos: {{ result.position }}</span>
+                  </div>
+                  <p class="text-gray-800 leading-relaxed">
+                    ...<span class="bg-yellow-200 px-1.5 py-0.5 rounded font-semibold">{{ result.context }}</span>...
+                  </p>
                 </div>
-            </div>
-        </div>
-    </div>
+              </div>
 
-    <!-- ============================================================
-         ESTADÍSTICAS DE PROGRESO
-    ============================================================ -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        
-        <!-- Progreso general -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="font-medium text-gray-800">Progreso total</h3>
-                <span class="text-2xl font-bold text-blue-600">68%</span>
+              <div *ngIf="searchResults.total_matches === 0" class="text-center py-12">
+                <div class="w-20 h-20 mx-auto mb-4 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                  <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                  </svg>
+                </div>
+                <p class="text-gray-600 font-medium">No se encontraron coincidencias</p>
+                <p class="text-sm text-gray-500 mt-2">Intenta con otros terminos de busqueda</p>
+              </div>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div class="bg-blue-600 h-2.5 rounded-full" style="width: 68%"></div>
-            </div>
-            <div class="flex justify-between text-sm text-gray-500 mt-2">
-                <span>20,400 expedientes</span>
-                <span>30,000 total</span>
-            </div>
+          </div>
         </div>
-        
-        <!-- Páginas procesadas -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="font-medium text-gray-800">Páginas digitalizadas</h3>
-                <span class="text-2xl font-bold text-green-600">9.65M</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div class="bg-green-600 h-2.5 rounded-full" style="width: 85%"></div>
-            </div>
-            <div class="flex justify-between text-sm text-gray-500 mt-2">
-                <span>9.65M páginas</span>
-                <span>14.19M total</span>
-            </div>
-        </div>
-        
-        <!-- Tasa de éxito OCR -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="font-medium text-gray-800">Calidad OCR</h3>
-                <span class="text-2xl font-bold text-purple-600">94.2%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div class="bg-purple-600 h-2.5 rounded-full" style="width: 94.2%"></div>
-            </div>
-            <div class="flex justify-between text-sm text-gray-500 mt-2">
-                <span>Precisión</span>
-                <span>Meta: 95%</span>
-            </div>
-        </div>
-        
-        <!-- Velocidad de procesamiento -->
-        <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="font-medium text-gray-800">Velocidad</h3>
-                <span class="text-2xl font-bold text-orange-600">1,250</span>
-            </div>
-            <div class="text-sm text-gray-600">
-                <p><i class="fas fa-file-alt mr-2"></i>Páginas/hora</p>
-                <p class="mt-2"><i class="fas fa-clock mr-2"></i>ETA: 15 días</p>
-            </div>
-        </div>
-    </div>
+      </div>
+    </section>
 
-    <!-- ============================================================
-         PANEL DE CONTROL DE DIGITALIZACIÓN
-    ============================================================ -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-8">
-        
-        <!-- Header del panel -->
-        <div class="p-6 border-b">
-            <div class="flex flex-col md:flex-row md:items-center justify-between">
+    <!-- QUICK SEARCH SECTION -->
+    <section *ngIf="activeTab === 'quick'" class="space-y-6">
+      <div class="max-w-4xl mx-auto space-y-6">
+        <!-- File Upload -->
+        <div class="bg-white rounded-xl shadow-sm p-8 border-2 border-dashed border-gray-300">
+          <div class="rounded-xl p-12 text-center transition-all hover:bg-blue-50/30 cursor-pointer group" (click)="quickFileInput.click()">
+            <input #quickFileInput type="file" accept=".pdf" class="hidden" (change)="onQuickFileSelected($event)" />
+            <div class="text-blue-500 mb-4 group-hover:scale-110 transition-transform">
+              <svg class="w-24 h-24 mx-auto" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 16v-8m0 0l-3 3m3-3l3 3M20 16.5a4.5 4.5 0 00-4.5-4.5h-.75A6.75 6.75 0 105.25 18h8.5" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ quickSearchFile?.name || 'Selecciona un archivo PDF' }}</h3>
+            <p class="text-gray-600">Busqueda instantanea sin guardar el archivo</p>
+          </div>
+        </div>
+
+        <!-- Search Options -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+          <div class="space-y-4">
+            <div class="relative">
+              <input type="text" [(ngModel)]="quickSearchTerm" placeholder="Texto a buscar..."
+                class="w-full p-4 pl-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg" />
+              <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <div class="relative">
+                  <input type="checkbox" [(ngModel)]="quickUseOcr" class="sr-only peer" />
+                  <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-500 transition-colors"></div>
+                  <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                </div>
+                <span class="text-gray-700 font-medium">Usar OCR para texto en imagenes</span>
+              </label>
+
+              <button (click)="quickSearch()" [disabled]="!quickSearchFile || !quickSearchTerm.trim() || isQuickSearching()"
+                class="px-8 py-3 border-2 border-blue-500 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 hover:border-blue-600 disabled:border-gray-300 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center space-x-2">
+                <span *ngIf="!isQuickSearching()">Buscar</span>
+                <span *ngIf="isQuickSearching()" class="flex items-center space-x-2">
+                  <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Buscando...</span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Search Results -->
+        <div *ngIf="quickSearchResults" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div class="bg-green-500 p-5">
+            <div class="flex justify-between items-center">
+              <h4 class="font-bold text-white text-lg">Resultados: "{{ quickSearchResults.term }}"</h4>
+              <div class="flex items-center space-x-3 bg-white/20 px-4 py-2 rounded-full">
+                <span class="text-sm font-semibold text-white">{{ quickSearchResults.total_matches }} coincidencias</span>
+                <span class="text-xs text-white/80">{{ quickSearchResults.execution_time | number:'1.3-3' }}s</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <div *ngIf="quickSearchResults.results.length > 0" class="space-y-3 max-h-[500px] overflow-y-auto">
+              <div *ngFor="let result of quickSearchResults.results"
+                class="p-4 bg-green-50 border-2 border-green-200 rounded-xl hover:border-green-400 transition-all">
+                <div class="mb-3">
+                  <span class="inline-flex items-center px-3 py-1 text-xs font-bold border-2 border-green-500 text-green-600 rounded-full">
+                    Pagina {{ result.page }}
+                  </span>
+                </div>
+                <p class="text-gray-800 leading-relaxed">
+                  ...<span class="bg-yellow-200 px-1.5 py-0.5 rounded font-semibold">{{ result.context }}</span>...
+                </p>
+              </div>
+            </div>
+
+            <div *ngIf="quickSearchResults.total_matches === 0" class="text-center py-12">
+              <div class="w-20 h-20 mx-auto mb-4 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                </svg>
+              </div>
+              <p class="text-gray-600 font-medium">No se encontraron coincidencias</p>
+              <p class="text-sm text-gray-500 mt-2">Intenta con otros terminos o activa OCR</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GLOBAL SEARCH SECTION -->
+    <section *ngIf="activeTab === 'global'" class="space-y-6">
+      <div class="max-w-5xl mx-auto space-y-6">
+        <!-- Search Form -->
+        <div class="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-2">
+              <label class="block text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">Termino de busqueda</label>
+              <div class="relative">
+                <input type="text" [(ngModel)]="globalSearchTerm" placeholder="Buscar en todos los documentos..."
+                  class="w-full p-4 pl-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg" />
+                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col justify-end space-y-3">
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <div class="relative">
+                  <input type="checkbox" [(ngModel)]="globalCaseSensitive" class="sr-only peer" />
+                  <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-500 transition-colors"></div>
+                  <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+                </div>
+                <span class="text-sm text-gray-700 font-medium">Coincidir mayusculas</span>
+              </label>
+
+              <button (click)="performGlobalSearch()" [disabled]="!globalSearchTerm.trim() || isGlobalSearching()"
+                class="w-full py-3 border-2 border-blue-500 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 hover:border-blue-600 disabled:border-gray-300 disabled:bg-gray-300 flex items-center justify-center space-x-2">
+                <span *ngIf="!isGlobalSearching()">Buscar en todos</span>
+                <span *ngIf="isGlobalSearching()" class="flex items-center space-x-2">
+                  <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Buscando...</span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div *ngIf="globalSearchResults">
+          <div class="p-6 bg-blue-500 text-white rounded-xl mb-6 shadow-sm">
+            <div class="flex justify-between items-center">
+              <h3 class="font-bold text-xl">
+                "{{ globalSearchResults.term }}" - {{ globalSearchResults.total_matches }} coincidencias en {{ globalSearchResults.total_documents_with_matches }} documentos
+              </h3>
+              <span class="text-sm font-semibold bg-white/20 px-4 py-2 rounded-full">{{ globalSearchResults.execution_time | number:'1.3-3' }}s</span>
+            </div>
+          </div>
+
+          <div *ngIf="globalSearchResults.documents.length === 0" class="text-center py-16 bg-white rounded-xl shadow-sm">
+            <div class="w-24 h-24 mx-auto mb-4 border-2 border-gray-300 rounded-full flex items-center justify-center">
+              <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+              </svg>
+            </div>
+            <p class="text-gray-700 font-semibold text-lg">No se encontraron coincidencias en ningun documento.</p>
+            <p class="text-sm text-gray-500 mt-2">Intenta con otros terminos de busqueda</p>
+          </div>
+
+          <div *ngIf="globalSearchResults.documents.length > 0" class="space-y-5">
+            <div *ngFor="let doc of globalSearchResults.documents"
+              class="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-500 transition-all">
+              <div class="bg-blue-500 text-white p-6 flex justify-between items-center cursor-pointer hover:bg-blue-600 transition-all"
+                (click)="goToDocumentSearch(doc.pdf_id, doc.filename || doc.pdf_id)">
                 <div>
-                    <h2 class="font-semibold text-gray-800 text-lg">Control de digitalización</h2>
-                    <p class="text-sm text-gray-500">Configuración y monitoreo del proceso</p>
+                  <h4 class="font-bold text-xl mb-2">{{ doc.filename || doc.pdf_id }}</h4>
+                  <div class="flex items-center space-x-4">
+                    <span class="inline-flex items-center px-3 py-1 text-xs font-bold bg-white/20 rounded-full">{{ doc.total_matches }} coincidencias</span>
+                    <span class="text-sm text-white/70">ID: {{ doc.pdf_id.substring(0, 16) }}...</span>
+                  </div>
                 </div>
-                
-                <div class="flex items-center space-x-3 mt-4 md:mt-0">
-                    <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium">
-                        <i class="fas fa-pause mr-2"></i>Pausar
-                    </button>
-                    <button class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm font-medium">
-                        <i class="fas fa-stop mr-2"></i>Detener lote
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Contenido del panel -->
-        <div class="p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
-                <!-- Columna 1: Configuración -->
-                <div class="lg:col-span-2">
-                    <h3 class="font-medium text-gray-800 mb-4">Configuración del escaneo</h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <!-- Formato de salida -->
-                        <div class="space-y-3">
-                            <label class="block text-sm font-medium text-gray-700">
-                                <i class="fas fa-file-export mr-2"></i>Formatos de salida
-                            </label>
-                            <div class="space-y-2">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="pdfa" checked class="rounded border-gray-300 text-blue-600">
-                                    <label for="pdfa" class="ml-2 text-sm text-gray-700">PDF/A (preservación)</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="jpeg" checked class="rounded border-gray-300 text-blue-600">
-                                    <label for="jpeg" class="ml-2 text-sm text-gray-700">JPEG (acceso rápido)</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="png" class="rounded border-gray-300 text-blue-600">
-                                    <label for="png" class="ml-2 text-sm text-gray-700">PNG (alta calidad)</label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Configuración OCR -->
-                        <div class="space-y-3">
-                            <label class="block text-sm font-medium text-gray-700">
-                                <i class="fas fa-font mr-2"></i>Configuración OCR
-                            </label>
-                            <div class="space-y-2">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="ocrEsp" checked class="rounded border-gray-300 text-blue-600">
-                                    <label for="ocrEsp" class="ml-2 text-sm text-gray-700">Español</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="ocrIng" class="rounded border-gray-300 text-blue-600">
-                                    <label for="ocrIng" class="ml-2 text-sm text-gray-700">Inglés</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="ocrValid" checked class="rounded border-gray-300 text-blue-600">
-                                    <label for="ocrValid" class="ml-2 text-sm text-gray-700">Validación automática</label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Resolución -->
-                        <div class="space-y-3">
-                            <label class="block text-sm font-medium text-gray-700">
-                                <i class="fas fa-expand-alt mr-2"></i>Resolución (DPI)
-                            </label>
-                            <div class="flex items-center space-x-4">
-                                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">300 DPI</button>
-                                <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">150 DPI</button>
-                                <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">600 DPI</button>
-                            </div>
-                        </div>
-                        
-                        <!-- Calidad de imagen -->
-                        <div class="space-y-3">
-                            <label class="block text-sm font-medium text-gray-700">
-                                <i class="fas fa-image mr-2"></i>Calidad de imagen
-                            </label>
-                            <div class="flex items-center space-x-4">
-                                <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Alta</button>
-                                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">Media</button>
-                                <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Baja</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Selector de escáner -->
-                    <div class="mt-6 pt-6 border-t">
-                        <label class="block text-sm font-medium text-gray-700 mb-3">
-                            <i class="fas fa-scanner mr-2"></i>Dispositivo de escaneo
-                        </label>
-                        <div class="flex items-center space-x-4">
-                            <select title="Dispositivo de escaneo" class="flex-1 border border-gray-300 rounded-lg py-2 px-3">
-                                <option>Epson DS-790WN (Conectado)</option>
-                                <option>Fujitsu fi-7160</option>
-                                <option>Canon DR-G2090</option>
-                            </select>
-                            <button title="Boton seleccionar" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Columna 2: Vista previa y controles -->
-                <div class="border-l pl-8">
-                    <h3 class="font-medium text-gray-800 mb-4">Vista previa</h3>
-                    
-                    <!-- Área de vista previa -->
-                    <div class="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg h-48 flex flex-col items-center justify-center mb-4">
-                        <i class="fas fa-file-image text-3xl text-gray-400 mb-3"></i>
-                        <p class="text-sm text-gray-500">Vista previa del documento</p>
-                        <p class="text-xs text-gray-400 mt-1">Última página escaneada</p>
-                    </div>
-                    
-                    <!-- Controles de vista previa -->
-                    <div class="grid grid-cols-3 gap-2 mb-6">
-                        <button title="Control de vista" class="p-2 border border-gray-300 rounded hover:bg-gray-50">
-                            <i class="fas fa-undo text-gray-600"></i>
-                        </button>
-                        <button title="Control de vista" class="p-2 border border-gray-300 rounded hover:bg-gray-50">
-                            <i class="fas fa-redo text-gray-600"></i>
-                        </button>
-                        <button title="Control de vista" class="p-2 border border-gray-300 rounded hover:bg-gray-50">
-                            <i class="fas fa-rotate-right text-gray-600"></i>
-                        </button>
-                        <button title="Control de vista" class="p-2 border border-gray-300 rounded hover:bg-gray-50">
-                            <i class="fas fa-search-plus text-gray-600"></i>
-                        </button>
-                        <button title="Control de vista" class="p-2 border border-gray-300 rounded hover:bg-gray-50">
-                            <i class="fas fa-search-minus text-gray-600"></i>
-                        </button>
-                        <button title="Control de vista" class="p-2 border border-gray-300 rounded hover:bg-gray-50">
-                            <i class="fas fa-crop text-gray-600"></i>
-                        </button>
-                    </div>
-                    
-                    <!-- Información del lote actual -->
-                    <div class="bg-blue-50 rounded-lg p-4">
-                        <h4 class="font-medium text-blue-800 mb-2">Lote actual</h4>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-blue-700">Caja 245</span>
-                                <span class="font-medium">Exp. 04567-04589</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-blue-700">Progreso:</span>
-                                <span>18/23 documentos</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-blue-700">Tiempo estimado:</span>
-                                <span>45 minutos</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                <span class="inline-flex items-center px-5 py-3 bg-white text-blue-500 font-bold rounded-xl hover:bg-blue-50 transition-all">
+                  <span>Ver documento</span>
+                  <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </span>
+              </div>
 
-    <!-- ============================================================
-         LOTES DE DIGITALIZACIÓN
-    ============================================================ -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-8">
-        <div class="p-6 border-b">
-            <h2 class="font-semibold text-gray-800 text-lg">Lotes de digitalización</h2>
-        </div>
-        
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Lote ID
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Expedientes
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Páginas
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Fecha inicio
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Estado
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Calidad OCR
-                        </th>
-                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Acciones
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    
-                    <!-- Lote 1 -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="font-medium text-gray-900">LOTE-2025-001</div>
-                            <div class="text-xs text-gray-500">Cajas 001-010</div>
-                        </td>
-                        <td class="py-4 px-6 text-sm">1,250</td>
-                        <td class="py-4 px-6 text-sm">589,400</td>
-                        <td class="py-4 px-6 text-sm">05/12/2025</td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                                Completado
-                            </span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <span class="text-sm font-medium mr-2">95.3%</span>
-                                <div class="w-16 bg-gray-200 rounded-full h-1.5">
-                                    <div class="bg-green-600 h-1.5 rounded-full" style="width: 95.3%"></div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800" title="Ver detalles">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-green-600 hover:text-green-800" title="Descargar">
-                                    <i class="fas fa-download"></i>
-                                </button>
-                                <button class="text-purple-600 hover:text-purple-800" title="Revisar">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                    <!-- Lote 2 -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="font-medium text-gray-900">LOTE-2025-002</div>
-                            <div class="text-xs text-gray-500">Cajas 011-020</div>
-                        </td>
-                        <td class="py-4 px-6 text-sm">1,180</td>
-                        <td class="py-4 px-6 text-sm">554,600</td>
-                        <td class="py-4 px-6 text-sm">10/12/2025</td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                                Completado
-                            </span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <span class="text-sm font-medium mr-2">94.8%</span>
-                                <div class="w-16 bg-gray-200 rounded-full h-1.5">
-                                    <div class="bg-green-600 h-1.5 rounded-full" style="width: 94.8%"></div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800" title="Ver detalles">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-green-600 hover:text-green-800" title="Descargar">
-                                    <i class="fas fa-download"></i>
-                                </button>
-                                <button class="text-purple-600 hover:text-purple-800" title="Revisar">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                    <!-- Lote 3 (actual) -->
-                    <tr class="hover:bg-gray-50 bg-blue-50">
-                        <td class="py-4 px-6">
-                            <div class="font-medium text-gray-900">LOTE-2025-003</div>
-                            <div class="text-xs text-gray-500">Cajas 021-030</div>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                <i class="fas fa-play mr-1"></i>Activo
-                            </span>
-                        </td>
-                        <td class="py-4 px-6 text-sm">950 / 1,200</td>
-                        <td class="py-4 px-6 text-sm">446,500 / 564,000</td>
-                        <td class="py-4 px-6 text-sm">15/12/2025</td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                                En progreso
-                            </span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex items-center">
-                                <span class="text-sm font-medium mr-2">93.5%</span>
-                                <div class="w-16 bg-gray-200 rounded-full h-1.5">
-                                    <div class="bg-blue-600 h-1.5 rounded-full" style="width: 93.5%"></div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800" title="Monitorear">
-                                    <i class="fas fa-chart-line"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800" title="Pausar">
-                                    <i class="fas fa-pause"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800" title="Detener">
-                                    <i class="fas fa-stop"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                    <!-- Lote 4 -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-4 px-6">
-                            <div class="font-medium text-gray-900">LOTE-2025-004</div>
-                            <div class="text-xs text-gray-500">Cajas 031-040</div>
-                        </td>
-                        <td class="py-4 px-6 text-sm">0 / 1,150</td>
-                        <td class="py-4 px-6 text-sm">0 / 540,500</td>
-                        <td class="py-4 px-6 text-sm">--/--/----</td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
-                                Pendiente
-                            </span>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-400">--</div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <div class="flex space-x-2">
-                                <button class="text-green-600 hover:text-green-800" title="Programar">
-                                    <i class="fas fa-calendar-plus"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Pie de tabla -->
-        <div class="px-6 py-4 border-t">
-            <div class="flex justify-between items-center">
-                <div class="text-sm text-gray-500">
-                    3 lotes completados • 1 en progreso • 8 pendientes
+              <div class="p-6 bg-gray-50 max-h-72 overflow-y-auto">
+                <div class="space-y-3">
+                  <div *ngFor="let result of doc.results.slice(0, 5)"
+                    class="p-4 bg-white border-2 border-gray-200 rounded-xl hover:border-blue-500 transition-all">
+                    <span class="inline-flex items-center px-3 py-1 text-xs font-bold border-2 border-blue-500 text-blue-500 rounded-full mr-3">
+                      Pagina {{ result.page }}
+                    </span>
+                    <span class="text-gray-800">
+                      ...<span class="bg-yellow-200 px-1.5 py-0.5 rounded font-semibold">{{ result.context }}</span>...
+                    </span>
+                  </div>
+                  <div *ngIf="doc.results.length > 5" class="text-center text-sm text-gray-600 pt-3">
+                    <span class="inline-flex items-center px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-full font-semibold">
+                      ... y {{ doc.results.length - 5 }} coincidencias mas
+                    </span>
+                  </div>
                 </div>
-                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
-                    <i class="fas fa-plus mr-2"></i>Nuevo lote
-                </button>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
+      </div>
+    </section>
 
-    <!-- ============================================================
-         PANEL DE MONITOREO EN TIEMPO REAL
-    ============================================================ -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-        <div class="p-6 border-b">
-            <h2 class="font-semibold text-gray-800 text-lg">Monitoreo en tiempo real</h2>
-        </div>
-        
-        <div class="p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                <!-- Métricas en tiempo real -->
-                <div class="lg:col-span-2">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="text-sm text-gray-500 mb-1">Velocidad actual</div>
-                            <div class="text-xl font-bold text-blue-600">1,245</div>
-                            <div class="text-xs text-gray-400">páginas/hora</div>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="text-sm text-gray-500 mb-1">Documento actual</div>
-                            <div class="text-xl font-bold text-green-600">18/23</div>
-                            <div class="text-xs text-gray-400">del lote</div>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="text-sm text-gray-500 mb-1">Tiempo restante</div>
-                            <div class="text-xl font-bold text-orange-600">00:42:15</div>
-                            <div class="text-xs text-gray-400">hh:mm:ss</div>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="text-sm text-gray-500 mb-1">Calidad OCR</div>
-                            <div class="text-xl font-bold text-purple-600">93.5%</div>
-                            <div class="text-xs text-gray-400">precisión</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Gráfica de actividad -->
-                    <div class="border rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-medium text-gray-800">Actividad de digitalización</h3>
-                            <span class="text-sm text-gray-500">Últimas 24 horas</span>
-                        </div>
-                        <div class="h-40 flex items-center justify-center text-gray-400">
-                            <!-- Aquí iría una gráfica real -->
-                            <div class="text-center">
-                                <i class="fas fa-chart-area text-3xl mb-2"></i>
-                                <p>Gráfica de actividad en tiempo real</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Alertas y notificaciones -->
-                <div class="border-l pl-6">
-                    <h3 class="font-medium text-gray-800 mb-4">Alertas del sistema</h3>
-                    
-                    <div class="space-y-3">
-                        <div class="flex items-start p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                            <i class="fas fa-exclamation-triangle text-yellow-500 mt-1 mr-3"></i>
-                            <div>
-                                <p class="text-sm font-medium text-yellow-800">Baja calidad OCR</p>
-                                <p class="text-xs text-yellow-600 mt-1">Documento 18 - Revisión recomendada</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                            <i class="fas fa-info-circle text-blue-500 mt-1 mr-3"></i>
-                            <div>
-                                <p class="text-sm font-medium text-blue-800">Cambio automático</p>
-                                <p class="text-xs text-blue-600 mt-1">Resolución ajustada a 300 DPI</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start p-3 bg-green-50 border border-green-200 rounded-lg">
-                            <i class="fas fa-check-circle text-green-500 mt=1 mr-3"></i>
-                            <div>
-                                <p class="text-sm font-medium text-green-800">Lote completado</p>
-                                <p class="text-xs text-green-600 mt-1">LOTE-2025-002 listo para revisión</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                            <i class="fas fa-bell text-gray-500 mt-1 mr-3"></i>
-                            <div>
-                                <p class="text-sm font-medium text-gray-800">Mantenimiento programado</p>
-                                <p class="text-xs text-gray-600 mt-1">20/12/2025 - 2 horas</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Botones de acción rápida -->
-                    <div class="mt-6 pt-6 border-t">
-                        <div class="grid grid-cols-2 gap-3">
-                            <button class="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 text-center">
-                                <i class="fas fa-file-export text-gray-600 text-lg mb-1"></i>
-                                <p class="text-xs text-gray-700">Exportar reporte</p>
-                            </button>
-                            <button class="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 text-center">
-                                <i class="fas fa-cog text-gray-600 text-lg mb-1"></i>
-                                <p class="text-xs text-gray-700">Ajustes avanzados</p>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- FILES SECTION -->
+    <section *ngIf="activeTab === 'files'" class="space-y-6">
+  <!-- View Toggle and Title -->
+  <div class="flex items-center justify-between">
+    <h2 class="text-xl font-bold text-gray-900">PDFs Almacenados ({{ totalPdfsCount }})</h2>
+    <div class="flex items-center space-x-2 bg-gray-50 rounded-lg p-1">
+      <button (click)="viewMode = 'cards'"
+        [class]="viewMode === 'cards' ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-gray-200'"
+        class="px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+        </svg>
+        <span>Cards</span>
+      </button>
+      <button (click)="viewMode = 'table'"
+        [class]="viewMode === 'table' ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-gray-200'"
+        class="px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0112 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 1.5v-1.5m0 0c0-.621.504-1.125 1.125-1.125m0 0h7.5" />
+        </svg>
+        <span>Tabla</span>
+      </button>
     </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="pdfsList.length === 0" class="text-center py-16 bg-gray-50 rounded-xl">
+    <div class="w-24 h-24 mx-auto mb-4 border-2 border-gray-300 rounded-full flex items-center justify-center">
+      <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5" />
+      </svg>
+    </div>
+    <p class="text-gray-600 font-medium text-lg">No hay PDFs almacenados</p>
+    <p class="text-sm text-gray-500 mt-2">Sube tu primer PDF para comenzar</p>
+    <button (click)="activeTab = 'upload'" class="mt-4 px-6 py-3 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 transition-colors">
+      Subir PDF
+    </button>
+  </div>
+
+  <!-- Cards View -->
+  <div *ngIf="pdfsList.length > 0 && viewMode === 'cards'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div *ngFor="let pdf of pdfsList"
+      class="group bg-gray-50 rounded-xl p-5 hover:bg-gray-100 transition-all cursor-pointer"
+      (contextmenu)="onContextMenu($event, pdf)">
+      
+      <!-- Preview del PDF en Cards -->
+      <div class="mb-4 bg-white rounded-lg border border-gray-200 p-3">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-medium text-gray-500">Vista Previa</span>
+          <span class="text-xs text-gray-400">{{ pdf.pages }} páginas</span>
+        </div>
+        <div class="h-32 overflow-hidden rounded bg-gradient-to-br from-gray-50 to-gray-100 p-3 border border-gray-300">
+          <div class="flex items-start space-x-2 h-full">
+            <!-- Icono PDF -->
+            <div class="w-8 h-8 flex-shrink-0">
+              <svg class="w-full h-full text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8" />
+              </svg>
+            </div>
+            <!-- Contenido de preview -->
+            <div class="flex-1 overflow-hidden">
+              <div class="text-xs font-medium text-gray-700 truncate">{{ pdf.filename }}</div>
+              <div class="mt-1 space-y-1">
+                <div class="h-1.5 w-full bg-gray-300 rounded"></div>
+                <div class="h-1.5 w-3/4 bg-gray-300 rounded"></div>
+                <div class="h-1.5 w-5/6 bg-gray-300 rounded"></div>
+                <div class="h-1.5 w-2/3 bg-gray-300 rounded"></div>
+                <div class="h-1.5 w-4/5 bg-gray-300 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-start mb-3">
+        <div class="flex-1 min-w-0">
+          <h4 class="font-bold text-gray-900 truncate group-hover:text-blue-500" [title]="pdf.filename">{{ pdf.filename }}</h4>
+          <p class="text-sm text-gray-600 mt-1">{{ formatBytes(pdf.size) }}</p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between mb-3">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold" [ngClass]="{
+            'bg-blue-100 text-blue-800': pdf.status === 'completed',
+            'bg-yellow-100 text-yellow-800': pdf.status === 'processing',
+            'bg-gray-100 text-gray-800': pdf.status === 'pending',
+            'bg-red-100 text-red-800': pdf.status === 'failed'
+          }">
+          {{ pdf.status === 'completed' ? 'Completado' : pdf.status === 'processing' ? 'Procesando' : pdf.status === 'pending' ? 'Pendiente' : 'Error' }}
+        </span>
+        <span *ngIf="pdf.used_ocr" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">OCR</span>
+      </div>
+
+      <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+        <div class="h-2 rounded-full transition-all" [ngClass]="{
+            'bg-blue-500': pdf.status === 'completed',
+            'bg-yellow-500': pdf.status === 'processing',
+            'bg-gray-500': pdf.status === 'pending',
+            'bg-red-500': pdf.status === 'failed'
+          }" [style.width.%]="pdf.progress"></div>
+      </div>
+
+      <div class="flex space-x-2">
+        <button (click)="$event.stopPropagation(); viewText(pdf.id)"
+          class="flex-1 px-3 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+          [disabled]="pdf.status !== 'completed'">
+          Ver
+        </button>
+        <button (click)="$event.stopPropagation(); downloadText(pdf.id)"
+          class="flex-1 px-3 py-2 text-sm bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
+          [disabled]="pdf.status !== 'completed'">
+          TXT
+        </button>
+        <button (click)="$event.stopPropagation(); downloadSearchablePDF(pdf.id)"
+          class="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+          PDF
+        </button>
+        <button (click)="$event.stopPropagation(); deletePdf(pdf.id, pdf.filename)"
+          class="px-3 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table View -->
+  <div *ngIf="pdfsList.length > 0 && viewMode === 'table'" class="bg-gray-50 rounded-xl overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Preview</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Nombre</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Paginas</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Tamano</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Estado</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">OCR</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="bg-gray-50 divide-y divide-gray-200">
+        <tr *ngFor="let pdf of pdfsList" class="hover:bg-gray-100 cursor-pointer" (contextmenu)="onContextMenu($event, pdf)">
+          <!-- Preview del PDF en Table -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="w-16 h-20 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 rounded border border-gray-300 p-2">
+                <div class="flex flex-col items-center justify-center h-full">
+                  <svg class="w-6 h-6 text-red-500 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z M14 2v6h6" />
+                  </svg>
+                  <div class="text-xs text-gray-600 font-medium">PDF</div>
+                  <div class="text-xs text-gray-500 mt-1">{{ pdf.pages }}p</div>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900 max-w-xs truncate" [title]="pdf.filename">{{ pdf.filename }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ pdf.pages }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ formatBytes(pdf.size) }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
+                'bg-blue-100 text-blue-800': pdf.status === 'completed',
+                'bg-yellow-100 text-yellow-800': pdf.status === 'processing',
+                'bg-gray-100 text-gray-800': pdf.status === 'pending',
+                'bg-red-100 text-red-800': pdf.status === 'failed'
+              }">
+              {{ pdf.status === 'completed' ? 'Completado' : pdf.status === 'processing' ? 'Procesando' : pdf.status === 'pending' ? 'Pendiente' : 'Error' }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+            <span *ngIf="pdf.used_ocr" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">Si</span>
+            <span *ngIf="!pdf.used_ocr" class="text-gray-500">No</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <div class="flex justify-end space-x-2">
+              <button (click)="$event.stopPropagation(); viewText(pdf.id)"
+                class="px-3 py-1.5 text-xs bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+                [disabled]="pdf.status !== 'completed'">
+                Ver
+              </button>
+              <button (click)="$event.stopPropagation(); downloadText(pdf.id)"
+                class="px-3 py-1.5 text-xs bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
+                [disabled]="pdf.status !== 'completed'">
+                TXT
+              </button>
+              <button (click)="$event.stopPropagation(); downloadSearchablePDF(pdf.id)"
+                class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                PDF
+              </button>
+              <button (click)="$event.stopPropagation(); deletePdf(pdf.id, pdf.filename)"
+                class="px-3 py-1.5 text-xs bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium">
+                Eliminar
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+  </main>
 </div>
 
-<!-- Modal de nuevo lote (oculto por defecto) -->
-<div id="modalNuevoLote" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
-        <div class="p-6 border-b">
-            <div class="flex justify-between items-center">
-                <h3 class="text-xl font-bold text-gray-800">Crear nuevo lote de digitalización</h3>
-                <button title="Crear nuevo lote" onclick="document.getElementById('modalNuevoLote').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-        </div>
-        <div class="p-6">
-            <div class="text-center py-8">
-                <i class="fas fa-folder-plus text-4xl text-gray-300 mb-3"></i>
-                <p class="text-gray-500">Modal para creación de nuevo lote</p>
-            </div>
-        </div>
-    </div>
+<!-- Context Menu -->
+<div *ngIf="showContextMenu" class="fixed z-50 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-48"
+  [style.left.px]="contextMenuX" [style.top.px]="contextMenuY" (mouseleave)="closeContextMenu()">
+  <button (click)="viewText(contextMenuPdf?.id); closeContextMenu()"
+    class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-3">
+    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+    <span>Ver texto</span>
+  </button>
+  <button (click)="downloadText(contextMenuPdf?.id); closeContextMenu()"
+    class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-3">
+    <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+    </svg>
+    <span>Descargar TXT</span>
+  </button>
+  <button (click)="downloadSearchablePDF(contextMenuPdf?.id); closeContextMenu()"
+    class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-3">
+    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+    </svg>
+    <span>Descargar PDF con texto</span>
+  </button>
+  <button (click)="selectedPdfId = contextMenuPdf?.id; activeTab = 'search'; closeContextMenu()"
+    class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-3">
+    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+    </svg>
+    <span>Buscar en documento</span>
+  </button>
+  <div class="border-t border-gray-200 my-1"></div>
+  <button (click)="deletePdf(contextMenuPdf?.id, contextMenuPdf?.filename); closeContextMenu()"
+    class="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-3">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+    </svg>
+    <span>Eliminar</span>
+  </button>
 </div>
 
-<style>
-/* Estilos visuales específicos para la pantalla de digitalización */
-.bg-blue-50 {
-    background-color: #eff6ff;
-}
+<!-- Click overlay to close context menu -->
+<div *ngIf="showContextMenu" class="fixed inset-0 z-40" (click)="closeContextMenu()"></div>
 
-.border-blue-200 {
-    border-color: #bfdbfe;
-}
+<!-- Modal para visualizar texto -->
+<div *ngIf="showTextModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+  (click)="closeTextModal()">
+  <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col" (click)="$event.stopPropagation()">
+    <div class="bg-blue-500 text-white p-6 rounded-t-xl flex justify-between items-center">
+      <div>
+        <h3 class="text-xl font-bold">Texto Extraido del PDF</h3>
+        <p class="text-sm text-white/80 mt-1">{{ selectedPdfFilename() }}</p>
+      </div>
+      <button (click)="closeTextModal()" class="p-2 hover:bg-white/20 rounded-lg transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
 
-/* Animaciones sutiles */
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-}
+    <div class="p-6 overflow-y-auto flex-1 bg-gray-50">
+      <div class="bg-white rounded-xl p-6 border border-gray-200">
+        <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
+          <div class="flex items-center space-x-4 text-sm text-gray-600">
+            <span class="flex items-center space-x-2">
+              <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+              </svg>
+              <span class="font-medium">{{ textContentLines }} lineas</span>
+            </span>
+            <span class="flex items-center space-x-2">
+              <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+              </svg>
+              <span class="font-medium">{{ textContentLength }} caracteres</span>
+            </span>
+          </div>
+        </div>
+        <pre class="whitespace-pre-wrap text-sm text-gray-800 leading-relaxed font-mono">{{ pdfTextContent }}</pre>
+      </div>
+    </div>
 
-.bg-blue-600 {
-    animation: pulse 2s infinite;
-}
+    <div class="p-4 bg-gray-100 rounded-b-xl flex justify-end">
+      <button (click)="closeTextModal()"
+        class="px-6 py-3 border-2 border-blue-500 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 hover:border-blue-600 transition-all">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</div>
 
-/* Estilos para la vista previa */
-.border-dashed {
-    border-style: dashed;
-}
-
-/* Scroll personalizado para tablas */
-.overflow-x-auto::-webkit-scrollbar {
-    height: 6px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 3px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-</style>
+<!-- Spinner -->
+<ngx-spinner bdColor="rgba(0,0,0,0.8)" size="large" color="#3B82F6" type="ball-scale-multiple" [fullScreen]="true">
+  <p class="text-white font-semibold text-lg mt-4">{{ loadingMessage() }}</p>
+</ngx-spinner>
