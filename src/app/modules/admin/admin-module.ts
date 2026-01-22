@@ -41,7 +41,7 @@ import { ModalContainerComponent } from './pages/explorador/components/modals/mo
 import { FechaLocalPipe } from '../../core/pipes/fecha-local/fecha-local.pipe';
 import { ExploradorView } from './pages/explorador/explorador.view';
 import { PdfViewerView } from './components/pdf-viewer/pdf-viewer.view';
-import { NgxSpinnerModule } from 'ngx-spinner';
+// import { NgxSpinnerModule } from 'ngx-spinner';
 import { ExploradorStateService } from './pages/explorador/services/explorador-state.service';
 import { PdfLocalSearchService } from './pages/digitalizacion/services/pdf-local-search.service';
 
@@ -81,7 +81,7 @@ import { PdfLocalSearchService } from './pages/digitalizacion/services/pdf-local
     CommonModule,
     ReactiveFormsModule,
     AdminRoutingModule,
-    FormsModule,FechaLocalPipe,NgxSpinnerModule
+    FormsModule,FechaLocalPipe
   ],  providers: [ExploradorStateService,PdfLocalSearchService]
   
 })

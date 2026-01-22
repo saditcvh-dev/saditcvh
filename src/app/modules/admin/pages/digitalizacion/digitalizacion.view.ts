@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+
 import {
   PdfService,
   PDFUploadResponse,
@@ -134,7 +134,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
   constructor(
     private pdfService: PdfService,
-    private spinner: NgxSpinnerService
+    // private spinner: NgxSpinnerService
   ) { }
 
   ngOnInit() {
