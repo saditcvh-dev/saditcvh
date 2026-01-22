@@ -44,6 +44,8 @@ import { PdfViewerView } from './components/pdf-viewer/pdf-viewer.view';
 // import { NgxSpinnerModule } from 'ngx-spinner';
 import { ExploradorStateService } from './pages/explorador/services/explorador-state.service';
 import { PdfLocalSearchService } from './pages/digitalizacion/services/pdf-local-search.service';
+import { UploadSectionComponent } from './pages/digitalizacion/upload-section/upload-section';
+// import { UploadSectionComponent } from './pages/digitalizacion/upload-section/upload-section';
 
 @NgModule({
   declarations: [
@@ -75,7 +77,7 @@ import { PdfLocalSearchService } from './pages/digitalizacion/services/pdf-local
     ActionBadgeComponent,ExploradorView,ExplorerPanelComponent,
     ViewerPanelComponent, ToastComponent
     , TabsNavigationComponent, SecurityTabComponent, PreviewTabComponent, MetadataTabComponent, UploadModalComponent, CreateAutorizacionModalComponent, ModalContainerComponent
-    , ContextMenuComponent,HistoryTabComponent,TreeNodeComponent,
+    , ContextMenuComponent,HistoryTabComponent,TreeNodeComponent, UploadSectionComponent,
   ],
   imports: [
     CommonModule,

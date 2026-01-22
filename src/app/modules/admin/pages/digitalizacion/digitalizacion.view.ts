@@ -57,10 +57,12 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
   // Variables para subida
   // selectedFile: File | null = null;
-  selectedFiles: File[] = [];
+  // selectedFiles: File[] = [];
 
-  useOcr: boolean = true;
-  uploadResult: PDFUploadResponse | null = null;
+  // useOcr: boolean = true;
+
+  // uploadResult: PDFUploadResponse | null = null;
+
 
   // Variables para búsqueda individual
   pdfsList: PDFListItem[] = [];
@@ -86,7 +88,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   showTextModal: boolean = false;
 
   // Signals para indicadores específicos por operación
-  isUploading = signal(false);
+  // isUploading = signal(false);
   isSearching = signal(false);
   isQuickSearching = signal(false);
   isGlobalSearching = signal(false);
@@ -152,7 +154,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
       }
     }, this.pollIntervalMs);
   }
-
+ // Actualizar este método
   updateRecentUploadsStatus(): void {
     this.recentUploads.forEach(upload => {
       const matchingPdf = this.pdfsList.find(p => p.id === upload.id);
@@ -168,6 +170,21 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     );
   }
 
+  // updateRecentUploadsStatus(): void {
+  //   this.recentUploads.forEach(upload => {
+  //     const matchingPdf = this.pdfsList.find(p => p.id === upload.id);
+  //     if (matchingPdf) {
+  //       upload.status = matchingPdf.status as any;
+  //       upload.progress = matchingPdf.progress || 0;
+  //     }
+  //   });
+
+  //   const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+  //   this.recentUploads = this.recentUploads.filter(upload =>
+  //     upload.status !== 'completed' || upload.timestamp > fiveMinutesAgo
+  //   );
+  // }
+
   ngOnDestroy(): void {
     if (this.pollTimer) {
       clearInterval(this.pollTimer);
@@ -176,39 +193,39 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   }
 
   // ========== FUNCIONES PARA SUBIDA ==========
-  onFilesSelected(event: any): void {
-  const files: File[] = Array.from(event.target.files);
+//   onFilesSelected(event: any): void {
+//   const files: File[] = Array.from(event.target.files);
 
-  const validPdfs = files.filter(f => f.type === 'application/pdf');
+//   const validPdfs = files.filter(f => f.type === 'application/pdf');
 
-  if (validPdfs.length === 0) {
-    this.stateService.showToast('Selecciona al menos un PDF válido', 'error');
-    return;
-  }
+//   if (validPdfs.length === 0) {
+//     this.stateService.showToast('Selecciona al menos un PDF válido', 'error');
+//     return;
+//   }
 
-  validPdfs.forEach(file => {
-    this.selectedFiles.push(file);
+//   validPdfs.forEach(file => {
+//     this.selectedFiles.push(file);
 
-    const uploadId = `upload-${Date.now()}-${file.name}`;
-    this.recentUploads.unshift({
-      id: uploadId,
-      filename: file.name,
-      status: 'uploading',
-      progress: 0,
-      timestamp: new Date()
-    });
-  });
+//     const uploadId = `upload-${Date.now()}-${file.name}`;
+//     this.recentUploads.unshift({
+//       id: uploadId,
+//       filename: file.name,
+//       status: 'uploading',
+//       progress: 0,
+//       timestamp: new Date()
+//     });
+//   });
 
-  this.stateService.showToast(
-    `${validPdfs.length} PDF(s) seleccionados correctamente`,
-    'success'
-  );
+//   this.stateService.showToast(
+//     `${validPdfs.length} PDF(s) seleccionados correctamente`,
+//     'success'
+//   );
 
-  event.target.value = ''; // reset input
-}
-removeSelectedFile(index: number): void {
-  this.selectedFiles.splice(index, 1);
-}
+//   event.target.value = ''; // reset input
+// }
+// removeSelectedFile(index: number): void {
+//   this.selectedFiles.splice(index, 1);
+// }
 
   // onFileSelected(event: any): void {
   //   const file = event.target.files[0];
@@ -273,50 +290,50 @@ removeSelectedFile(index: number): void {
   //       });
   //   }
   // }
-  uploadFile(): void {
-  if (this.selectedFiles.length === 0) return;
+//   uploadFile(): void {
+//   if (this.selectedFiles.length === 0) return;
 
-  this.isUploading.set(true);
-  this.loadingMessage.set('Subiendo y procesando PDFs...');
+//   this.isUploading.set(true);
+//   this.loadingMessage.set('Subiendo y procesando PDFs...');
 
-  const filesToUpload = [...this.selectedFiles];
-  this.selectedFiles = [];
+//   const filesToUpload = [...this.selectedFiles];
+//   // this.selectedFiles = [];
 
-  const uploadNext = (index: number) => {
-    if (index >= filesToUpload.length) {
-      this.isUploading.set(false);
-      this.loadPdfsList();
-      return;
-    }
+//   const uploadNext = (index: number) => {
+//     if (index >= filesToUpload.length) {
+//       this.isUploading.set(false);
+//       this.loadPdfsList();
+//       return;
+//     }
 
-    const file = filesToUpload[index];
-    const currentUpload = this.recentUploads.find(u => u.filename === file.name);
+//     const file = filesToUpload[index];
+//     const currentUpload = this.recentUploads.find(u => u.filename === file.name);
 
-    if (currentUpload) {
-      currentUpload.status = 'processing';
-      currentUpload.progress = 30;
-    }
+//     if (currentUpload) {
+//       currentUpload.status = 'processing';
+//       currentUpload.progress = 30;
+//     }
 
-    this.pdfService.uploadPdf(file, this.useOcr).subscribe({
-      next: (result) => {
-        if (currentUpload) {
-          currentUpload.id = result.id;
-          currentUpload.progress = 70;
-        }
-        uploadNext(index + 1);
-      },
-      error: () => {
-        if (currentUpload) {
-          currentUpload.status = 'failed';
-          currentUpload.progress = 0;
-        }
-        uploadNext(index + 1);
-      }
-    });
-  };
+//     this.pdfService.uploadPdf(file, this.useOcr).subscribe({
+//       next: (result) => {
+//         if (currentUpload) {
+//           currentUpload.id = result.id;
+//           currentUpload.progress = 70;
+//         }
+//         uploadNext(index + 1);
+//       },
+//       error: () => {
+//         if (currentUpload) {
+//           currentUpload.status = 'failed';
+//           currentUpload.progress = 0;
+//         }
+//         uploadNext(index + 1);
+//       }
+//     });
+//   };
 
-  uploadNext(0);
-}
+//   uploadNext(0);
+// }
 
   // ========== FUNCIONES PARA BÚSQUEDA INDIVIDUAL ==========
   loadPdfsList(): void {
@@ -662,5 +679,8 @@ removeSelectedFile(index: number): void {
 
   get totalPdfsCount(): number {
     return this.pdfsList.length;
+  }
+   onUploadCompleted(): void {
+    this.loadPdfsList();
   }
 }
