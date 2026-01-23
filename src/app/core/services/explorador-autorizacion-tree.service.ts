@@ -178,12 +178,16 @@ export class AutorizacionTreeService {
     return tree;
   }
 
-  private generateFolderName(autorizacion: any): string {
-    const municipioNum = autorizacion.municipio.num.toString().padStart(2, '0');
-    const modalidadNum = autorizacion.modalidad.num.toString().padStart(2, '0');
+private generateFolderName(autorizacion: any): string {
+  const numero = autorizacion.numeroAutorizacion;
+  const municipio = autorizacion.municipio.num.toString().padStart(2, '0');
+  const modalidad = autorizacion.modalidad.num.toString().padStart(2, '0');
+  const consecutivo1 = autorizacion.consecutivo1.toString().padStart(2, '0');
+  const consecutivo2 = autorizacion.consecutivo2.toString().padStart(3, '0');
+  const tipo = autorizacion.tipoAutorizacion.abreviatura;
 
-    return `${autorizacion.numeroAutorizacion} ${municipioNum}-${modalidadNum}-${autorizacion.consecutivo1.toString().padStart(4, '0')}-${autorizacion.consecutivo2.toString().padStart(4, '0')} ${autorizacion.tipoAutorizacion.abreviatura}`;
-  }
+  return `${numero} ${municipio}-${modalidad}-${consecutivo1}-${consecutivo2} ${tipo}`;
+}
 
 
 

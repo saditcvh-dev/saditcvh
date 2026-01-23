@@ -1,5 +1,63 @@
 <div class="space-y-4">
+	<!-- Número de Autorización -->
+<!-- Número de Autorización + Consecutivos -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+  <!-- Número de Autorización -->
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">
+       Autorización <span class="text-red-500">*</span>
+    </label>
+    <input
+      type="text"
+      [value]="modalState.data?.numeroAutorizacion || ''"
+      (input)="onNumeroAutorizacionChange($event)"
+      placeholder="Ej. 5656"
+      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#691831] focus:border-[#691831] transition-colors text-sm"
+    />
+  </div>
+
+  <!-- Consecutivo 1 -->
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">
+      Consecutivo 1 <span class="text-red-500">*</span>
+    </label>
+    <input
+        type="text"
+  inputmode="numeric"
+  pattern="[0-9]*"
+      [value]="modalState.data?.consecutivo1 || ''"
+      (input)="onConsecutivo1Change($event)"
+      placeholder="Ej. 1"
+      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#691831] focus:border-[#691831] transition-colors text-sm"
+    />
+  </div>
+
+  <!-- Consecutivo 2 -->
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">
+      Consecutivo 2 <span class="text-red-500">*</span>
+    </label>
+    <input
+      type="text"
+  inputmode="numeric"
+  pattern="[0-9]*"
+      [value]="modalState.data?.consecutivo2 || ''"
+      (input)="onConsecutivo2Change($event)"
+      placeholder="Ej. 2026"
+      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#691831] focus:border-[#691831] transition-colors text-sm"
+    />
+  </div>
+
+</div>
+
+<p class="text-xs text-gray-500 mt-1">
+  Datos que conforman el número completo de autorización
+</p>
+
+
 	<!-- Modalidad -->
+	 
 	<div>
 		<label class="block text-sm font-medium text-gray-700 mb-1"> Modalidad <span class="text-red-500">*</span>
 		</label>
