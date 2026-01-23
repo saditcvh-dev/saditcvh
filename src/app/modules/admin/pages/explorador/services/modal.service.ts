@@ -237,10 +237,10 @@ export class ModalService {
       ).toPromise();
       this.loadingService.hide()
       stateService.showToast('Nueva versión creada correctamente', 'success');
-       this.selectedFile.set(null)
-       this.uploadModalState.update(state => ({ ...state, visible: false }));
-       
-      } catch (error) {
+      this.selectedFile.set(null)
+      this.uploadModalState.update(state => ({ ...state, visible: false }));
+
+    } catch (error) {
       // this.selectedFile.set(null)
       this.loadingService.hide()
       stateService.showToast('Error al crear nueva versión', 'error');
@@ -271,17 +271,32 @@ export class ModalService {
 
   private createAutorizacion(data: any, stateService: any): void {
     this.loadingService.show()
-    if (!data.municipioId || !data.modalidadId || !data.tipoId || !data.solicitante) {
+    if (
+      !data.municipioId ||
+      !data.modalidadId ||
+      !data.tipoId ||
+      !data.numeroAutorizacion ||
+      !data.consecutivo1 ||
+      !data.consecutivo2 ||
+      !data.solicitante
+    ) {
       stateService.showToast('Completa todos los campos obligatorios', 'error');
       return;
     }
+
 
     const payload = {
       municipio_id: data.municipioId,
       modalidad_id: Number(data.modalidadId),
       tipo_id: Number(data.tipoId),
       solicitante: data.solicitante,
+
+      // agregado ..
+      numero_autorizacion: data.numeroAutorizacion,
+      consecutivo1: data.consecutivo1,
+      consecutivo2: data.consecutivo2,
     };
+
 
     this.autorizacionService.crearAutorizacion(payload).subscribe({
       next: () => {
