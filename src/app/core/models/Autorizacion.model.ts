@@ -63,9 +63,15 @@ export interface CrearAutorizacionDto {
   municipio_id: number;
   modalidad_id: number;
   tipo_id: number;
-  solicitante?: string;
+
+  numero_autorizacion: string;
+  consecutivo1: string;
+  consecutivo2: string;
+
+  solicitante: string;
   fecha_solicitud?: string;
 }
+
 
 
 export interface ActualizarAutorizacionDto extends Partial<CrearAutorizacionDto> {

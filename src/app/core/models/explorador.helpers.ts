@@ -25,12 +25,12 @@ export const formatFileSize = (bytes: number): string => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
-export const createAutorizacionPayload = (data: any) => ({
-  municipio_id: data.municipioId,
-  modalidad_id: Number(data.modalidadId),
-  tipo_id: Number(data.tipoId),
-  solicitante: data.solicitante,
-});
+// export const createAutorizacionPayload = (data: any) => ({
+//   municipio_id: data.municipioId,
+//   modalidad_id: Number(data.modalidadId),
+//   tipo_id: Number(data.tipoId),
+//   solicitante: data.solicitante,
+// });
 
 export const createDocumentoPayload = (data: any) => ({
   titulo: data.titulo,
