@@ -39,67 +39,7 @@
 
         <div class="flex items-center gap-4 flex-shrink-0">
 
-          <!-- Botón de tema (modo oscuro/claro) -->
-          <div class="relative">
-            <!-- Tema -->
-            <li>
-              <!-- <button
-                class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded flex items-center gap-2 transition-colors"
-                (click)="toggleThemeSubmenu()">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                </svg>
-                Tema
-                <span class="ml-auto material-symbols-rounded icon-xs">
-                  {{ themeSubmenuOpen ? 'expand_less' : 'expand_more' }}
-                </span>
-              </button> -->
-
-              <!-- Submenú de temas -->
-              <!-- <ul *ngIf="themeSubmenuOpen"
-                class="pl-10 pb-2 text-xs text-gray-600 dark:text-slate-400 animate-in fade-in slide-in-from-top-2">
-                <li>
-                  <button (click)="setTheme('light')"
-                    class="block w-full text-left px-2 py-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded flex items-center gap-2 transition-colors">
-                    <span class="material-symbols-rounded icon-xs" [class.text-primary]="currentTheme === 'light'">
-                      light_mode
-                    </span>
-                    Claro
-                    <span *ngIf="currentTheme === 'light'"
-                      class="ml-auto material-symbols-rounded icon-xs text-primary">
-                      check
-                    </span>
-                  </button>
-                </li>
-                <li>
-                  <button (click)="setTheme('dark')"
-                    class="block w-full text-left px-2 py-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded flex items-center gap-2 transition-colors">
-                    <span class="material-symbols-rounded icon-xs" [class.text-primary]="currentTheme === 'dark'">
-                      dark_mode
-                    </span>
-                    Oscuro
-                    <span *ngIf="currentTheme === 'dark'" class="ml-auto material-symbols-rounded icon-xs text-primary">
-                      check
-                    </span>
-                  </button>
-                </li>
-                <li>
-                  <button (click)="setTheme('system')"
-                    class="block w-full text-left px-2 py-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded flex items-center gap-2 transition-colors">
-                    <span class="material-symbols-rounded icon-xs" [class.text-primary]="currentTheme === 'system'">
-                      computer
-                    </span>
-                    Sistema
-                    <span *ngIf="currentTheme === 'system'"
-                      class="ml-auto material-symbols-rounded icon-xs text-primary">
-                      check
-                    </span>
-                  </button>
-                </li>
-              </ul> -->
-            </li>
-          </div>
+          
 
           <button *ngIf="isMobile" (click)="openMobileSearch()"
             class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex-shrink-0"
@@ -110,7 +50,7 @@
             </svg>
           </button>
 
-          
+
 
           <div class="relative">
             <div class="flex items-center gap-2">
