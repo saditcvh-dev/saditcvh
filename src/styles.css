@@ -3,3 +3,70 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Para todos los inputs */
+input, textarea, select {
+  color: #000000;
+  font-weight: normal;
+}
+
+/* También puedes ser más específico */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+textarea,
+select {
+  color: black !important;
+}
+
+/*  */
+
+/* Agregar estos estilos a tu archivo CSS */
+
+/* Permitir selección de texto en todo el contenedor PDF */
+.pdf-page-wrapper {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+}
+
+/* La capa de texto debe ser seleccionable */
+/* .text-layer {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  pointer-events: auto !important;
+} */
+
+/* Los spans dentro de la capa de texto también */
+/* .text-layer span {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  cursor: text !important;
+  color: transparent !important;
+} */
+
+/* El canvas solo debe capturar eventos en modo comentario */
+canvas {
+  pointer-events: none;
+}
+
+canvas.comment-mode-active {
+  pointer-events: auto !important;
+  cursor: crosshair !important;
+}
+
+
+
+/* src/styles.css */
+@media (prefers-color-scheme: dark) {
+  html.system-dark {
+    /* En lugar de @apply dark, añade la clase directamente */
+    /* Esto aplicará todos los estilos dark: del documento */
+  }
+}

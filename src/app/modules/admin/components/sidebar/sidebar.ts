@@ -1,9 +1,19 @@
-import { Component, EventEmitter, HostListener, inject, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { debounceTime, fromEvent, Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth';
 import { MunicipioService } from '../../../../core/services/explorador-municipio.service';
 import { AutorizacionTreeService } from '../../../../core/services/explorador-autorizacion-tree.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
+
+interface sidebarInfo {
+  label: string;
+  value: string;
+  status: 'good' | 'warning' | 'critical';
+  progress: number;
+  show: boolean;
+}
 
 @Component({
   selector: 'app-sidebar',
@@ -15,18 +25,41 @@ export class Sidebar {
   isMobile = false;
   private resizeSubscription!: Subscription;
   private treeService = inject(AutorizacionTreeService);
+  @Input() territoriesCount = 0;
 
+  // private readonly apiUrl = `${environment.apiUrl}/municipios`;
+  // private readonly apiUrlUsuarios = `${environment.apiUrl}/users/my-territories`;
 
-
+  dashboardInfo: any;
   @Output() sidebarToggled = new EventEmitter<boolean>();
 
 
-  constructor(private router: Router,private authService: AuthService) {
+  constructor(private router: Router, private authService: AuthService, private http: HttpClient, private municipioService: MunicipioService) {
     this.checkViewport();
   }
 
+  sidebarInfo: sidebarInfo = {
+    label: 'Cargando...',
+    value: '',
+    status: 'good',
+    progress: 0,
+    show: false
+  };
   ngOnInit(): void {
     this.initializeSidebarState();
+
+    // Inicializar información del dashboard
+    // de environment.apiUrl}/dashboard/status`;
+    this.http.get(`${environment.apiUrl}/dashboard/status`)
+      .subscribe((data: any) => {
+        this.sidebarInfo = {
+          label: data.label,
+          value: data.value,
+          status: data.status,
+          progress: data.progress,
+          show: data.show
+        };
+      });
 
     // Suscribirse a eventos de resize con debounce para mejor performance
     this.resizeSubscription = fromEvent(window, 'resize')
@@ -129,7 +162,7 @@ export class Sidebar {
   showNotificationsDropdown = false;
   showQuickValidateMenu = false;
   maintenanceMode: boolean = false;
-  
+
 
   // Datos de ejemplo - en producción vendrían de un servicio
   pendingValidationCount = 12;
@@ -234,7 +267,7 @@ export class Sidebar {
 
 
 
-  
+
   /**
    * Maneja la lógica de cierre de sesión.
    * Llama al método logout del AuthService.

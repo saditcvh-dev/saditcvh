@@ -1,11 +1,20 @@
-import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-header',
   standalone: false,
   templateUrl: './header.html',
 })
-export class Header {
+export class Header implements OnInit {
+
+
+  themeSubmenuOpen = false;
+  currentTheme: 'light' | 'dark' | 'system' = 'system';
+
+
+  @Input() sidebarOpen!: boolean;
+  @Input() isMobileView!: boolean;
+
   @Output() mobileMenuToggled = new EventEmitter<void>();
 
   isMobile = false;
@@ -193,7 +202,65 @@ export class Header {
     }
   }
   ngOnInit() {
+    this.loadThemePreference();
+
     this.isMobile = window.innerWidth < 768;
   }
+
+  toggleThemeSubmenu() {
+    this.themeSubmenuOpen = !this.themeSubmenuOpen;
+  }
+
+  setTheme(theme: 'light' | 'dark' | 'system') {
+    this.currentTheme = theme;
+    this.themeSubmenuOpen = false;
+
+    switch (theme) {
+      case 'light':
+        document.documentElement.classList.remove('dark');
+        break;
+      case 'dark':
+        document.documentElement.classList.add('dark');
+        break;
+      case 'system':
+        // Detectar preferencia del sistema
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        break;
+    }
+
+    // Guardar preferencia
+    localStorage.setItem('theme', theme);
+  }
+
+  private loadThemePreference() {
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null;
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme) {
+      this.currentTheme = savedTheme;
+      this.setTheme(savedTheme);
+    } else {
+      // Tema por defecto: sistema
+      this.currentTheme = 'system';
+      if (prefersDark) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+  }
+
+  goToProfile() {
+    // Navegar al perfil
+    console.log('Ir al perfil');
+  }
+
+  logout() {
+    // Lógica de cierre de sesión
+    console.log('Cerrar sesión');
+  }
+
 
 }

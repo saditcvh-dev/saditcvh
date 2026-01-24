@@ -14,7 +14,7 @@ export class Admin implements OnInit {
   isMobileView = false;
   @ViewChild('sidebar') sidebarComponent!: Sidebar;
   private userService = inject(UserService);
-
+  territoriesCount = 0;
   ngOnInit(): void {
     this.logUserPermissions();
   }
@@ -65,6 +65,7 @@ export class Admin implements OnInit {
 
         if (summary.length > 0) {
           console.table(summary);
+          this.territoriesCount = response.data.length;
         } else {
           console.warn('El usuario no tiene territorios asignados en la matriz.');
         }

@@ -1,10 +1,18 @@
-<div class="flex h-[calc(100vh-80px)]  gap-6 p-6 font-sans relative">
-	<div class="flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300" [class.w-16]="isCollapsed" [class.w-1/3]="!isCollapsed">
-		<app-explorer-panel [tree]="tree()" [selectedNode]="selectedNode()" [collapsed]="isCollapsed" (nodeSelected)="onSelectNode($event)" (nodeRightClick)="onNodeRightClick($event)" (toggle)="toggleExplorer()">
+<div class="flex gap-6 p-6 font-sans relative">
+	<div class="flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300"
+		[class.w-16]="isCollapsed" [class.w-1/3]="!isCollapsed">
+		<app-explorer-panel [tree]="tree()" [selectedNode]="selectedNode()" [collapsed]="isCollapsed"
+			(nodeSelected)="onSelectNode($event)" (nodeRightClick)="onNodeRightClick($event)"
+			(toggle)="toggleExplorer()">
 		</app-explorer-panel>
 	</div>
-	<div class="flex flex-col flex-1 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden relative">
-		<app-viewer-panel [selectedNode]="selectedNode()" [breadcrumbs]="breadcrumbs()" [activeTab]="activeTab()" [pdfUrl]="pdfUrl()" [documentVersions]="documentVersions()" (breadcrumbClick)="onBreadcrumbClick($event)" (tabChange)="onTabChange($event)" (openUploadModal)="openUploadModal()" (downloadVersion)="downloadVersion($event)" (restoreVersion)="restoreVersion($event)">
+	<div class="flex flex-col flex-1 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden overflow-y-auto  [&::-webkit-scrollbar]:hidden 
+            [-ms-overflow-style:none] 
+            [scrollbar-width:none] relative">
+		<app-viewer-panel [selectedNode]="selectedNode()" [breadcrumbs]="breadcrumbs()" [activeTab]="activeTab()"
+			[pdfUrl]="pdfUrl()" [documentVersions]="documentVersions()" (breadcrumbClick)="onBreadcrumbClick($event)"
+			(tabChange)="onTabChange($event)" (openUploadModal)="openUploadModal()"
+			(downloadVersion)="downloadVersion($event)" (restoreVersion)="restoreVersion($event)">
 		</app-viewer-panel>
 	</div>
 	<!-- Componentes de UI flotantes -->
@@ -13,6 +21,12 @@
 	<app-toast [toast]="toast()" (close)="closeToast()">
 	</app-toast>
 	<!-- Modales -->
-	<app-modal-container [modalState]="modalState()" [uploadModalState]="uploadModalState()" [isDragging]="isDragging()" [selectedFile]="selectedFile()" [isUploading]="isUploading()" [modalidades]="modalidades()" [tiposAutorizacion]="tiposAutorizacion()" (modalAction)="handleModalAction($event)" (closeModal)="closeModal()" (closeUploadModal)="closeUploadModal()" (fileSelected)="onFileSelected($event)" (fileDropped)="onFileDrop($event)" (dragOver)="onDragOver($event)" (dragLeave)="onDragLeave($event)" (clearFile)="clearSelectedFile($event)" (uploadFile)="uploadFile()" (modalDataChange)="onModalDataChange($event)" [selectedNode]="selectedNode()">
+	<app-modal-container [modalState]="modalState()" [uploadModalState]="uploadModalState()" [isDragging]="isDragging()"
+		[selectedFile]="selectedFile()" [isUploading]="isUploading()" [modalidades]="modalidades()"
+		[tiposAutorizacion]="tiposAutorizacion()" (modalAction)="handleModalAction($event)" (closeModal)="closeModal()"
+		(closeUploadModal)="closeUploadModal()" (fileSelected)="onFileSelected($event)"
+		(fileDropped)="onFileDrop($event)" (dragOver)="onDragOver($event)" (dragLeave)="onDragLeave($event)"
+		(clearFile)="clearSelectedFile($event)" (uploadFile)="uploadFile()"
+		(modalDataChange)="onModalDataChange($event)" [selectedNode]="selectedNode()">
 	</app-modal-container>
 </div>

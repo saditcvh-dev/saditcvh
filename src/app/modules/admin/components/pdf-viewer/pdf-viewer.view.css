@@ -1,0 +1,5 @@
+/* Para que el sidebar se vea mejor al scrollear */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}

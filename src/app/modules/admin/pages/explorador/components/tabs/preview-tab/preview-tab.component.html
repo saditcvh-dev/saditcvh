@@ -2,45 +2,515 @@
 	<!-- Sin selección -->
 	<ng-container *ngIf="!selectedNode; else withSelection">
 		<div class="flex flex-col items-center justify-center h-full text-gray-400">
-			<svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+			<svg class="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+					d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
 			</svg>
 			<p class="text-lg">Selecciona un elemento para ver detalles</p>
 		</div>
 	</ng-container>
+
 	<ng-template #withSelection>
-		<!-- Autorización -->
+		<!-- Autorización con PDF -->
 		<ng-container *ngIf="isAutorizacion; else otherNode">
-			<!-- PDF con vista previa -->
+			<!-- PDF con vista previa avanzada -->
 			<ng-container *ngIf="hasPreview; else noPreview">
-				<div class="relative w-full" style="height: calc(100vh - 220px);">
-					<div *ngIf="isLoading()" class="absolute top-0 left-0 z-20 w-full">
-						<div class="h-1 w-full bg-gray-200 overflow-hidden">
-							<div class="h-full w-1/3 bg-blue-500 animate-[loading_1.2s_ease-in-out_infinite]">
+				<!-- VISOR AVANZADO DE PDF -->
+				<div class="flex text-sm h-full">
+					<!-- Sidebar izquierdo - NO AFECTADO POR ZOOM -->
+					<div class="w-48 border-r border-gray-200 flex flex-col shadow-sm bg-white sticky top-0 h-full z-10">
+
+						<!-- Contenedor de controles -->
+						<div class="flex-1 overflow-y-auto p-3 space-y-4 
+									[&::-webkit-scrollbar]:hidden 
+									[-ms-overflow-style:none] 
+									[scrollbar-width:none]">
+							<!-- Información del documento -->
+							<div *ngIf="pdfDoc" class="p-2 bg-gray-50 rounded border border-gray-200">
+								<h3 class="text-xs font-semibold text-gray-700 mb-1">Documento</h3>
+								<p class="text-xs text-gray-600 truncate">{{ currentFileName }}</p>
+								<div class="flex justify-between text-xs text-gray-500 mt-1">
+									<span>{{ getFileSize() }}</span>
+									<span>{{ totalPages }} pág</span>
+								</div>
+							</div>
+
+							<!-- Navegación -->
+							<div>
+								<h3 class="text-xs font-semibold text-gray-700 mb-2">Navegación</h3>
+								<div class="mb-3">
+									<label class="block text-xs text-gray-600 mb-1">Ir a página:</label>
+									<div class="flex">
+										<input type="number" [(ngModel)]="jumpToPage" [min]="1" [max]="totalPages"
+											placeholder="Nº"
+											class="w-12 px-2 py-1 text-xs text-center border border-gray-300 rounded-l focus:outline-none focus:ring-1 focus:ring-gray-500">
+										<button (click)="goToPageNumber(jumpToPage)"
+											[disabled]="!jumpToPage || jumpToPage < 1 || jumpToPage > totalPages"
+											class="flex-1 bg-white border border-gray-300 text-gray-900 px-2 py-1 text-xs rounded-r hover:bg-gray-50 hover:text-gray-900 disabled:bg-gray-100 disabled:text-gray-400">
+											Ir
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<!-- Vista actual -->
+							<div>
+								<h3 class="text-xs font-semibold text-gray-700 mb-1">Vista actual</h3>
+								<div class="bg-gray-50 p-2 rounded border border-gray-200">
+									<div class="flex items-center justify-between">
+										<span class="text-xs font-medium text-gray-800">Pág {{ currentVisiblePage
+											}}</span>
+										<span class="text-xs text-gray-600">/ {{ totalPages }}</span>
+									</div>
+								</div>
+							</div>
+
+							<!-- Zoom - Controles independientes -->
+							<div>
+								<h3 class="text-xs font-semibold text-gray-700 mb-2">Zoom</h3>
+								<div class="flex items-center justify-between mb-2">
+									<button (click)="zoomOut()" [disabled]="!pdfDoc"
+										class="p-1.5 bg-white border border-gray-300 text-gray-800 rounded hover:bg-gray-50 hover:text-gray-900">
+										<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
+										</svg>
+									</button>
+									<span class="text-xs font-medium text-gray-900">{{ getZoomPercentage() }}%</span>
+									<button (click)="zoomIn()" [disabled]="!pdfDoc"
+										class="p-1.5 bg-white border border-gray-300 text-gray-800 rounded hover:bg-gray-50 hover:text-gray-900">
+										<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+										</svg>
+									</button>
+								</div>
+								<div class="space-y-1">
+									<!-- <button (click)="fitToWidth()" [disabled]="!pdfDoc"
+										class="w-full py-1.5 text-xs bg-white border border-gray-300 text-gray-900 rounded hover:bg-gray-50 hover:text-gray-900 disabled:bg-gray-100 disabled:text-gray-400">
+										Ajustar ancho
+									</button>
+									<button (click)="fitToPage()" [disabled]="!pdfDoc"
+										class="w-full py-1.5 text-xs bg-white border border-gray-300 text-gray-900 rounded hover:bg-gray-50 hover:text-gray-900 disabled:bg-gray-100 disabled:text-gray-400">
+										Ajustar página
+									</button> -->
+									<button (click)="resetZoom()" [disabled]="!pdfDoc"
+										class="w-full py-1.5 text-xs bg-white border border-gray-300 text-gray-900 rounded hover:bg-gray-50 hover:text-gray-900 disabled:bg-gray-100 disabled:text-gray-400">
+										Restablecer zoom
+									</button>
+								</div>
+							</div>
+
+							<!-- Herramientas -->
+							<div>
+								<h3 class="text-xs font-semibold text-gray-700 mb-2">Herramientas</h3>
+								<div class="space-y-1">
+									<button (click)="toggleCommentMode()" [disabled]="!pdfDoc"
+										class="w-full flex items-center px-2 py-1.5 text-xs bg-white border border-gray-300 text-gray-800 rounded hover:bg-gray-50 hover:text-gray-900 disabled:bg-gray-100 disabled:text-gray-400">
+										<svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+										</svg>
+										Comentario
+									</button>
+									<button (click)="toggleSearchPanel()" [disabled]="!pdfDoc"
+										class="w-full flex items-center px-2 py-1.5 text-xs bg-white border border-gray-300 text-gray-800 rounded hover:bg-gray-50 hover:text-gray-900 disabled:bg-gray-100 disabled:text-gray-400">
+										<svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round"
+												d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+										</svg>
+										Buscar
+									</button>
+									<!-- <button (click)="printPDF()" [disabled]="!pdfDoc"
+										class="w-full flex items-center px-2 py-1.5 text-xs bg-white border border-gray-300 text-gray-800 rounded hover:bg-gray-50 hover:text-gray-900 disabled:bg-gray-100 disabled:text-gray-400">
+										<svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round"
+												d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" />
+										</svg>
+										Imprimir
+									</button> -->
+								</div>
+							</div>
+						</div>
+
+						<!-- Footer -->
+						<div class="p-3 border-t border-gray-200 bg-white shrink-0">
+							<button (click)="toggleFullscreen()" [disabled]="!pdfDoc"
+								class="w-full flex items-center justify-center px-2 py-1.5 text-xs bg-white border border-gray-300 text-gray-900 rounded hover:bg-gray-50 hover:text-gray-900 disabled:bg-gray-100 disabled:text-gray-400">
+								<svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+									<path *ngIf="!isFullscreen" stroke-linecap="round" stroke-linejoin="round"
+										d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+									<path *ngIf="isFullscreen" stroke-linecap="round" stroke-linejoin="round"
+										d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25" />
+								</svg>
+								{{ isFullscreen ? 'Salir' : 'Pantalla completa' }}
+							</button>
+						</div>
+					</div>
+
+					<!-- Área principal - Aquí se aplica el zoom SOLO al PDF -->
+					<div class="flex-1 flex flex-col min-h-0 relative">
+						<!-- Barra superior - NO AFECTADA POR ZOOM -->
+						<div
+							class="bg-white border-b border-gray-200 px-3 py-2 flex items-center justify-between text-xs shrink-0 z-10">
+							<!-- Indicador de página actual -->
+							<div class="flex items-center space-x-2">
+								<div class="flex items-center bg-gray-50 px-2 py-1 rounded border border-gray-200">
+									<svg class="w-3 h-3 text-gray-600 mr-1" fill="none" stroke="currentColor" stroke-width="2"
+										viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round"
+											d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+									</svg>
+									<span class="text-xs text-gray-900">
+										Pág <span class="font-semibold">{{ currentVisiblePage }}</span>/{{ totalPages }}
+									</span>
+								</div>
+
+								<!-- Controles de navegación -->
+								<div class="flex items-center space-x-1">
+									<button (click)="scrollToPage(currentVisiblePage - 1)"
+										[disabled]="!pdfDoc || currentVisiblePage <= 1"
+										class="p-1 text-gray-800 hover:bg-gray-100 hover:text-gray-900 rounded disabled:opacity-40 disabled:text-gray-500">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round"
+												d="M15.75 19.5L8.25 12l7.5-7.5" />
+										</svg>
+									</button>
+
+									<button (click)="scrollToPage(currentVisiblePage + 1)"
+										[disabled]="!pdfDoc || currentVisiblePage >= totalPages"
+										class="p-1 text-gray-800 hover:bg-gray-100 hover:text-gray-900 rounded disabled:opacity-40 disabled:text-gray-500">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round"
+												d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+										</svg>
+									</button>
+								</div>
+							</div>
+
+							<!-- Zoom y herramientas -->
+							<div class="flex items-center space-x-3">
+								<div class="text-xs text-gray-900" *ngIf="pdfDoc">
+									Zoom: <span class="font-medium text-gray-900">{{ getZoomPercentage() }}%</span>
+								</div>
+
+								<div class="flex items-center space-x-1">
+									<!-- Indicador de carga -->
+									<div *ngIf="isLoadingPages" class="flex items-center">
+										<div
+											class="w-3 h-3 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-1">
+										</div>
+										<span class="text-xs text-gray-900">Cargando...</span>
+									</div>
+
+									<!-- Resultados de búsqueda -->
+									<div *ngIf="totalSearchMatches > 0 && !isSearching"
+										class="flex items-center space-x-1">
+										<span class="text-xs text-gray-900">{{ currentSearchResultIndex + 1 }}/{{
+											totalSearchMatches }}</span>
+										<button (click)="goToPreviousSearchResult()"
+											class="p-1 text-gray-900 hover:bg-gray-100 hover:text-gray-900 rounded">
+											<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round"
+													d="M15.75 19.5L8.25 12l7.5-7.5" />
+											</svg>
+										</button>
+										<button (click)="goToNextSearchResult()"
+											class="p-1 text-gray-900 hover:bg-gray-100 hover:text-gray-900 rounded">
+											<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round"
+													d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+											</svg>
+										</button>
+									</div>
+
+									<!-- Contador de comentarios -->
+									<button (click)="toggleCommentsPanel()"
+										class="relative p-1 text-gray-900 hover:bg-gray-100 hover:text-gray-900 rounded">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round"
+												d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+										</svg>
+										<span *ngIf="comments.length > 0"
+											class="absolute -top-0.5 -right-0.5 bg-blue-500 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center text-[10px]">
+											{{ comments.length }}
+										</span>
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Área del PDF - AQUÍ SE APLICA EL ZOOM INDEPENDIENTEMENTE -->
+						<div class="flex-1 relative bg-gray-200 overflow-auto min-h-0" #pdfContainer
+							(scroll)="onScroll()" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)"
+							(touchend)="onTouchEnd($event)" style="touch-action: none;">
+
+							<!-- Panel de búsqueda flotante - POSICIONADO FIJO -->
+							<div *ngIf="showSearchPanel && pdfDoc"
+								class="fixed top-4 right-4 w-72 bg-white rounded-lg shadow-xl z-50 border border-gray-300">
+								<div class="p-3">
+									<div class="flex items-center justify-between mb-2">
+										<h3 class="text-sm font-medium text-gray-900">Buscar</h3>
+										<button (click)="toggleSearchPanel()"
+											class="text-gray-500 hover:text-gray-900">
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round"
+													d="M6 18L18 6M6 6l12 12" />
+											</svg>
+										</button>
+									</div>
+
+									<div class="flex gap-1 mb-2">
+										<input #searchInput type="text" [(ngModel)]="searchText"
+											placeholder="Buscar texto..." (keyup.enter)="searchInPDF()"
+											class="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+										<button (click)="searchInPDF()" [disabled]="isSearching || !searchText.trim()"
+											class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500">
+											{{ isSearching ? 'Buscando...' : 'Buscar' }}
+										</button>
+									</div>
+
+									<div *ngIf="totalSearchMatches > 0" class="mt-2 pt-2 border-t border-gray-200">
+										<div class="flex items-center justify-between text-xs text-gray-600 mb-1">
+											<span class="text-gray-900">{{ totalSearchMatches }} coincidencias</span>
+											<button (click)="clearSearchHighlights()"
+												class="text-xs text-gray-600 hover:text-gray-900">
+												Limpiar
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Loading inicial -->
+							<div *ngIf="isLoading && !pdfDoc"
+								class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 z-10 p-4">
+								<div
+									class="w-8 h-8 border-3 border-gray-200 border-t-gray-600 rounded-full animate-spin mb-2">
+								</div>
+								<p class="text-sm text-gray-900">Cargando PDF...</p>
+								<div *ngIf="loadingProgress > 0"
+									class="w-48 h-1.5 bg-gray-200 rounded-full overflow-hidden mt-2">
+									<div class="h-full bg-gray-600 transition-all" [style.width.%]="loadingProgress">
+									</div>
+								</div>
+							</div>
+
+							<!-- Overlay para modo comentario -->
+							<div *ngIf="commentModeActive && pdfDoc"
+								class="fixed top-2 left-1/2 transform -translate-x-1/2 z-20">
+								<div class="bg-blue-500 text-white px-3 py-1.5 rounded shadow-lg text-sm">
+									<div class="flex items-center">
+										<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round"
+												d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+										</svg>
+										<span>Haz clic para comentar</span>
+									</div>
+								</div>
+							</div>
+
+							<!-- Indicador de zoom táctil -->
+							<div *ngIf="isPinching" class="fixed top-2 left-1/2 transform -translate-x-1/2 z-20">
+								<div class="bg-blue-500 text-white px-3 py-1.5 rounded shadow-lg text-sm">
+									<div class="flex items-center">
+										<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round"
+												d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+										</svg>
+										<span>Ajustando zoom: {{ getZoomPercentage() }}%</span>
+									</div>
+								</div>
+							</div>
+
+							<!-- Contenedor principal de páginas - DONDE SE APLICA EL ZOOM -->
+							<div id="pdfPagesContainer" class="p-2"
+								
+								>
+								<!-- Las páginas se renderizan aquí -->
+								<div *ngFor="let page of visiblePages" [id]="'page-' + page"
+									class="pdf-page-container mx-auto">
+								</div>
+
+								<!-- Cargando más páginas -->
+								<div *ngIf="isLoadingPages && visiblePages.length < totalPages"
+									class="text-center py-4">
+									<div
+										class="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mx-auto mb-1">
+									</div>
+									<p class="text-xs text-gray-900">Cargando páginas...</p>
+								</div>
+
+								<!-- Marcador de fin -->
+								<div *ngIf="visiblePages.length === totalPages && totalPages > 0"
+									class="text-center py-4 border-t border-gray-200 mt-4">
+									<svg class="w-8 h-8 text-green-500 mx-auto mb-1" fill="none" stroke="currentColor" stroke-width="2"
+										viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round"
+											d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+									</svg>
+									<p class="text-sm text-gray-900">Fin del documento</p>
+									<p class="text-xs text-gray-600">{{ totalPages }} páginas</p>
+								</div>
+							</div>
+
+							<!-- Botón para ir arriba -->
+							<button *ngIf="showScrollTop" (click)="scrollToTop()"
+								class="fixed bottom-4 right-4 w-8 h-8 bg-blue-500 text-white rounded-full shadow hover:bg-gray-900 z-10 flex items-center justify-center">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round"
+										d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
+								</svg>
+							</button>
+
+							<!-- Indicador de página flotante -->
+							<div *ngIf="pdfDoc"
+								class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded shadow text-sm z-10">
+								<div class="flex items-center">
+									<svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round"
+											d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+									</svg>
+									<span>Pág {{ currentVisiblePage }}/{{ totalPages }}</span>
+								</div>
 							</div>
 						</div>
 					</div>
-					<object *ngIf="!hasError()" [data]="pdfUrl" type="application/pdf" class="w-full h-full" (load)="onPdfLoaded()" (error)="onPdfError()">
-					</object>
+
+					<!-- Panel lateral derecho - NO AFECTADO POR ZOOM -->
+					<div *ngIf="showCommentsPanel"
+						class="absolute inset-0 lg:static lg:w-80 bg-white border-l border-gray-200 shadow-lg z-40 flex flex-col">
+						<!-- Header -->
+						<div class="p-3 border-b border-gray-200 flex items-center justify-between shrink-0">
+							<h3 class="text-sm font-semibold text-gray-900">Comentarios</h3>
+							<button (click)="toggleCommentsPanel()"
+								class="p-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+								</svg>
+							</button>
+						</div>
+
+						<!-- Contenido -->
+						<div class="flex-1 overflow-y-auto p-3
+									[&::-webkit-scrollbar]:hidden 
+									[-ms-overflow-style:none] 
+									[scrollbar-width:none]">
+							<!-- Formulario nuevo comentario -->
+							<div class="mb-4 p-3 bg-gray-50 rounded border border-gray-200">
+								<h4 class="text-xs font-medium text-gray-900 mb-2">Nuevo comentario</h4>
+
+								<textarea #commentTextarea [(ngModel)]="newCommentText" placeholder="Escribe aquí..."
+									rows="2" maxlength="500" (keydown.enter)="addComment($event)"
+									class="w-full px-2 py-1.5 text-xs bg-white border border-gray-300 rounded focus:ring-1 focus:ring-gray-500 focus:outline-none resize-none mb-2"></textarea>
+
+								<div class="flex items-center justify-between mb-3">
+									<div class="flex space-x-1">
+										<button *ngFor="let color of commentColors; let i = index"
+											(click)="selectedColor = color" [class.ring-1]="selectedColor === color"
+											[class.ring-gray-500]="selectedColor === color"
+											class="w-4 h-4 rounded-full border border-gray-300"
+											[style.backgroundColor]="color">
+										</button>
+									</div>
+
+									<span class="text-xs text-gray-600">{{ newCommentText.length }}/500</span>
+								</div>
+
+								<button (click)="addComment()" [disabled]="!newCommentText.trim()"
+									class="w-full py-1.5 text-xs bg-blue-500 text-white rounded hover:bg-gray-900 disabled:bg-gray-300 disabled:text-gray-500">
+									Agregar
+								</button>
+							</div>
+
+							<!-- Lista de comentarios -->
+							<div *ngIf="comments.length > 0; else noComments">
+								<!-- Filtros -->
+								<div class="mb-3">
+									<div class="flex items-center justify-between mb-2">
+										<h4 class="text-xs font-semibold text-gray-900">Comentarios</h4>
+										<button (click)="filterByPage = filterByPage ? null : currentVisiblePage"
+											[class.bg-gray-100]="filterByPage"
+											class="text-xs px-2 py-0.5 border border-gray-300 text-gray-900 rounded hover:bg-gray-50">
+											{{ filterByPage ? 'Todos' : 'Esta página' }}
+										</button>
+									</div>
+
+									<div class="mb-3">
+										<input type="text" [(ngModel)]="searchQuery" placeholder="Buscar..."
+											class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-gray-500 focus:outline-none">
+									</div>
+								</div>
+
+								<!-- Comentarios -->
+								<div class="space-y-2">
+									<div *ngFor="let comment of filteredComments"
+										[class.bg-gray-50]="selectedComment?.id === comment.id"
+										(click)="selectComment(comment)"
+										class="p-2 bg-white border border-gray-300 rounded hover:border-gray-400 cursor-pointer text-xs">
+										<div class="flex items-start justify-between mb-1">
+											<div class="flex items-center space-x-1">
+												<div class="w-2 h-2 rounded-full"
+													[style.backgroundColor]="comment.color"></div>
+												<span class="font-medium text-gray-900">Pág {{ comment.page }}</span>
+												<span class="text-gray-600">{{ formatTimeAgo(comment.date) }}</span>
+											</div>
+											<button (click)="deleteComment(comment); $event.stopPropagation()"
+												class="text-gray-600 hover:text-red-600">
+												<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round"
+														d="M6 18L18 6M6 6l12 12" />
+												</svg>
+											</button>
+										</div>
+
+										<p class="text-gray-900 mb-1 line-clamp-2">{{ comment.text }}</p>
+
+										<div class="mt-1 pt-1 border-t border-gray-100">
+											<button (click)="scrollToPage(comment.page); $event.stopPropagation()"
+												class="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-900 rounded hover:bg-gray-200">
+												Ir a página
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<ng-template #noComments>
+								<div class="flex flex-col items-center justify-center py-8">
+									<svg class="w-12 h-12 text-gray-400 mb-2" fill="none" stroke="currentColor" stroke-width="1.5"
+										viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round"
+											d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+									</svg>
+									<p class="text-xs text-gray-900 mb-1">No hay comentarios</p>
+									<button (click)="commentModeActive = true"
+										class="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-gray-900">
+										Activar comentarios
+									</button>
+								</div>
+							</ng-template>
+						</div>
+					</div>
 				</div>
+				<!-- FIN VISOR AVANZADO DE PDF -->
 			</ng-container>
+
 			<!-- Sin archivo -->
 			<ng-template #noPreview>
 				<div class="flex flex-col items-center justify-center h-full text-gray-400">
-					<svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+					<svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round"
+							d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
 					</svg>
 					<p class="text-lg">Sin vista previa disponible</p>
 					<p class="text-sm mt-2">Sube un archivo para visualizarlo</p>
 				</div>
 			</ng-template>
 		</ng-container>
+
 		<!-- Otros nodos -->
 		<ng-template #otherNode>
 			<div class="flex flex-col items-center justify-center h-full text-gray-400">
 				<div [innerHTML]="getNodeIcon(selectedNode)" class="w-16 h-16 mb-4"></div>
 				<p class="text-lg">{{ selectedNode?.nombre }}</p>
-				<!-- <p class="text-sm mt-2">{{ getNodeDescription(selectedNode) }}</p> -->
 			</div>
 		</ng-template>
 	</ng-template>
