@@ -40,18 +40,27 @@ export class ViewerPanelComponent {
     return typeMap[this.selectedNode.type] || this.selectedNode.type;
   }
 
-  get nodeTypeColor(): string {
-    if (!this.selectedNode) return 'gray';
-    
-    switch (this.selectedNode.type) {
-      case 'municipio':
-        return 'bg-blue-100 text-blue-700 border-blue-200';
-      case 'autorizacion':
-        return 'bg-green-100 text-green-700 border-green-200';
-      default:
-        return 'bg-gray-100 text-gray-600 border-gray-200';
-    }
+get nodeTypeColor(): string {
+  if (!this.selectedNode) return '';
+
+  switch (this.selectedNode.type) {
+    case 'municipio':
+      return `
+        bg-blue-100 text-blue-700 border-blue-200
+        dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800
+      `;
+    case 'autorizacion':
+      return `
+        bg-green-100 text-green-700 border-green-200
+        dark:bg-green-900/30 dark:text-green-300 dark:border-green-800
+      `;
+    default:
+      return `
+        bg-gray-100 text-gray-600 border-gray-200
+        dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700
+      `;
   }
+}
 
   getNodeIcon(node: AutorizacionTreeNode): string {
     const iconMap = {

@@ -1,10 +1,12 @@
 <div class="space-y-4">
 	<!-- Área de Drop -->
-	<div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer transition-all duration-200" [class.border-[#691831]]="isDragging" [class.bg-blue-50]="isDragging" [class.border-green-300]="selectedFile" [class.bg-green-50]="selectedFile" (click)="openFilePicker()" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)">
+	<div class="border-2 border-dashed border-gray-300 dark:border-neutral-600
+            bg-white dark:bg-gray-800
+            rounded-xl p-8 text-center cursor-pointer transition-all duration-200" [class.border-[#691831]]="isDragging" [class.bg-blue-50]="isDragging" [class.dark:bg-blue-950]="isDragging" [class.border-green-300]="selectedFile" [class.bg-green-50]="selectedFile" [class.dark:bg-green-950]="selectedFile" (click)="openFilePicker()" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)">
 		<!-- Icono según estado -->
 		<div class="mb-4">
 			<div *ngIf="!selectedFile" class="flex justify-center">
-				<svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<svg class="w-12 h-12 text-gray-400 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
 				</svg>
 			</div>
@@ -13,38 +15,40 @@
 			</div>
 		</div>
 		<!-- Texto principal -->
-		<p class="text-gray-700 font-medium mb-1">
+		<p class="text-gray-700  dark:text-neutral-200 font-medium mb-1">
 			{{ selectedFile ? 'Archivo seleccionado' : description }}
 		</p>
 		<!-- Texto secundario -->
-		<p class="text-xs text-gray-500 mb-2"> Formatos soportados: PDF, JPG, PNG, TIFF, DOC, DOCX </p>
-		<p class="text-xs text-gray-500"> Tamaño máximo: 50MB </p>
+		<p class="text-xs text-gray-500 dark:text-neutral-400 mb-2"> Formatos soportados: PDF, JPG, PNG, TIFF, DOC, DOCX </p>
+		<p class="text-xs text-gray-500 dark:text-neutral-400"> Tamaño máximo: 50MB </p>
 		<!-- Botón de selección -->
 		<div *ngIf="!selectedFile" class="mt-4">
-			<button type="button" class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"> Seleccionar archivo </button>
+			<button type="button" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700  dark:text-neutral-200 text-sm font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-neutral-700 transition-colors"> Seleccionar archivo </button>
 		</div>
 		<!-- Archivo seleccionado -->
 		<div *ngIf="selectedFile" class="mt-6">
-			<div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+		<div class="bg-white dark:bg-gray-800
+            border border-gray-200 dark:border-neutral-700
+            rounded-lg p-4 shadow-sm">
 				<div class="flex items-center gap-3">
 					<div class="flex-shrink-0">
 						<div [innerHTML]="getFileIconSvg()"></div>
 					</div>
 					<div class="flex-1 min-w-0">
-						<p class="text-sm font-medium text-gray-800 truncate">
+						<p class="text-sm font-medium text-gray-800 dark:text-neutral-200 truncate">
 							{{ selectedFile.name }}
 						</p>
 						<div class="flex items-center gap-3 mt-1">
-							<span class="text-xs text-gray-500">
+							<span class="text-xs text-gray-500 dark:text-neutral-400">
 								{{ fileTypeLabel }}
 							</span>
-							<span class="text-xs text-gray-500">•</span>
-							<span class="text-xs text-gray-500">
+							<span class="text-xs text-gray-500 dark:text-neutral-400">•</span>
+							<span class="text-xs text-gray-500 dark:text-neutral-400">
 								{{ formatFileSize(selectedFile.size) }}
 							</span>
 						</div>
 					</div>
-					<button type="button" (click)="onClearFile($event)" class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100">
+					<button type="button" (click)="onClearFile($event)" class="text-gray-400 dark:text-neutral-500 hover:text-gray-600 dark:hover:text-neutral-300 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 						</svg>
@@ -59,13 +63,13 @@
 			<svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
 			</svg>
-			<span class="text-gray-700">Tamaño válido: {{ formatFileSize(selectedFile.size) }}</span>
+			<span class="text-gray-700 dark:text-neutral-200">Tamaño válido: {{ formatFileSize(selectedFile.size) }}</span>
 		</div>
 		<div class="flex items-center gap-2 text-sm">
 			<svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
 			</svg>
-			<span class="text-gray-700">Formato compatible: {{ fileTypeLabel }}</span>
+			<span class="text-gray-700 dark:text-neutral-200">Formato compatible: {{ fileTypeLabel }}</span>
 		</div>
 	</div>
 	<!-- Input de archivo oculto -->
