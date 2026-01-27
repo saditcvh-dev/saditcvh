@@ -1,34 +1,35 @@
-<div *ngIf="contextMenu.visible" #menuContainer [style.top.px]="contextMenu.y" [style.left.px]="contextMenu.x" class="fixed bg-white rounded-lg shadow-xl border border-gray-200 w-52 py-1 z-50 text-sm text-gray-700 animate-in fade-in duration-100">
+<div *ngIf="contextMenu.visible" #menuContainer [style.top.px]="contextMenu.y" [style.left.px]="contextMenu.x" class="fixed bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-neutral-700 w-52 py-1 z-50 text-sm text-gray-700 dark:text-neutral-200 animate-in fade-in duration-100"
+>
 	<!-- Header del menú -->
-	<div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase border-b border-gray-100 bg-gray-50 truncate">
+	<div class="px-4 py-2 text-xs font-bold text-gray-400 dark:text-neutral-400 uppercase border-b border-gray-100 dark:border-neutral-700 bg-gray-50 dark:bg-gray-800 truncate">
 		{{ contextMenu.node?.nombre }}
 	</div>
-	<button *ngIf="shouldShowAction('open')" (click)="onAction('open')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-gray-700">
+	<button *ngIf="shouldShowAction('open')" (click)="onAction('open')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 text-gray-700 dark:text-neutral-200">
 		<svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
 		</svg> Abrir / Visualizar </button>
 	<!-- Agregar Documento -->
-	<button *ngIf="shouldShowAction('add_documento')" (click)="onAction('add_documento')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-gray-700">
+	<button *ngIf="shouldShowAction('add_documento')" (click)="onAction('add_documento')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 text-gray-700 dark:text-neutral-200">
 		<svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
 		</svg> Agregar Documento </button>
 	<!-- Agregar Autorización -->
-	<button *ngIf="shouldShowAction('add_autorizacion')" (click)="onAction('add_autorizacion')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-gray-700">
+	<button *ngIf="shouldShowAction('add_autorizacion')" (click)="onAction('add_autorizacion')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 text-gray-700 dark:text-neutral-200">
 		<svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
 		</svg> Archivo / Autorización </button>
 	<!-- Separador -->
-	<div class="border-t border-gray-100 my-1"></div>
+	<div class="border-t border-gray-100 dark:border-neutral-700 my-1"></div>
 	<!-- Permisos -->
-	<button (click)="onAction('security')" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-purple-700">
+	<button (click)="onAction('security')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 text-purple-700 dark:text-purple-400">
 		<svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
 		</svg> Permisos </button>
 	<!-- Separador -->
-	<div class="border-t border-gray-100 my-1"></div>
+	<div class="border-t border-gray-100 dark:border-neutral-700 my-1"></div>
 	<!-- Eliminar -->
-	<button *ngIf="shouldShowAction('delete')" (click)="onAction('delete')" class="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 flex items-center gap-2">
+	<button *ngIf="shouldShowAction('delete')" (click)="onAction('delete')" class="w-full text-left px-4 py-2 hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center gap-2">
 		<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
 		</svg> Eliminar </button>

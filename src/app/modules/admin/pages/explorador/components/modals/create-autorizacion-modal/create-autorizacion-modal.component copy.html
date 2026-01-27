@@ -1,0 +1,138 @@
+<div class="space-y-4">
+	<!-- Número de Autorización -->
+<!-- Número de Autorización + Consecutivos -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+  <!-- Número de Autorización -->
+  <div>
+    <label class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
+       Autorización <span class="text-red-500">*</span>
+    </label>
+    <input
+      type="text"
+      [value]="modalState.data?.numeroAutorizacion || ''"
+      (input)="onNumeroAutorizacionChange($event)"
+      placeholder="Ej. 5656"
+       class="w-full px-3 py-2 rounded-lg border
+          bg-white dark:bg-gray-800
+          border-gray-300 dark:border-neutral-600
+          text-gray-900 dark:text-neutral-100
+          placeholder:text-gray-400 dark:placeholder:text-neutral-400
+          focus:ring-2 focus:ring-[#691831] dark:focus:ring-blue-500
+          focus:border-[#691831] dark:focus:border-blue-500
+          transition-colors text-sm"
+  />
+  </div>
+
+  <!-- Consecutivo 1 -->
+  <div>
+    <label class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
+      Consecutivo 1 <span class="text-red-500">*</span>
+    </label>
+    <input
+        type="text"
+  inputmode="numeric"
+  pattern="[0-9]*"
+      [value]="modalState.data?.consecutivo1 || ''"
+      (input)="onConsecutivo1Change($event)"
+      placeholder="Ej. 1"
+       class="w-full px-3 py-2 rounded-lg border
+          bg-white dark:bg-gray-800
+          border-gray-300 dark:border-neutral-600
+          text-gray-900 dark:text-neutral-100
+          placeholder:text-gray-400 dark:placeholder:text-neutral-400
+          focus:ring-2 focus:ring-[#691831] dark:focus:ring-blue-500
+          focus:border-[#691831] dark:focus:border-blue-500
+          transition-colors text-sm"
+  />
+  </div>
+
+  <!-- Consecutivo 2 -->
+  <div>
+    <label class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1">
+      Consecutivo 2 <span class="text-red-500">*</span>
+    </label>
+    <input
+      type="text"
+  inputmode="numeric"
+  pattern="[0-9]*"
+      [value]="modalState.data?.consecutivo2 || ''"
+      (input)="onConsecutivo2Change($event)"
+      placeholder="Ej. 2026"
+       class="w-full px-3 py-2 rounded-lg border
+          bg-white dark:bg-gray-800
+          border-gray-300 dark:border-neutral-600
+          text-gray-900 dark:text-neutral-100
+          placeholder:text-gray-400 dark:placeholder:text-neutral-400
+          focus:ring-2 focus:ring-[#691831] dark:focus:ring-blue-500
+          focus:border-[#691831] dark:focus:border-blue-500
+          transition-colors text-sm"
+  />
+  </div>
+
+</div>
+
+<p class="text-xs text-gray-500 dark:text-neutral-400 mt-1">
+  Datos que conforman el número completo de autorización
+</p>
+
+
+	<!-- Modalidad -->
+	 
+	<div>
+		<label class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1"> Modalidad <span class="text-red-500">*</span>
+		</label>
+		<select [value]="modalState.data?.modalidadId || ''" (change)="onModalidadChange($event)"  class="w-full px-3 py-2 rounded-lg border
+         bg-white dark:bg-gray-800
+         border-gray-300 dark:border-neutral-600
+         text-gray-900 dark:text-neutral-100
+         focus:ring-2 focus:ring-[#691831] dark:focus:ring-blue-500
+         transition-colors text-sm">
+			<option value="">Seleccione una modalidad</option>
+			<option *ngFor="let modalidad of modalidades" [value]="modalidad.id" [selected]="modalidad.id === modalState.data?.modalidadId">
+				{{ modalidad.num }} - {{ modalidad.nombre }}
+			</option>
+		</select>
+		<p *ngIf="modalState.data?.modalidadId" class="text-xs text-gray-500 dark:text-neutral-400 mt-1">
+			{{ modalidadLabel }}
+		</p>
+	</div>
+	<!-- Tipo de Autorización -->
+	<div *ngIf="!modalState.data?.hideTipoSelect">
+		<label class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1"> Tipo de Autorización <span class="text-red-500">*</span>
+		</label>
+		<select [value]="modalState.data?.tipoId || ''" (change)="onTipoChange($event)"  class="w-full px-3 py-2 rounded-lg border
+         bg-white dark:bg-gray-800
+         border-gray-300 dark:border-neutral-600
+         text-gray-900 dark:text-neutral-100
+         focus:ring-2 focus:ring-[#691831] dark:focus:ring-blue-500
+         transition-colors text-sm">
+			<option value="">Seleccione un tipo</option>
+			<option *ngFor="let tipo of tiposAutorizacion" [value]="tipo.id" [selected]="tipo.id === modalState.data?.tipoId">
+				{{ tipo.nombre }} ({{ tipo.abreviatura }})
+			</option>
+		</select>
+		<p *ngIf="modalState.data?.tipoId" class="text-xs text-gray-500 dark:text-neutral-400 mt-1">
+			{{ tipoLabel }}
+		</p>
+	</div>
+	<!-- Solicitante -->
+	<div>
+		<label class="block text-sm font-medium text-gray-700 dark:text-neutral-300 mb-1"> Solicitante <span class="text-red-500">*</span>
+		</label>
+		<input type="text" [value]="modalState.data?.solicitante || ''" (input)="onSolicitanteChange($event)" placeholder="Nombre del solicitante"  class="w-full px-3 py-2 rounded-lg border
+         bg-white dark:bg-gray-800
+         border-gray-300 dark:border-neutral-600
+         text-gray-900 dark:text-neutral-100
+         focus:ring-2 focus:ring-[#691831] dark:focus:ring-blue-500
+         transition-colors text-sm">
+		<p class="text-xs text-gray-500 dark:text-neutral-400 mt-1"> Persona o entidad que solicita la autorización </p>
+	</div>
+
+	<div *ngIf="!isFormValid()"  class="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg p-3">
+		<p class="text-sm font-medium text-red-800 dark:text-red-300 mb-1"> Complete los campos requeridos: </p>
+		<ul class="text-xs text-red-700 list-disc pl-4">
+			<li *ngFor="let error of getFormErrors()">{{ error }}</li>
+		</ul>
+	</div>
+</div>

@@ -9,6 +9,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url
 ).toString();
 
+// 
+// pdfjsLib.GlobalWorkerOptions.workerSrc = 
+  // 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+// 
 // Interfaces
 interface PdfComment {
   id: number;
@@ -40,8 +44,10 @@ interface SearchResult {
 @Component({
   selector: 'app-pdf-viewer',
   templateUrl: './pdf-viewer.view.html',
+  styleUrl: './pdf-viewer.view.css',
   standalone: false
 })
+
 export class PdfViewerView implements OnInit, OnDestroy {
   @ViewChild('pdfContainer', { static: true })
   pdfContainer!: ElementRef<HTMLDivElement>;

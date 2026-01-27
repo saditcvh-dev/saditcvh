@@ -1,21 +1,22 @@
 <aside id="sidebar"
-  class="fixed top-0 left-0 h-screen bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out z-40 shadow-none"
+  class="fixed top-0 left-0 h-screen bg-neutral-100 dark:bg-black border-r border-gray-200 dark:border-neutral-700 flex flex-col transition-all duration-300 ease-in-out z-40 shadow-none"
   [ngClass]="{
     'w-16': !sidebarOpen && !isMobile,
-    'w-62': sidebarOpen && !isMobile,
+    'w-64': sidebarOpen && !isMobile,
     '-translate-x-full': isMobile && !sidebarOpen,
-    'translate-x-0 w-62 shadow-xl': isMobile && sidebarOpen
+    'translate-x-0 w-64 shadow-xl': isMobile && sidebarOpen  
   }">
 
   <!-- Botón toggle -->
-  <div class="px-3 py-4 flex flex-row items-center justify-between gap-2 border-b border-gray-200">
+  <div
+    class="px-3 py-4 flex flex-row items-center justify-between gap-2 border-b border-gray-200 dark:border-neutral-700">
     <!-- Logo visible solo cuando el sidebar está abierto -->
     <img routerLink="/admin" *ngIf="sidebarOpen || isMobile" src="logos/logomovilidad-SNfondo.png" alt="Logo"
       class="h-7 cursor-pointer flex-shrink-0">
 
     <!-- Botón toggle -->
     <button (click)="toggleSidebar()"
-      class="flex items-center justify-center rounded-lg text-gray-500 transition flex-shrink-0 hover:bg-gray-100"
+      class="flex items-center justify-center rounded-lg text-gray-500 dark:text-neutral-400 transition flex-shrink-0 hover:bg-gray-100 dark:hover:bg-neutral-900"
       [ngClass]="{
       'p-2 shadow-sm': sidebarOpen && !isMobile,
       'p-2 bg-none border-none': !sidebarOpen && !isMobile,
@@ -43,37 +44,58 @@
   </div>
 
   <!-- Navegación principal -->
-  <nav class="flex-1 px-3 py-4 space-y-1 text-sm overflow-hidden overflow-y-auto">
+  <nav class="flex-1 px-3 py-4 space-y-1 text-sm overflow-hidden overflow-y-auto
+  [&::-webkit-scrollbar]:hidden 
+  [-ms-overflow-style:none] 
+  [scrollbar-width:none]">
     <!-- Search -->
-    <div *ngIf="sidebarOpen || isMobile" class="pt-4 pb-4 border-b border-gray-200">
+    <div *ngIf="sidebarOpen || isMobile" class="pt-4 pb-4 border-b border-gray-200 dark:border-neutral-700">
       <div class="relative">
-        <input type="text" placeholder="Buscar..."
-          class="w-full pl-9 pr-10 py-2 text-sm rounded-lg bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition" />
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+        <input type="text" placeholder="Buscar..." class="w-full pl-9 pr-14 py-2 text-sm rounded-lg
+           bg-white dark:bg-gray-800
+           border border-gray-200 dark:border-neutral-600
+           focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500
+           transition
+           text-gray-900 dark:text-neutral-100
+           placeholder:text-gray-400 dark:placeholder:text-neutral-400" />
+
+        <!-- Icono buscar -->
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4
+           text-gray-400 dark:text-neutral-500 pointer-events-none" fill="none" stroke="currentColor"
           viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <span
-          class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded font-mono">
+
+        <!-- Shortcut -->
+        <span class="absolute right-3 top-1/2 -translate-y-1/2
+           text-[10px] text-gray-400 dark:text-neutral-500
+           bg-gray-100 dark:bg-gray-700
+           px-1.5 py-0.5 rounded font-mono select-none">
           Ctrl + K
         </span>
       </div>
+
     </div>
 
     <!-- Grupo: General -->
     <div class="pb-2 pt-4">
-      <h3 *ngIf="sidebarOpen || isMobile" class="px-3 mb-1.5 text-xs font-semibold text-gray-500 tracking-wider">
+      <h3 *ngIf="sidebarOpen || isMobile"
+        class="px-3 mb-1.5 text-xs font-semibold text-gray-500 dark:text-neutral-400 tracking-wider">
         General
       </h3>
       <ul class="space-y-1">
         <li>
-          <a routerLink="/admin/dashboard" routerLinkActive="bg-white font-medium border border-gray-150 !text-gray-600"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-100 transition duration-200">
-            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z" />
+          <a routerLink="/admin/dashboard"
+            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
+            <!-- icono de dashboard -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
+
             <span *ngIf="sidebarOpen || isMobile" class="whitespace-nowrap text-sm">
               Dashboard
             </span>
@@ -84,58 +106,48 @@
 
     <!-- Grupo: Gestión -->
     <div class="pb-2">
-      <h3 *ngIf="sidebarOpen || isMobile" class="px-3 mb-1.5 text-xs font-semibold text-gray-500 tracking-wider">
+      <h3 *ngIf="sidebarOpen || isMobile"
+        class="px-3 mb-1.5 text-xs font-semibold text-gray-500 dark:text-neutral-400 tracking-wider">
         Gestión
       </h3>
       <ul class="space-y-1">
         <li>
           <a routerLink="/admin/explorador"
-            routerLinkActive="bg-white font-medium border border-gray-150 !text-gray-600"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-100 transition duration-200 relative">
-            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200 relative">
+            <img src="assets/icons/explorer.png" alt="Carpeta"
+              class="w-7 h-7 flex-shrink-0">
             <span *ngIf="sidebarOpen || isMobile" class="whitespace-nowrap text-sm">
               Explorador
             </span>
-            
-            <!-- Badge de pendientes por validar -->
-            <span *ngIf="pendingValidationCount > 0 && (sidebarOpen || isMobile)" 
-              class="absolute left-7 top-1.5 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">
-              {{ pendingValidationCount > 99 ? '99+' : pendingValidationCount }}
-            </span>
-            
-            <!-- Atajo de validación rápida (solo visible cuando sidebar abierto) -->
-            <span *ngIf="sidebarOpen || isMobile" 
-              class="absolute right-3 top-1/2 -translate-y-1/2 group">
-              <button (click)="quickValidate($event)" title="Validar 5 aleatorios"
-                class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </button>
+
+            <!-- Badge de territorios -->
+            <span *ngIf="territoriesCount > 0 && (sidebarOpen || isMobile)"
+              class="absolute left-6 top-1.5 bg-orange-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+              {{ territoriesCount }}
             </span>
           </a>
         </li>
 
         <li>
           <a routerLink="/admin/digitalizacion"
-            routerLinkActive="bg-white font-medium border border-gray-150 !text-gray-600"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-100 transition duration-200">
-            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M3 9a2 2 0 012-2h10a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
+
             <span *ngIf="sidebarOpen || isMobile" class="whitespace-nowrap text-sm">
               Digitalización
             </span>
           </a>
         </li>
         <li>
-          <a routerLink="/admin/reportes" routerLinkActive="bg-white font-medium border border-gray-150 !text-gray-600"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-100 transition duration-200">
+          <a routerLink="/admin/reportes"
+            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -150,13 +162,15 @@
 
     <!-- Grupo: Administración -->
     <div class="pb-2" *ngIf="isAdmin()">
-      <h3 *ngIf="sidebarOpen || isMobile" class="px-3 mb-1.5 text-xs font-semibold text-gray-500 tracking-wider">
+      <h3 *ngIf="sidebarOpen || isMobile"
+        class="px-3 mb-1.5 text-xs font-semibold text-gray-500 dark:text-neutral-400 tracking-wider">
         Administración
       </h3>
       <ul class="space-y-1">
         <li>
-          <a routerLink="/admin/usuarios" routerLinkActive="bg-white font-medium border border-gray-150 !text-gray-600"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-100 transition duration-200">
+          <a routerLink="/admin/usuarios"
+            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -167,8 +181,9 @@
           </a>
         </li>
         <li>
-          <a routerLink="/admin/respaldos" routerLinkActive="bg-white font-medium border border-gray-150 !text-gray-600"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-100 transition duration-200">
+          <a routerLink="/admin/respaldos"
+            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M12 6c-3.866 0-7 1.79-7 4s3.134 4 7 4 7-1.79 7-4-3.134-4-7-4zM4 10c0-2.21 3.582-4 8-4s8 1.79 8 4v2c0 2.21-3.582 4-8 4s-8-1.79-8-4v-2z" />
@@ -179,8 +194,9 @@
           </a>
         </li>
         <li>
-          <a routerLink="/admin/auditoria" routerLinkActive="bg-white font-medium border border-gray-150 !text-gray-600"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-100 transition duration-200">
+          <a routerLink="/admin/auditoria"
+            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -190,42 +206,18 @@
             </span>
           </a>
         </li>
-        
-        <!-- Switch Modo Mantenimiento (solo visible cuando sidebar abierto) -->
-        <li *ngIf="sidebarOpen || isMobile">
-          <div class="flex items-center justify-between px-3 py-2">
-            <div class="flex items-center gap-3">
-              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span class="text-sm text-gray-700">Modo Mantenimiento</span>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" 
-                     [checked]="maintenanceMode" 
-                     (change)="maintenanceMode = !maintenanceMode; toggleMaintenanceMode()"
-                     class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer 
-                peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
-                after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all 
-                peer-checked:bg-orange-500"></div>
-            </label>
-          </div>
-          <p *ngIf="maintenanceMode" class="px-3 text-xs text-[#c04838] mt-1">
-            Sistema en mantenimiento - Altas bloqueadas
-          </p>
-        </li>
       </ul>
     </div>
-    
-    <div *ngIf="sidebarOpen || isMobile" class="pb-2 mt-6 border-t border-gray-200 pt-4">
+
+    <!-- Mi Actividad reciente -->
+    <!-- <div *ngIf="sidebarOpen || isMobile" class="pb-2 mt-6 border-t border-gray-200 dark:border-neutral-700 pt-4">
       <div class="flex items-center justify-between px-3 mb-2">
-        <h3 class="text-xs font-medium text-gray-500 tracking-wider">
-          Mi Unidad
+        <h3 class="text-xs font-medium text-gray-500 dark:text-neutral-400 tracking-wider">
+          Mi Actividad reciente
         </h3>
-        <button class="p-1 hover:bg-gray-200 rounded-full text-gray-500 transition" title="Nueva Carpeta">
+        <button
+          class="p-1 hover:bg-gray-200 dark:hover:bg-neutral-700 rounded-full text-gray-500 dark:text-neutral-400 transition"
+          title="Nueva Carpeta">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 4v16m8-8H4" />
           </svg>
@@ -233,107 +225,127 @@
       </div>
       <ul class="space-y-1">
         <li
-          class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 cursor-pointer group transition duration-200">
+          class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-neutral-900 cursor-pointer group transition duration-200">
           <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-gray-500 group-hover:text-blue-600 transition-colors" fill="currentColor"
-              viewBox="0 0 20 20">
+            <svg
+              class="w-5 h-5 text-gray-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+              fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
             </svg>
             <div class="flex flex-col">
-              <span class="text-sm font-none text-gray-500 group-hover:text-blue-700">
+              <span
+                class="text-sm font-none text-gray-500 dark:text-neutral-400 group-hover:text-blue-700 dark:group-hover:text-blue-300">
                 Expedientes Generales
               </span>
-              <span class="text-xs text-gray-400">30k Archivos</span>
+              <span class="text-xs text-gray-400 dark:text-neutral-500">30k Archivos</span>
             </div>
           </div>
-          <svg class="w-4 h-4 text-gray-300 group-hover:text-blue-500" fill="none" stroke="currentColor"
-            viewBox="0 0 24 24">
+          <svg
+            class="w-4 h-4 text-gray-300 dark:text-neutral-600 group-hover:text-blue-500 dark:group-hover:text-blue-400"
+            fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7" />
           </svg>
         </li>
         <li
-          class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 cursor-pointer group transition duration-200">
+          class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-neutral-900 cursor-pointer group transition duration-200">
           <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-gray-500 group-hover:text-blue-600 transition-colors" fill="currentColor"
-              viewBox="0 0 20 20">
+            <svg
+              class="w-5 h-5 text-gray-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+              fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
             </svg>
-            <span class="text-sm font-none text-gray-500 group-hover:text-blue-700">
+            <span
+              class="text-sm font-none text-gray-500 dark:text-neutral-400 group-hover:text-blue-700 dark:group-hover:text-blue-300">
               Digitalización en Proceso
             </span>
           </div>
-          <svg class="w-4 h-4 text-gray-300 group-hover:text-blue-500" fill="none" stroke="currentColor"
-            viewBox="0 0 24 24">
+          <svg
+            class="w-4 h-4 text-gray-300 dark:text-neutral-600 group-hover:text-blue-500 dark:group-hover:text-blue-400"
+            fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7" />
           </svg>
         </li>
         <li
-          class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 cursor-pointer group transition duration-200">
+          class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-neutral-900 cursor-pointer group transition duration-200">
           <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-gray-500 group-hover:text-blue-600 transition-colors" fill="currentColor"
-              viewBox="0 0 20 20">
+            <svg
+              class="w-5 h-5 text-gray-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+              fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
             </svg>
-            <span class="text-sm font-none text-gray-500 group-hover:text-blue-700">
+            <span
+              class="text-sm font-none text-gray-500 dark:text-neutral-400 group-hover:text-blue-700 dark:group-hover:text-blue-300">
               Reportes e Inventario
             </span>
           </div>
-          <svg class="w-4 h-4 text-gray-300 group-hover:text-blue-500" fill="none" stroke="currentColor"
-            viewBox="0 0 24 24">
+          <svg
+            class="w-4 h-4 text-gray-300 dark:text-neutral-600 group-hover:text-blue-500 dark:group-hover:text-blue-400"
+            fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7" />
           </svg>
         </li>
         <li
-          class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 cursor-pointer group transition duration-200">
+          class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-neutral-900 cursor-pointer group transition duration-200">
           <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-gray-500 group-hover:text-blue-600 transition-colors" fill="none"
-              stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              class="w-5 h-5 text-gray-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+              fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
                 d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
             </svg>
-            <span class="text-sm font-none text-gray-500 group-hover:text-blue-700">
+            <span
+              class="text-sm font-none text-gray-500 dark:text-neutral-400 group-hover:text-blue-700 dark:group-hover:text-blue-300">
               Administración STCH
             </span>
           </div>
-          <svg class="w-4 h-4 text-gray-300 group-hover:text-blue-500" fill="none" stroke="currentColor"
-            viewBox="0 0 24 24">
+          <svg
+            class="w-4 h-4 text-gray-300 dark:text-neutral-600 group-hover:text-blue-500 dark:group-hover:text-blue-400"
+            fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7" />
           </svg>
         </li>
       </ul>
-    </div>
-  
+    </div> -->
   </nav>
 
-  <!-- Pie del sidebar -->
-  <div class="px-3 py-4 border-t border-gray-200 mt-auto flex flex-col gap-3">
-    <!-- Indicador de último respaldo -->
-    <div *ngIf="sidebarOpen || isMobile" class="px-3">
+  <div class="px-3 py-4 border-t border-gray-200 dark:border-neutral-700">
+
+    <div *ngIf="(sidebarOpen || isMobile) && sidebarInfo.show" class="px-3">
+
+      <!-- Texto dinámico -->
       <div class="flex items-center justify-between text-xs">
-        <span class="text-gray-500">Último respaldo:</span>
+        <span class="text-gray-500 dark:text-neutral-400">
+          {{ sidebarInfo.label }}:
+        </span>
+
         <span [ngClass]="{
-          'text-[#334a7a]': lastBackupStatus === 'success',
-          'text-red-600': lastBackupStatus === 'failed'
+          'text-gray-900 dark:text-neutral-100': sidebarInfo.progress < 80,
+          'text-yellow-600': sidebarInfo.progress >= 80 && sidebarInfo.progress < 95,
+          'text-red-600': sidebarInfo.progress >= 95
         }" class="font-medium">
-          {{ lastBackupTime }}
+          {{ sidebarInfo.value }}
         </span>
       </div>
+
+      <!-- Barra de progreso -->
       <div class="flex items-center gap-2 mt-1">
-        <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+        <div class="flex-1 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div [ngClass]="{
-            'bg-[#334a7a]': diskUsage < 80,
-            'bg-yellow-500': diskUsage >= 80 && diskUsage < 95,
-            'bg-red-500': diskUsage >= 95
-          }" [style.width.%]="diskUsage" class="h-full"></div>
+            'bg-[#334a7a] dark:bg-blue-500': sidebarInfo.progress < 80,
+            'bg-yellow-500': sidebarInfo.progress >= 80 && sidebarInfo.progress < 95,
+            'bg-red-500': sidebarInfo.progress >= 95
+          }" [style.width.%]="sidebarInfo.progress" class="h-full"></div>
         </div>
-        <span class="text-xs text-gray-500">{{ diskUsage }}%</span>
+
+        <span class="text-xs text-gray-500 dark:text-neutral-400">
+          {{ sidebarInfo.progress }}%
+        </span>
       </div>
     </div>
-
+    <!-- Sección inferior: Cerrar sesión -->
     <!-- Botón Cerrar sesión -->
-    <button type="button"
-    (click)="onLogout()"
-      class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-100 transition duration-200">
+    <button type="button" (click)="onLogout()"
+      class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
       <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
           d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

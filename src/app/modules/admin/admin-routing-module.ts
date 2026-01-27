@@ -10,6 +10,7 @@ import { UsuariosView } from './pages/usuarios/usuarios.view';
 import { PermissionMatrixComponent } from './components/permission-matrix/permission-matrix';
 import { roleGuard } from '../../core/guards/role.guard';
 import { ExploradorView } from './pages/explorador/explorador.view';
+import { PdfViewerView } from './components/pdf-viewer/pdf-viewer.view';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -32,6 +33,11 @@ const routes: Routes = [
           title: 'digitalizacion',
           breadcrumb: [{ label: 'digitalizacion', path: '/admin/digitalizacion' }],
         },
+      },
+        {
+        path: 'PdfView',
+        component: PdfViewerView,
+        // canActivate: [roleGuard],
       },
       // {
       //   path: 'expedientes',
@@ -106,6 +112,7 @@ const routes: Routes = [
         path: '**',
         redirectTo: 'dashboard',
       },
+    
     ],
   },
 ];

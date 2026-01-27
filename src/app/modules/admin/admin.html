@@ -1,24 +1,35 @@
-<!-- HEADER-->
-<!-- <app-header></app-header> -->
-<app-header (mobileMenuToggled)="onMobileMenuToggled()"></app-header>
+<div class="flex min-h-screen bg-gray-50">
+  <!-- SIDEBAR -->
+  <app-sidebar #sidebar [territoriesCount]="territoriesCount"
+              (sidebarToggled)="onSidebarToggled($event)"></app-sidebar>
 
-<div class="flex flex-1 overflow-hidden">
-    <!-- SIDEBAR-->
-    <app-sidebar #sidebar 
-                (sidebarToggled)="onSidebarToggled($event)"></app-sidebar>
+  <!-- HEADER COMPONENTE -->
+  <app-header
+    [sidebarOpen]="sidebarOpen"
+    [isMobileView]="isMobileView"
+    (mobileMenuToggled)="onMobileMenuToggled()">
+  </app-header>
 
-    <!-- CONTENIDO DINÁMICO-->
-    <main
-        class="flex-1 p-4 md:p-6 mt-6 bg-gray-100 overflow-y-auto transition-all duration-300 ease-in-out w-full min-h-[calc(100vh-64px)]"
-        [ngClass]="{
-            'md:ml-16': !sidebarOpen && !isMobileView,
-            'md:ml-64': sidebarOpen && !isMobileView,
-            'ml-0': isMobileView
-          }">
-                  <!-- Breadcrumbs -->
-        <div class="px-6 py-4 bg-white border-b border-gray-200">
-            <app-breadcrumbs></app-breadcrumbs>
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="flex-1 flex flex-col min-h-screen">
+    <!-- ESPACIO para el header fijo (NO otro header aquí) -->
+    <div class="flex-1 pt-16 overflow-auto"
+         [ngClass]="{
+           'md:ml-16': !sidebarOpen && !isMobileView,
+           'md:ml-64': sidebarOpen && !isMobileView
+         }">
+      
+      <main class="min-h-full p-2 md:p-2 bg-white">
+        <!-- Breadcrumbs -->
+        <div class="px-6 bg-white">
+          <app-breadcrumbs></app-breadcrumbs>
         </div>
-        <router-outlet></router-outlet>
-    </main>
+        
+        <!-- Contenido dinámico -->
+        <div class="p-2 md:p-2">
+          <router-outlet></router-outlet>
+        </div>
+      </main>
+    </div>
+  </div>
 </div>
