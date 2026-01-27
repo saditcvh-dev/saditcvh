@@ -131,7 +131,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   }> = [];
 
   // Polling para actualizar la lista automáticamente
-  pollIntervalMs: number = 3000; // 3 segundos (más rápido)
+  pollIntervalMs: number =3000; // 3 segundos (más rápido)
   private pollTimer: any = null;
 
   constructor(
