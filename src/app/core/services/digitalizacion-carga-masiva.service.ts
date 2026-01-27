@@ -11,11 +11,11 @@ export class CargaMasivaService {
 
   constructor(private http: HttpClient) {}
 
-  subirArchivoComprimido(archivo: File): Observable<any> {
+  subirArchivoComprimido(archivo: File,useOcr: boolean): Observable<any> {
     const formData = new FormData();
     formData.append('archivo', archivo);
     formData.append('tipo', this.obtenerTipoArchivo(archivo));
-    
+    formData.append('useOcr', String(useOcr));
     return this.http.post<any>(
       `${this.baseUrl}/comprimido`,
       formData,
@@ -26,12 +26,13 @@ export class CargaMasivaService {
     );
   }
 // ,{ withCredentials: true }
-  subirMultiplesPDFs(archivos: File[]): Observable<any> {
+  subirMultiplesPDFs(archivos: File[],useOcr: boolean): Observable<any> {
     const formData = new FormData();
 
     archivos.forEach((archivo: File) => {
       formData.append('archivos', archivo);
     });
+  formData.append('useOcr', String(useOcr));
 
     return this.http.post<any>(
       `${this.baseUrl}/pdfs-multiples`,
