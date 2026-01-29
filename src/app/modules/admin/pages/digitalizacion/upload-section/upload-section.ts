@@ -32,7 +32,7 @@ export class UploadSectionComponent {
 
   // Variables para subida
   selectedFiles: File[] = [];
-  useOcr: boolean = true;
+  useOcr: boolean = false;
   uploadResult: PDFUploadResponse | null = null;
   useZip = false;
 
