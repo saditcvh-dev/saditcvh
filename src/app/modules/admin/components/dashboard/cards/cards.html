@@ -4,7 +4,7 @@
 
 <div class="mb-6">
   <!-- Debug info - Puedes eliminar esto después -->
-  <div *ngIf="false" class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-xs">
+  <div *ngIf="false" class="mb-4 p-3 bg-yellow-50 dark:bg-[#050505] shadow-md dark:shadow-black border border-yellow-200 rounded text-xs">
     <strong>Debug Info:</strong><br>
     isLoading: {{ isLoading }}<br>
     hasError: {{ hasError }}<br>
@@ -45,11 +45,11 @@
 
 <!-- Grid de 4 tarjetas -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-  <div
+  <div class="dark:bg-[#050505] shadow-md dark:shadow-black bg-white rounded-lg border border-gray-200 dark:border-none p-4"
     *ngFor="let card of cards; let i = index"
     [ngClass]="getCardClass(card)"
   >
-    <div class="flex items-center justify-between">
+    <div class="flex dark:bg-[#050505] items-center justify-between">
       <div>
         <p class="text-sm font-medium text-gray-500 mb-2">
           <i [class]="card.icon + ' mr-2 text-[#691831]'"></i>

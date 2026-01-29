@@ -3,7 +3,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/public/home', pathMatch: 'full' },
+  { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
   {
     path: 'public',
     loadChildren: () => import('./modules/public/public-module').then(m => m.PublicModule)

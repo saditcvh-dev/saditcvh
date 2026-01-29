@@ -51,7 +51,7 @@ export class MetadataTabComponent {
     return typeMap[type] || type;
   }
 
-  private formatDate(dateString?: string): string {
+   formatDate(dateString?: string): string {
     if (!dateString) return 'No disponible';
 
     try {

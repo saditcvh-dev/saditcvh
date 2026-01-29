@@ -107,25 +107,25 @@ export class Sidebar {
 
 
 
-  openSidebar(): void {
-    this.sidebarOpen = true;
-    this.sidebarToggled.emit(true);
+  // openSidebar(): void {
+  //   this.sidebarOpen = true;
+  //   this.sidebarToggled.emit(true);
 
-    // Bloquear scroll en body cuando sidebar está abierto en móvil
-    if (this.isMobile) {
-      document.body.style.overflow = 'hidden';
-    }
-  }
+  //   // Bloquear scroll en body cuando sidebar está abierto en móvil
+  //   if (this.isMobile) {
+  //     document.body.style.overflow = 'hidden';
+  //   }
+  // }
 
-  closeSidebar(): void {
-    this.sidebarOpen = false;
-    this.sidebarToggled.emit(false);
+  // closeSidebar(): void {
+  //   this.sidebarOpen = false;
+  //   this.sidebarToggled.emit(false);
 
-    // Restaurar scroll en body
-    if (this.isMobile) {
-      document.body.style.overflow = '';
-    }
-  }
+  //   // Restaurar scroll en body
+  //   if (this.isMobile) {
+  //     document.body.style.overflow = '';
+  //   }
+  // }
 
   // Método público para abrir sidebar desde header
   public open(): void {
@@ -146,11 +146,11 @@ export class Sidebar {
   public getIsMobile(): boolean {
     return this.isMobile;
   }
-  toggleSidebar() {
-    this.sidebarOpen = !this.sidebarOpen;
-    this.sidebarToggled.emit(this.sidebarOpen);
-    console.log("Sidebar open state:", this.sidebarOpen);
-  }
+  // toggleSidebar() {
+  //   this.sidebarOpen = !this.sidebarOpen;
+  //   this.sidebarToggled.emit(this.sidebarOpen);
+  //   console.log("Sidebar open state:", this.sidebarOpen);
+  // }
   // toggleSidebar(): void {
   //   if (this.sidebarOpen) {
   //     this.closeSidebar();
@@ -171,29 +171,7 @@ export class Sidebar {
   lastBackupStatus: 'success' | 'failed' = 'success';
   diskUsage = 75; // porcentaje
 
-  notifications = [
-    {
-      id: 1,
-      type: 'error',
-      title: 'Error de carga',
-      message: '5 expedientes con error en la carga automática',
-      time: 'Hace 2 horas'
-    },
-    {
-      id: 2,
-      type: 'warning',
-      title: 'Espacio en disco bajo',
-      message: 'Solo queda 15% de espacio disponible',
-      time: 'Hace 1 día'
-    },
-    {
-      id: 3,
-      type: 'info',
-      title: 'Backup completado',
-      message: 'Respaldo automático ejecutado correctamente',
-      time: 'Hace 2 días'
-    }
-  ];
+
 
   // Métodos
   toggleNotifications() {
@@ -298,4 +276,54 @@ export class Sidebar {
     return this.authService.hasRole('administrador');
   }
 
+  // Método para manejar clics en enlaces (cierra sidebar en móvil)
+  onNavLinkClick(): void {
+    if (this.isMobile && this.sidebarOpen) {
+      this.closeSidebar();
+    }
+  }
+
+  // Método para manejar la tecla Escape
+  @HostListener('document:keydown.escape', ['$event'])
+  handleEscape(event: Event): void {
+    if (this.isMobile && this.sidebarOpen) {
+      this.closeSidebar();
+    }
+  }
+
+  // Corrige el método toggleSidebar para mejor manejo en móvil
+  toggleSidebar(): void {
+    if (this.isMobile) {
+      if (this.sidebarOpen) {
+        this.closeSidebar();
+      } else {
+        this.openSidebar();
+      }
+    } else {
+      // En desktop, simplemente alternar
+      this.sidebarOpen = !this.sidebarOpen;
+      this.sidebarToggled.emit(this.sidebarOpen);
+    }
+  }
+
+  // Asegúrate de que estos métodos existen en tu componente:
+  private openSidebar(): void {
+    this.sidebarOpen = true;
+    this.sidebarToggled.emit(true);
+
+    // Bloquear scroll en body cuando sidebar está abierto en móvil
+    if (this.isMobile) {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  private closeSidebar(): void {
+    this.sidebarOpen = false;
+    this.sidebarToggled.emit(false);
+
+    // Restaurar scroll en body
+    if (this.isMobile) {
+      document.body.style.overflow = '';
+    }
+  }
 }

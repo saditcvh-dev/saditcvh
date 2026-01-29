@@ -1,5 +1,5 @@
 <!-- Gráfica de Actividad - Documentos por Día -->
-<div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+<div class="bg-white dark:bg-[#050505] rounded-xl border border-gray-200 dark:border-neutral-900 p-6 shadow-sm">
     
     <!-- Encabezado -->
     <div class="flex justify-between items-center mb-6">
@@ -38,7 +38,7 @@
     </div>
 
     <!-- Contenedor de la gráfica -->
-    <div class="h-72 flex flex-col items-center justify-center bg-gray-50 rounded-lg border border-gray-100 relative overflow-hidden">
+    <div class="h-72 dark:bg-[#131212] flex flex-col items-center justify-center bg-gray-50 rounded-lg border border-gray-100 dark:border-neutral-900 relative overflow-hidden">
         
         <!-- Indicador de carga -->
         <div *ngIf="isLoading" class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center rounded-lg z-10">
@@ -98,7 +98,7 @@
                             </div>
                             
                             <!-- Tooltip -->
-                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 
+                            <div class=" absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 
                                        bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 
                                        transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none">
                                 <div class="font-semibold">{{ dia.dia_semana }}</div>
@@ -118,22 +118,22 @@
             </div>
             
             <!-- Línea base (eje X) - MÁS GRUESA -->
-            <div class="absolute left-12 right-4 bottom-16 border-t-2 border-gray-400"></div>
+            <div class="absolute left-12 right-4 bottom-16 border-t-2 border-gray-400 dark:border-gray-700"></div>
         </div>
     </div>
 
     <!-- Estadísticas -->
-    <div class="mt-6 pt-4 border-t border-gray-100">
+    <div class="mt-6 pt-4 border-t border-gray-100 dark:border-neutral-900">
         <div class="grid grid-cols-3 gap-4">
-            <div class="text-center p-3 bg-gray-50 rounded-lg">
+            <div class="text-center p-3 bg-gray-50 dark:bg-[#131212] rounded-lg">
                 <div class="text-2xl font-bold text-[#691831]">{{ formatNumber(totalDocumentos) }}</div>
                 <div class="text-xs text-gray-500 mt-1">Total documentos</div>
             </div>
-            <div class="text-center p-3 bg-gray-50 rounded-lg">
+            <div class="text-center p-3 bg-gray-50 dark:bg-[#131212] rounded-lg">
                 <div class="text-2xl font-bold text-[#691831]">{{ formatDecimal(promedioDiario) }}</div>
                 <div class="text-xs text-gray-500 mt-1">Promedio diario</div>
             </div>
-            <div class="text-center p-3 bg-gray-50 rounded-lg">
+            <div class="text-center p-3 bg-gray-50 dark:bg-[#131212] rounded-lg">
                 <div class="text-lg font-bold text-[#691831] truncate">{{ diaPico }}</div>
                 <div class="text-xs text-gray-500 mt-1">Día pico</div>
             </div>
@@ -141,7 +141,7 @@
     </div>
 
     <!-- Leyenda con orden cronológico -->
-    <div class="mt-4 pt-4 border-t border-gray-100">
+    <div class="mt-4 pt-4 border-t border-gray-100 dark:border-neutral-900">
         <div class="text-center text-sm text-gray-600 mb-2">Período: {{ getPeriodo() }}</div>
         <div class="flex items-center justify-between">
             <div *ngFor="let dia of chartData; let i = index" class="flex flex-col items-center">

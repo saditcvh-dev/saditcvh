@@ -1,7 +1,7 @@
 <div class="space-y-4">
 	<!-- Área de Drop -->
 	<div class="border-2 border-dashed border-gray-300 dark:border-neutral-600
-            bg-white dark:bg-gray-800
+            bg-white dark:bg-[#050505]
             rounded-xl p-8 text-center cursor-pointer transition-all duration-200" [class.border-[#691831]]="isDragging" [class.bg-blue-50]="isDragging" [class.dark:bg-blue-950]="isDragging" [class.border-green-300]="selectedFile" [class.bg-green-50]="selectedFile" [class.dark:bg-green-950]="selectedFile" (click)="openFilePicker()" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)">
 		<!-- Icono según estado -->
 		<div class="mb-4">

@@ -1,4 +1,4 @@
-<div class="p-4 border-b border-gray-100 dark:border-neutral-700 bg-gray-50 dark:bg-black flex justify-between items-center" [class.justify-center]="collapsed()">
+<div class="p-4 border-b border-gray-100 dark:border-neutral-900 bg-blue-400/20  dark:bg-[#131314] flex justify-between items-center" [class.justify-center]="collapsed()">
 	<!-- Título normal -->
 	<h2 *ngIf="!collapsed()" class="font-bold text-[#691831] dark:text-neutral-400 text-lg flex items-center gap-2"> Explorador </h2>
 	<!-- Vista colapsada -->
@@ -20,7 +20,7 @@
 		</button>
 	</span>
 </div>
-<div *ngIf="!collapsed()" class="px-4 py-2 bg-white dark:bg-black border-b border-gray-100 dark:border-neutral-700">
+<div *ngIf="!collapsed()" class="px-4 py-2 bg-white dark:bg-[#131314] border-b border-gray-100 dark:border-neutral-900">
 	<div class="relative">
 		 <input class="w-full 
 		bg-gray-50 dark:bg-gray-800
@@ -37,7 +37,7 @@
 		</svg>
 	</div>
 </div>
-<div class="flex-1 overflow-y-auto p-2 bg-white dark:bg-black pb-14 max-h-[calc(100vh-180px)] custom-scrollbar on-context-menu scrollbar-hide">
+<div class="flex-1 overflow-y-auto p-2 bg-white dark:bg-[#131314] pb-14 max-h-[calc(100vh-180px)] custom-scrollbar on-context-menu scrollbar-hide">
 	<app-tree-node *ngFor="let node of filteredTree()" [node]="node" [selectedNode]="selectedNode()" [collapsed]="collapsed()" (floatingOpen)="floatingState.set($event)" (nodeSelected)="onNodeSelected($event)" (nodeRightClick)="onNodeRightClick($event)">
 	</app-tree-node>
 </div>

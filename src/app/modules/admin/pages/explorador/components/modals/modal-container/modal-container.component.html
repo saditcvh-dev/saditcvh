@@ -1,9 +1,9 @@
 <!-- Backdrop -->
-<div *ngIf="showModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 dark:bg-gray-800/60" (click)="onCloseModal()">
+<div *ngIf="showModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 dark:bg-[#050505]/60" (click)="onCloseModal()">
 	<!-- Contenido del Modal -->
-	<div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-neutral-700" (click)="$event.stopPropagation()">
+	<div class="relative bg-white dark:bg-[#050505] rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-neutral-700" (click)="$event.stopPropagation()">
 		<!-- Header -->
-		<div class="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-neutral-700 flex justify-between items-center">
+		<div class="px-6 py-4 bg-gray-50 dark:bg-[#050505] border-b border-gray-100 dark:border-neutral-700 flex justify-between items-center">
 			<h3 class="text-lg font-bold text-gray-800 dark:text-neutral-100">
 				{{ modalTitle }}
 			</h3>
@@ -14,12 +14,12 @@
 			</button>
 		</div>
 		<!-- Body -->
-		<div class="p-6 overflow-y-auto max-h-[calc(90vh-140px)] bg-white dark:bg-gray-800">
+		<div class="p-6 overflow-y-auto max-h-[calc(90vh-140px)] bg-white dark:bg-[#050505]">
 			<!-- Modal de Subida (Versión o Nuevo Documento) -->
 			<div *ngIf="activeModalType === 'upload' || activeModalType === 'create_documento'" class="space-y-4">
 				<!-- Versión Modal -->
 				<div *ngIf="isVersionModal" class="space-y-4">
-					<div class="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+					<div class="mb-4 p-3 bg-gray-50 dark:bg-[#050505] rounded-lg">
 						<p class="text-sm text-gray-600 dark:text-neutral-300"> Subir nueva versión para: <span class="font-medium">{{ getSelectedNodeName() }}</span>
 						</p>
 						<p class="text-xs text-gray-500 dark:text-neutral-400 mt-1"> Se creará una nueva versión del documento actual </p>
@@ -29,7 +29,7 @@
 				</div>
 				<!-- Nuevo Documento Modal -->
 				<div *ngIf="isNewDocumentModal" class="space-y-4">
-					<div class="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+					<div class="mb-4 p-3 bg-gray-50 dark:bg-[#050505] rounded-lg">
 						<p class="text-sm text-gray-600 dark:text-neutral-300"> Documento: <span class="font-medium">{{ getSelectedNodeName() }}</span>
 						</p>
 						<p class="text-xs text-gray-500 dark:text-neutral-400 mt-1"> Numero Autorización: {{ selectedNode?.data?.numeroAutorizacion || 'N/A' }}
@@ -52,7 +52,7 @@
       </div> -->
 		</div>
 		<!-- Footer -->
-		<div class="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-100 dark:border-neutral-700 flex justify-end gap-3">
+		<div class="px-6 py-4 bg-gray-50 dark:bg-[#050505] border-t border-gray-100 dark:border-neutral-700 flex justify-end gap-3">
 			<!-- Botón Cancelar -->
 			<button (click)="onCloseModal()" class="px-4 py-2 border border-gray-300 dark:border-neutral-600 text-gray-700 dark:text-neutral-300 rounded-lg text-sm font-medium transition-colors hover:bg-gray-50 dark:hover:bg-neutral-700"> Cancelar </button>
 			<!-- Botón de Acción Principal -->

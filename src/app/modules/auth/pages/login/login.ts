@@ -50,6 +50,9 @@ export class Login implements OnInit {
         next: () => {
           this.loading = false;
           this.router.navigate(['/admin/dashboard']);
+          console.log('Login successful');
+          // mostrar respuesta del servidor si es necesario aquí del usuario todo 
+          console.log('User logged in:', this.authService.currentUser);
         },
         error: (err) => {
           this.loading = false;

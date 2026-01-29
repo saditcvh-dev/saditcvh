@@ -1,34 +1,43 @@
-<div class="flex min-h-screen bg-gray-50">
+<div class="flex h-screen bg-gray-100 dark:bg-[#050505] overflow-hidden">
   <!-- SIDEBAR -->
-  <app-sidebar #sidebar [territoriesCount]="territoriesCount"
-              (sidebarToggled)="onSidebarToggled($event)"></app-sidebar>
+  <app-sidebar
+    #sidebar
+    [territoriesCount]="territoriesCount"
+    (sidebarToggled)="onSidebarToggled($event)">
+  </app-sidebar>
 
-  <!-- HEADER COMPONENTE -->
-  <app-header
-    [sidebarOpen]="sidebarOpen"
-    [isMobileView]="isMobileView"
-    (mobileMenuToggled)="onMobileMenuToggled()">
-  </app-header>
+  <!-- CONTENEDOR DERECHO -->
+  <div class="flex-1 flex flex-col h-screen">
 
-  <!-- CONTENIDO PRINCIPAL -->
-  <div class="flex-1 flex flex-col min-h-screen">
-    <!-- ESPACIO para el header fijo (NO otro header aquí) -->
-    <div class="flex-1 pt-16 overflow-auto"
-         [ngClass]="{
-           'md:ml-16': !sidebarOpen && !isMobileView,
-           'md:ml-64': sidebarOpen && !isMobileView
-         }">
-      
-      <main class="min-h-full p-2 md:p-2 bg-white">
-        <!-- Breadcrumbs -->
-        <div class="px-6 bg-white">
+    <!-- HEADER (FIJO) -->
+    <app-header
+      class="fixed top-0 right-0 left-0 md:left-auto z-50"
+      [sidebarOpen]="sidebarOpen"
+      [isMobileView]="isMobileView"
+      (mobileMenuToggled)="onMobileMenuToggled()">
+    </app-header>
+
+    <!-- CONTENIDO -->
+    <div
+      class="flex-1 pt-20 transition-all duration-300 overflow-hidden"
+      [ngClass]="{
+        'md:ml-16': !sidebarOpen && !isMobileView,
+        'md:ml-56': sidebarOpen && !isMobileView
+      }"
+    >
+      <!-- MAIN FIJO -->
+      <main class="h-full bg-white dark:bg-[#121212] rounded-xl mx-2 flex flex-col">
+
+        <!-- BREADCRUMBS (NO SCROLL) -->
+        <div class="px-6 py-2 shrink-0">
           <app-breadcrumbs></app-breadcrumbs>
         </div>
-        
-        <!-- Contenido dinámico -->
-        <div class="p-2 md:p-2">
+
+        <!-- CONTENIDO DINÁMICO (SCROLL AQUÍ) -->
+        <div class="flex-1 overflow-y-auto p-4 dark:text-gray-100">
           <router-outlet></router-outlet>
         </div>
+
       </main>
     </div>
   </div>
