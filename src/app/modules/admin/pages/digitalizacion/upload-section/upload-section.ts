@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { PdfService, PDFUploadResponse } from '../services/pdf-ocr.service';
 import { ExploradorStateService } from '../../explorador/services/explorador-state.service';
 import { CargaMasivaService } from '../../../../../core/services/digitalizacion-carga-masiva.service';
+import { HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-upload-section',
@@ -48,147 +49,148 @@ export class UploadSectionComponent {
 
   // ========== FUNCIONES PARA SUBIDA ==========
   onFilesSelected(event: any): void {
-  const files: File[] = Array.from(event.target.files);
-  
-  // Detectar si es archivo comprimido
-  const compressedFile = files.find(f => 
-    f.type === 'application/zip' || 
-    f.type === 'application/x-zip-compressed' ||
-    f.name.toLowerCase().endsWith('.zip') ||
-    f.name.toLowerCase().endsWith('.rar')
-  );
+    const files: File[] = Array.from(event.target.files);
 
-  // Si hay archivo comprimido, limpiar otros archivos
-  if (compressedFile) {
-    if (files.length > 1) {
-      this.stateService.showToast(
-        'Solo puedes subir un archivo comprimido a la vez',
-        'error'
-      );
-      event.target.value = '';
-      return;
-    }
-    
-    this.selectedFiles = [compressedFile];
-    this.useZip = true;
-    
-    const uploadId = `upload-${Date.now()}-${compressedFile.name}`;
-    this.recentUploads.unshift({
-      id: uploadId,
-      filename: compressedFile.name,
-      status: 'uploading',
-      progress: 0,
-      timestamp: new Date()
-    });
-    
-    this.stateService.showToast(
-      'Archivo comprimido seleccionado correctamente',
-      'success'
-    );
-  } 
-  // Si son PDFs individuales
-  else {
-    const validPdfs = files.filter(f => 
-      f.type === 'application/pdf' || 
-      f.name.toLowerCase().endsWith('.pdf')
+    // Detectar si es archivo comprimido
+    const compressedFile = files.find(f =>
+      f.type === 'application/zip' ||
+      f.type === 'application/x-zip-compressed' ||
+      f.name.toLowerCase().endsWith('.zip') ||
+      f.name.toLowerCase().endsWith('.rar')
     );
 
-    if (validPdfs.length === 0) {
-      this.stateService.showToast('Selecciona al menos un PDF o archivo comprimido válido', 'error');
-      return;
-    }
+    // Si hay archivo comprimido, limpiar otros archivos
+    if (compressedFile) {
+      if (files.length > 1) {
+        this.stateService.showToast(
+          'Solo puedes subir un archivo comprimido a la vez',
+          'error'
+        );
+        event.target.value = '';
+        return;
+      }
 
-    validPdfs.forEach(file => {
-      this.selectedFiles.push(file);
+      this.selectedFiles = [compressedFile];
+      this.useZip = true;
 
-      const uploadId = `upload-${Date.now()}-${file.name}`;
+      const uploadId = `upload-${Date.now()}-${compressedFile.name}`;
       this.recentUploads.unshift({
         id: uploadId,
-        filename: file.name,
+        filename: compressedFile.name,
         status: 'uploading',
         progress: 0,
         timestamp: new Date()
       });
-    });
 
-    this.stateService.showToast(
-      `${validPdfs.length} PDF(s) seleccionados correctamente`,
-      'success'
-    );
-    this.useZip = false;
+      this.stateService.showToast(
+        'Archivo comprimido seleccionado correctamente',
+        'success'
+      );
+    }
+    // Si son PDFs individuales
+    else {
+      const validPdfs = files.filter(f =>
+        f.type === 'application/pdf' ||
+        f.name.toLowerCase().endsWith('.pdf')
+      );
+
+      if (validPdfs.length === 0) {
+        this.stateService.showToast('Selecciona al menos un PDF o archivo comprimido válido', 'error');
+        return;
+      }
+
+      validPdfs.forEach(file => {
+        this.selectedFiles.push(file);
+
+        const uploadId = `upload-${Date.now()}-${file.name}`;
+        this.recentUploads.unshift({
+          id: uploadId,
+          filename: file.name,
+          status: 'uploading',
+          progress: 0,
+          timestamp: new Date()
+        });
+      });
+
+      this.stateService.showToast(
+        `${validPdfs.length} PDF(s) seleccionados correctamente`,
+        'success'
+      );
+      this.useZip = false;
+    }
+
+    event.target.value = '';
+    this.emitRecentUploads();
   }
-
-  event.target.value = '';
-  this.emitRecentUploads();
-}
 
 
   removeSelectedFile(index: number): void {
     this.selectedFiles.splice(index, 1);
   }
-uploadFile(): void {
-  if (this.selectedFiles.length === 0) return;
+  uploadFile(): void {
+    if (this.selectedFiles.length === 0) return;
 
-  this.isUploading.set(true);
-  this.loadingMessage.set('Subiendo y procesando archivos...');
+    this.isUploading.set(true);
+    this.loadingMessage.set('Subiendo y procesando archivos...');
 
-  const filesToUpload = [...this.selectedFiles];
-  this.selectedFiles = [];
+    const filesToUpload = [...this.selectedFiles];
+    this.selectedFiles = [];
 
-  // 🗜️ Si es archivo comprimido
-  if (this.useZip) {
-    const compressedFile = filesToUpload[0];
-    
-    // Buscar el upload correspondiente
-    const currentUpload = this.recentUploads.find(u => u.filename === compressedFile.name);
-    
-    if (currentUpload) {
-      currentUpload.status = 'processing';
-      currentUpload.progress = 30;
-      this.emitRecentUploads();
+    // 🗜️ Si es archivo comprimido
+    if (this.useZip) {
+      const compressedFile = filesToUpload[0];
+
+      // Buscar el upload correspondiente
+      const currentUpload = this.recentUploads.find(u => u.filename === compressedFile.name);
+
+      if (currentUpload) {
+        currentUpload.status = 'processing';
+        currentUpload.progress = 30;
+        this.emitRecentUploads();
+      }
+      this.cargaMasivaService
+        .subirArchivoComprimido(compressedFile, this.useOcr)
+        .subscribe({
+          next: (event) => {
+            if (event.type === HttpEventType.UploadProgress && event.total) {
+              const progress = Math.round((event.loaded / event.total) * 100);
+              if (currentUpload) {
+                currentUpload.progress = progress;
+                currentUpload.status = 'uploading';
+                this.emitRecentUploads();
+              }
+            }
+
+            if (event.type === HttpEventType.Response) {
+              if (currentUpload) {
+                currentUpload.status = 'processing';
+                currentUpload.progress = 100;
+                this.emitRecentUploads();
+              }
+
+              
+              // const loteId = event.body?.loteId;
+              // if (loteId) {
+              //   this.monitorearLote(loteId, currentUpload);
+              // }
+            }
+          },
+          error: () => {
+            if (currentUpload) {
+              currentUpload.status = 'failed';
+              currentUpload.progress = 0;
+              this.emitRecentUploads();
+            }
+            this.isUploading.set(false);
+          }
+        });
+
+      return;
     }
 
-    this.cargaMasivaService.subirArchivoComprimido(compressedFile,this.useOcr).subscribe({
-      next: (response) => {
-        if (currentUpload) {
-          currentUpload.id = response.id || compressedFile.name;
-          currentUpload.status = 'completed';
-          currentUpload.progress = 100;
-          this.emitRecentUploads();
-        }
-        
-        this.isUploading.set(false);
-        this.uploadCompleted.emit();
-        
-        this.stateService.showToast(
-          'Archivo comprimido procesado correctamente',
-          'success'
-        );
-      },
-      error: (error) => {
-        console.error('Error subiendo archivo comprimido:', error);
-        
-        if (currentUpload) {
-          currentUpload.status = 'failed';
-          currentUpload.progress = 0;
-          this.emitRecentUploads();
-        }
-        
-        this.isUploading.set(false);
-        
-        this.stateService.showToast(
-          error.error?.message || 'Error al procesar el archivo comprimido',
-          'error'
-        );
-      }
-    });
-    
-    return;
-  }
+    // 📄 Si son PDFs múltiples (con o sin OCR)
 
-  // 📄 Si son PDFs múltiples (con o sin OCR)
-
-    this.cargaMasivaService.subirMultiplesPDFs(filesToUpload,this.useOcr).subscribe({
+    this.cargaMasivaService.subirMultiplesPDFs(filesToUpload, this.useOcr).subscribe({
       next: (response) => {
         // Actualizar todos los uploads como completados
         this.recentUploads.forEach(upload => {
@@ -209,7 +211,7 @@ uploadFile(): void {
       },
       error: (error) => {
         console.error('Error subiendo PDFs:', error);
-        
+
         // Marcar como fallados
         this.recentUploads.forEach(upload => {
           if (filesToUpload.some(f => f.name === upload.filename)) {
@@ -228,10 +230,10 @@ uploadFile(): void {
       }
     });
 
-   
 
 
-}
+
+  }
 
 
   formatBytes(bytes: number): string {

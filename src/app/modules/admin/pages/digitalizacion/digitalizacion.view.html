@@ -88,6 +88,14 @@
           </svg>
           <span>Archivos ({{ totalPdfsCount }})</span>
         </button>
+        <button (click)="activeTab = 'lotes'"
+          [class]="activeTab === 'lotes' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'"
+          class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+          </svg>
+        </button>
       </nav>
     </div>
   </header>
@@ -710,6 +718,104 @@
         </table>
       </div>
     </section>
+<section *ngIf="activeTab === 'lotes'" class="space-y-6">
+ <button
+    (click)="recargar()"
+    class="inline-flex items-center gap-2 px-4 py-2
+           bg-blue-600 hover:bg-blue-700
+           text-white text-sm font-medium
+           rounded-lg shadow
+           transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+           active:scale-95">
+    
+    <!-- Icono opcional -->
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+         viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round"
+            d="M4 4v6h6M20 20v-6h-6M5 19a9 9 0 0114-7M19 5a9 9 0 00-14 7"/>
+    </svg>
+
+    Recargar
+  </button>  <h3 class="text-lg font-semibold text-gray-800">
+    Procesos de carga masiva
+  </h3>
+
+  <!-- Loading -->
+  <div *ngIf="isLoadingLotes()" class="flex items-center space-x-2 text-gray-600">
+    <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor"
+        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+    <span>Cargando lotes...</span>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!isLoadingLotes() && lotesUsuario.length > 0"
+       class="bg-gray-50 rounded-xl overflow-hidden shadow-sm">
+
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Lote</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Archivos</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Completados</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Progreso</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Último proceso</th>
+        </tr>
+      </thead>
+
+      <tbody class="bg-gray-50 divide-y divide-gray-200">
+        <tr *ngFor="let lote of lotesUsuario"
+            class="hover:bg-gray-100 transition-colors">
+
+          <td class="px-6 py-4 text-sm font-medium text-gray-900">
+            {{ lote.loteId }}
+          </td>
+
+          <td class="px-6 py-4 text-sm text-gray-700">
+            {{ lote.totalArchivos }}
+          </td>
+
+          <td class="px-6 py-4 text-sm text-gray-700">
+            {{ lote.completados }}
+          </td>
+
+          <td class="px-6 py-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  class="h-2 rounded-full transition-all"
+                  [ngClass]="{
+                    'bg-green-500': lote.porcentaje === 100,
+                    'bg-blue-500': lote.porcentaje < 100
+                  }"
+                  [style.width.%]="lote.porcentaje">
+                </div>
+              </div>
+              <span class="text-xs font-medium text-gray-700 min-w-[40px]">
+                {{ lote.porcentaje }}%
+              </span>
+            </div>
+          </td>
+
+          <td class="px-6 py-4 text-sm text-gray-600">
+            {{ formatDate(lote.ultimoProceso) }}
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!isLoadingLotes() && lotesUsuario.length === 0"
+       class="text-center text-gray-500 py-8">
+    No hay lotes registrados.
+  </div>
+
+</section>
 
   </main>
 </div>

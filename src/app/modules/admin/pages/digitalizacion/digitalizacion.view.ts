@@ -13,10 +13,8 @@ import {
   DocumentMatch
 } from './services/pdf-ocr.service';
 import { ExploradorStateService } from '../explorador/services/explorador-state.service';
+import { CargaMasivaService, LoteOCR } from '../../../../core/services/digitalizacion-carga-masiva.service';
 // import Swal from 'sweetalert2';
-
-
-
 
 @Component({
   standalone: false,
@@ -24,7 +22,7 @@ import { ExploradorStateService } from '../explorador/services/explorador-state.
 })
 export class DigitalizacionView implements OnInit, OnDestroy {
   // Cambia la definicion del tipo activeTab para incluir 'files':
-  activeTab: 'search' | 'upload' | 'quick' | 'global' | 'files' = 'upload';
+  activeTab: 'search' | 'upload' | 'quick' | 'global' | 'files' | 'lotes' = 'upload';
 
   // Agrega estas propiedades:
   viewMode: 'cards' | 'table' = 'cards';
@@ -52,19 +50,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   closeToast(): void {
     this.stateService.closeToast();
   }
-  // Estados para diferentes secciones
-  // activeTab: 'upload' | 'search' | 'quick' | 'global' = 'upload';
 
-  // Variables para subida
-  // selectedFile: File | null = null;
-  // selectedFiles: File[] = [];
-
-  // useOcr: boolean = true;
-
-  // uploadResult: PDFUploadResponse | null = null;
-
-
-  // Variables para búsqueda individual
   pdfsList: PDFListItem[] = [];
   selectedPdfId: string = '';
   searchTerm: string = '';
@@ -131,30 +117,56 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   }> = [];
 
   // Polling para actualizar la lista automáticamente
-  pollIntervalMs: number =3000; // 3 segundos (más rápido)
+  pollIntervalMs: number = 3000; // 3 segundos (más rápido)
   private pollTimer: any = null;
-
+  lotesUsuario: LoteOCR[] = [];
+  isLoadingLotes = signal(false);
   constructor(
     private pdfService: PdfService,
+    private cargaMasivaService: CargaMasivaService,
+
     // private spinner: NgxSpinnerService
   ) { }
 
   ngOnInit() {
     this.loadPdfsList();
-    this.startPolling();
-  }
+    this.loadLotesUsuario();
 
-  startPolling(): void {
-    this.pollTimer = setInterval(() => {
-      try {
-        this.loadPdfsList();
-        this.updateRecentUploadsStatus();
-      } catch (e) {
-        console.error('Error en polling de lista de PDFs:', e);
-      }
-    }, this.pollIntervalMs);
+    // this.startPolling();
   }
- // Actualizar este método
+  recargar() {
+
+    this.loadPdfsList();
+    this.loadLotesUsuario();
+  }
+  loadLotesUsuario(): void {
+    this.isLoadingLotes.set(true);
+
+    this.cargaMasivaService.listarLotesUsuario(20, 0)
+      .subscribe({
+        next: (resp) => {
+          if (resp.success) {
+            this.lotesUsuario = resp.lotes;
+          }
+          this.isLoadingLotes.set(false);
+        },
+        error: (err) => {
+          console.error('Error cargando lotes:', err);
+          this.isLoadingLotes.set(false);
+        }
+      });
+  }
+  // startPolling(): void {
+  //   this.pollTimer = setInterval(() => {
+  //     try {
+  //       this.loadPdfsList();
+  //       this.updateRecentUploadsStatus();
+  //     } catch (e) {
+  //       console.error('Error en polling de lista de PDFs:', e);
+  //     }
+  //   }, this.pollIntervalMs);
+  // }
+  // Actualizar este método
   updateRecentUploadsStatus(): void {
     this.recentUploads.forEach(upload => {
       const matchingPdf = this.pdfsList.find(p => p.id === upload.id);
@@ -170,21 +182,6 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     );
   }
 
-  // updateRecentUploadsStatus(): void {
-  //   this.recentUploads.forEach(upload => {
-  //     const matchingPdf = this.pdfsList.find(p => p.id === upload.id);
-  //     if (matchingPdf) {
-  //       upload.status = matchingPdf.status as any;
-  //       upload.progress = matchingPdf.progress || 0;
-  //     }
-  //   });
-
-  //   const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-  //   this.recentUploads = this.recentUploads.filter(upload =>
-  //     upload.status !== 'completed' || upload.timestamp > fiveMinutesAgo
-  //   );
-  // }
-
   ngOnDestroy(): void {
     if (this.pollTimer) {
       clearInterval(this.pollTimer);
@@ -192,148 +189,6 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     }
   }
 
-  // ========== FUNCIONES PARA SUBIDA ==========
-//   onFilesSelected(event: any): void {
-//   const files: File[] = Array.from(event.target.files);
-
-//   const validPdfs = files.filter(f => f.type === 'application/pdf');
-
-//   if (validPdfs.length === 0) {
-//     this.stateService.showToast('Selecciona al menos un PDF válido', 'error');
-//     return;
-//   }
-
-//   validPdfs.forEach(file => {
-//     this.selectedFiles.push(file);
-
-//     const uploadId = `upload-${Date.now()}-${file.name}`;
-//     this.recentUploads.unshift({
-//       id: uploadId,
-//       filename: file.name,
-//       status: 'uploading',
-//       progress: 0,
-//       timestamp: new Date()
-//     });
-//   });
-
-//   this.stateService.showToast(
-//     `${validPdfs.length} PDF(s) seleccionados correctamente`,
-//     'success'
-//   );
-
-//   event.target.value = ''; // reset input
-// }
-// removeSelectedFile(index: number): void {
-//   this.selectedFiles.splice(index, 1);
-// }
-
-  // onFileSelected(event: any): void {
-  //   const file = event.target.files[0];
-  //   if (file && file.type === 'application/pdf') {
-  //     this.selectedFile = file;
-
-  //     const uploadId = `upload-${Date.now()}`;
-  //     this.recentUploads.unshift({
-  //       id: uploadId,
-  //       filename: file.name,
-  //       status: 'uploading',
-  //       progress: 0,
-  //       timestamp: new Date()
-  //     });
-
-
-
-  //     this.stateService.showToast('Archivo seleccionado con éxito', 'success');
-
-  //   } else {
-
-  //     this.stateService.showToast('Por favor selecciona un archivo PDF válido', 'error');
-  //     this.selectedFile = null;
-  //   }
-  // }
-
-  // uploadFile(): void {
-  //   if (this.selectedFile) {
-  //     this.isUploading.set(true);
-  //     this.loadingMessage.set('Subiendo y procesando PDF...');
-
-  //     const currentUpload = this.recentUploads.find(u => u.filename === this.selectedFile?.name);
-  //     if (currentUpload) {
-  //       currentUpload.status = 'processing';
-  //       currentUpload.progress = 30;
-  //     }
-
-  //     this.pdfService.uploadPdf(this.selectedFile, this.useOcr)
-  //       .subscribe({
-  //         next: (result) => {
-  //           this.uploadResult = result;
-  //           this.selectedFile = null;
-
-  //           if (currentUpload) {
-  //             currentUpload.id = result.id;
-  //             currentUpload.status = 'processing';
-  //             currentUpload.progress = 70;
-  //           }
-
-  //           this.stateService.showToast('El PDF está siendo procesado. El estado se actualizará automáticamente.', 'success');
-  //           this.loadPdfsList();
-  //           this.isUploading.set(false);
-  //         },
-  //         error: (error) => {
-  //           if (currentUpload) {
-  //             currentUpload.status = 'failed';
-  //             currentUpload.progress = 0;
-  //           }
-  //           this.stateService.showToast('Hubo un rror al subir el PDF', 'error');
-  //           this.isUploading.set(false);
-  //         }
-  //       });
-  //   }
-  // }
-//   uploadFile(): void {
-//   if (this.selectedFiles.length === 0) return;
-
-//   this.isUploading.set(true);
-//   this.loadingMessage.set('Subiendo y procesando PDFs...');
-
-//   const filesToUpload = [...this.selectedFiles];
-//   // this.selectedFiles = [];
-
-//   const uploadNext = (index: number) => {
-//     if (index >= filesToUpload.length) {
-//       this.isUploading.set(false);
-//       this.loadPdfsList();
-//       return;
-//     }
-
-//     const file = filesToUpload[index];
-//     const currentUpload = this.recentUploads.find(u => u.filename === file.name);
-
-//     if (currentUpload) {
-//       currentUpload.status = 'processing';
-//       currentUpload.progress = 30;
-//     }
-
-//     this.pdfService.uploadPdf(file, this.useOcr).subscribe({
-//       next: (result) => {
-//         if (currentUpload) {
-//           currentUpload.id = result.id;
-//           currentUpload.progress = 70;
-//         }
-//         uploadNext(index + 1);
-//       },
-//       error: () => {
-//         if (currentUpload) {
-//           currentUpload.status = 'failed';
-//           currentUpload.progress = 0;
-//         }
-//         uploadNext(index + 1);
-//       }
-//     });
-//   };
-
-//   uploadNext(0);
-// }
 
   // ========== FUNCIONES PARA BÚSQUEDA INDIVIDUAL ==========
   loadPdfsList(): void {
@@ -680,7 +535,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   get totalPdfsCount(): number {
     return this.pdfsList.length;
   }
-   onUploadCompleted(): void {
+  onUploadCompleted(): void {
     this.loadPdfsList();
   }
 }
