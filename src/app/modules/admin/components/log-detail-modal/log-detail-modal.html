@@ -1,14 +1,14 @@
 <div *ngIf="isOpen && log" 
-     class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-[60] animate-fadeIn"
+     class="fixed inset-0 bg-slate-900/60 dark:bg-neutral-950/70 backdrop-blur-sm flex items-center justify-center p-4 z-[60] animate-fadeIn"
      (click)="onClose()">
   
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-200"
+  <div class="bg-white dark:bg-[#050505] rounded-2xl shadow-2xl dark:shadow-gray-950/50 w-full max-w-2xl overflow-hidden border border-slate-200 dark:border-neutral-900"
        (click)="$event.stopPropagation()">
     
-    <div class="p-6 border-b border-slate-100 flex justify-between items-start bg-gray-50/50">
+    <div class="p-6 border-b border-slate-100 dark:border-neutral-800 flex justify-between items-start bg-gray-50/50 dark:bg-[#0a0a0a]">
       <div class="flex gap-4 items-center">
-        <div [ngClass]="log.action === 'DELETE' ? 'bg-red-50 text-red-600' : 'bg-[#691831]/10 text-[#691831]'"
-             class="p-3 rounded-xl shadow-sm">
+        <div [ngClass]="log.action === 'DELETE' ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400' : 'bg-[#691831]/10 dark:bg-[#691831]/20 text-[#691831] dark:text-[#ff7eb3]'"
+             class="p-3 rounded-xl shadow-sm dark:shadow-black/50">
              <svg *ngIf="log.action === 'DELETE'" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
              </svg>
@@ -17,106 +17,106 @@
              </svg>
         </div>
         <div>
-          <h2 class="text-xl font-bold text-gray-800">Resumen de Actividad</h2>
+          <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Resumen de Actividad</h2>
           <div class="flex items-center gap-2 mt-1">
             <app-action-badge [action]="log.action"></app-action-badge>
-            <span class="text-slate-300 text-xs">|</span>
-            <span class="text-xs text-slate-500 font-mono">Ref: #{{log.id}}</span>
+            <span class="text-slate-300 dark:text-gray-700 text-xs">|</span>
+            <span class="text-xs text-slate-500 dark:text-gray-400 font-mono">Ref: #{{log.id}}</span>
           </div>
         </div>
       </div>
-      <button (click)="onClose()" class="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors">
+      <button (click)="onClose()" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-400 dark:text-gray-500 transition-colors">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" /></svg>
       </button>
     </div>
 
-    <div class="p-6 max-h-[70vh] overflow-y-auto space-y-6 custom-scroll">
+    <div class="p-6 max-h-[70vh] overflow-y-auto space-y-6 custom-scroll dark:custom-scroll-dark">
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-gray-100 pb-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-gray-100 dark:border-gray-800 pb-6">
         <div class="space-y-1">
           <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest">Ejecutado por</p>
           <div class="flex items-center gap-2">
-            <div class="w-6 h-6 rounded-full bg-[#691831] text-white text-[10px] flex items-center justify-center font-bold shadow-sm">
+            <div class="w-6 h-6 rounded-full bg-[#691831] dark:bg-[#ff7eb3] text-white dark:text-gray-900 text-[10px] flex items-center justify-center font-bold shadow-sm dark:shadow-black/50">
               {{ getInitials() }}
             </div>
-            <span class="font-bold text-gray-700 text-sm">{{ log.user?.username || 'Sistema' }}</span>
+            <span class="font-bold text-gray-700 dark:text-gray-200 text-sm">{{ log.user?.username || 'Sistema' }}</span>
           </div>
         </div>
         <div class="space-y-1">
           <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest">Momento</p>
-          <p class="text-sm font-semibold text-gray-700 italic">
+          <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 italic">
             {{ log.created_at | date:'dd/MM/yyyy HH:mm:ss' }}
           </p>
         </div>
         <div class="space-y-1">
           <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest">IP Origen</p>
-          <p class="text-sm font-mono font-bold text-[#BC955B]">
+          <p class="text-sm font-mono font-bold text-[#BC955B] dark:text-[#f0c674]">
             {{ log.ip_address }}
           </p>
         </div>
       </div>
 
       <div class="space-y-4">
-        <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
-          <svg class="w-4 h-4 text-[#BC955B]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <h3 class="text-sm font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+          <svg class="w-4 h-4 text-[#BC955B] dark:text-[#f0c674]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           Detalles de la Operación
         </h3>
 
         <div *ngIf="log.details.display_name || log.details.target_user" 
-             class="bg-gray-50 p-4 rounded-xl border-l-4 border-[#BC955B] shadow-sm flex items-center justify-between animate-fadeIn">
+             class="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border-l-4 border-[#BC955B] dark:border-[#f0c674] shadow-sm dark:shadow-black/30 flex items-center justify-between animate-fadeIn">
           <div class="flex items-center gap-3">
-            <div class="p-2 bg-white rounded-lg border border-gray-100 text-[#691831]">
+            <div class="p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 text-[#691831] dark:text-[#ff7eb3]">
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
             <div>
               <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest">Sujeto Afectado</p>
-              <p class="font-bold text-gray-800">{{ log.details.display_name || log.details.target_user }}</p>
-              <p *ngIf="log.details.municipality" class="text-[10px] text-[#BC955B] font-bold">{{ log.details.municipality }}</p>
+              <p class="font-bold text-gray-800 dark:text-gray-100">{{ log.details.display_name || log.details.target_user }}</p>
+              <p *ngIf="log.details.municipality" class="text-[10px] text-[#BC955B] dark:text-[#f0c674] font-bold">{{ log.details.municipality }}</p>
             </div>
           </div>
           <div class="text-right">
             <p class="text-[10px] text-gray-400 uppercase font-black">ID Entidad</p>
-            <p class="font-mono text-xs text-gray-500 font-bold">#{{ log.entity_id }}</p>
+            <p class="font-mono text-xs text-gray-500 dark:text-gray-400 font-bold">#{{ log.entity_id }}</p>
           </div>
         </div>
 
         <div *ngIf="isUpdatePerms()" class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fadeIn">
-          <div class="border border-green-100 rounded-xl overflow-hidden shadow-sm">
-            <div class="bg-green-50 px-3 py-2 text-[10px] font-black text-green-700 border-b border-green-100 uppercase tracking-widest">Otorgados</div>
-            <div class="p-4 bg-white space-y-2 max-h-48 overflow-y-auto custom-scroll">
-              <div *ngFor="let p of log.details.changes?.added" class="flex items-center gap-2 text-xs text-green-800 font-semibold">
-                <svg class="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7" /></svg>
+          <div class="border border-green-100 dark:border-green-900 rounded-xl overflow-hidden shadow-sm dark:shadow-black/30">
+            <div class="bg-green-50 dark:bg-green-950/40 px-3 py-2 text-[10px] font-black text-green-700 dark:text-green-400 border-b border-green-100 dark:border-green-900 uppercase tracking-widest">Otorgados</div>
+            <div class="p-4 bg-white dark:bg-gray-900 space-y-2 max-h-48 overflow-y-auto custom-scroll dark:custom-scroll-dark">
+              <div *ngFor="let p of log.details.changes?.added" class="flex items-center gap-2 text-xs text-green-800 dark:text-green-300 font-semibold">
+                <svg class="w-4 h-4 text-green-500 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7" /></svg>
                 {{ p }}
               </div>
-              <p *ngIf="!log.details.changes?.added?.length" class="text-xs text-gray-400 italic">Ninguno</p>
+              <p *ngIf="!log.details.changes?.added?.length" class="text-xs text-gray-400 dark:text-gray-500 italic">Ninguno</p>
             </div>
           </div>
-          <div class="border border-red-100 rounded-xl overflow-hidden shadow-sm">
-            <div class="bg-red-50 px-3 py-2 text-[10px] font-black text-red-700 border-b border-red-100 uppercase tracking-widest">Revocados</div>
-            <div class="p-4 bg-white space-y-2 max-h-48 overflow-y-auto custom-scroll">
-              <div *ngFor="let p of log.details.changes?.removed" class="flex items-center gap-2 text-xs text-red-800 font-semibold">
-                <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" /></svg>
+          <div class="border border-red-100 dark:border-red-900 rounded-xl overflow-hidden shadow-sm dark:shadow-black/30">
+            <div class="bg-red-50 dark:bg-red-950/40 px-3 py-2 text-[10px] font-black text-red-700 dark:text-red-400 border-b border-red-100 dark:border-red-900 uppercase tracking-widest">Revocados</div>
+            <div class="p-4 bg-white dark:bg-gray-900 space-y-2 max-h-48 overflow-y-auto custom-scroll dark:custom-scroll-dark">
+              <div *ngFor="let p of log.details.changes?.removed" class="flex items-center gap-2 text-xs text-red-800 dark:text-red-300 font-semibold">
+                <svg class="w-4 h-4 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" /></svg>
                 {{ p }}
               </div>
-              <p *ngIf="!log.details.changes?.removed?.length" class="text-xs text-gray-400 italic">Ninguno</p>
+              <p *ngIf="!log.details.changes?.removed?.length" class="text-xs text-gray-400 dark:text-gray-500 italic">Ninguno</p>
             </div>
           </div>
         </div>
 
         <div *ngIf="log.action === 'CREATE' && log.details.data" class="grid grid-cols-1 md:grid-cols-2 gap-3 animate-fadeIn">
-           <div *ngFor="let key of getDataKeys(log.details.data)" class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+           <div *ngFor="let key of getDataKeys(log.details.data)" class="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg border border-gray-100 dark:border-gray-800">
              <p class="text-[10px] text-gray-400 uppercase font-bold">{{ key.replace('_', ' ') }}</p>
-             <p class="text-sm font-semibold text-gray-700">{{ log.details.data[key] }}</p>
+             <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ log.details.data[key] }}</p>
            </div>
         </div>
 
         <div *ngIf="log.action === 'UPDATE' && log.details.changes" class="space-y-3 animate-fadeIn">
           <div *ngFor="let key of getChangesKeys(log.details.changes)" 
-              class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+              class="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800">
             
-            <p class="text-[10px] text-[#691831] uppercase font-black mb-2">{{ key.replace('_', ' ') }}</p>
+            <p class="text-[10px] text-[#691831] dark:text-[#ff7eb3] uppercase font-black mb-2">{{ key.replace('_', ' ') }}</p>
             
             <div class="flex flex-col md:flex-row items-center gap-4">
               <div class="flex-1 w-full">
@@ -125,35 +125,35 @@
                 <ng-container *ngIf="isFieldValueArray(log.details.changes[key].old); else oldText">
                   <div class="flex flex-wrap gap-1 mt-1">
                     <span *ngFor="let item of log.details.changes[key].old" 
-                          class="px-2 py-0.5 bg-gray-200 text-gray-500 rounded text-[10px] line-through">
+                          class="px-2 py-0.5 bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded text-[10px] line-through">
                       {{ item }}
                     </span>
-                    <span *ngIf="!log.details.changes[key].old?.length" class="text-gray-400 italic text-sm">ninguno</span>
+                    <span *ngIf="!log.details.changes[key].old?.length" class="text-gray-400 dark:text-gray-500 italic text-sm">ninguno</span>
                   </div>
                 </ng-container>
                 <ng-template #oldText>
-                  <p class="text-gray-500 line-through text-sm italic">{{ log.details.changes[key].old ?? 'n/a' }}</p>
+                  <p class="text-gray-500 dark:text-gray-400 line-through text-sm italic">{{ log.details.changes[key].old ?? 'n/a' }}</p>
                 </ng-template>
               </div>
 
-              <svg class="w-4 h-4 text-gray-300 hidden md:block shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-4 h-4 text-gray-300 dark:text-gray-700 hidden md:block shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7-7 7" />
               </svg>
 
               <div class="flex-1 w-full">
-                <p class="text-[9px] text-[#BC955B] uppercase font-bold">Nuevo</p>
+                <p class="text-[9px] text-[#BC955B] dark:text-[#f0c674] uppercase font-bold">Nuevo</p>
                 
                 <ng-container *ngIf="isFieldValueArray(log.details.changes[key].new); else newText">
                   <div class="flex flex-wrap gap-1 mt-1">
                     <span *ngFor="let item of log.details.changes[key].new" 
-                          class="px-2 py-0.5 bg-[#BC955B]/10 text-[#BC955B] rounded text-[10px] font-bold border border-[#BC955B]/20">
+                          class="px-2 py-0.5 bg-[#BC955B]/10 dark:bg-[#f0c674]/10 text-[#BC955B] dark:text-[#f0c674] rounded text-[10px] font-bold border border-[#BC955B]/20 dark:border-[#f0c674]/20">
                       {{ item }}
                     </span>
-                    <span *ngIf="!log.details.changes[key].new?.length" class="text-gray-400 italic text-sm">vaciado</span>
+                    <span *ngIf="!log.details.changes[key].new?.length" class="text-gray-400 dark:text-gray-500 italic text-sm">vaciado</span>
                   </div>
                 </ng-container>
                 <ng-template #newText>
-                  <p class="text-gray-800 font-bold text-sm">{{ log.details.changes[key].new ?? 'n/a' }}</p>
+                  <p class="text-gray-800 dark:text-gray-200 font-bold text-sm">{{ log.details.changes[key].new ?? 'n/a' }}</p>
                 </ng-template>
               </div>
             </div>
@@ -161,28 +161,28 @@
         </div>
 
         <div *ngIf="log.action === 'DELETE'" 
-             class="bg-red-50 p-4 rounded-xl border border-red-100 flex gap-3 items-center animate-pulse">
-          <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+             class="bg-red-50 dark:bg-red-950/30 p-4 rounded-xl border border-red-100 dark:border-red-900 flex gap-3 items-center animate-pulse">
+          <svg class="w-5 h-5 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
           <div>
-            <p class="text-sm font-bold text-red-900">Usuario Inactivado</p>
-            <p class="text-[11px] text-red-700 font-medium">El acceso para este usuario ha sido revocado del sistema.</p>
+            <p class="text-sm font-bold text-red-900 dark:text-red-300">Usuario Inactivado</p>
+            <p class="text-[11px] text-red-700 dark:text-red-400 font-medium">El acceso para este usuario ha sido revocado del sistema.</p>
           </div>
         </div>
 
         <div *ngIf="!isUpdatePerms() && log.action !== 'CREATE' && log.action !== 'UPDATE' && (!log.details.changes || getChangesKeys(log.details.changes).length === 0)" 
              class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div *ngFor="let item of log.details | keyvalue" 
-               class="bg-gray-50 p-3 rounded-lg border border-gray-100"
+               class="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg border border-gray-100 dark:border-gray-800"
                [hidden]="item.key === 'device_detected' || item.key === 'display_name' || item.key === 'changes' || item.key === 'target_user' || item.key === 'municipality' || item.key === 'data' || item.key === 'type'">
             <p class="text-[10px] text-gray-400 uppercase font-bold">{{ item.key.toString().replace('_', ' ') }}</p>
-            <p class="text-sm font-semibold text-gray-700">{{ item.value }}</p>
+            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ item.value }}</p>
           </div>
         </div>
       </div>
 
-      <div class="pt-4 border-t border-gray-100 flex items-center gap-3 text-gray-400 italic text-[12px]">
+      <div class="pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center gap-3 text-gray-400 dark:text-gray-500 italic text-[12px]">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path d="M9.75 17L9 21h6l-.75-4M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
@@ -190,9 +190,9 @@
       </div>
     </div>
 
-    <div class="p-4 bg-gray-50 flex justify-end gap-2">
+    <div class="p-4 bg-gray-50 dark:bg-gray-900/50 flex justify-end gap-2">
       <button (click)="onClose()" 
-              class="px-10 py-2.5 bg-[#691831] text-white rounded-xl font-bold hover:bg-[#501225] transition-all shadow-md active:scale-95">
+              class="px-10 py-2.5 bg-[#691831] dark:bg-[#ff7eb3] text-white dark:text-gray-900 rounded-xl font-bold hover:bg-[#501225] dark:hover:bg-[#ff5b9c] transition-all shadow-md dark:shadow-black/30 active:scale-95">
         Cerrar Detalle
       </button>
     </div>

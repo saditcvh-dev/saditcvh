@@ -1,14 +1,14 @@
 <header
-  class="fixed top-0 right-0 bg-white dark:bg-black dark:border-black z-30 transition-all duration-300 ease-in-out"
+  class="fixed top-0 right-0 bg-gray-100 dark:bg-[#050505] dark:border-black z-30 transition-all duration-300 ease-in-out"
   [ngClass]="{
     'md:w-[calc(100%-4rem)]': !sidebarOpen && !isMobileView,  
-    'md:w-[calc(100%-16rem)]': sidebarOpen && !isMobileView,  
+    'md:w-[calc(100%-14rem)]': sidebarOpen && !isMobileView,  
     'w-full': isMobileView
   }">
 
 
   <div class="w-full h-full min-w-0">
-    <div class="max-w-screen-2xl mx-auto px-4 lg:px-6">
+    <div class=" mx-auto px-4 lg:px-6">
       <div class="flex items-center justify-between h-16 min-w-0">
 
         <div class="flex items-center gap-3 flex-shrink-0">
@@ -39,10 +39,10 @@
 
         <div class="flex items-center gap-4 flex-shrink-0">
 
-          
+
 
           <button *ngIf="isMobile" (click)="openMobileSearch()"
-            class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex-shrink-0"
+            class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-900 transit-rounded-lgion-colors flex-shrink-0"
             aria-label="Abrir búsqueda">
             <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -57,12 +57,12 @@
               <img src="https://ui-avatars.com/api?name=Admin&background=374151&color=fff" alt="avatar"
                 class="w-9 h-9 rounded-full flex-shrink-0">
               <div class="hidden md:block min-w-0">
-                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">Administrador</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">admin@hidalgo.gob.mx</p>
+                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{role_user}}</p>
+                <!-- <p class="text-xs text-gray-500 dark:text-gray-400 truncate">admin@hidalgo.gob.mx</p> -->
               </div>
 
               <button *ngIf="!isMobile" (click)="toggleProfile()" type="button"
-                class="hidden md:block p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition flex-shrink-0">
+                class="hidden md:block p-1 rounded hover:bg-gray-100 dark:hover:bg-neutral-900 transit-rounded-lgion flex-shrink-0">
                 <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor"
                   viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -70,7 +70,7 @@
               </button>
 
               <button *ngIf="isMobile" (click)="toggleProfile()" type="button"
-                class="md:hidden p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition flex-shrink-0">
+                class="md:hidden p-1 rounded hover:bg-gray-100 dark:hover:bg-neutral-900 transit-rounded-lgion flex-shrink-0">
                 <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor"
                   viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -80,57 +80,50 @@
             </div>
 
             <div *ngIf="profileOpen"
-              class="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+              class="absolute right-0 mt-2 w-64 bg-white dark:bg-[#050505] rounded-lg shadow-lg border border-gray-200 dark:border-neutral-900 z-50"
               (clickOutside)="profileOpen = false">
               <div class="p-4 border-b border-gray-100 dark:border-gray-700">
                 <div class="flex items-center gap-3">
                   <img src="https://ui-avatars.com/api?name=Admin&background=374151&color=fff" alt="avatar"
                     class="w-10 h-10 rounded-full">
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">Administrador del Sistema
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{role_user}}
                     </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">admin@hidalgo.gob.mx</p>
-                    <p class="text-xs text-sky-600 dark:text-sky-400 font-medium mt-1">Rol: Super Administrador</p>
                   </div>
                 </div>
               </div>
 
               <div class="py-2">
-                <a href="/perfil"
-                  class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                <a *ngIf="isAdmin()" routerLink="/admin/usuarios" (click)="onNavLinkClick()"
+                  class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors">
+                  <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
-                  Mi perfil
+                  Usuarios
                 </a>
 
-                <a href="/configuracion"
-                  class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <a *ngIf="isAdmin()" routerLink="/admin/respaldos" (click)="onNavLinkClick()"
+                  class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors">
+                  <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M12 6c-3.866 0-7 1.79-7 4s3.134 4 7 4 7-1.79 7-4-3.134-4-7-4zM4 10c0-2.21 3.582-4 8-4s8 1.79 8 4v2c0 2.21-3.582 4-8 4s-8-1.79-8-4v-2z" />
                   </svg>
-                  Configuración
+                  Respaldos
                 </a>
 
-                <a href="/auditoria"
-                  class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                <a *ngIf="isAdmin()" routerLink="/admin/auditoria" (click)="onNavLinkClick()"
+                  class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors">
+                  <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                       d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  Registro de actividades
+                  Auditoría
                 </a>
 
                 <!-- Opción de Tema -->
                 <button (click)="toggleThemeSubmenu()"
-                  class="w-full text-left px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 rounded flex items-center gap-2 transition-colors text-sm text-gray-700 dark:text-gray-300">
+                  class="w-full text-left px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-neutral-900 flex items-center gap-2 transition-colors text-sm text-gray-700 dark:text-gray-300">
                   <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -138,44 +131,44 @@
                   </svg>
                   Tema
                   <span class="ml-auto material-symbols-rounded text-gray-400 dark:text-gray-500 text-sm">
-                    {{ themeSubmenuOpen ? 'expand_less' : 'expand_more' }}
+                    {{ themeSubmenuOpen ? 'ver menos' : 'ver más' }}
                   </span>
                 </button>
 
                 <!-- Submenú de temas -->
                 <div *ngIf="themeSubmenuOpen" class="pl-8 pr-2 py-1">
                   <button (click)="setTheme('light')"
-                    class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded flex items-center gap-2 transition-colors text-xs text-gray-700 dark:text-gray-300">
+                    class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2 transition-colors text-xs text-gray-700 dark:text-gray-300">
+                    <!-- en español -->
                     <span class="material-symbols-rounded text-sm" [class.text-primary]="currentTheme === 'light'">
-                      light_mode
+                      <!-- en español light_mode -->
+                      Modo claro
                     </span>
-                    Claro
                     <span *ngIf="currentTheme === 'light'"
-                      class="ml-auto material-symbols-rounded text-sm text-primary">
-                      check
+                      class="ml-auto material-symbols-rounded text-sm text-primary  px-2 bg-blue-400/20 rounded-full">
+                      ✓
                     </span>
                   </button>
 
                   <button (click)="setTheme('dark')"
-                    class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded flex items-center gap-2 transition-colors text-xs text-gray-700 dark:text-gray-300">
+                    class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2 transition-colors text-xs text-gray-700 dark:text-gray-300">
                     <span class="material-symbols-rounded text-sm" [class.text-primary]="currentTheme === 'dark'">
-                      dark_mode
+                      Modo oscuro
                     </span>
-                    Oscuro
-                    <span *ngIf="currentTheme === 'dark'" class="ml-auto material-symbols-rounded text-sm text-primary">
-                      check
+                    <span *ngIf="currentTheme === 'dark'"
+                      class="ml-auto material-symbols-rounded text-sm px-2 bg-blue-400 rounded-xl text-black">
+                      ✓
                     </span>
                   </button>
 
                   <button (click)="setTheme('system')"
-                    class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded flex items-center gap-2 transition-colors text-xs text-gray-700 dark:text-gray-300">
+                    class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2 transition-colors text-xs text-gray-700 dark:text-gray-300">
                     <span class="material-symbols-rounded text-sm" [class.text-primary]="currentTheme === 'system'">
-                      computer
+                      Tema del sistema
                     </span>
-                    Sistema
                     <span *ngIf="currentTheme === 'system'"
-                      class="ml-auto material-symbols-rounded text-sm text-primary">
-                      check
+                      class="ml-auto material-symbols-rounded text-sm px-2 bg-blue-400 rounded-xl text-black">
+                      ✓
                     </span>
                   </button>
                 </div>
@@ -195,7 +188,7 @@
               <div
                 class="p-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 rounded-b-lg">
                 <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
-                  SADIT-CVH v2.3.0<br>
+                  SADIT-CVH<br>
                   <span class="text-gray-400 dark:text-gray-500">© 2024 Gobierno de Hidalgo</span>
                 </p>
               </div>
@@ -216,7 +209,7 @@
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <button (click)="closeMobileSearch()"
-            class="absolute right-3 top-3.5 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+            class="absolute right-3 top-3.5 p-1 rounded hover:bg-gray-100 dark:hover:bg-neutral-900">
             <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>

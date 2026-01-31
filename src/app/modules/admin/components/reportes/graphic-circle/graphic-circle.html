@@ -1,5 +1,5 @@
 <!-- Gráfica de Distribución por Tipo de Documento -->
-<div class="bg-white rounded-xl border border-[#99999A]/20 p-6 shadow-sm">
+<div class="bg-white dark:bg-[#050505] rounded-xl border border-[#99999A]/20 p-6 shadow-sm">
     
     <!-- Encabezado -->
     <div class="flex items-center justify-between mb-6">
@@ -53,7 +53,7 @@
         </div>
         
         <!-- Gráfica con datos -->
-        <div *ngIf="!isLoading && tiposData.length > 0" class="w-full text-center">
+        <div *ngIf="!isLoading && tiposData.length > 0" class=" dark:bg-[#050505] w-full text-center">
             
             <!-- Total de documentos - MOSTRAR EL TOTAL REAL DEL API -->
             <div class="mb-6">

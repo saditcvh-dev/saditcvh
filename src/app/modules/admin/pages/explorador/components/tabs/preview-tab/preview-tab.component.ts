@@ -1361,7 +1361,7 @@ export class PreviewTabComponent implements OnInit, AfterViewInit, OnDestroy {
       console.error(`Error al resaltar búsqueda en página ${pageNum}:`, error);
     }
   }
-  
+
   clearSearchHighlights(): void {
     this.textLayers.forEach((textLayer) => {
       const highlights = textLayer.querySelectorAll('.search-highlight, .current-search-highlight');
@@ -1834,6 +1834,13 @@ export class PreviewTabComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  // Agrega esta propiedad a tu componente
+  isSidebarCollapsed: boolean = false;
+
+  // Agrega este método para alternar el estado
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
   // ========== LIMPIEZA ==========
 
   ngOnDestroy() {

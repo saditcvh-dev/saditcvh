@@ -16,7 +16,7 @@
         <ng-container *ngIf="i === 0">
           
           <a (click)="navigateTo(breadcrumb.url)" 
-             class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 cursor-pointer">
+             class="inline-flex items-center text-sm font-medium text-blue-500  dark:text-gray-400 hover:text-blue-600 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" 
                  fill="none" 
                  viewBox="0 0 24 24" 
@@ -33,10 +33,10 @@
         <ng-container *ngIf="i > 0">
           <a *ngIf="!isLast(i)" 
              (click)="navigateTo(breadcrumb.url)"
-             class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 cursor-pointer">
+             class="ml-1 text-sm font-medium   hover:text-blue-600 md:ml-2 cursor-pointer">
             {{ breadcrumb.label }}
           </a>
-          <span *ngIf="isLast(i)" class="ml-1 text-sm font-medium text-gray-500 md:ml-2">
+          <span *ngIf="isLast(i)" class="ml-1 text-sm font-medium  text-gray-500 md:ml-2">
             {{ breadcrumb.label }}
           </span>
         </ng-container>

@@ -1,34 +1,29 @@
 <aside id="sidebar"
-  class="fixed top-0 left-0 h-screen bg-neutral-100 dark:bg-black border-r border-gray-200 dark:border-neutral-700 flex flex-col transition-all duration-300 ease-in-out z-40 shadow-none"
+  class="fixed top-0 left-0 h-screen bg-neutral-100 dark:bg-[#050505] flex flex-col transition-all duration-300 ease-in-out z-40 shadow-none select-none"
   [ngClass]="{
     'w-16': !sidebarOpen && !isMobile,
-    'w-64': sidebarOpen && !isMobile,
+    'w-56': sidebarOpen && !isMobile,
     '-translate-x-full': isMobile && !sidebarOpen,
     'translate-x-0 w-64 shadow-xl': isMobile && sidebarOpen  
-  }">
+  }" (click)="$event.stopPropagation()">
 
   <!-- Botón toggle -->
-  <div
-    class="px-3 py-4 flex flex-row items-center justify-between gap-2 border-b border-gray-200 dark:border-neutral-700">
+  <div class="px-3 py-4 flex flex-row items-center justify-between gap-2">
     <!-- Logo visible solo cuando el sidebar está abierto -->
     <img routerLink="/admin" *ngIf="sidebarOpen || isMobile" src="logos/logomovilidad-SNfondo.png" alt="Logo"
-      class="h-7 cursor-pointer flex-shrink-0">
+      class="h-7 cursor-pointer flex-shrink-0" (click)="onNavLinkClick()">
 
     <!-- Botón toggle -->
     <button (click)="toggleSidebar()"
-      class="flex items-center justify-center rounded-lg text-gray-500 dark:text-neutral-400 transition flex-shrink-0 hover:bg-gray-100 dark:hover:bg-neutral-900"
-      [ngClass]="{
-      'p-2 shadow-sm': sidebarOpen && !isMobile,
-      'p-2 bg-none border-none': !sidebarOpen && !isMobile,
-      'p-2 ml-auto': isMobile && !sidebarOpen
-      }" [attr.aria-label]="sidebarOpen ? 'Cerrar menú' : 'Abrir menú'">
+      class="flex items-center justify-center rounded-lg text-gray-500 dark:text-neutral-400 transition flex-shrink-0 hover:bg-white dark:hover:bg-neutral-900 p-2"
+      [attr.aria-label]="sidebarOpen ? 'Cerrar menú' : 'Abrir menú'">
 
       <!-- Icono X para cerrar en móvil cuando está abierto -->
       <svg *ngIf="sidebarOpen && isMobile" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M6 18L18 6M6 6l12 12" />
       </svg>
 
-      <!-- Icono de sidebar outline -->
+      <!-- Icono de sidebar outline para desktop cuando está abierto -->
       <svg *ngIf="sidebarOpen && !isMobile" xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink" role="img" style="" width="18" height="18" viewBox="0 0 1024 1024"
         name="LeftBar" data-v-47f71c5b="" class="iconify">
@@ -36,7 +31,13 @@
           d="M725.333333 132.266667A166.4 166.4 0 0 1 891.733333 298.666667v426.666666c0 91.904-74.496 166.4-166.4 166.4H298.666667A166.442667 166.442667 0 0 1 132.266667 725.333333V298.666667A166.4 166.4 0 0 1 298.666667 132.266667h426.666666z m-281.6 682.666666H725.333333a89.6 89.6 0 0 0 89.6-89.6V298.666667A89.6 89.6 0 0 0 725.333333 209.066667h-281.6v605.866666zM298.666667 209.066667A89.6 89.6 0 0 0 209.066667 298.666667v426.666666c0 49.493333 40.106667 89.6 89.6 89.6h68.266666V209.066667H298.666667z"
           fill="currentColor"></path>
       </svg>
-      <!-- Icono cuando el sidebar está cerrado: menú hamburguesa -->
+
+      <!-- Icono hamburguesa para móvil cuando está cerrado -->
+      <svg *ngIf="!sidebarOpen && isMobile" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+
+      <!-- Icono hamburguesa para desktop cuando está cerrado -->
       <svg *ngIf="!sidebarOpen && !isMobile" class="w-4.5 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
       </svg>
@@ -44,17 +45,14 @@
   </div>
 
   <!-- Navegación principal -->
-  <nav class="flex-1 px-3 py-4 space-y-1 text-sm overflow-hidden overflow-y-auto
-  [&::-webkit-scrollbar]:hidden 
-  [-ms-overflow-style:none] 
-  [scrollbar-width:none]">
+  <nav
+    class="flex-1 px-3 py-4 space-y-1 text-sm overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] hover:[&::-webkit-scrollbar-thumb]:bg-gray-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-700">
     <!-- Search -->
-    <div *ngIf="sidebarOpen || isMobile" class="pt-4 pb-4 border-b border-gray-200 dark:border-neutral-700">
+    <div *ngIf="sidebarOpen || isMobile" class="pt-4 pb-4">
       <div class="relative">
         <input type="text" placeholder="Buscar..." class="w-full pl-9 pr-14 py-2 text-sm rounded-lg
            bg-white dark:bg-gray-800
-           border border-gray-200 dark:border-neutral-600
-           focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500
+           focus:outline-none focus:ring-1 focus:ring-blue-500
            transition
            text-gray-900 dark:text-neutral-100
            placeholder:text-gray-400 dark:placeholder:text-neutral-400" />
@@ -75,7 +73,6 @@
           Ctrl + K
         </span>
       </div>
-
     </div>
 
     <!-- Grupo: General -->
@@ -86,9 +83,9 @@
       </h3>
       <ul class="space-y-1">
         <li>
-          <a routerLink="/admin/dashboard"
-            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
+          <a routerLink="/admin/dashboard" (click)="onNavLinkClick()"
+            [routerLinkActive]="['bg-blue-400/20', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-white dark:hover:bg-neutral-900 transition duration-200">
             <!-- icono de dashboard -->
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
               stroke="currentColor" class="size-5">
@@ -112,11 +109,10 @@
       </h3>
       <ul class="space-y-1">
         <li>
-          <a routerLink="/admin/explorador"
-            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
-            class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200 relative">
-            <img src="assets/icons/explorer.png" alt="Carpeta"
-              class="w-7 h-7 flex-shrink-0">
+          <a routerLink="/admin/explorador" (click)="onNavLinkClick()"
+            [routerLinkActive]="['bg-blue-400/20', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-white dark:hover:bg-neutral-900 transition duration-200 relative">
+            <img src="assets/icons/explorer.png" alt="Carpeta" class="w-7 h-7 flex-shrink-0">
             <span *ngIf="sidebarOpen || isMobile" class="whitespace-nowrap text-sm">
               Explorador
             </span>
@@ -130,9 +126,9 @@
         </li>
 
         <li>
-          <a routerLink="/admin/digitalizacion"
-            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
+          <a routerLink="/admin/digitalizacion" (click)="onNavLinkClick()"
+            [routerLinkActive]="['bg-blue-400/20', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-white dark:hover:bg-neutral-900 transition duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
               stroke="currentColor" class="size-5">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -145,9 +141,9 @@
           </a>
         </li>
         <li>
-          <a routerLink="/admin/reportes"
-            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
+          <a routerLink="/admin/reportes" (click)="onNavLinkClick()"
+            [routerLinkActive]="['bg-blue-400/20', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-white dark:hover:bg-neutral-900 transition duration-200">
             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -168,9 +164,9 @@
       </h3>
       <ul class="space-y-1">
         <li>
-          <a routerLink="/admin/usuarios"
-            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
+          <a routerLink="/admin/usuarios" (click)="onNavLinkClick()"
+            [routerLinkActive]="['bg-blue-400/20', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-white dark:hover:bg-neutral-900 transition duration-200">
             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -181,9 +177,9 @@
           </a>
         </li>
         <li>
-          <a routerLink="/admin/respaldos"
-            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
+          <a routerLink="/admin/respaldos" (click)="onNavLinkClick()"
+            [routerLinkActive]="['bg-blue-400/20', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-white dark:hover:bg-neutral-900 transition duration-200">
             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M12 6c-3.866 0-7 1.79-7 4s3.134 4 7 4 7-1.79 7-4-3.134-4-7-4zM4 10c0-2.21 3.582-4 8-4s8 1.79 8 4v2c0 2.21-3.582 4-8 4s-8-1.79-8-4v-2z" />
@@ -194,9 +190,9 @@
           </a>
         </li>
         <li>
-          <a routerLink="/admin/auditoria"
-            [routerLinkActive]="['bg-white', 'dark:bg-gray-800', 'font-medium', 'border', 'border-gray-150', 'dark:border-neutral-600', '!text-gray-600', 'dark:!text-neutral-200']"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
+          <a routerLink="/admin/auditoria" (click)="onNavLinkClick()"
+            [routerLinkActive]="['bg-blue-400/20', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-white dark:hover:bg-neutral-900 transition duration-200">
             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -208,110 +204,10 @@
         </li>
       </ul>
     </div>
-
-    <!-- Mi Actividad reciente -->
-    <!-- <div *ngIf="sidebarOpen || isMobile" class="pb-2 mt-6 border-t border-gray-200 dark:border-neutral-700 pt-4">
-      <div class="flex items-center justify-between px-3 mb-2">
-        <h3 class="text-xs font-medium text-gray-500 dark:text-neutral-400 tracking-wider">
-          Mi Actividad reciente
-        </h3>
-        <button
-          class="p-1 hover:bg-gray-200 dark:hover:bg-neutral-700 rounded-full text-gray-500 dark:text-neutral-400 transition"
-          title="Nueva Carpeta">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 4v16m8-8H4" />
-          </svg>
-        </button>
-      </div>
-      <ul class="space-y-1">
-        <li
-          class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-neutral-900 cursor-pointer group transition duration-200">
-          <div class="flex items-center gap-2">
-            <svg
-              class="w-5 h-5 text-gray-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
-              fill="currentColor" viewBox="0 0 20 20">
-              <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
-            </svg>
-            <div class="flex flex-col">
-              <span
-                class="text-sm font-none text-gray-500 dark:text-neutral-400 group-hover:text-blue-700 dark:group-hover:text-blue-300">
-                Expedientes Generales
-              </span>
-              <span class="text-xs text-gray-400 dark:text-neutral-500">30k Archivos</span>
-            </div>
-          </div>
-          <svg
-            class="w-4 h-4 text-gray-300 dark:text-neutral-600 group-hover:text-blue-500 dark:group-hover:text-blue-400"
-            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7" />
-          </svg>
-        </li>
-        <li
-          class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-neutral-900 cursor-pointer group transition duration-200">
-          <div class="flex items-center gap-2">
-            <svg
-              class="w-5 h-5 text-gray-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
-              fill="currentColor" viewBox="0 0 20 20">
-              <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
-            </svg>
-            <span
-              class="text-sm font-none text-gray-500 dark:text-neutral-400 group-hover:text-blue-700 dark:group-hover:text-blue-300">
-              Digitalización en Proceso
-            </span>
-          </div>
-          <svg
-            class="w-4 h-4 text-gray-300 dark:text-neutral-600 group-hover:text-blue-500 dark:group-hover:text-blue-400"
-            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7" />
-          </svg>
-        </li>
-        <li
-          class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-neutral-900 cursor-pointer group transition duration-200">
-          <div class="flex items-center gap-2">
-            <svg
-              class="w-5 h-5 text-gray-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
-              fill="currentColor" viewBox="0 0 20 20">
-              <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
-            </svg>
-            <span
-              class="text-sm font-none text-gray-500 dark:text-neutral-400 group-hover:text-blue-700 dark:group-hover:text-blue-300">
-              Reportes e Inventario
-            </span>
-          </div>
-          <svg
-            class="w-4 h-4 text-gray-300 dark:text-neutral-600 group-hover:text-blue-500 dark:group-hover:text-blue-400"
-            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7" />
-          </svg>
-        </li>
-        <li
-          class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-neutral-900 cursor-pointer group transition duration-200">
-          <div class="flex items-center gap-2">
-            <svg
-              class="w-5 h-5 text-gray-500 dark:text-neutral-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
-              fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-            </svg>
-            <span
-              class="text-sm font-none text-gray-500 dark:text-neutral-400 group-hover:text-blue-700 dark:group-hover:text-blue-300">
-              Administración STCH
-            </span>
-          </div>
-          <svg
-            class="w-4 h-4 text-gray-300 dark:text-neutral-600 group-hover:text-blue-500 dark:group-hover:text-blue-400"
-            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7" />
-          </svg>
-        </li>
-      </ul>
-    </div> -->
   </nav>
 
-  <div class="px-3 py-4 border-t border-gray-200 dark:border-neutral-700">
-
+  <div class="px-3 py-4">
     <div *ngIf="(sidebarOpen || isMobile) && sidebarInfo.show" class="px-3">
-
       <!-- Texto dinámico -->
       <div class="flex items-center justify-between text-xs">
         <span class="text-gray-500 dark:text-neutral-400">
@@ -342,10 +238,10 @@
         </span>
       </div>
     </div>
-    <!-- Sección inferior: Cerrar sesión -->
+
     <!-- Botón Cerrar sesión -->
-    <button type="button" (click)="onLogout()"
-      class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition duration-200">
+    <button type="button" (click)="onLogout(); onNavLinkClick()"
+      class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-neutral-400 hover:bg-white dark:hover:bg-neutral-900 transition duration-200">
       <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
           d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -359,5 +255,5 @@
 
 <!-- Overlay para móvil -->
 <div *ngIf="isMobile && sidebarOpen" (click)="toggleSidebar()"
-  class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden transition-opacity duration-300">
+  class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden transition-opacity duration-300 backdrop-blur-sm">
 </div>

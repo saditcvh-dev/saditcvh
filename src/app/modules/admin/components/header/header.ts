@@ -1,4 +1,5 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { AuthService } from '../../../../core/services/auth';
 
 @Component({
   selector: 'app-header',
@@ -21,7 +22,7 @@ export class Header implements OnInit {
   profileOpen = false;
   mobileSearchOpen = false;
 
-  constructor() {
+  constructor(private authService: AuthService) {
     this.checkViewport();
   }
 
@@ -92,54 +93,7 @@ export class Header implements OnInit {
   totalNotifications = 5;
   unreadNotifications = 3;
 
-  // Datos de ejemplo para notificaciones
-  notifications = [
-    {
-      id: 1,
-      type: 'error',
-      title: 'Error de carga',
-      message: '5 expedientes con error en la carga automática',
-      time: 'Hace 2 horas',
-      read: false,
-      action: '/admin/expedientes?filter=errors'
-    },
-    {
-      id: 2,
-      type: 'warning',
-      title: 'Espacio en disco bajo',
-      message: 'Solo queda 15% de espacio disponible',
-      time: 'Hace 1 día',
-      read: false,
-      action: '/admin/respaldos'
-    },
-    {
-      id: 3,
-      type: 'info',
-      title: 'Backup completado',
-      message: 'Respaldo automático ejecutado correctamente',
-      time: 'Hace 2 días',
-      read: true,
-      action: '/admin/respaldos'
-    },
-    {
-      id: 4,
-      type: 'error',
-      title: 'Validación pendiente',
-      message: '12 expedientes esperando validación',
-      time: 'Hace 3 días',
-      read: true,
-      action: '/admin/expedientes?filter=pending'
-    },
-    {
-      id: 5,
-      type: 'success',
-      title: 'Sistema actualizado',
-      message: 'Versión 2.1.0 instalada correctamente',
-      time: 'Hace 5 días',
-      read: true,
-      action: null
-    }
-  ];
+
   toggleNotifications() {
     this.notificationsOpen = !this.notificationsOpen;
     // Cerrar perfil si está abierto
@@ -148,11 +102,6 @@ export class Header implements OnInit {
     }
   }
 
-  markAllAsRead() {
-    this.notifications.forEach(notif => notif.read = true);
-    this.unreadNotifications = 0;
-    this.totalNotifications = this.notifications.length;
-  }
 
   handleNotificationClick(notification: any) {
     // Marcar como leída
@@ -211,9 +160,32 @@ export class Header implements OnInit {
     this.themeSubmenuOpen = !this.themeSubmenuOpen;
   }
 
+
+  /**
+    * Verifica si el usuario actual tiene rol de administrador
+    */
+  isAdmin(): boolean {
+    return this.authService.hasRole('administrador');
+  }
+  get role_user(): string {
+    //  operador ternario de ver si es admin o operador isAdmin
+    return this.isAdmin() ? 'Administrador' : 'Operador';
+  }
+
+  onNavLinkClick(): void {
+    if (this.themeSubmenuOpen) {
+      this.closeMenu();
+    }
+  }
+
+  closeMenu(): void {
+    // logica para cerrar el menu
+    this.themeSubmenuOpen = false;
+  }
+
   setTheme(theme: 'light' | 'dark' | 'system') {
     this.currentTheme = theme;
-    this.themeSubmenuOpen = false;
+    // this.themeSubmenuOpen = false;
 
     switch (theme) {
       case 'light':

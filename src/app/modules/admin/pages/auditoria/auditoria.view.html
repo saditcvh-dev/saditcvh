@@ -1,30 +1,30 @@
-<div class="p-6 animate-fadeIn">
+<div class="p-6 dark:bg-[#131314] animate-fadeIn">
   <header class="mb-8">
-    <h1 class="text-2xl font-bold text-[#691831] mb-2">Centro de Auditoría</h1>
-    <p class="text-gray-600 font-medium">Historial detallado de operaciones y acceso al sistema.</p>
+    <h1 class="text-2xl font-bold text-[#691831] dark:text-[#c44569] mb-2">Centro de Auditoría</h1>
+    <p class="text-gray-600 dark:text-gray-400 font-medium">Historial detallado de operaciones y acceso al sistema.</p>
   </header>
 
-  <div class="bg-white rounded-xl border shadow-lg border-gray-200 overflow-hidden">
+  <div class="bg-white dark:bg-[#1a1a1b] rounded-xl border shadow-lg border-gray-200 dark:border-gray-800 dark:shadow-gray-900/50 overflow-hidden">
     
-    <div class="p-6 border-b border-gray-200 bg-gray-50/50 flex flex-col gap-4">
+    <div class="p-6 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 flex flex-col gap-4">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
         
         <div class="md:col-span-3">
-            <label class="text-[11px] font-bold text-gray-500 uppercase mb-1 block">Búsqueda libre</label>
+            <label class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1 block">Búsqueda libre</label>
             <div class="flex relative">
             <input type="text" [(ngModel)]="filters.search" (keyup.enter)="onSearch()"
                     placeholder="Usuario, acción o ID..."
-                    class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#BC955B] focus:border-[#BC955B]">
-            <button (click)="onSearch()" class="absolute right-0 top-0 h-full px-3 bg-[#691831] text-white rounded-r-lg hover:bg-[#A02142] transition">
+                    class="w-full pl-4 pr-10 py-2 border border-gray-300 dark:border-neutral-900 dark:bg-[#131314] dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#BC955B] dark:focus:ring-[#d4a762] focus:border-[#BC955B] dark:focus:border-[#d4a762]">
+            <button (click)="onSearch()" class="absolute right-0 top-0 h-full px-3 bg-[#691831] dark:bg-[#c44569] text-white rounded-r-lg hover:bg-[#A02142] dark:hover:bg-[#d87093] transition">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </button>
             </div>
         </div>
 
         <div class="md:col-span-2">
-            <label class="text-[11px] font-bold text-gray-500 uppercase mb-1 block">Módulo</label>
+            <label class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1 block">Módulo</label>
             <select [(ngModel)]="filters.module" (change)="onSearch()"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#BC955B] outline-none">
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-900 dark:bg-[#131314] dark:text-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#BC955B] dark:focus:ring-[#d4a762] outline-none">
             <option value="ALL">Todos</option>
             <option value="USER">Usuarios</option>
             <option value="AUTH">Accesos</option>
@@ -33,18 +33,18 @@
         </div>
 
         <div class="md:col-span-2">
-            <label class="text-[11px] font-bold text-gray-500 uppercase mb-1 block">Rol Ejecutor</label>
+            <label class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1 block">Rol Ejecutor</label>
             <select [(ngModel)]="filters.roleId" (change)="onSearch()"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#BC955B] outline-none">
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-900 dark:bg-[#131314] dark:text-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#BC955B] dark:focus:ring-[#d4a762] outline-none">
             <option value="ALL">Cualquier Rol</option>
             <option *ngFor="let role of roles()" [value]="role.id">{{ role.name | titlecase }}</option>
             </select>
         </div>
 
         <div class="md:col-span-2">
-            <label class="text-[11px] font-bold text-gray-500 uppercase mb-1 block">Orden</label>
+            <label class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1 block">Orden</label>
             <select [(ngModel)]="filters.sort" (change)="onSearch()"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#BC955B] outline-none font-medium">
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-900 dark:bg-[#131314] dark:text-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#BC955B] dark:focus:ring-[#d4a762] outline-none font-medium">
             <option value="DESC">Más recientes</option>
             <option value="ASC">Más antiguos</option>
             </select>
@@ -52,27 +52,30 @@
 
         <div class="md:col-span-3 flex gap-2">
             <div class="flex-1">
-            <label class="text-[11px] font-bold text-gray-500 uppercase mb-1 block">Desde</label>
+            <label class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1 block">Desde</label>
             <input type="date" [(ngModel)]="filters.startDate" (change)="onSearch()"
-                    class="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-[#BC955B] outline-none">
+                    class="w-full px-2 py-2 border border-gray-300 dark:border-neutral-900 dark:bg-[#131314] dark:text-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-[#BC955B] dark:focus:ring-[#d4a762] outline-none">
             </div>
             <div class="flex-1">
-            <label class="text-[11px] font-bold text-gray-500 uppercase mb-1 block">Hasta</label>
+            <label class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1 block">Hasta</label>
             <input type="date" [(ngModel)]="filters.endDate" (change)="onSearch()"
-                    class="w-full px-2 py-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-[#BC955B] outline-none">
+                    class="w-full px-2 py-2 border border-gray-300 dark:border-neutral-900 dark:bg-[#131314] dark:text-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-[#BC955B] dark:focus:ring-[#d4a762] outline-none">
             </div>
         </div>
         </div>
     </div>
 
     <div class="overflow-x-auto relative">
-      <div *ngIf="isLoading" class="absolute inset-0 bg-white/60 backdrop-blur-[1px] z-10 flex items-center justify-center">
-        <svg class="animate-spin h-8 w-8 text-[#A02142]" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+      <div *ngIf="isLoading" class="absolute inset-0 bg-white/60 dark:bg-gray-900/60 backdrop-blur-[1px] z-10 flex items-center justify-center">
+        <svg class="animate-spin h-8 w-8 text-[#A02142] dark:text-[#c44569]" viewBox="0 0 24 24">
+          <circle class="opacity-25 dark:opacity-30" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
       </div>
 
       <table class="w-full text-left">
-        <thead class="bg-gray-50 border-b border-gray-200">
-          <tr class="text-[#691831] text-xs font-bold uppercase tracking-wider">
+        <thead class="bg-gray-50 dark:bg-[#131314] border-b border-gray-200 dark:border-gray-800">
+          <tr class="text-[#691831] dark:text-[#c44569] text-xs font-bold uppercase tracking-wider">
             <th class="px-6 py-4">Ejecutor</th>
             <th class="px-6 py-4">Módulo</th>
             <th class="px-6 py-4">Actividad</th>
@@ -80,33 +83,36 @@
             <th class="px-6 py-4 text-right">Acciones</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
-          <tr *ngFor="let log of logs" class="hover:bg-gray-50 transition-colors group">
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+          <tr *ngFor="let log of logs" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
             <td class="px-6 py-4">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-[#DDC9A3]/30 text-[#691831] flex items-center justify-center text-xs font-bold border border-[#BC955B]/20 shadow-sm">
+                <div class="w-10 h-10 rounded-full bg-[#DDC9A3]/30 dark:bg-[#d4a762]/20 text-[#691831] dark:text-[#c44569] flex items-center justify-center text-xs font-bold border border-[#BC955B]/20 dark:border-[#d4a762]/30 shadow-sm">
                   {{ getInitials(log.user) }}
                 </div>
                 <div>
-                  <p class="text-sm font-bold text-gray-800">{{ log.user?.username || 'Sistema' }}</p>
-                  <p class="text-[10px] text-gray-400 font-mono tracking-tighter">{{ log.ip_address }}</p>
+                  <p class="text-sm font-bold text-gray-800 dark:text-gray-100">{{ log.user?.username || 'Sistema' }}</p>
+                  <p class="text-[10px] text-gray-400 dark:text-gray-500 font-mono tracking-tighter">{{ log.ip_address }}</p>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 text-xs font-black text-gray-500 uppercase">
-              <span class="px-2 py-1 bg-gray-100 rounded text-[10px]">{{ log.module }}</span>
+            <td class="px-6 py-4 text-xs font-black text-gray-500 dark:text-gray-400 uppercase">
+              <span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-[10px]">{{ log.module }}</span>
             </td>
             <td class="px-6 py-4">
               <app-action-badge [action]="log.action"></app-action-badge>
             </td>
-            <td class="px-6 py-4 text-sm text-gray-600 font-medium">
+            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 font-medium">
               {{ log.created_at | date:'dd/MM/yyyy' }} 
-              <span class="text-[#BC955B] text-xs ml-1">{{ log.created_at | date:'HH:mm' }}</span>
+              <span class="text-[#BC955B] dark:text-[#d4a762] text-xs ml-1">{{ log.created_at | date:'HH:mm' }}</span>
             </td>
             <td class="px-6 py-4 text-right">
               <button (click)="openDetail(log)" 
-                      class="p-2 hover:bg-[#DDC9A3]/30 text-[#691831] rounded-lg transition-all shadow-sm border border-transparent hover:border-[#BC955B]/30">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                      class="p-2 hover:bg-[#DDC9A3]/30 dark:hover:bg-[#d4a762]/20 text-[#691831] dark:text-[#c44569] rounded-lg transition-all shadow-sm border border-transparent hover:border-[#BC955B]/30 dark:hover:border-[#d4a762]/30">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
               </button>
             </td>
           </tr>
@@ -114,36 +120,46 @@
       </table>
     </div>
 
-    <div class="p-6 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="p-6 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 flex flex-col sm:flex-row justify-between items-center gap-4">
       <div class="flex items-center gap-2">
-        <span class="text-sm text-gray-600">Mostrando</span>
-        <div class="px-3 py-1 bg-[#DDC9A3]/50 text-[#691831] font-bold rounded-lg text-sm border border-[#BC955B]/50">
+        <span class="text-sm text-gray-600 dark:text-gray-400">Mostrando</span>
+        <div class="px-3 py-1 bg-[#DDC9A3]/50 dark:bg-[#d4a762]/20 text-[#691831] dark:text-[#c44569] font-bold rounded-lg text-sm border border-[#BC955B]/50 dark:border-[#d4a762]/30">
           {{ logs.length }}
         </div>
-        <span class="text-sm text-gray-600">de</span>
-        <div class="px-3 py-1 bg-white text-gray-700 font-bold rounded-lg text-sm border border-gray-300">
+        <span class="text-sm text-gray-600 dark:text-gray-400">de</span>
+        <div class="px-3 py-1 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-lg text-sm border border-gray-300 dark:border-neutral-900">
           {{ pagination.total }}
         </div>
-        <span class="text-sm text-gray-600">registros</span>
+        <span class="text-sm text-gray-600 dark:text-gray-400">registros</span>
       </div>
 
       <div class="flex items-center gap-2">
         <button (click)="changePage(pagination.page - 1)" [disabled]="pagination.page === 1"
                 class="px-3 py-1 rounded-lg border transition flex items-center gap-1 text-sm font-medium"
-                [ngClass]="{'bg-gray-100 text-gray-400 cursor-not-allowed': pagination.page === 1, 'bg-white hover:bg-[#DDC9A3]/20 border-gray-300 text-[#691831]': pagination.page > 1}">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                [ngClass]="{
+                  'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed': pagination.page === 1, 
+                  'bg-white dark:bg-gray-800 hover:bg-[#DDC9A3]/20 dark:hover:bg-[#d4a762]/10 border-gray-300 dark:border-neutral-900 text-[#691831] dark:text-[#c44569]': pagination.page > 1
+                }">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
           Anterior
         </button>
 
-        <span class="px-4 py-1 text-sm font-bold text-[#691831] bg-[#DDC9A3] rounded-lg border border-[#BC955B]">
+        <span class="px-4 py-1 text-sm font-bold text-[#691831] dark:text-[#c44569] bg-[#DDC9A3] dark:bg-[#d4a762]/30 rounded-lg border border-[#BC955B] dark:border-[#d4a762]">
           {{ pagination.page }} / {{ pagination.totalPages }}
         </span>
 
         <button (click)="changePage(pagination.page + 1)" [disabled]="pagination.page === pagination.totalPages"
                 class="px-3 py-1 rounded-lg border transition flex items-center gap-1 text-sm font-medium"
-                [ngClass]="{'bg-gray-100 text-gray-400 cursor-not-allowed': pagination.page === pagination.totalPages, 'bg-white hover:bg-[#DDC9A3]/20 border-gray-300 text-[#691831]': pagination.page < pagination.totalPages}">
+                [ngClass]="{
+                  'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed': pagination.page === pagination.totalPages, 
+                  'bg-white dark:bg-gray-800 hover:bg-[#DDC9A3]/20 dark:hover:bg-[#d4a762]/10 border-gray-300 dark:border-neutral-900 text-[#691831] dark:text-[#c44569]': pagination.page < pagination.totalPages
+                }">
           Siguiente
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
         </button>
       </div>
     </div>

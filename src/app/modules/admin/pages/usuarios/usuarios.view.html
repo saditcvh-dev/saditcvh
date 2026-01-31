@@ -1,16 +1,16 @@
-<div class="p-6">
+<div class="p-6 ">
   <div class="mb-8">
     <div class="flex flex-col md:flex-row md:items-center justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-[#691831] mb-2">Gestión de Usuarios</h1>
-        <p class="text-gray-600">
+        <h1 class="text-2xl font-bold text-[#691831] dark:text-[#c44569] mb-2">Gestión de Usuarios</h1>
+        <p class="text-gray-600 dark:text-gray-400">
           Administración de accesos, roles y cargos del sistema
         </p>
       </div>
       <div class="mt-4 md:mt-0">
         <button
           (click)="openCreateModal()"
-          class="px-4 py-2 bg-[#691831] text-white rounded-lg hover:bg-[#A02142] text-sm font-medium flex items-center transition shadow-md"
+          class="px-4 py-2 bg-[#691831] dark:bg-[#c44569] text-white rounded-lg hover:bg-[#A02142] dark:hover:bg-[#d87093] text-sm font-medium flex items-center transition shadow-md"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -21,57 +21,62 @@
     </div>
   </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-
-      <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm flex items-center justify-between">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+    <!-- Total de Usuarios -->
+    <div class="bg-white dark:bg-[#1a1a1b] rounded-xl border border-gray-200 dark:border-neutral-800 p-6 shadow-sm dark:shadow-neutral-900/50 flex items-center justify-between">
       <div>
-        <p class="text-sm font-medium text-gray-500">Total de Usuarios</p>
-        <h3 class="text-3xl font-extrabold text-[#A02142] mt-1">
+        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Usuarios</p>
+        <h3 class="text-3xl font-extrabold text-[#A02142] dark:text-[#c44569] mt-1">
           {{ totalUsers() }}
         </h3>
       </div>
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-[#BC955B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-[#BC955B] dark:text-[#d4a762]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
       </svg>
     </div>
 
+    <!-- Por Rol -->
     <ng-container *ngFor="let roleCount of roleCounts()">
-      <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm flex items-center justify-between">
+      <div class="bg-white dark:bg-[#1a1a1b] rounded-xl border border-gray-200 dark:border-neutral-800 p-6 shadow-sm dark:shadow-neutral-900/50 flex items-center justify-between">
         <div>
-          <p class="text-sm font-medium text-gray-500">Usuarios Rol: {{ roleCount.roleName | titlecase }}</p>
-          <h3 class="text-3xl font-extrabold text-green-600 mt-1">
+          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Usuarios Rol: {{ roleCount.roleName | titlecase }}</p>
+          <h3 class="text-3xl font-extrabold text-green-600 dark:text-green-400 mt-1">
             {{ roleCount.count }}
           </h3>
         </div>
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-400 dark:text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </div>
     </ng-container>
-
   </div>
 
-  <div class="bg-white rounded-xl border shadow-lg border-gray-200">
+  <!-- Tabla principal -->
+  <div class="bg-white dark:bg-[#1a1a1b] rounded-xl border shadow-lg border-gray-200 dark:border-neutral-800 dark:shadow-neutral-900/50">
 
+    <!-- Loading State -->
     <div *ngIf="isLoading()" class="text-center py-10">
-      <svg class="animate-spin h-8 w-8 text-[#A02142] mx-auto mb-3" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <svg class="animate-spin h-8 w-8 text-[#A02142] dark:text-[#c44569] mx-auto mb-3" viewBox="0 0 24 24">
+        <circle class="opacity-25 dark:opacity-30" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
-      <p class="text-lg text-gray-600">Cargando usuarios...</p>
+      <p class="text-lg text-gray-600 dark:text-gray-400">Cargando usuarios...</p>
     </div>
 
+    <!-- Error State -->
     <div
       *ngIf="error() && !isLoading()"
-      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded m-6"
+      class="bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded m-6"
     >
       {{ error() }}
     </div>
 
+    <!-- Content -->
     <div *ngIf="!isLoading()">
+      <!-- Filtros -->
+      <div class="p-6 border-b border-gray-200 dark:border-neutral-800 flex flex-col md:flex-row flex-wrap gap-3 justify-between">
 
-      <div class="p-6 border-b border-gray-200 flex flex-col md:flex-row flex-wrap gap-3 justify-between">
-
+        <!-- Buscador -->
         <div class="flex relative w-full md:w-auto md:max-w-xs items-stretch">
           <input
             id="search-user-input"
@@ -80,15 +85,15 @@
             (ngModelChange)="search.set($event)"
             (keyup.enter)="applyFilters()"
             placeholder="Buscar por nombre, email, usuario..."
-            class="border border-gray-300 rounded-l-lg py-2 px-4 text-sm w-full focus:outline-none focus:ring-2 focus:ring-[#BC955B] focus:border-[#BC955B] pr-16"
+            class="border border-gray-300 dark:border-gray-700 dark:bg-[#131314] dark:text-gray-200 rounded-l-lg py-2 px-4 text-sm w-full focus:outline-none focus:ring-2 focus:ring-[#BC955B] dark:focus:ring-[#d4a762] focus:border-[#BC955B] dark:focus:border-[#d4a762] pr-16"
           />
 
-          <kbd class="absolute right-12 top-2.5 px-1.5 py-0.5 text-xs bg-gray-100 text-gray-600 rounded">Ctrl + B</kbd>
+          <kbd class="absolute right-12 top-2.5 px-1.5 py-0.5 text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded">Ctrl + B</kbd>
 
           <button
             (click)="applyFilters()"
             title="Buscar"
-            class="bg-[#691831] hover:bg-[#A02142] text-white p-2 rounded-r-lg flex items-center justify-center transition focus:outline-none focus:ring-2 focus:ring-[#BC955B]"
+            class="bg-[#691831] dark:bg-[#c44569] hover:bg-[#A02142] dark:hover:bg-[#d87093] text-white p-2 rounded-r-lg flex items-center justify-center transition focus:outline-none focus:ring-2 focus:ring-[#BC955B] dark:focus:ring-[#d4a762]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -96,11 +101,12 @@
           </button>
         </div>
 
+        <!-- Filtros de Rol, Cargo y Estado -->
         <div class="flex flex-wrap gap-3">
           <select
             [ngModel]="filterRole()"
             (ngModelChange)="filterRole.set($event); applyFilters()"
-            class="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#BC955B] focus:border-[#BC955B]"
+            class="border border-gray-300 dark:border-gray-700 dark:bg-[#131314] dark:text-gray-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#BC955B] dark:focus:ring-[#d4a762] focus:border-[#BC955B] dark:focus:border-[#d4a762]"
           >
             <option value="all">Todos los roles</option>
             <option *ngFor="let role of roles()" [value]="role.id">
@@ -111,7 +117,7 @@
           <select
             [ngModel]="filterCargo()"
             (ngModelChange)="filterCargo.set($event); applyFilters()"
-            class="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#BC955B] focus:border-[#BC955B]"
+            class="border border-gray-300 dark:border-gray-700 dark:bg-[#131314] dark:text-gray-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#BC955B] dark:focus:ring-[#d4a762] focus:border-[#BC955B] dark:focus:border-[#d4a762]"
           >
             <option value="all">Todos los cargos</option>
             <option *ngFor="let cargo of cargos()" [value]="cargo.id">
@@ -122,7 +128,7 @@
           <select
             [ngModel]="filterStatus()"
             (ngModelChange)="filterStatus.set($event); applyFilters()"
-            class="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#BC955B] focus:border-[#BC955B]"
+            class="border border-gray-300 dark:border-gray-700 dark:bg-[#131314] dark:text-gray-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#BC955B] dark:focus:ring-[#d4a762] focus:border-[#BC955B] dark:focus:border-[#d4a762]"
           >
             <option value="all">Todos los estados</option>
             <option value="true">Activo</option>
@@ -131,20 +137,22 @@
         </div>
       </div>
 
+      <!-- Tabla de Usuarios -->
       <div class="overflow-x-auto">
         <table class="w-full min-w-[900px]">
-          <thead class="bg-gray-50 border-b border-gray-200">
+          <thead class="bg-gray-50 dark:bg-[#131314] border-b border-gray-200 dark:border-neutral-800">
             <tr>
+              <!-- Columna Usuario -->
               <th
-                class="py-3 px-6 text-left text-xs font-medium cursor-pointer hover:bg-gray-100 transition"
+                class="py-3 px-6 text-left text-xs font-medium cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                 (click)="handleSort('name')"
-                [ngClass]="{'bg-[#DDC9A3]/50 text-[#691831]': sortColumn() === 'name', 'text-gray-500': sortColumn() !== 'name'}"
+                [ngClass]="{'bg-[#DDC9A3]/50 dark:bg-[#d4a762]/20 text-[#691831] dark:text-[#c44569]': sortColumn() === 'name', 'text-gray-500 dark:text-gray-400': sortColumn() !== 'name'}"
               >
                 <div class="flex items-center gap-2">
                   Usuario
                   <div
                     class="flex flex-col h-5 justify-center"
-                    [ngClass]="{'text-[#A02142]': sortColumn() === 'name', 'text-gray-400': sortColumn() !== 'name'}"
+                    [ngClass]="{'text-[#A02142] dark:text-[#c44569]': sortColumn() === 'name', 'text-gray-400 dark:text-gray-600': sortColumn() !== 'name'}"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -152,7 +160,7 @@
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       stroke-width="3"
-                      [ngClass]="{'text-[#A02142]': sortColumn() === 'name' && sortDirection() === 'asc', 'text-gray-300': sortColumn() !== 'name' || sortDirection() !== 'asc'}"
+                      [ngClass]="{'text-[#A02142] dark:text-[#c44569]': sortColumn() === 'name' && sortDirection() === 'asc', 'text-gray-300 dark:text-gray-700': sortColumn() !== 'name' || sortDirection() !== 'asc'}"
                     >
                       <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
                     </svg>
@@ -162,7 +170,7 @@
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       stroke-width="3"
-                      [ngClass]="{'text-[#A02142]': sortColumn() === 'name' && sortDirection() === 'desc', 'text-gray-300': sortColumn() !== 'name' || sortDirection() !== 'desc'}"
+                      [ngClass]="{'text-[#A02142] dark:text-[#c44569]': sortColumn() === 'name' && sortDirection() === 'desc', 'text-gray-300 dark:text-gray-700': sortColumn() !== 'name' || sortDirection() !== 'desc'}"
                     >
                       <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
@@ -170,20 +178,21 @@
                 </div>
               </th>
 
-              <th class="py-3 px-6 text-left text-xs font-medium text-gray-500">Roles</th>
-              <th class="py-3 px-6 text-left text-xs font-medium text-gray-500">Cargo</th>
-              <th class="py-3 px-6 text-left text-xs font-medium text-gray-500">Estado</th>
+              <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Roles</th>
+              <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Cargo</th>
+              <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Estado</th>
 
+              <!-- Columna Creado por -->
               <th
-                class="py-3 px-6 text-left text-xs font-medium cursor-pointer hover:bg-gray-100 transition"
+                class="py-3 px-6 text-left text-xs font-medium cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                 (click)="handleSort('creator')"
-                [ngClass]="{'bg-[#DDC9A3]/50 text-[#691831]': sortColumn() === 'creator', 'text-gray-500': sortColumn() !== 'creator'}"
+                [ngClass]="{'bg-[#DDC9A3]/50 dark:bg-[#d4a762]/20 text-[#691831] dark:text-[#c44569]': sortColumn() === 'creator', 'text-gray-500 dark:text-gray-400': sortColumn() !== 'creator'}"
               >
                 <div class="flex items-center gap-2">
                   Creado por
                   <div
                     class="flex flex-col h-5 justify-center"
-                    [ngClass]="{'text-[#A02142]': sortColumn() === 'creator', 'text-gray-400': sortColumn() !== 'creator'}"
+                    [ngClass]="{'text-[#A02142] dark:text-[#c44569]': sortColumn() === 'creator', 'text-gray-400 dark:text-gray-600': sortColumn() !== 'creator'}"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -191,7 +200,7 @@
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       stroke-width="3"
-                      [ngClass]="{'text-[#A02142]': sortColumn() === 'creator' && sortDirection() === 'asc', 'text-gray-300': sortColumn() !== 'creator' || sortDirection() !== 'asc'}"
+                      [ngClass]="{'text-[#A02142] dark:text-[#c44569]': sortColumn() === 'creator' && sortDirection() === 'asc', 'text-gray-300 dark:text-gray-700': sortColumn() !== 'creator' || sortDirection() !== 'asc'}"
                     >
                       <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
                     </svg>
@@ -201,7 +210,7 @@
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       stroke-width="3"
-                      [ngClass]="{'text-[#A02142]': sortColumn() === 'creator' && sortDirection() === 'desc', 'text-gray-300': sortColumn() !== 'creator' || sortDirection() !== 'desc'}"
+                      [ngClass]="{'text-[#A02142] dark:text-[#c44569]': sortColumn() === 'creator' && sortDirection() === 'desc', 'text-gray-300 dark:text-gray-700': sortColumn() !== 'creator' || sortDirection() !== 'desc'}"
                     >
                       <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
@@ -209,16 +218,17 @@
                 </div>
               </th>
 
+              <!-- Columna Modificado por -->
               <th
-                class="py-3 px-6 text-left text-xs font-medium cursor-pointer hover:bg-gray-100 transition"
+                class="py-3 px-6 text-left text-xs font-medium cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                 (click)="handleSort('editor')"
-                [ngClass]="{'bg-[#DDC9A3]/50 text-[#691831]': sortColumn() === 'editor', 'text-gray-500': sortColumn() !== 'editor'}"
+                [ngClass]="{'bg-[#DDC9A3]/50 dark:bg-[#d4a762]/20 text-[#691831] dark:text-[#c44569]': sortColumn() === 'editor', 'text-gray-500 dark:text-gray-400': sortColumn() !== 'editor'}"
               >
                 <div class="flex items-center gap-2">
                   Modificado por
                   <div
                     class="flex flex-col h-5 justify-center"
-                    [ngClass]="{'text-[#A02142]': sortColumn() === 'editor', 'text-gray-400': sortColumn() !== 'editor'}"
+                    [ngClass]="{'text-[#A02142] dark:text-[#c44569]': sortColumn() === 'editor', 'text-gray-400 dark:text-gray-600': sortColumn() !== 'editor'}"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -226,7 +236,7 @@
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       stroke-width="3"
-                      [ngClass]="{'text-[#A02142]': sortColumn() === 'editor' && sortDirection() === 'asc', 'text-gray-300': sortColumn() !== 'editor' || sortDirection() !== 'asc'}"
+                      [ngClass]="{'text-[#A02142] dark:text-[#c44569]': sortColumn() === 'editor' && sortDirection() === 'asc', 'text-gray-300 dark:text-gray-700': sortColumn() !== 'editor' || sortDirection() !== 'asc'}"
                     >
                       <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
                     </svg>
@@ -236,7 +246,7 @@
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       stroke-width="3"
-                      [ngClass]="{'text-[#A02142]': sortColumn() === 'editor' && sortDirection() === 'desc', 'text-gray-300': sortColumn() !== 'editor' || sortDirection() !== 'desc'}"
+                      [ngClass]="{'text-[#A02142] dark:text-[#c44569]': sortColumn() === 'editor' && sortDirection() === 'desc', 'text-gray-300 dark:text-gray-700': sortColumn() !== 'editor' || sortDirection() !== 'desc'}"
                     >
                       <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
@@ -244,47 +254,51 @@
                 </div>
               </th>
 
-              <th class="py-3 px-6 text-left text-xs font-medium text-gray-500">Acciones</th>
+              <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Acciones</th>
             </tr>
           </thead>
 
-          <tbody class="divide-y divide-gray-100">
+          <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
             <tr
               *ngFor="let user of users()"
-              class="hover:bg-gray-50"
+              class="hover:bg-gray-50 dark:hover:bg-gray-800/50"
             >
+              <!-- Datos del Usuario -->
               <td class="py-4 px-6">
-                <div class="font-medium text-gray-900">
+                <div class="font-medium text-gray-900 dark:text-gray-100">
                   {{ user.first_name }} {{ user.last_name }} {{ user.second_last_name || '' }}
                 </div>
-                <div class="text-xs text-gray-500">
+                <div class="text-xs text-gray-500 dark:text-gray-400">
                   {{ user.email }}
                 </div>
-                <div class="text-xs text-gray-400">
+                <div class="text-xs text-gray-400 dark:text-gray-500">
                   @{{ user.username }}
                 </div>
               </td>
 
+              <!-- Roles -->
               <td class="py-4 px-6">
                 <div class="flex flex-wrap gap-1">
                   <span
                     *ngFor="let role of user.roles"
-                    class="px-2 py-0.5 text-xs rounded bg-[#691831]/10 text-[#691831] font-medium border border-gray-200"
+                    class="px-2 py-0.5 text-xs rounded bg-[#691831]/10 dark:bg-[#c44569]/20 text-[#691831] dark:text-[#c44569] font-medium border border-gray-200 dark:border-gray-700"
                   >
                     {{ role.name }}
                   </span>
                 </div>
               </td>
 
-              <td class="py-4 px-6">
+              <!-- Cargo -->
+              <td class="py-4 px-6 dark:text-gray-300">
                 {{ user.cargo?.nombre || 'Sin cargo' }}
               </td>
 
+              <!-- Estado -->
               <td class="py-4 px-6">
                 <span
                   [ngClass]="{
-                    'text-green-700 bg-green-100 border border-green-200': user.active,
-                    'text-red-700 bg-red-100 border border-red-200': !user.active
+                    'text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800': user.active,
+                    'text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800': !user.active
                   }"
                   class="px-2 py-1 text-xs font-medium rounded-full"
                 >
@@ -292,38 +306,41 @@
                 </span>
               </td>
 
+              <!-- Creado por -->
               <td class="py-4 px-6">
                 <ng-container *ngIf="user.creator">
-                    <div class="text-sm text-gray-900">
+                    <div class="text-sm text-gray-900 dark:text-gray-100">
                       {{ user.creator.first_name }} {{ user.creator.last_name }}
                     </div>
-                    <div class="text-xs text-gray-500">@{{ user.creator.username }}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">@{{ user.creator.username }}</div>
                 </ng-container>
                 <ng-container *ngIf="!user.creator">
-                    <span class="text-sm text-gray-400">-</span>
+                    <span class="text-sm text-gray-400 dark:text-gray-500">-</span>
                 </ng-container>
               </td>
 
+              <!-- Modificado por -->
               <td class="py-4 px-6">
                 <ng-container *ngIf="user.editor">
-                    <div class="text-sm text-gray-900">
+                    <div class="text-sm text-gray-900 dark:text-gray-100">
                       {{ user.editor.first_name }} {{ user.editor.last_name }}
                     </div>
-                    <div class="text-xs text-gray-500">@{{ user.editor.username }}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">@{{ user.editor.username }}</div>
                 </ng-container>
                 <ng-container *ngIf="!user.editor">
-                    <span class="text-sm text-gray-400">-</span>
+                    <span class="text-sm text-gray-400 dark:text-gray-500">-</span>
                 </ng-container>
               </td>
 
+              <!-- Acciones -->
               <td class="py-4 px-6">
                 <div class="flex gap-2">
                   <button
                     (click)="managePermissions(user)"
                     title="Gestionar Permisos"
-                    class="p-2 hover:bg-[#DDC9A3]/30 rounded transition"
+                    class="p-2 hover:bg-[#DDC9A3]/30 dark:hover:bg-[#d4a762]/20 rounded transition"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#BC955B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#BC955B] dark:text-[#d4a762]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                     </svg>
                   </button>
@@ -331,14 +348,18 @@
                   <button
                     (click)="openEditModal(user)"
                     title="Editar"
-                    class="p-2 hover:bg-[#DDC9A3]/30 rounded transition"
+                    class="p-2 hover:bg-[#DDC9A3]/30 dark:hover:bg-[#d4a762]/20 rounded transition"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#691831]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#691831] dark:text-[#c44569]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                   </button>
-                  <button (click)="deleteUser(user)" title="Eliminar/Inactivar" class="p-2 hover:bg-red-50 rounded transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <button 
+                    (click)="deleteUser(user)" 
+                    title="Eliminar/Inactivar" 
+                    class="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </button>
@@ -349,41 +370,44 @@
         </table>
       </div>
 
-      <div class="p-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <!-- Paginación -->
+      <div class="p-6 border-t border-gray-200 dark:border-neutral-800 flex flex-col sm:flex-row justify-between items-center gap-4">
 
+        <!-- Contador de resultados -->
         <div class="flex items-center gap-2">
-          <div class="text-sm text-gray-600">
+          <div class="text-sm text-gray-600 dark:text-gray-400">
             Mostrando
           </div>
-          <div class="px-3 py-1 bg-[#DDC9A3]/50 text-[#691831] font-bold rounded-lg text-sm border border-[#BC955B]/50">
+          <div class="px-3 py-1 bg-[#DDC9A3]/50 dark:bg-[#d4a762]/20 text-[#691831] dark:text-[#c44569] font-bold rounded-lg text-sm border border-[#BC955B]/50 dark:border-[#d4a762]/50">
             {{ users().length }}
           </div>
-          <div class="text-sm text-gray-600">
+          <div class="text-sm text-gray-600 dark:text-gray-400">
             de
           </div>
-          <div class="px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg text-sm border border-gray-300">
+          <div class="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-lg text-sm border border-gray-300 dark:border-gray-700">
             {{ totalUsers() }}
           </div>
-          <div class="text-sm text-gray-600">
+          <div class="text-sm text-gray-600 dark:text-gray-400">
             usuarios
           </div>
         </div>
 
+        <!-- Navegación de páginas -->
         <div class="flex items-center gap-2">
-          <span class="text-sm font-semibold text-gray-700 hidden sm:block">Página:</span>
+          <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 hidden sm:block">Página:</span>
           <div class="flex gap-1 items-center">
             <button
               (click)="prevPage()"
               [disabled]="pagination().page <= 1"
               class="px-3 py-1 text-sm rounded-lg border transition flex items-center gap-1"
-              [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': pagination().page <= 1, 'bg-white hover:bg-[#DDC9A3]/20 border-gray-300 text-[#691831]': pagination().page > 1}"
+              [ngClass]="{'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-600 cursor-not-allowed': pagination().page <= 1, 'bg-white dark:bg-gray-700 hover:bg-[#DDC9A3]/20 dark:hover:bg-[#d4a762]/10 border-gray-300 dark:border-gray-600 text-[#691831] dark:text-[#c44569]': pagination().page > 1}"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
 
-            <span class="px-3 py-1 text-sm font-bold text-[#691831] bg-[#DDC9A3] rounded-lg border border-[#BC955B]">
+            <span class="px-3 py-1 text-sm font-bold text-[#691831] dark:text-[#c44569] bg-[#DDC9A3] dark:bg-[#d4a762]/30 rounded-lg border border-[#BC955B] dark:border-[#d4a762]">
               {{ pagination().page }} / {{ pagination().totalPages }}
             </span>
 
@@ -391,7 +415,7 @@
               (click)="nextPage()"
               [disabled]="pagination().page >= pagination().totalPages"
               class="px-3 py-1 text-sm rounded-lg border transition flex items-center gap-1"
-              [ngClass]="{'bg-gray-100 text-gray-500 cursor-not-allowed': pagination().page >= pagination().totalPages, 'bg-white hover:bg-[#DDC9A3]/20 border-gray-300 text-[#691831]': pagination().page < pagination().totalPages}"
+              [ngClass]="{'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-600 cursor-not-allowed': pagination().page >= pagination().totalPages, 'bg-white dark:bg-gray-700 hover:bg-[#DDC9A3]/20 dark:hover:bg-[#d4a762]/10 border-gray-300 dark:border-gray-600 text-[#691831] dark:text-[#c44569]': pagination().page < pagination().totalPages}"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -400,11 +424,11 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
+<!-- Componente de Formulario (sin cambios en su estructura interna) -->
 <app-user-form
   [isOpen]="isModalOpen()"
   [user]="selectedUser()"
@@ -414,18 +438,19 @@
   (userSaved)="handleUserSaved($event)"
 ></app-user-form>
 
+<!-- Modal de Confirmación de Eliminación -->
 <div
   *ngIf="isConfirmDeleteModalOpen()"
   (click)="closeDeleteConfirmation()"
-  class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex justify-center items-center p-4 transition duration-300"
+  class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 dark:bg-opacity-70 flex justify-center items-center p-4 transition duration-300"
 >
   <div
     (click)="$event.stopPropagation()"
-    class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-100 opacity-100"
+    class="bg-white dark:bg-[#1a1a1b] rounded-xl shadow-2xl dark:shadow-gray-900/70 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100"
   >
-    <div class="flex justify-between items-center p-4 border-b border-gray-100 bg-gray-100 rounded-t-xl">
-      <h3 class="text-lg font-bold text-[#691831]">Confirmar Inactivación de Usuario</h3>
-      <button (click)="closeDeleteConfirmation()" class="p-2 rounded-full hover:bg-gray-200 transition text-[#691831]">
+    <div class="flex justify-between items-center p-4 border-b border-gray-100 dark:border-neutral-800 bg-gray-100 dark:bg-[#131314] rounded-t-xl">
+      <h3 class="text-lg font-bold text-[#691831] dark:text-[#c44569]">Confirmar Inactivación de Usuario</h3>
+      <button (click)="closeDeleteConfirmation()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition text-[#691831] dark:text-[#c44569]">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -434,28 +459,28 @@
 
     <div class="p-6">
       <div class="text-center space-y-4">
-        <div class="mx-auto w-12 h-12 flex items-center justify-center rounded-full bg-[#A02142]">
+        <div class="mx-auto w-12 h-12 flex items-center justify-center rounded-full bg-[#A02142] dark:bg-[#c44569]">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         </div>
 
-        <p class="text-gray-700 text-sm">
+        <p class="text-gray-700 dark:text-gray-300 text-sm">
           ¿Está seguro que desea inactivar (eliminar) al usuario
-          <b class="text-[#A02142]">{{ userToDelete()?.first_name }} {{ userToDelete()?.last_name }}</b>? Esta acción no se puede revertir.
+          <b class="text-[#A02142] dark:text-[#c44569]">{{ userToDelete()?.first_name }} {{ userToDelete()?.last_name }}</b>? Esta acción no se puede revertir.
         </p>
       </div>
 
       <div class="mt-6 flex justify-end gap-3">
         <button
           (click)="closeDeleteConfirmation()"
-          class="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+          class="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
         >
           Cancelar
         </button>
         <button
           (click)="performDeleteAction()"
-          class="px-4 py-2 text-sm font-medium rounded-lg text-white transition shadow-md bg-red-600 hover:bg-red-700"
+          class="px-4 py-2 text-sm font-medium rounded-lg text-white transition shadow-md bg-red-600 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-800"
         >
           Sí, Inactivar Usuario
         </button>
