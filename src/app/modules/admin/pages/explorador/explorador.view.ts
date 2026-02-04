@@ -18,7 +18,9 @@ import { ViewerTab } from '../../../../core/helpers/tabs-permissions.helper';
   providers: [ExploradorStateService, ModalService]
 })
 export class ExploradorView implements OnInit {
+  showControlPanel = signal<boolean>(false);  // Añade esta señal si quieres controlarlo
   // Servicios
+  showMainHeader: boolean = true;
   private treeService = inject(AutorizacionTreeService);
   private stateService = inject(ExploradorStateService);
   private modalService = inject(ModalService);
@@ -79,6 +81,13 @@ export class ExploradorView implements OnInit {
 
   toggleExplorer() {
     this.isCollapsed = !this.isCollapsed;
+  }
+    // showControlPanel = signal<boolean>(true);
+  
+  // ... resto de propiedades
+  
+  onShowControlPanelChange(value: boolean): void {
+    this.showControlPanel.set(value);
   }
   // En ExploradorView
   pdfUrl = computed(() => {

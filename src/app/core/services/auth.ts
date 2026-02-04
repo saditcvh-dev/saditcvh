@@ -79,4 +79,28 @@ export class AuthService {
     if (!user || !user.roles) return false;
     return user.roles.includes(expectedRole);
   }
+
+
+  
+  // ID del usuario
+  get userId(): string | null {
+    const id = this._currentUser()?.id;
+    return id !== undefined && id !== null ? String(id) : null;
+  }
+
+  // Username
+  get username(): string | null {
+    return this._currentUser()?.username ?? null;
+  }
+
+  // Email (si existe)
+  get email(): string | null {
+    return this._currentUser()?.email ?? null;
+  }
+
+  // Roles
+  get roles(): string[] {
+    return this._currentUser()?.roles ?? [];
+  }
+
 }

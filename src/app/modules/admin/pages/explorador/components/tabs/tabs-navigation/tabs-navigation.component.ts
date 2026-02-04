@@ -9,10 +9,20 @@ import { ViewerTab } from '../../../../../../../core/helpers/tabs-permissions.he
   styleUrls: ['./tabs-navigation.component.css']
 })
 export class TabsNavigationComponent {
+  // input para showControlPanel
+
+
+  @Input() showMainHeader: boolean = true;
+
+  @Output() showMainHeaderChange = new EventEmitter<boolean>();
+
+  @Input() showControlPanel: boolean = false;
+
   @Input() selectedNode!: AutorizacionTreeNode | null;
   @Input() activeTab!: ViewerTab;
   @Input() allowedTabs: ViewerTab[] = [];
   @Output() tabChange = new EventEmitter<ViewerTab>();
+
   tabs = [
     { id: 'preview', label: 'Vista Previa', icon: 'eye', showFor: ['autorizacion'] },
     { id: 'metadata', label: 'Metadatos', icon: 'info', showFor: ['autorizacion'] },
@@ -33,6 +43,14 @@ export class TabsNavigationComponent {
       this.tabChange.emit(tabId);
     }
   }
+  // Método para alternar visibilidad del panel de control
+
+  toggleMainHeader(): void {
+    this.showMainHeader = !this.showMainHeader;
+    this.showMainHeaderChange.emit(this.showMainHeader);
+    console.log('showMainHeader aqui :', this.showMainHeader);
+  }
+
 
   getTabIcon(tabId: string): string {
     switch (tabId) {
@@ -60,5 +78,8 @@ export class TabsNavigationComponent {
       default:
         return '';
     }
+  }
+  toggleControlPanel(): void {
+    this.showControlPanel = !this.showControlPanel;
   }
 }

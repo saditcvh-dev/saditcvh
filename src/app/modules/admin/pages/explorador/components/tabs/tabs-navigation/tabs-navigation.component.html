@@ -1,25 +1,104 @@
-<div class="flex px-6 gap-6 mt-1 border-b border-gray-100 dark:border-neutral-900">
-	<!-- Vista Previa -->
-	<button *ngIf="shouldShowTab('preview')" (click)="onTabClick('preview')" [class.border-[#691831]]="activeTab === 'preview'" [class.text-[#691831]]="activeTab === 'preview'" class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1">
-		<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-		</svg> Vista Previa </button>
-	<!-- Metadatos -->
-	<button *ngIf="shouldShowTab('metadata')" (click)="onTabClick('metadata')" [class.border-[#691831]]="activeTab === 'metadata'" [class.text-[#691831]]="activeTab === 'metadata'" class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors"> Metadatos </button>
-	<!-- Seguridad -->
-	<button *ngIf="shouldShowTab('security')" (click)="onTabClick('security')" [class.border-[#691831]]="activeTab === 'security'" [class.text-[#691831]]="activeTab === 'security'" class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1">
-		<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-		</svg> Seguridad </button>
-	<!-- Notas -->
-	<!-- <button *ngIf="shouldShowTab('notes')" (click)="onTabClick('notes')" [class.border-[#691831]]="activeTab === 'notes'" [class.text-[#691831]]="activeTab === 'notes'" class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1">
-		<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-		</svg> Notas </button> -->
-	<!-- Historial -->
-	<button *ngIf="shouldShowTab('history')" (click)="onTabClick('history')" [class.border-[#691831]]="activeTab === 'history'" [class.text-[#691831]]="activeTab === 'history'" class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1">
-		<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-		</svg> Historial </button>
+<!-- ponerle borde solo si es true showMainHeader -->
+<div class="flex px-6 gap-6 mt-4 border-b border-gray-100 dark:border-neutral-900 justify-between items-center">
+
+	<!-- Contenedor para los tabs (a la izquierda) -->
+	<div class="flex gap-6">
+		<!-- Vista Previa -->
+		<button *ngIf="shouldShowTab('preview')" (click)="onTabClick('preview')"
+			[class.border-[#691831]]="activeTab === 'preview'" [class.text-[#691831]]="activeTab === 'preview'"
+			class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1">
+			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+					d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+					d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+			</svg> Vista Previa
+		</button>
+
+		<!-- Metadatos -->
+		<button *ngIf="shouldShowTab('metadata')" (click)="onTabClick('metadata')"
+			[class.border-[#691831]]="activeTab === 'metadata'" [class.text-[#691831]]="activeTab === 'metadata'"
+			class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors">
+			Metadatos
+		</button>
+
+		<!-- Seguridad -->
+		<button *ngIf="shouldShowTab('security')" (click)="onTabClick('security')"
+			[class.border-[#691831]]="activeTab === 'security'" [class.text-[#691831]]="activeTab === 'security'"
+			class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1">
+			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+					d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+			</svg> Seguridad
+		</button>
+
+		<!-- Historial -->
+		<button *ngIf="shouldShowTab('history')" (click)="onTabClick('history')"
+			[class.border-[#691831]]="activeTab === 'history'" [class.text-[#691831]]="activeTab === 'history'"
+			class="pb-3 text-sm font-medium border-b-[3px] border-transparent text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1">
+			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+					d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+			</svg> Historial
+		</button>
+	</div>
+
+	<!-- Botón para mostrar controles (a la derecha) -->
+	<div *ngIf="!showControlPanel" class="flex">
+		<button (click)="toggleControlPanel()"
+			class=" bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-colors"
+			title="Mostrar controles">
+			<!-- tres pontitos de opciones -->
+			<svg class="w-5 h-5 text-gray-600 dark:text-neutral-300" fill="none" stroke="currentColor"
+				viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+					d="M12 6v.01M12 12v.01M12 18v.01M6 6h.01M6 12h.01M6 18h.01M18 6h.01M18 12h.01M18 18h.01" />
+			</svg>
+			<!-- <svg class="w-5 h-5 text-gray-600 dark:text-neutral-300" fill="none" stroke="currentColor"
+				viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+			</svg> -->
+		</button>
+	</div>
+
+	<!-- Panel de control flotante (siempre visible cuando showControlPanel es true) -->
+	<div *ngIf="showControlPanel" class="absolute top-4 right-4 z-50">
+		<div class="flex flex-col gap-2 bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm rounded-lg shadow-lg p-3">
+			<!-- Título del panel de control -->
+			<div class="text-xs font-semibold text-gray-600 dark:text-neutral-300 mb-1">
+				Control de Vista
+			</div>
+
+			<!-- Botón para mostrar/ocultar encabezado -->
+			<button (click)="toggleMainHeader()"
+				class="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700 transition-colors w-full"
+				[title]="showMainHeader ? 'Ocultar encabezado principal' : 'Mostrar encabezado principal'">
+				<svg *ngIf="showMainHeader" class="w-4 h-4 text-gray-600 dark:text-neutral-300" fill="none"
+					stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+				</svg>
+				<svg *ngIf="!showMainHeader" class="w-4 h-4 text-gray-600 dark:text-neutral-300" fill="none"
+					stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+				</svg>
+				<span class="text-xs text-gray-700 dark:text-neutral-300">
+					{{ showMainHeader ? 'Ocultar Encabezado' : 'Mostrar Encabezado' }}
+				</span>
+			</button>
+
+			<!-- Separador -->
+			<div class="border-t border-gray-200 dark:border-neutral-700 my-1"></div>
+
+			<!-- Botón para ocultar panel de control -->
+			<button (click)="toggleControlPanel()"
+				class="flex items-center gap-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700 transition-colors w-full"
+				title="Ocultar controles">
+				<svg class="w-4 h-4 text-gray-600 dark:text-neutral-300" fill="none" stroke="currentColor"
+					viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				</svg>
+				<span class="text-xs text-gray-700 dark:text-neutral-300">Ocultar Controles</span>
+			</button>
+		</div>
+	</div>
 </div>

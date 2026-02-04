@@ -45,6 +45,8 @@ import { PdfViewerView } from './components/pdf-viewer/pdf-viewer.view';
 import { ExploradorStateService } from './pages/explorador/services/explorador-state.service';
 import { PdfLocalSearchService } from './pages/digitalizacion/services/pdf-local-search.service';
 import { UploadSectionComponent } from './pages/digitalizacion/upload-section/upload-section';
+import { AnotacionesService } from '../../core/services/anotaciones.service';
+import { Comentarios } from './pages/explorador/components/comentarios/comentarios';
 // import { UploadSectionComponent } from './pages/digitalizacion/upload-section/upload-section';
 
 @NgModule({
@@ -61,6 +63,7 @@ import { UploadSectionComponent } from './pages/digitalizacion/upload-section/up
     Sidebar,
     Breadcrumbs,
     UserFormComponent,
+    Comentarios,
     PasswordToggleComponent,
     TreeNodeComponent,
     CardsComponent,
@@ -84,7 +87,8 @@ import { UploadSectionComponent } from './pages/digitalizacion/upload-section/up
     ReactiveFormsModule,
     AdminRoutingModule,
     FormsModule,FechaLocalPipe
-  ],  providers: [ExploradorStateService,PdfLocalSearchService]
+  ],  providers: [AnotacionesService
+    ,ExploradorStateService,PdfLocalSearchService]
   
 })
 export class AdminModule { }

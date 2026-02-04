@@ -10,24 +10,40 @@ import { Sidebar } from './components/sidebar/sidebar';
   templateUrl: './admin.html',
 })
 export class Admin implements OnInit {
-  sidebarOpen = true;
+  sidebarOpen = false;
   isMobileView = false;
   @ViewChild('sidebar') sidebarComponent!: Sidebar;
   private userService = inject(UserService);
   territoriesCount = 0;
+  
   ngOnInit(): void {
+    this.updateMobileView();  // ✅ Actualizar estado móvil al inicio
     this.logUserPermissions();
   }
+  
   ngAfterViewInit(): void {
-    // Sincronizar con el estado inicial del sidebar
+    // ✅ CORREGIDO: Sincronizar con el estado REAL del sidebar
     setTimeout(() => {
-      this.updateMobileView();
-      this.sidebarOpen = !this.isMobileView;
+      if (this.sidebarComponent) {
+        // Respetar el estado inicial del sidebar (inicia cerrado)
+        // No forzar ningún estado, el sidebar ya emitió su estado inicial
+      }
     });
   }
+  
   @HostListener('window:resize')
   onResize(): void {
+    const wasMobile = this.isMobileView;
     this.updateMobileView();
+    
+    // ✅ Si cambia de desktop a mobile, cerrar sidebar
+    if (!wasMobile && this.isMobileView && this.sidebarOpen) {
+      this.sidebarOpen = false;
+      // Opcional: cerrar también el sidebar component
+      if (this.sidebarComponent) {
+        this.sidebarComponent.close();
+      }
+    }
   }
 
   private updateMobileView(): void {
@@ -35,6 +51,7 @@ export class Admin implements OnInit {
   }
 
   onSidebarToggled(isOpen: boolean): void {
+    // ✅ Recibe el estado real del sidebar
     this.sidebarOpen = isOpen;
   }
 
@@ -43,6 +60,7 @@ export class Admin implements OnInit {
       this.sidebarComponent.toggleSidebar();
     }
   }
+  
   private logUserPermissions(): void {
     console.log('%c--- Iniciando sesión administrativa ---', 'color: #691831; font-weight: bold; font-size: 12px;');
 

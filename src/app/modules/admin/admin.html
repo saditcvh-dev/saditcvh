@@ -1,7 +1,7 @@
 <div class="flex h-screen bg-gray-100 dark:bg-[#050505] overflow-hidden">
   <!-- SIDEBAR -->
   <app-sidebar
-    #sidebar
+    #sidebar 
     [territoriesCount]="territoriesCount"
     (sidebarToggled)="onSidebarToggled($event)">
   </app-sidebar>
@@ -21,8 +21,9 @@
     <div
       class="flex-1 pt-20 transition-all duration-300 overflow-hidden"
       [ngClass]="{
-        'md:ml-16': !sidebarOpen && !isMobileView,
-        'md:ml-56': sidebarOpen && !isMobileView
+        'ml-0': isMobileView,
+        'md:ml-16': !isMobileView && !sidebarOpen,
+        'md:ml-56': !isMobileView && sidebarOpen
       }"
     >
       <!-- MAIN FIJO -->

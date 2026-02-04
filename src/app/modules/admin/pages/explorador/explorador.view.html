@@ -6,13 +6,17 @@
 			(toggle)="toggleExplorer()">
 		</app-explorer-panel>
 	</div>
+
+
 	<div class="flex flex-col flex-1 bg-white   rounded-xl shadow-md dark:shadow-black border border-gray-200 dark:border-none  dark:bg-[#131314] overflow-hidden overflow-y-auto  [&::-webkit-scrollbar]:hidden 
             [-ms-overflow-style:none] 
             [scrollbar-width:none] relative">
-		<app-viewer-panel [selectedNode]="selectedNode()" [breadcrumbs]="breadcrumbs()" [activeTab]="activeTab()"
-			[pdfUrl]="pdfUrl()" [documentVersions]="documentVersions()" (breadcrumbClick)="onBreadcrumbClick($event)"
-			(tabChange)="onTabChange($event)" (openUploadModal)="openUploadModal()"
-			(downloadVersion)="downloadVersion($event)" (restoreVersion)="restoreVersion($event)">
+		<app-viewer-panel [showMainHeader]="showMainHeader" [selectedNode]="selectedNode()"
+			[breadcrumbs]="breadcrumbs()" [activeTab]="activeTab()" [pdfUrl]="pdfUrl()"
+			[documentVersions]="documentVersions()" [showControlPanel]="showControlPanel()"
+			(breadcrumbClick)="onBreadcrumbClick($event)" (tabChange)="onTabChange($event)"
+			(openUploadModal)="openUploadModal()" (downloadVersion)="downloadVersion($event)"
+			(restoreVersion)="restoreVersion($event)">
 		</app-viewer-panel>
 	</div>
 	<!-- Componentes de UI flotantes -->

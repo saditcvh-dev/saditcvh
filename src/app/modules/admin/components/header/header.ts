@@ -1,5 +1,6 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, Input, OnInit, Output } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth';
+import { AutorizacionTreeService } from '../../../../core/services/explorador-autorizacion-tree.service';
 
 @Component({
   selector: 'app-header',
@@ -12,6 +13,7 @@ export class Header implements OnInit {
   themeSubmenuOpen = false;
   currentTheme: 'light' | 'dark' | 'system' = 'system';
 
+  private treeService = inject(AutorizacionTreeService);
 
   @Input() sidebarOpen!: boolean;
   @Input() isMobileView!: boolean;
@@ -224,15 +226,22 @@ export class Header implements OnInit {
     }
   }
 
-  goToProfile() {
-    // Navegar al perfil
-    console.log('Ir al perfil');
+  /**
+    * Maneja la lógica de cierre de sesión.
+    * Llama al método logout del AuthService.
+    */
+  onLogout(): void {
+    // El servicio maneja la petición al backend, limpia el estado local
+    // y redirige al usuario a la página de login.
+    this.authService.logout().subscribe({
+      next: (success) => {
+        this.treeService.reset();
+        console.log('Sesión cerrada exitosamente');
+      },
+      error: (err) => {
+        console.error('Error al cerrar sesión', err);
+      }
+    });
   }
-
-  logout() {
-    // Lógica de cierre de sesión
-    console.log('Cerrar sesión');
-  }
-
 
 }

@@ -8,6 +8,7 @@ import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizac
   styleUrls: ['./history-tab.component.css']
 })
 export class HistoryTabComponent {
+  @Input() fullScreenMode: boolean = false;
   @Input() selectedNode!: AutorizacionTreeNode | null;
   @Input() documentVersions: any[] = [];
 

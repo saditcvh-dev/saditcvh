@@ -4,11 +4,13 @@ import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizac
 
 @Component({
   selector: 'app-security-tab',
-    standalone: false,
+  standalone: false,
   templateUrl: './security-tab.component.html',
   styleUrls: ['./security-tab.component.css']
 })
 export class SecurityTabComponent {
+  @Input() fullScreenMode: boolean = false;
+
   @Input() selectedNode!: AutorizacionTreeNode | null;
 
   permissions = [
