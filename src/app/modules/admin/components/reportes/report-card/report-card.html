@@ -1,12 +1,12 @@
 <!-- ============================================================
     REPORTES DETALLADOS
 ============================================================ -->
-<div class="bg-white rounded-xl border border-[#99999A]/20 shadow-sm mb-8">
-    <div class="p-6 border-b border-[#99999A]/20">
+<div class="bg-white dark:bg-[#0a0a0a] rounded-xl border border-[#99999A]/20 dark:border-gray-800 shadow-sm mb-8">
+    <div class="p-6 border-b border-[#99999A]/20 dark:border-gray-800">
         <div class="flex flex-col md:flex-row md:items-center justify-between">
             <div>
-                <h2 class="font-semibold text-[#691B31] text-lg">Reportes detallados</h2>
-                <p class="text-sm text-[#6F7271]">
+                <h2 class="font-semibold text-[#691B31] dark:text-[#c44569] text-lg">Reportes detallados</h2>
+                <p class="text-sm text-[#6F7271] dark:text-gray-400">
                     Haz clic en una tarjeta para descargar el reporte en PDF
                 </p>
             </div>
@@ -17,29 +17,29 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Reporte 1 - Documentos -->
             <div 
-                class="border border-[#BC955B]/30 rounded-lg p-5 hover:border-[#BC955B] hover:shadow-md transition-all cursor-pointer"
+                class="border border-[#BC955B]/30 dark:border-[#d4a762]/30 rounded-lg p-5 hover:border-[#BC955B] dark:hover:border-[#d4a762] hover:shadow-md dark:hover:shadow-gray-900/50 transition-all cursor-pointer bg-white dark:bg-[#1a1a1a]"
                 (click)="generarReporteDocumentos()"
                 [class.opacity-50]="isLoadingDocumentos"
                 [class.cursor-wait]="isLoadingDocumentos"
             >
                 <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 rounded-lg bg-[#DDC9A3]/20 flex items-center justify-center mr-3">
+                    <div class="w-10 h-10 rounded-lg bg-[#DDC9A3]/20 dark:bg-[#d4a762]/20 flex items-center justify-center mr-3">
                         <i 
-                            class="fas text-[#BC955B]" 
+                            class="fas text-[#BC955B] dark:text-[#d4a762]" 
                             [class.fa-search]="!isLoadingDocumentos"
                             [class.fa-spinner]="isLoadingDocumentos"
                             [class.fa-spin]="isLoadingDocumentos"
                         ></i>
                     </div>
                     <div>
-                        <h4 class="font-medium text-[#BC955B]">
+                        <h4 class="font-medium text-[#BC955B] dark:text-[#d4a762]">
                             Actividad de documentos
                             <span *ngIf="isLoadingDocumentos" class="text-xs ml-2">(Generando...)</span>
                         </h4>
-                        <p class="text-xs text-[#6F7271]">Procesamiento de documentos</p>
+                        <p class="text-xs text-[#6F7271] dark:text-gray-400">Procesamiento de documentos</p>
                     </div>
                 </div>
-                <div class="text-xs text-[#6F7271] mt-2">
+                <div class="text-xs text-[#6F7271] dark:text-gray-400 mt-2">
                     <i class="fas fa-file-pdf mr-1"></i>
                     Descargar PDF
                 </div>
@@ -47,31 +47,31 @@
 
             <!-- Reporte 2 - Actividad de usuarios -->
             <div 
-                class="border border-[#A02142]/20 rounded-lg p-5 hover:border-[#A02142] hover:shadow-md transition-all cursor-pointer"
+                class="border border-[#A02142]/20 dark:border-[#c44569]/30 rounded-lg p-5 hover:border-[#A02142] dark:hover:border-[#c44569] hover:shadow-md dark:hover:shadow-gray-900/50 transition-all cursor-pointer bg-white dark:bg-[#1a1a1a]"
                 (click)="generarReporteUsuarios()"
                 [class.opacity-50]="isLoadingUsuarios"
                 [class.cursor-wait]="isLoadingUsuarios"
             >
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-lg bg-[#A02142]/10 flex items-center justify-center mr-3">
+                        <div class="w-10 h-10 rounded-lg bg-[#A02142]/10 dark:bg-[#c44569]/20 flex items-center justify-center mr-3">
                             <i 
-                                class="fas text-[#A02142]" 
+                                class="fas text-[#A02142] dark:text-[#c44569]" 
                                 [class.fa-users]="!isLoadingUsuarios"
                                 [class.fa-spinner]="isLoadingUsuarios"
                                 [class.fa-spin]="isLoadingUsuarios"
                             ></i>
                         </div>
                         <div>
-                            <h4 class="font-medium text-[#A02142]">
+                            <h4 class="font-medium text-[#A02142] dark:text-[#c44569]">
                                 Actividad de usuarios
                                 <span *ngIf="isLoadingUsuarios" class="text-xs ml-2">(Generando...)</span>
                             </h4>
-                            <p class="text-xs text-[#6F7271]">Uso del sistema</p>
+                            <p class="text-xs text-[#6F7271] dark:text-gray-400">Uso del sistema</p>
                         </div>
                     </div>
                 </div>
-                <div class="text-xs text-[#6F7271] mt-2">
+                <div class="text-xs text-[#6F7271] dark:text-gray-400 mt-2">
                     <i class="fas fa-file-pdf mr-1"></i>
                     Descargar PDF
                 </div>

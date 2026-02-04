@@ -1,5 +1,41 @@
+/* En el archivo CSS del componente */
 :host {
   display: block;
+}
+
+/* Variables locales para el componente */
+:host-context(.light) {
+  --card-bg: #ffffff;
+  --card-border: #99999A;
+  --text-primary: #691B31;
+  --text-secondary: #6F7271;
+  --accent-gold: #BC955B;
+  --accent-gold-light: #DDC9A3;
+  --accent-wine: #A02142;
+}
+
+:host-context(.dark) {
+  --card-bg: #1a1a1a;
+  --card-border: #374151;
+  --text-primary: #c44569;
+  --text-secondary: #9ca3af;
+  --accent-gold: #d4a762;
+  --accent-gold-light: #d4a762;
+  --accent-wine: #c44569;
+}
+
+/* Aplicar variables */
+.report-card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
 }
 
 /* Efectos hover */

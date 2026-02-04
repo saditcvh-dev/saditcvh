@@ -97,12 +97,12 @@ export class CardsComponent implements OnInit, OnDestroy {
       error: false
     },
     {
-      id: 'busquedas',
-      title: 'Búsquedas Hoy',
+      id: 'documentos_hoy',
+      title: 'Documentos Hoy',
       value: 0,
-      icon: 'fas fa-search',
+      icon: 'fas fa-calendar-day',
       color: '#691831',
-      description: 'Total hoy',
+      description: 'Digitalizados hoy',
       trend: { value: 0, isPositive: true },
       loading: true,
       error: false
@@ -246,14 +246,14 @@ export class CardsComponent implements OnInit, OnDestroy {
     this.cards[2].loading = false;
     this.cards[2].error = false;
 
-    // 4. Búsquedas Hoy - Usar valor de la API o simulado
-    const busquedasOldValue = Number(this.cards[3].value) || 0;
-    const busquedasValue = data.busquedas_hoy || 0;
-    this.cards[3].value = busquedasValue;
-    this.cards[3].description = `Total hoy: ${busquedasValue}`;
+    // 4. Documentos Hoy - Usar valor específico de la API
+    const documentosHoyOldValue = Number(this.cards[3].value) || 0;
+    const documentosHoyValue = data.documentos_hoy || 0;
+    this.cards[3].value = documentosHoyValue;
+    this.cards[3].description = `Digitalizados hoy: ${documentosHoyValue}`;
     this.cards[3].trend = {
-      value: this.calculateTrend(busquedasOldValue, busquedasValue),
-      isPositive: busquedasValue >= busquedasOldValue
+      value: this.calculateTrend(documentosHoyOldValue, documentosHoyValue),
+      isPositive: documentosHoyValue >= documentosHoyOldValue
     };
     this.cards[3].loading = false;
     this.cards[3].error = false;
@@ -263,7 +263,7 @@ export class CardsComponent implements OnInit, OnDestroy {
       documentos: data.total_documentos || 0,
       paginas: data.total_paginas || 0,
       usuarios: data.total_usuarios_activos || 0,
-      busquedas: busquedasValue
+      documentos_hoy: documentosHoyValue
     };
 
     // Forzar cambio de referencia para que Angular detecte los cambios

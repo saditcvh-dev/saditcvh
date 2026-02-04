@@ -72,21 +72,24 @@
         
         <!-- Filtro por regiones -->
         <div class="flex flex-wrap gap-2 ml-auto">
-            <button 
-                (click)="selectRegion(null)"
-                [class.bg-[#691B31]="selectedRegion === null"
-                [class.dark:bg-[#c44569]="selectedRegion === null"
-                [class.text-white]="selectedRegion === null"
-                class="px-3 py-1.5 text-xs rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-800 dark:text-gray-200"
+            <button
+            (click)="selectRegion(null)"
+            [ngClass]="{
+                'bg-selected text-white': selectedRegion === null
+            }"
+            class="px-3 py-1.5 text-xs rounded-full bg-gray-100 dark:bg-gray-800
+                    border border-gray-200 dark:border-gray-700
+                    hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors
+                    text-gray-800 dark:text-gray-200"
             >
                 Todos ({{ totalMunicipios }})
             </button>
             <button 
                 *ngFor="let region of regiones"
                 (click)="selectRegion(region.id)"
-                [class.bg-[#691B31]="selectedRegion === region.id"
-                [class.dark:bg-[#c44569]="selectedRegion === region.id"
-                [class.text-white]="selectedRegion === region.id"
+                [ngClass]="{
+                    'selected-region': selectedRegion === region.id
+                }"
                 class="px-3 py-1.5 text-xs rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-800 dark:text-gray-200"
                 [title]="'Municipios: ' + getRegionMunicipiosCount(region.id) + ' | Documentos: ' + getRegionTotalDocuments(region.id)"
             >
@@ -164,9 +167,9 @@
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div *ngFor="let region of regiones" 
                  (click)="selectRegion(region.id)"
-                 [class.ring-2]="selectedRegion === region.id"
-                 [class.ring-[#691B31]]="selectedRegion === region.id"
-                 [class.dark:ring-[#c44569]]="selectedRegion === region.id"
+                 [ngClass]="{
+                    'selected-region-card': selectedRegion === region.id
+                 }"
                  class="p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-all">
                 <div class="text-center">
                     <div class="text-2xl font-bold text-[#691B31] dark:text-[#c44569]">

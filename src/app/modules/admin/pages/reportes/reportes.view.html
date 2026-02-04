@@ -32,30 +32,7 @@
         <app-graphic-municipio-map></app-graphic-municipio-map>
     </div>
     
-    <div class="bg-white rounded-xl border border-[#99999A]/20 shadow-sm mb-8">
+    <div class="bg-white rounded-xl   shadow-sm mb-8">
         <app-report-card></app-report-card>
     </div>
-    
-
-<script>
-// Script básico para demostración (sin funcionalidad real)
-document.addEventListener('DOMContentLoaded', function() {
-    // Simulación de interacción básica
-    const botonesGenerar = document.querySelectorAll('button:contains("Generar")');
-    botonesGenerar.forEach(boton => {
-        boton.addEventListener('click', function() {
-            const tipoReporte = this.closest('.border').querySelector('h4').textContent;
-            console.log(`Generando reporte: ${tipoReporte}`);
-        });
-    });
-    
-    // Configurar botón de reporte personalizado
-    const btnConfigurar = document.querySelector('button:contains("Configurar")');
-    if (btnConfigurar) {
-        btnConfigurar.addEventListener('click', function() {
-            document.getElementById('modalConfigReporte').classList.remove('hidden');
-        });
-    }
-});
-
-</script>
+</div>
