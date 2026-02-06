@@ -9,25 +9,29 @@
         <div class="flex items-center space-x-3">
 
           <div>
-            <h1 class="text-xl font-bold text-gray-900">Digitalización</h1>
-            <p class="text-xs text-gray-500">Procesamiento OCR</p>
+            <h1 class="text-xl font-bold text-[#691831] dark:text-[#c44569]">Digitalización</h1>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Procesamiento OCR</p>
           </div>
         </div>
 
         <!-- Estadisticas y Actualizar -->
         <div class="flex items-center space-x-6">
           <div class="hidden md:flex items-center space-x-4 text-sm">
-            <span class="text-gray-600">Total: <span class="font-semibold text-gray-900">{{ totalPdfsCount
+            <span class="text-gray-600 dark:text-gray-400">Total: <span
+                class="font-semibold text-gray-900 dark:text-gray-100">{{ totalPdfsCount
                 }}</span></span>
-            <span class="text-gray-600">Completados: <span class="font-semibold text-green-600">{{ completedPdfsCount()
+            <span class="text-gray-600 dark:text-gray-400">Completados: <span class="font-semibold text-green-600">{{
+                completedPdfsCount()
                 }}</span></span>
-            <span class="text-gray-600">En proceso: <span class="font-semibold text-yellow-600">{{ processingPdfsCount()
+            <span class="text-gray-600 dark:text-gray-400">En proceso: <span class="font-semibold text-yellow-600">{{
+                processingPdfsCount()
                 }}</span></span>
-            <span class="text-gray-600">Con OCR: <span class="font-semibold text-blue-600">{{ withOcrCount()
+            <span class="text-gray-600 dark:text-gray-400">Con OCR: <span
+                class="font-semibold text-[#A02142] dark:text-[#c44569]">{{ withOcrCount()
                 }}</span></span>
           </div>
           <button (click)="loadPdfsList()"
-            class="px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors flex items-center space-x-2 font-medium">
+            class="px-4 py-2 border-2 border-[#691831] text-[#691831] rounded-lg hover:bg-[#691831]/10 dark:border-[#c44569] dark:text-[#c44569] dark:hover:bg-[#c44569]/20 transition-colors flex items-center space-x-2 font-medium">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -38,9 +42,9 @@
       </div>
 
       <!-- Tabs Navigation -->
-      <nav class="flex space-x-1 border-t border-gray-100 pt-2">
+      <nav class="flex space-x-1 border-t border-gray-100 pt-2 dark:border-neutral-800">
         <button (click)="activeTab = 'upload'"
-          [class]="activeTab === 'upload' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'"
+          [class]="activeTab === 'upload' ? 'border-b-2 border-[#691831] text-[#691831] dark:border-[#c44569] dark:text-[#c44569]' : 'text-gray-500 hover:text-[#A02142] dark:hover:text-[#c44569]'"
           class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -50,7 +54,7 @@
         </button>
 
         <button (click)="activeTab = 'search'"
-          [class]="activeTab === 'search' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'"
+          [class]="activeTab === 'search' ? 'border-b-2 border-[#691831] text-[#691831] dark:border-[#c44569] dark:text-[#c44569]' : 'text-gray-500 hover:text-[#A02142] dark:hover:text-[#c44569]'"
           class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -60,7 +64,7 @@
         </button>
 
         <button (click)="activeTab = 'quick'"
-          [class]="activeTab === 'quick' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'"
+          [class]="activeTab === 'quick' ? 'border-b-2 border-[#691831] text-[#691831] dark:border-[#c44569] dark:text-[#c44569]' : 'text-gray-500 hover:text-[#A02142] dark:hover:text-[#c44569]'"
           class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -70,7 +74,7 @@
         </button>
 
         <button (click)="activeTab = 'global'"
-          [class]="activeTab === 'global' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'"
+          [class]="activeTab === 'global' ? 'border-b-2 border-[#691831] text-[#691831] dark:border-[#c44569] dark:text-[#c44569]' : 'text-gray-500 hover:text-[#A02142] dark:hover:text-[#c44569]'"
           class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -80,7 +84,7 @@
         </button>
 
         <button (click)="activeTab = 'files'"
-          [class]="activeTab === 'files' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'"
+          [class]="activeTab === 'files' ? 'border-b-2 border-[#691831] text-[#691831] dark:border-[#c44569] dark:text-[#c44569]' : 'text-gray-500 hover:text-[#A02142] dark:hover:text-[#c44569]'"
           class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -89,7 +93,7 @@
           <span>Archivos ({{ totalPdfsCount }})</span>
         </button>
         <button (click)="activeTab = 'lotes'"
-          [class]="activeTab === 'lotes' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'"
+          [class]="activeTab === 'lotes' ? 'border-b-2 border-[#691831] text-[#691831] dark:border-[#c44569] dark:text-[#c44569]' : 'text-gray-500 hover:text-[#A02142] dark:hover:text-[#c44569]'"
           class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -116,10 +120,11 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- PDF Selection -->
         <div class="lg:col-span-1">
-          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-              <svg class="w-6 h-6 text-blue-500 mr-3" fill="none" stroke="currentColor" stroke-width="2"
-                viewBox="0 0 24 24">
+          <div
+            class="bg-white dark:bg-[#1a1a1b] border border-gray-200 dark:border-neutral-800 rounded-xl shadow-sm p-6 border border-gray-200">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+              <svg class="w-6 h-6 text-[#691831] dark:text-[#c44569] mr-3" fill="none" stroke="currentColor"
+                stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375" />
               </svg>
@@ -127,14 +132,33 @@
             </h3>
 
             <div class="relative mb-4">
-              <select [(ngModel)]="selectedPdfId" (change)="onPdfSelect(selectedPdfId)"
-                class="w-full p-4 pl-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white text-gray-900 font-medium">
-                <option value="">-- Selecciona un PDF --</option>
-                <option *ngFor="let pdf of pdfsList" [value]="pdf.id">
+              <select [(ngModel)]="selectedPdfId" (change)="onPdfSelect(selectedPdfId)" class="
+      w-full p-4 pl-12 rounded-xl border-2 appearance-none
+      bg-white dark:bg-[#131314]
+      border-gray-300 dark:border-neutral-700
+
+      !text-gray-900 dark:!text-neutral-100
+      caret-gray-900 dark:caret-neutral-100
+
+      focus:ring-2 focus:ring-[#BC955B]
+      focus:border-[#BC955B]
+      dark:focus:ring-[#d4a762]
+      dark:focus:border-[#d4a762]
+
+      transition-colors font-medium
+    ">
+                <option value="" class="bg-white dark:bg-[#131314] text-gray-400 dark:text-neutral-400">
+                  -- Selecciona un PDF --
+                </option>
+
+                <option *ngFor="let pdf of pdfsList" [value]="pdf.id"
+                  class="bg-white dark:bg-[#131314] text-gray-900 dark:text-neutral-100">
                   {{ pdf.filename }} ({{ pdf.pages }} pags.)
                 </option>
               </select>
-              <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500">
+
+              <div
+                class="absolute left-4 top-1/2 -translate-y-1/2 text-[#691831] dark:text-[#c44569] pointer-events-none">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5" />
                 </svg>
@@ -142,8 +166,8 @@
             </div>
 
             <!-- PDF Info -->
-            <div *ngIf="selectedPdfInfo" class="p-4 bg-gray-50 rounded-xl border border-gray-200">
-              <h4 class="font-bold text-gray-900 mb-3 flex items-center">
+            <div *ngIf="selectedPdfInfo" class="p-4 bg-gray-50 dark:bg-[#131314] rounded-xl border border-gray-200">
+              <h4 class="font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center">
                 <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" stroke-width="2"
                   viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round"
@@ -153,31 +177,33 @@
               </h4>
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Subido:</span>
-                  <span class="font-semibold text-gray-900">{{ formatDate(selectedPdfInfo.upload_date.toString())
+                  <span class="text-gray-600 dark:text-gray-400">Subido:</span>
+                  <span class="font-semibold text-gray-900 dark:text-gray-100">{{
+                    formatDate(selectedPdfInfo.upload_date.toString())
                     }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Tamano:</span>
-                  <span class="font-semibold text-gray-900">{{ formatBytes(selectedPdfInfo.size) }}</span>
+                  <span class="text-gray-600 dark:text-gray-400">Tamano:</span>
+                  <span class="font-semibold text-gray-900 dark:text-gray-100">{{ formatBytes(selectedPdfInfo.size)
+                    }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Texto extraido:</span>
+                  <span class="text-gray-600 dark:text-gray-400">Texto extraido:</span>
                   <span class="font-semibold" [class]="selectedPdfInfo.has_text ? 'text-green-600' : 'text-yellow-600'">
                     {{ selectedPdfInfo.has_text ? 'Disponible' : 'No disponible' }}
                   </span>
                 </div>
                 <div class="flex flex-col space-y-2 mt-4 pt-3 border-t border-gray-200">
                   <button (click)="viewText(selectedPdfInfo!.id)"
-                    class="w-full px-3 py-2 text-sm border-2 border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors font-medium">
+                    class="w-full px-3 py-2 text-sm border-2 border-[#691831] text-[#691831] rounded-lg hover:bg-[#691831]/10 dark:border-[#c44569] dark:text-[#c44569] dark:hover:bg-[#c44569]/20 transition-colors font-medium">
                     Ver texto
                   </button>
                   <button (click)="downloadText(selectedPdfInfo!.id)"
-                    class="w-full px-3 py-2 text-sm border-2 border-green-500 text-green-500 rounded-lg hover:bg-green-50 transition-colors font-medium">
+                    class="w-full px-3 py-2 text-sm border-2 border-[#691831] text-[#691831] dark:border-[#c44569] dark:text-[#c44569] rounded-lg hover:bg-green-50 transition-colors font-medium">
                     Descargar TXT
                   </button>
                   <button (click)="downloadSearchablePDF(selectedPdfInfo!.id)"
-                    class="w-full px-3 py-2 text-sm border-2 border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors font-medium">
+                    class="w-full px-3 py-2 text-sm border-2 border-[#691831] text-[#691831] rounded-lg hover:bg-[#691831]/10 dark:border-[#c44569] dark:text-[#c44569] dark:hover:bg-[#c44569]/20 transition-colors font-medium">
                     Descargar PDF con texto
                   </button>
                 </div>
@@ -189,13 +215,30 @@
         <!-- Search Form and Results -->
         <div class="lg:col-span-2 space-y-6">
           <!-- Search Form -->
-          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">Buscar en documento</h3>
+          <div
+            class="bg-white dark:bg-[#1a1a1b] rounded-xl shadow-sm p-6 border border-gray-200 dark:border-neutral-700 dark:bg-[#1a1a1b] dark:border-neutral-800">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Buscar en documento</h3>
             <div class="space-y-4">
               <div class="relative">
-                <input type="text" [(ngModel)]="searchTerm" placeholder="Escribe el texto a buscar..."
-                  class="w-full p-4 pl-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500">
+                <input type="text" [(ngModel)]="searchTerm" placeholder="Escribe el texto a buscar..." class="
+                w-full p-4 pl-12 rounded-xl border-2
+                bg-white dark:bg-[#131314]
+                border-gray-300 dark:border-neutral-700
+
+                !text-gray-900 dark:!text-neutral-100
+                caret-gray-900 dark:caret-neutral-100
+
+                placeholder:text-gray-400 dark:placeholder:text-neutral-400
+
+                focus:ring-2 focus:ring-[#BC955B]
+                focus:border-[#BC955B]
+                dark:focus:ring-[#d4a762]
+                dark:focus:border-[#d4a762]
+
+                transition-colors
+              " />
+
+                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-[#691831] dark:text-[#c44569]">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                       d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -207,16 +250,26 @@
                 <label class="flex items-center space-x-3 cursor-pointer">
                   <div class="relative">
                     <input type="checkbox" [(ngModel)]="caseSensitive" class="sr-only peer" />
-                    <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-500 transition-colors">
-                    </div>
-                    <div
-                      class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5">
-                    </div>
+
+                    <!-- Track -->
+                    <div class="
+      w-11 h-6 rounded-full transition-colors
+      bg-gray-300 dark:bg-neutral-600
+      peer-checked:bg-[#691831] dark:peer-checked:bg-[#c44569]
+    "></div>
+
+                    <!-- Thumb -->
+                    <div class="
+      absolute left-1 top-1 w-4 h-4 rounded-full
+      bg-white dark:bg-neutral-100
+      transition-transform
+      peer-checked:translate-x-5
+    "></div>
                   </div>
-                  <span class="text-gray-700 font-medium">Coincidir mayusculas/minusculas</span>
+                  <span class="text-gray-700 dark:text-gray-300 font-medium">Coincidir mayusculas/minusculas</span>
                 </label>
                 <button (click)="searchInPdf()" [disabled]="!selectedPdfId || !searchTerm.trim() || isSearching()"
-                  class="px-6 py-3 border-2 border-blue-500 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 hover:border-blue-600 disabled:border-gray-300 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center space-x-2">
+                  class="px-6 py-3 border-2  bg-[#691831] text-white dark:bg-[#c44569] font-semibold rounded-xl  hover:border-[#A02142] dark:hover:border-[#d4708a] disabled:border-gray-300 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center space-x-2">
                   <span *ngIf="!isSearching()">Buscar</span>
                   <span *ngIf="isSearching()" class="flex items-center space-x-2">
                     <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -228,8 +281,9 @@
           </div>
 
           <!-- Search Results -->
-          <div *ngIf="searchResults" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="bg-blue-500 p-5">
+          <div *ngIf="searchResults" class="bg-white dark:bg-[#1a1a1b] rounded-xl shadow-sm 
+            border border-gray-200 dark:border-neutral-800 overflow-hidden">
+            <div class="bg-[#691831] dark:bg-[#c44569] p-5">
               <div class="flex justify-between items-center">
                 <h4 class="font-bold text-white text-lg">Resultados: "{{ searchResults.term }}"</h4>
                 <div class="flex items-center space-x-3 bg-white/20 px-4 py-2 rounded-full">
@@ -242,17 +296,20 @@
             <div class="p-6">
               <div *ngIf="searchResults.results.length > 0" class="space-y-3 max-h-[500px] overflow-y-auto">
                 <div *ngFor="let result of searchResults.results; let i = index"
-                  class="p-4 bg-gray-50 border-2 border-gray-200 rounded-xl hover:border-blue-500 transition-all">
+                  class="p-4 bg-gray-50 dark:bg-[#131314] border-2 border-gray-200 rounded-xl hover: transition-all">
                   <div class="flex justify-between items-start mb-3">
                     <span
-                      class="inline-flex items-center px-3 py-1 text-xs font-bold border-2 border-blue-500 text-blue-500 rounded-full">
+                      class="inline-flex items-center px-3 py-1 text-xs font-bold border-2 border-[#691831] text-[#691831] rounded-full">
                       Pagina {{ result.page }}
-                      <span class="ml-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">{{ i + 1 }}</span>
+                      <span class="ml-2 bg-[#691831] text-white dark:bg-[#c44569] text-xs px-2 py-0.5 rounded-full">{{ i
+                        + 1 }}</span>
                     </span>
-                    <span class="text-sm text-gray-600 font-medium">Pos: {{ result.position }}</span>
+                    <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">Pos: {{ result.position }}</span>
                   </div>
-                  <p class="text-gray-800 leading-relaxed">
-                    ...<span class="bg-yellow-200 px-1.5 py-0.5 rounded font-semibold">{{ result.context }}</span>...
+                  <p class="text-gray-800 dark:text-gray-200 leading-relaxed">
+                    ...<span
+                      class="bg-[#BC955B]/30 text-[#691831] dark:bg-[#BC955B]/20 dark:text-[#f1c27d] px-1.5 py-0.5 rounded font-semibold">{{
+                      result.context }}</span>...
                   </p>
                 </div>
               </div>
@@ -266,7 +323,7 @@
                       d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
                   </svg>
                 </div>
-                <p class="text-gray-600 font-medium">No se encontraron coincidencias</p>
+                <p class="text-gray-600 dark:text-gray-400 font-medium">No se encontraron coincidencias</p>
                 <p class="text-sm text-gray-500 mt-2">Intenta con otros terminos de busqueda</p>
               </div>
             </div>
@@ -279,29 +336,45 @@
     <section *ngIf="activeTab === 'quick'" class="space-y-6">
       <div class="max-w-4xl mx-auto space-y-6">
         <!-- File Upload -->
-        <div class="bg-white rounded-xl shadow-sm p-8 border-2 border-dashed border-gray-300">
-          <div class="rounded-xl p-12 text-center transition-all hover:bg-blue-50/30 cursor-pointer group"
+        <div
+          class="bg-white dark:bg-[#1a1a1b] rounded-xl shadow-sm p-8 border-2 border-dashed border-gray-300 dark:border-neutral-700">
+          <div
+            class="rounded-xl p-12 text-center transition-all cursor-pointer group hover:bg-[#691831]/10 dark:hover:bg-[#c44569]/20 dark:text-[#c44569]:text-[#c44569] dark:hover:bg-[#c44569]/20/30 cursor-pointer group"
             (click)="quickFileInput.click()">
             <input #quickFileInput type="file" accept=".pdf" class="hidden" (change)="onQuickFileSelected($event)" />
-            <div class="text-blue-500 mb-4 group-hover:scale-110 transition-transform">
+            <div class="text-[#691831] dark:text-[#c44569] mb-4 group-hover:scale-110 transition-transform">
               <svg class="w-24 h-24 mx-auto" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M12 16v-8m0 0l-3 3m3-3l3 3M20 16.5a4.5 4.5 0 00-4.5-4.5h-.75A6.75 6.75 0 105.25 18h8.5" />
               </svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ quickSearchFile?.name || 'Selecciona un archivo PDF' }}
+            <h3 class="text-xl font-bold text-[#691831] dark:text-[#c44569] mb-2">{{ quickSearchFile?.name ||
+              'Selecciona un archivo PDF' }}
             </h3>
-            <p class="text-gray-600">Busqueda instantanea sin guardar el archivo</p>
+            <p class="text-gray-600 dark:text-gray-400">Busqueda instantanea sin guardar el archivo</p>
           </div>
         </div>
 
         <!-- Search Options -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div class="bg-white dark:bg-[#1a1a1b] rounded-xl shadow-sm p-6 border border-gray-200 dark:border-neutral-700">
           <div class="space-y-4">
             <div class="relative">
-              <input type="text" [(ngModel)]="quickSearchTerm" placeholder="Texto a buscar..."
-                class="w-full p-4 pl-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg" />
-              <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500">
+              <input type="text" [(ngModel)]="quickSearchTerm" placeholder="Texto a buscar..." class="    w-full p-4 pl-12 rounded-xl border-2
+    bg-white dark:bg-[#131314]
+    border-gray-300 dark:border-neutral-700
+
+    !text-gray-900 dark:!text-neutral-100
+    caret-gray-900 dark:caret-neutral-100
+
+    placeholder:text-gray-400 dark:placeholder:text-neutral-400
+
+    focus:ring-2 focus:ring-[#BC955B]
+    focus:border-[#BC955B]
+    dark:focus:ring-[#d4a762]
+    dark:focus:border-[#d4a762]
+
+    transition-colors" />
+              <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#691831] dark:text-[#c44569]">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round"
                     d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -313,17 +386,21 @@
               <label class="flex items-center space-x-3 cursor-pointer">
                 <div class="relative">
                   <input type="checkbox" [(ngModel)]="quickUseOcr" class="sr-only peer" />
-                  <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-500 transition-colors"></div>
+                  <div class="    w-11 h-6 rounded-full transition-colors
+    bg-gray-300 dark:bg-neutral-600
+    peer-checked:bg-[#691831]
+    dark:peer-checked:bg-[#c44569]">
+                  </div>
                   <div
                     class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5">
                   </div>
                 </div>
-                <span class="text-gray-700 font-medium">Usar OCR para texto en imagenes</span>
+                <span class="text-gray-700 dark:text-gray-300 font-medium">Usar OCR para texto en imagenes</span>
               </label>
 
               <button (click)="quickSearch()"
                 [disabled]="!quickSearchFile || !quickSearchTerm.trim() || isQuickSearching()"
-                class="px-8 py-3 border-2 border-blue-500 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 hover:border-blue-600 disabled:border-gray-300 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center space-x-2">
+                class="px-8 py-3 border-2  bg-[#691831] text-white dark:bg-[#c44569] font-bold rounded-xl  hover:border-[#A02142] dark:hover:border-[#d4708a] disabled:border-gray-300 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center space-x-2">
                 <span *ngIf="!isQuickSearching()">Buscar</span>
                 <span *ngIf="isQuickSearching()" class="flex items-center space-x-2">
                   <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -335,11 +412,12 @@
         </div>
 
         <!-- Quick Search Results -->
-        <div *ngIf="quickSearchResults" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div *ngIf="quickSearchResults" class="bg-white dark:bg-[#1a1a1b] rounded-xl shadow-sm 
+            border border-gray-200 dark:border-neutral-800 overflow-hidden">
           <div class="bg-green-500 p-5">
             <div class="flex justify-between items-center">
               <h4 class="font-bold text-white text-lg">Resultados: "{{ quickSearchResults.term }}"</h4>
-              <div class="flex items-center space-x-3 bg-white/20 px-4 py-2 rounded-full">
+              <div class="flex items-center space-x-3 bg-white/20 dark:bg-black/20 px-4 py-2 rounded-full">
                 <span class="text-sm font-semibold text-white">{{ quickSearchResults.total_matches }}
                   coincidencias</span>
                 <span class="text-xs text-white/80">{{ quickSearchResults.execution_time | number:'1.3-3' }}s</span>
@@ -357,8 +435,10 @@
                     Pagina {{ result.page }}
                   </span>
                 </div>
-                <p class="text-gray-800 leading-relaxed">
-                  ...<span class="bg-yellow-200 px-1.5 py-0.5 rounded font-semibold">{{ result.context }}</span>...
+                <p class="text-gray-800 dark:text-gray-200 leading-relaxed">
+                  ...<span
+                    class="bg-[#BC955B]/30 text-[#691831] dark:bg-[#BC955B]/20 dark:text-[#f1c27d] px-1.5 py-0.5 rounded font-semibold">{{
+                    result.context }}</span>...
                 </p>
               </div>
             </div>
@@ -372,7 +452,7 @@
                     d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
                 </svg>
               </div>
-              <p class="text-gray-600 font-medium">No se encontraron coincidencias</p>
+              <p class="text-gray-600 dark:text-gray-400 font-medium">No se encontraron coincidencias</p>
               <p class="text-sm text-gray-500 mt-2">Intenta con otros terminos o activa OCR</p>
             </div>
           </div>
@@ -384,15 +464,16 @@
     <section *ngIf="activeTab === 'global'" class="space-y-6">
       <div class="max-w-5xl mx-auto space-y-6">
         <!-- Search Form -->
-        <div class="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
+        <div class="bg-white dark:bg-[#1a1a1b] rounded-xl shadow-sm p-8 border border-gray-200 dark:border-neutral-700">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="md:col-span-2">
-              <label class="block text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">Termino de
+              <label
+                class="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-3 uppercase tracking-wide">Termino de
                 busqueda</label>
               <div class="relative">
                 <input type="text" [(ngModel)]="globalSearchTerm" placeholder="Buscar en todos los documentos..."
-                  class="w-full p-4 pl-12 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg" />
-                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500">
+                  class="w-full p-4 pl-12 rounded-xl border-2 text-lg bg-white dark:bg-[#131314] border-gray-300 dark:border-neutral-700 !text-gray-900 dark:!text-neutral-100 caret-gray-900 dark:caret-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-400 focus:ring-2 focus:ring-[#BC955B] focus:border-[#BC955B] dark:focus:ring-[#d4a762] dark:focus:border-[#d4a762] transition-colors" />
+                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#691831] dark:text-[#c44569]">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                       d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
@@ -405,16 +486,19 @@
               <label class="flex items-center space-x-2 cursor-pointer">
                 <div class="relative">
                   <input type="checkbox" [(ngModel)]="globalCaseSensitive" class="sr-only peer" />
-                  <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-500 transition-colors"></div>
+                  <div
+                    class="w-11 h-6 rounded-full transition-colors bg-gray-300 dark:bg-neutral-600 peer-checked:bg-[#691831] dark:peer-checked:bg-[#c44569]">
+                  </div>
                   <div
                     class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5">
                   </div>
                 </div>
-                <span class="text-sm text-gray-700 font-medium">Coincidir mayusculas</span>
+                <span class="text-sm text-gray-700 dark:text-gray-300 dark:text-gray-300 font-medium">Coincidir
+                  mayusculas</span>
               </label>
 
               <button (click)="performGlobalSearch()" [disabled]="!globalSearchTerm.trim() || isGlobalSearching()"
-                class="w-full py-3 border-2 border-blue-500 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 hover:border-blue-600 disabled:border-gray-300 disabled:bg-gray-300 flex items-center justify-center space-x-2">
+                class="w-full py-3 border-2  bg-[#691831] text-white dark:bg-[#c44569] font-bold rounded-xl  hover:border-[#A02142] dark:hover:border-[#d4708a] disabled:border-gray-300 disabled:bg-gray-300 flex items-center justify-center space-x-2">
                 <span *ngIf="!isGlobalSearching()">Buscar en todos</span>
                 <span *ngIf="isGlobalSearching()" class="flex items-center space-x-2">
                   <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -427,7 +511,7 @@
 
         <!-- Results -->
         <div *ngIf="globalSearchResults">
-          <div class="p-6 bg-blue-500 text-white rounded-xl mb-6 shadow-sm">
+          <div class="p-6 bg-[#691831] text-white dark:bg-[#c44569] rounded-xl mb-6 shadow-sm">
             <div class="flex justify-between items-center">
               <h3 class="font-bold text-xl">
                 "{{ globalSearchResults.term }}" - {{ globalSearchResults.total_matches }} coincidencias en {{
@@ -453,9 +537,9 @@
 
           <div *ngIf="globalSearchResults.documents.length > 0" class="space-y-5">
             <div *ngFor="let doc of globalSearchResults.documents"
-              class="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-500 transition-all">
+              class="bg-white dark:bg-[#1a1a1b] border-2 border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover: transition-all">
               <div
-                class="bg-blue-500 text-white p-6 flex justify-between items-center cursor-pointer hover:bg-blue-600 transition-all"
+                class="bg-[#691831] text-white dark:bg-[#c44569] p-6 flex justify-between items-center cursor-pointer hover:bg-[#A02142] transition-all"
                 (click)="goToDocumentSearch(doc.pdf_id, doc.filename || doc.pdf_id)">
                 <div>
                   <h4 class="font-bold text-xl mb-2">{{ doc.filename || doc.pdf_id }}</h4>
@@ -466,7 +550,7 @@
                   </div>
                 </div>
                 <span
-                  class="inline-flex items-center px-5 py-3 bg-white text-blue-500 font-bold rounded-xl hover:bg-blue-50 transition-all">
+                  class="inline-flex items-center px-5 py-3 bg-white dark:bg-[#1a1a1b] text-blue-500 font-bold rounded-xl hover:bg-[#691831]/10 dark:border-[#c44569] dark:text-[#c44569] dark:hover:bg-[#c44569]/20 transition-all">
                   <span>Ver documento</span>
                   <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -474,21 +558,23 @@
                 </span>
               </div>
 
-              <div class="p-6 bg-gray-50 max-h-72 overflow-y-auto">
+              <div class="p-6 bg-gray-50 dark:bg-[#131314]  max-h-72 overflow-y-auto">
                 <div class="space-y-3">
                   <div *ngFor="let result of doc.results.slice(0, 5)"
-                    class="p-4 bg-white border-2 border-gray-200 rounded-xl hover:border-blue-500 transition-all">
+                    class="p-4 bg-white border-2 border-gray-200 rounded-xl hover: transition-all">
                     <span
-                      class="inline-flex items-center px-3 py-1 text-xs font-bold border-2 border-blue-500 text-blue-500 rounded-full mr-3">
+                      class="inline-flex items-center px-3 py-1 text-xs font-bold border-2 border-[#691831] text-[#691831] rounded-full mr-3">
                       Pagina {{ result.page }}
                     </span>
-                    <span class="text-gray-800">
-                      ...<span class="bg-yellow-200 px-1.5 py-0.5 rounded font-semibold">{{ result.context }}</span>...
+                    <span class="text-gray-800 dark:text-gray-200">
+                      ...<span
+                        class="bg-[#BC955B]/30 text-[#691831] dark:bg-[#BC955B]/20 dark:text-[#f1c27d] px-1.5 py-0.5 rounded font-semibold">{{
+                        result.context }}</span>...
                     </span>
                   </div>
-                  <div *ngIf="doc.results.length > 5" class="text-center text-sm text-gray-600 pt-3">
+                  <div *ngIf="doc.results.length > 5" class="text-center text-sm text-gray-600 dark:text-gray-400 pt-3">
                     <span
-                      class="inline-flex items-center px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-full font-semibold">
+                      class="inline-flex items-center px-4 py-2 border-2 border-[#691831] text-[#691831] rounded-full font-semibold">
                       ... y {{ doc.results.length - 5 }} coincidencias mas
                     </span>
                   </div>
@@ -504,10 +590,10 @@
     <section *ngIf="activeTab === 'files'" class="space-y-6">
       <!-- View Toggle and Title -->
       <div class="flex items-center justify-between">
-        <h2 class="text-xl font-bold text-gray-900">PDFs Almacenados ({{ totalPdfsCount }})</h2>
-        <div class="flex items-center space-x-2 bg-gray-50 rounded-lg p-1">
+        <h2 class="text-xl font-bold text-[#691831] dark:text-[#c44569]">PDFs Almacenados ({{ totalPdfsCount }})</h2>
+        <div class="flex items-center space-x-2 bg-gray-50 dark:bg-[#131314]  rounded-lg p-1">
           <button (click)="viewMode = 'cards'"
-            [class]="viewMode === 'cards' ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-gray-200'"
+            [class]="viewMode === 'cards' ? 'bg-[#691831] text-white dark:bg-[#c44569]' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-neutral-800'"
             class="px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -516,7 +602,7 @@
             <span>Cards</span>
           </button>
           <button (click)="viewMode = 'table'"
-            [class]="viewMode === 'table' ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-gray-200'"
+            [class]="viewMode === 'table' ? 'bg-[#691831] text-white dark:bg-[#c44569]' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-neutral-800'"
             class="px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -528,16 +614,16 @@
       </div>
 
       <!-- Empty State -->
-      <div *ngIf="pdfsList.length === 0" class="text-center py-16 bg-gray-50 rounded-xl">
+      <div *ngIf="pdfsList.length === 0" class="text-center py-16 bg-gray-50 dark:bg-[#131314]  rounded-xl">
         <div class="w-24 h-24 mx-auto mb-4 border-2 border-gray-300 rounded-full flex items-center justify-center">
           <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5" />
           </svg>
         </div>
-        <p class="text-gray-600 font-medium text-lg">No hay PDFs almacenados</p>
+        <p class="text-gray-600 dark:text-gray-400 font-medium text-lg">No hay PDFs almacenados</p>
         <p class="text-sm text-gray-500 mt-2">Sube tu primer PDF para comenzar</p>
         <button (click)="activeTab = 'upload'"
-          class="mt-4 px-6 py-3 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 transition-colors">
+          class="mt-4 px-6 py-3 bg-[#691831] text-white dark:bg-[#c44569] font-semibold rounded-xl hover:bg-[#A02142] transition-colors">
           Subir PDF
         </button>
       </div>
@@ -546,11 +632,11 @@
       <div *ngIf="pdfsList.length > 0 && viewMode === 'cards'"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div *ngFor="let pdf of pdfsList"
-          class="group bg-gray-50 rounded-xl p-5 hover:bg-gray-100 transition-all cursor-pointer"
+          class="group bg-gray-50 dark:bg-[#131314]  rounded-xl p-5 hover:bg-gray-100 dark:bg-neutral-800 transition-all cursor-pointer"
           (contextmenu)="onContextMenu($event, pdf)">
 
           <!-- Preview del PDF en Cards -->
-          <div class="mb-4 bg-white rounded-lg border border-gray-200 p-3">
+          <div class="mb-4 bg-white rounded-lg border border-gray-200 dark:border-neutral-700 p-3">
             <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-medium text-gray-500">Vista Previa</span>
               <span class="text-xs text-gray-400">{{ pdf.pages }} páginas</span>
@@ -582,17 +668,19 @@
 
           <div class="flex justify-between items-start mb-3">
             <div class="flex-1 min-w-0">
-              <h4 class="font-bold text-gray-900 truncate group-hover:text-blue-500" [title]="pdf.filename">{{
+              <h4
+                class="font-bold text-gray-900 dark:text-gray-100 truncate group-hover:text-[#691831] dark:group-hover:text-[#c44569]"
+                [title]="pdf.filename">{{
                 pdf.filename }}</h4>
-              <p class="text-sm text-gray-600 mt-1">{{ formatBytes(pdf.size) }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ formatBytes(pdf.size) }}</p>
             </div>
           </div>
 
           <div class="flex items-center justify-between mb-3">
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold" [ngClass]="{
-            'bg-blue-100 text-blue-800': pdf.status === 'completed',
+            'bg-[#691831]/10 text-[#691831] dark:bg-[#c44569]/20 dark:text-[#c44569]': pdf.status === 'completed',
             'bg-yellow-100 text-yellow-800': pdf.status === 'processing',
-            'bg-gray-100 text-gray-800': pdf.status === 'pending',
+            'bg-gray-100 dark:bg-neutral-800 text-gray-800 dark:text-gray-200': pdf.status === 'pending',
             'bg-red-100 text-red-800': pdf.status === 'failed'
           }">
               {{ pdf.status === 'completed' ? 'Completado' : pdf.status === 'processing' ? 'Procesando' : pdf.status ===
@@ -604,7 +692,7 @@
 
           <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
             <div class="h-2 rounded-full transition-all" [ngClass]="{
-            'bg-blue-500': pdf.status === 'completed',
+            'bg-[#691831] dark:bg-[#c44569]': pdf.status === 'completed',
             'bg-yellow-500': pdf.status === 'processing',
             'bg-gray-500': pdf.status === 'pending',
             'bg-red-500': pdf.status === 'failed'
@@ -613,7 +701,7 @@
 
           <div class="flex space-x-2">
             <button (click)="$event.stopPropagation(); viewText(pdf.id)"
-              class="flex-1 px-3 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+              class="flex-1 px-3 py-2 text-sm bg-[#691831] text-white dark:bg-[#c44569] rounded-lg hover:bg-[#A02142] transition-colors font-medium"
               [disabled]="pdf.status !== 'completed'">
               Ver
             </button>
@@ -640,7 +728,7 @@
       <!-- Table View -->
       <div *ngIf="pdfsList.length > 0 && viewMode === 'table'" class="bg-gray-50 rounded-xl overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-100">
+          <thead class="bg-gray-100 dark:bg-neutral-800">
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Preview</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Nombre</th>
@@ -651,8 +739,8 @@
               <th class="px-6 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">Acciones</th>
             </tr>
           </thead>
-          <tbody class="bg-gray-50 divide-y divide-gray-200">
-            <tr *ngFor="let pdf of pdfsList" class="hover:bg-gray-100 cursor-pointer"
+          <tbody class="bg-gray-50 dark:bg-[#131314] divide-y divide-gray-200 dark:divide-neutral-700">
+            <tr *ngFor="let pdf of pdfsList" class="hover:bg-gray-100 dark:bg-neutral-800 cursor-pointer"
               (contextmenu)="onContextMenu($event, pdf)">
               <!-- Preview del PDF en Table -->
               <td class="px-6 py-4 whitespace-nowrap">
@@ -663,30 +751,32 @@
                       <svg class="w-6 h-6 text-red-500 mb-1" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z M14 2v6h6" />
                       </svg>
-                      <div class="text-xs text-gray-600 font-medium">PDF</div>
-                      <div class="text-xs text-gray-500 mt-1">{{ pdf.pages }}p</div>
+                      <div class="text-xs text-gray-600 dark:text-gray-400 font-medium">PDF</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ pdf.pages }}p</div>
                     </div>
                   </div>
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900 max-w-xs truncate" [title]="pdf.filename">{{ pdf.filename
+                <div class="text-sm font-medium text-gray-900 dark:text-gray-100 max-w-xs truncate"
+                  [title]="pdf.filename">{{ pdf.filename
                   }}</div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ pdf.pages }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ formatBytes(pdf.size) }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{{ pdf.pages }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{{ formatBytes(pdf.size)
+                }}</td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
-                'bg-blue-100 text-blue-800': pdf.status === 'completed',
+                'bg-[#691831]/10 text-[#691831] dark:bg-[#c44569]/20 dark:text-[#c44569]': pdf.status === 'completed',
                 'bg-yellow-100 text-yellow-800': pdf.status === 'processing',
-                'bg-gray-100 text-gray-800': pdf.status === 'pending',
+                'bg-gray-100 dark:bg-neutral-800 text-gray-800 dark:text-gray-200': pdf.status === 'pending',
                 'bg-red-100 text-red-800': pdf.status === 'failed'
               }">
                   {{ pdf.status === 'completed' ? 'Completado' : pdf.status === 'processing' ? 'Procesando' : pdf.status
                   === 'pending' ? 'Pendiente' : 'Error' }}
                 </span>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
                 <span *ngIf="pdf.used_ocr"
                   class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">Si</span>
                 <span *ngIf="!pdf.used_ocr" class="text-gray-500">No</span>
@@ -694,7 +784,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <div class="flex justify-end space-x-2">
                   <button (click)="$event.stopPropagation(); viewText(pdf.id)"
-                    class="px-3 py-1.5 text-xs bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+                    class="px-3 py-1.5 text-xs bg-[#691831] text-white dark:bg-[#c44569] rounded-lg hover:bg-[#A02142] transition-colors font-medium"
                     [disabled]="pdf.status !== 'completed'">
                     Ver
                   </button>
@@ -718,114 +808,192 @@
         </table>
       </div>
     </section>
-<section *ngIf="activeTab === 'lotes'" class="space-y-6">
- <button
-    (click)="recargar()"
-    class="inline-flex items-center gap-2 px-4 py-2
-           bg-blue-600 hover:bg-blue-700
-           text-white text-sm font-medium
-           rounded-lg shadow
-           transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
-           active:scale-95">
-    
-    <!-- Icono opcional -->
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
-         viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round"
-            d="M4 4v6h6M20 20v-6h-6M5 19a9 9 0 0114-7M19 5a9 9 0 00-14 7"/>
-    </svg>
+    <section *ngIf="activeTab === 'lotes'" class="space-y-6">
 
-    Recargar
-  </button>  <h3 class="text-lg font-semibold text-gray-800">
-    Procesos de carga masiva
-  </h3>
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+        Procesos de carga masiva
+      </h3>
 
-  <!-- Loading -->
-  <div *ngIf="isLoadingLotes()" class="flex items-center space-x-2 text-gray-600">
-    <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      <path class="opacity-75" fill="currentColor"
-        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-    </svg>
-    <span>Cargando lotes...</span>
-  </div>
+      <!-- Loading -->
+      <div *ngIf="isLoadingLotes()" class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+        <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+        <span>Cargando lotes...</span>
+      </div>
 
-  <!-- Table -->
-  <div *ngIf="!isLoadingLotes() && lotesUsuario.length > 0"
-       class="bg-gray-50 rounded-xl overflow-hidden shadow-sm">
+      <!-- Table -->
+      <div *ngIf="!isLoadingLotes() && lotesUsuario.length > 0"
+        class="bg-gray-50 dark:bg-[#131314] rounded-xl overflow-visible shadow-sm">
 
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Lote</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Archivos</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Completados</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Progreso</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Último proceso</th>
-        </tr>
-      </thead>
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-100 dark:bg-neutral-800">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider
+               text-gray-700 dark:text-gray-300">Lote</th>
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider
+               text-gray-700 dark:text-gray-300">Archivos</th>
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider
+               text-gray-700 dark:text-gray-300">Completados</th>
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider
+               text-gray-700 dark:text-gray-300">Progreso</th>
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider
+               text-gray-700 dark:text-gray-300">Último proceso</th>
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider
+ text-gray-700 dark:text-gray-300">
+                Estado
+              </th>
 
-      <tbody class="bg-gray-50 divide-y divide-gray-200">
-        <tr *ngFor="let lote of lotesUsuario"
-            class="hover:bg-gray-100 transition-colors">
+            </tr>
+          </thead>
 
-          <td class="px-6 py-4 text-sm font-medium text-gray-900">
-            {{ lote.loteId }}
-          </td>
+          <tbody class="bg-gray-50 dark:bg-[#131314] divide-y divide-gray-200 dark:divide-neutral-700">
+            <ng-container *ngFor="let lote of lotesUsuario">
+                          <tr 
+              class="transition-colors hover:bg-gray-100 dark:hover:bg-neutral-700 dark:bg-neutral-800">
 
-          <td class="px-6 py-4 text-sm text-gray-700">
-            {{ lote.totalArchivos }}
-          </td>
+              <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                {{ lote.loteId }}
+              </td>
 
-          <td class="px-6 py-4 text-sm text-gray-700">
-            {{ lote.completados }}
-          </td>
+              <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                {{ lote.totalArchivos }}
+              </td>
 
-          <td class="px-6 py-4">
-            <div class="flex items-center space-x-3">
-              <div class="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  class="h-2 rounded-full transition-all"
-                  [ngClass]="{
-                    'bg-green-500': lote.porcentaje === 100,
-                    'bg-blue-500': lote.porcentaje < 100
-                  }"
-                  [style.width.%]="lote.porcentaje">
+              <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                <div class="flex items-center justify-between text-xs text-gray-600">
+                  <!-- <span>{{ lote.completados }} / {{ lote.totalArchivos }}</span> -->
+                  <span class="font-semibold">
+                    {{ lote.completados }} / {{ lote.totalArchivos }}
+                  </span>
+
                 </div>
-              </div>
-              <span class="text-xs font-medium text-gray-700 min-w-[40px]">
-                {{ lote.porcentaje }}%
-              </span>
-            </div>
-          </td>
 
-          <td class="px-6 py-4 text-sm text-gray-600">
-            {{ formatDate(lote.ultimoProceso) }}
-          </td>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex flex-col space-y-1">
 
-        </tr>
-      </tbody>
-    </table>
-  </div>
+                  <!-- Barra -->
+                  <div class="flex items-center space-x-3">
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="h-2 rounded-full transition-all" [ngClass]="{
+                    'bg-green-500': (lote?.porcentaje ?? 0) === 100 && (lote?.fallados ?? 0) === 0,
+                    'bg-red-500': (lote?.fallados ?? 0) > 0,
+                    'bg-yellow-500': (lote?.porcentaje ?? 0) < 100 && (lote?.fallados ?? 0) === 0
+                  }" [style.width.%]="lote?.porcentaje ?? 0">
+                      </div>
 
-  <!-- Empty state -->
-  <div *ngIf="!isLoadingLotes() && lotesUsuario.length === 0"
-       class="text-center text-gray-500 py-8">
-    No hay lotes registrados.
-  </div>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 min-w-[40px]">
+                      {{ lote.porcentaje }}%
+                    </span>
+                  </div>
 
-</section>
+                  <!-- Mensaje de error con tooltip -->
+                  <div *ngIf="(lote?.fallados ?? 0) > 0"
+                    class="relative group text-xs text-red-600 dark:text-red-400 flex items-center gap-1 ">
+
+                    ⚠ {{ lote?.fallados }} archivo(s) con error
+
+                    <!-- Tooltip -->
+                    <div class="absolute z-[9999] hidden group-hover:block
+                  top-full left-0 mt-2 w-80
+                  bg-gray-900 text-white text-xs
+                  rounded-lg shadow-lg p-3">
+
+                      <ul class="list-disc pl-4 space-y-1">
+                        <li *ngFor="let error of lote?.errores">
+                          {{ error }}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+
+                </div>
+              </td>
+  
+
+              <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                {{ formatDate(lote.ultimoProceso) }}
+              </td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="{
+      'bg-green-100 text-green-700': lote.porcentaje === 100 && lote.fallados === 0,
+      'bg-red-100 text-red-700': lote.fallados > 0,
+      'bg-yellow-100 text-yellow-700': lote.porcentaje < 100 && lote.fallados === 0
+    }">
+                  <ng-container *ngIf="lote.porcentaje === 100 && lote.fallados === 0">
+                    Completado
+                  </ng-container>
+                  <ng-container *ngIf="lote.fallados > 0">
+                    Con errores
+                  </ng-container>
+                  <ng-container *ngIf="lote.porcentaje < 100 && lote.fallados === 0">
+                    En proceso
+                  </ng-container>
+                </span>
+              </td>
+
+
+            </tr>
+
+
+            <!-- Fila extra: archivos procesados -->
+            <tr *ngIf="lote.porcentaje === 100 && lote.fallados === 0 && lote.archivosProcesados.length"
+              class="bg-white dark:bg-neutral-900">
+              <td colspan="6" class="px-6 py-4">
+                <div class="space-y-2">
+                  <h4 class="text-sm font-semibold text-green-700 dark:text-green-400">
+                    📄 Archivos procesados
+                  </h4>
+
+                  <ul class="space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                    <li *ngFor="let archivo of lote.archivosProcesados" class="flex items-center justify-between p-2 rounded-lg
+                 bg-gray-50 dark:bg-neutral-800">
+                      <div class="flex flex-col">
+                        <span class="font-medium">
+                          {{ archivo.nombreArchivo }}
+                        </span>
+                        <span class="text-xs text-gray-500">
+                          Documento ID: {{ archivo.metadata?.documentoId ?? '—' }}
+                        </span>
+                      </div>
+
+                      <span class="text-xs text-green-600 font-semibold">
+                        ✔ Procesado
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+
+            </ng-container>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty state -->
+      <div *ngIf="!isLoadingLotes() && lotesUsuario.length === 0" class="text-center text-gray-500 py-8">
+        No hay lotes registrados.
+      </div>
+
+    </section>
 
   </main>
 </div>
 
 <!-- Context Menu -->
-<div *ngIf="showContextMenu" class="fixed z-50 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-48"
+<div *ngIf="showContextMenu"
+  class="fixed z-50 bg-white rounded-lg shadow-xl border border-gray-200 dark:border-neutral-700 py-2 min-w-48"
   [style.left.px]="contextMenuX" [style.top.px]="contextMenuY" (mouseleave)="closeContextMenu()">
   <button (click)="viewText(contextMenuPdf?.id); closeContextMenu()"
-    class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-3">
-    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-neutral-800 flex items-center space-x-3">
+    <svg class="w-4 h-4 text-[#691831] dark:text-[#c44569]" fill="none" stroke="currentColor" stroke-width="2"
+      viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round"
         d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
       <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -833,7 +1001,7 @@
     <span>Ver texto</span>
   </button>
   <button (click)="downloadText(contextMenuPdf?.id); closeContextMenu()"
-    class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-3">
+    class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-neutral-800 flex items-center space-x-3">
     <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round"
         d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -841,22 +1009,24 @@
     <span>Descargar TXT</span>
   </button>
   <button (click)="downloadSearchablePDF(contextMenuPdf?.id); closeContextMenu()"
-    class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-3">
-    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-neutral-800 flex items-center space-x-3">
+    <svg class="w-4 h-4 text-[#691831] dark:text-[#c44569]" fill="none" stroke="currentColor" stroke-width="2"
+      viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round"
         d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
     </svg>
     <span>Descargar PDF con texto</span>
   </button>
   <button (click)="selectedPdfId = contextMenuPdf?.id; activeTab = 'search'; closeContextMenu()"
-    class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-3">
-    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-neutral-800 flex items-center space-x-3">
+    <svg class="w-4 h-4 text-[#691831] dark:text-[#c44569]" fill="none" stroke="currentColor" stroke-width="2"
+      viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round"
         d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
     </svg>
     <span>Buscar en documento</span>
   </button>
-  <div class="border-t border-gray-200 my-1"></div>
+  <div class="border-t border-gray-200 dark:border-neutral-700 my-1"></div>
   <button (click)="deletePdf(contextMenuPdf?.id, contextMenuPdf?.filename); closeContextMenu()"
     class="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-3">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -875,7 +1045,7 @@
   (click)="closeTextModal()">
   <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col"
     (click)="$event.stopPropagation()">
-    <div class="bg-blue-500 text-white p-6 rounded-t-xl flex justify-between items-center">
+    <div class="bg-[#691831] text-white dark:bg-[#c44569] p-6 rounded-t-xl flex justify-between items-center">
       <div>
         <h3 class="text-xl font-bold">Texto Extraido del PDF</h3>
         <p class="text-sm text-white/80 mt-1">{{ selectedPdfFilename() }}</p>
@@ -887,10 +1057,10 @@
       </button>
     </div>
 
-    <div class="p-6 overflow-y-auto flex-1 bg-gray-50">
-      <div class="bg-white rounded-xl p-6 border border-gray-200">
-        <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
-          <div class="flex items-center space-x-4 text-sm text-gray-600">
+    <div class="p-6 overflow-y-auto flex-1 bg-gray-50 dark:bg-neutral-900">
+      <div class="bg-white dark:bg-[#131314] rounded-xl p-6 border border-gray-200  dark:border-neutral-700">
+        <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-200 dark:border-neutral-700">
+          <div class="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
             <span class="flex items-center space-x-2">
               <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -906,13 +1076,14 @@
             </span>
           </div>
         </div>
-        <pre class="whitespace-pre-wrap text-sm text-gray-800 leading-relaxed font-mono">{{ pdfTextContent }}</pre>
+        <pre
+          class="whitespace-pre-wrap text-sm text-gray-800 dark:text-gray-200 leading-relaxed font-mono">{{ pdfTextContent }}</pre>
       </div>
     </div>
 
-    <div class="p-4 bg-gray-100 rounded-b-xl flex justify-end">
+    <div class="p-4 bg-gray-100 dark:bg-neutral-800 rounded-b-xl flex justify-end">
       <button (click)="closeTextModal()"
-        class="px-6 py-3 border-2 border-blue-500 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 hover:border-blue-600 transition-all">
+        class="px-6 py-3 border-2  bg-[#691831] text-white dark:bg-[#c44569] font-semibold rounded-xl  hover:border-[#A02142] dark:hover:border-[#d4708a] transition-all">
         Cerrar
       </button>
     </div>

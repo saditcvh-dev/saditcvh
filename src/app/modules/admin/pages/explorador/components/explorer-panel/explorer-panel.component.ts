@@ -64,6 +64,7 @@ export class ExplorerPanelComponent {
    * Input handling
    * ======================= */
 onInputChange(event: Event): void {
+  console.log("clic")
   const value = (event.target as HTMLInputElement).value;
   this.filterText.set(value);
 

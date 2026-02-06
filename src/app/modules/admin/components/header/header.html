@@ -20,10 +20,10 @@
           </div>
         </div>
 
-        <div class="flex-1 max-w-xl mx-4 hidden md:block min-w-0">
+        <div class="flex-1 rounded-full max-w-xl mx-4 hidden md:block min-w-0">
           <label for="globalSearch" class="sr-only">Buscar en el sistema</label>
-          <input id="globalSearch" type="text" placeholder="Buscar expediente, serie, usuario…"
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white min-w-0"
+          <input id="globalSearch" type="text" placeholder="Ingresa un texto para realizar la busqueda…"
+            class="w-full pl-10 pr-4 py-2 rounded-full  border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white min-w-0"
             [(ngModel)]="searchText" (focus)="isSearchModalOpen = true" />
         </div>
 
@@ -39,7 +39,7 @@
 
           <div class="relative">
             <div class="flex items-center gap-2">
-      
+
               <div class="hidden md:block min-w-0">
                 <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{role_user}}</p>
                 <!-- <p class="text-xs text-gray-500 dark:text-gray-400 truncate">admin@hidalgo.gob.mx</p> -->
@@ -66,7 +66,7 @@
             <div *ngIf="profileOpen"
               class="absolute right-0 mt-2 w-64 bg-white dark:bg-[#050505] rounded-lg shadow-lg border border-gray-200 dark:border-neutral-900 z-50"
               (clickOutside)="profileOpen = false">
-              
+
 
               <div class="py-2">
                 <a *ngIf="isAdmin()" routerLink="/admin/usuarios" (click)="onNavLinkClick()"
@@ -173,22 +173,27 @@
       </div>
 
       <div *ngIf="mobileSearchOpen && isMobile" class="md:hidden py-3 border-t border-gray-100 dark:border-gray-800">
-        <label for="mobileSearch" class="sr-only">Buscar</label>
-        <div class="relative">
-          <input id="mobileSearch" type="text" placeholder="Buscar expediente, serie, usuario…"
-            class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            (input)="onSearch($event)" (keydown.enter)="closeMobileSearch()" />
-          <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-400 dark:text-gray-500" fill="none"
-            stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <button (click)="closeMobileSearch()"
-            class="absolute right-3 top-3.5 p-1 rounded hover:bg-gray-100 dark:hover:bg-neutral-900">
-            <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <div class="rounded-lg rounded-xl rounded-2xl"
+          style="background-color: #e5e7eb; background: #e5e7eb; border-radius: 16px;">
+          <label for="mobileSearch" class="sr-only">Buscar</label>
+          <div class="relative p-4 px-4">
+            <input id="mobileSearch" type="text" placeholder="Buscar expediente, serie, usuario…"
+              class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg rounded-full rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              style="border-radius: 12px; border-radius: 16px;" (input)="onSearch($event)"
+              (keydown.enter)="closeMobileSearch()" />
+            <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-400 dark:text-gray-500" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-          </button>
+            <button (click)="closeMobileSearch()"
+              class="absolute right-3 top-3.5 p-1 rounded hover:bg-gray-100 dark:hover:bg-neutral-900">
+              <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -196,5 +201,6 @@
 </header>
 
 
-<app-busqueda [isVisible]="isSearchModalOpen" [(searchTerm)]="searchText" (close)="isSearchModalOpen = false">
+<app-busqueda [isVisible]="isSearchModalOpen" [(searchTerm)]="searchText" (close)="isSearchModalOpen = false" (searchSubmit)="onAdvancedSearch($event)"
+>
 </app-busqueda>

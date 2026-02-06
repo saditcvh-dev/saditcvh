@@ -1,6 +1,7 @@
 import { Component, EventEmitter, HostListener, inject, Input, OnInit, Output } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth';
 import { AutorizacionTreeService } from '../../../../core/services/explorador-autorizacion-tree.service';
+import { BusquedaService } from '../../../../core/services/busqueda';
 
 @Component({
   selector: 'app-header',
@@ -9,12 +10,12 @@ import { AutorizacionTreeService } from '../../../../core/services/explorador-au
 })
 export class Header implements OnInit {
 
-  searchText:string=''
+  searchText: string = ''
   themeSubmenuOpen = false;
   currentTheme: 'light' | 'dark' | 'system' = 'system';
 
   private treeService = inject(AutorizacionTreeService);
-
+  busquedaService = inject(BusquedaService);
   @Input() sidebarOpen!: boolean;
   @Input() isMobileView!: boolean;
 
@@ -23,6 +24,7 @@ export class Header implements OnInit {
   isMobile = false;
   profileOpen = false;
   mobileSearchOpen = false;
+
 
   constructor(private authService: AuthService) {
     this.checkViewport();
@@ -226,22 +228,13 @@ export class Header implements OnInit {
     }
   }
 
-  goToProfile() {
-    // Navegar al perfil
-    console.log('Ir al perfil');
-  }
-
-  logout() {
-    // Lógica de cierre de sesión
-    console.log('Cerrar sesión');
-  }
 
 
 
   // nuevas funciones para busqueda con modal 
-  
-  isSearchModalOpen!:boolean;
-    // Se activa al hacer clic en el input del header
+
+  isSearchModalOpen!: boolean;
+  // Se activa al hacer clic en el input del header
   openSearch() {
     this.isSearchModalOpen = true;
   }
@@ -269,6 +262,22 @@ export class Header implements OnInit {
       },
       error: (err) => {
         console.error('Error al cerrar sesión', err);
+      }
+    });
+  }
+  onAdvancedSearch(term: string) {
+    console.log('🔍 Búsqueda avanzada:', term);
+
+    this.busquedaService.buscar(term).subscribe({
+      next: (data) => {
+        console.log('Resultados globales:', data);
+        // aquí puedes:
+        // 🔹 actualizar un store
+        // 🔹 navegar con router
+        // 🔹 mostrar otra vista
+      },
+      error: () => {
+        console.warn('Sin resultados');
       }
     });
   }

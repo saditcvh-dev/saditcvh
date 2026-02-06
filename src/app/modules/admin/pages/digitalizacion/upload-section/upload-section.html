@@ -2,30 +2,31 @@
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Upload Form -->
     <div class="lg:col-span-2">
-      <div class="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
-      <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center">
+      <div class="bg-white dark:bg-[#050505] rounded-xl shadow-sm p-8 
+            border border-gray-200 dark:border-neutral-700">
+      <h3 class="text-lg font-bold text-gray-900 dark:text-neutral-100 mb-6 flex items-center">
         Seleccionar PDFs o archivo ZIP
       </h3>
 
 
 <!-- En el área de dropzone -->
-<div class="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center transition-all hover:border-blue-500 hover:bg-blue-50/30 cursor-pointer group"
+<div class="border-2 border-dashed border-gray-300 dark:border-neutral-600 rounded-xl p-12 text-center transition-all hover:border-blue-500 hover:bg-blue-50/30 dark:hover:bg-[#691831] dark:bg-[#c44569]/10"
   (click)="fileInput.click()">
   <input #fileInput type="file" accept=".pdf,.zip,.rar" class="hidden" (change)="onFilesSelected($event)" [multiple]="true" />
-  <div class="text-blue-500 mb-4 group-hover:scale-110 transition-transform">
+  <div class=" text-[#691831] dark:text-[#c44569] mb-4 group-hover:scale-110 transition-transform">
     <svg class="w-20 h-20 mx-auto" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round"
         d="M12 16v-8m0 0l-3 3m3-3l3 3M20 16.5a4.5 4.5 0 00-4.5-4.5h-.75A6.75 6.75 0 105.25 18h8.5" />
     </svg>
   </div>
-  <p class="text-gray-900 mb-2 font-semibold text-lg">
+  <p class="text-gray-900 dark:text-neutral-100 mb-2 font-semibold text-lg">
     {{ selectedFiles.length > 0 
         ? (useZip 
             ? 'Archivo comprimido seleccionado'
             : selectedFiles.length + ' PDF(s) seleccionados')
         : 'Arrastra o haz clic para seleccionar' }}
   </p>
-  <p class="text-sm text-gray-500">
+  <p class="text-sm text-gray-500 dark:text-neutral-400">
     {{ useZip 
         ? 'Formato: ZIP o RAR (máx. 50MB)' 
         : 'PDFs individuales o múltiples (máx. 50MB cada uno)' }}
@@ -35,17 +36,18 @@
 <!-- Mostrar tipo de archivo seleccionado -->
 <div *ngIf="selectedFiles.length > 0" class="mt-6 space-y-3">
   <div *ngFor="let file of selectedFiles; let i = index"
-       class="p-4 bg-green-50 rounded-xl border border-green-200 flex items-center justify-between">
+       class="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-700 flex items-center justify-between">
     <div class="flex items-center space-x-3">
       <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path *ngIf="useZip" stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
         <path *ngIf="!useZip" stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75" />
       </svg>
       <div>
-        <p class="font-semibold text-gray-900">{{ file.name }}</p>
-        <p class="text-xs text-gray-600">
+        <p class="font-semibold text-gray-900 dark:text-neutral-100">{{ file.name }}</p>
+        <p class="text-xs text-gray-600 dark:text-neutral-400">
           {{ formatBytes(file.size) }}
-          <span *ngIf="useZip" class="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+          <span *ngIf="useZip" class="ml-2 px-2 py-1 bg-blue-100 text-blue-800 
+             dark:bg-blue-900/30 dark:text-blue-300 text-xs rounded-full">
             COMPRIMIDO
           </span>
         </p>
@@ -59,55 +61,64 @@
 </div>
 
         <!-- OCR Option -->
-        <div class="mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200">
+        <div class="mt-6 p-5 bg-gray-50 dark:bg-neutral-900 rounded-xl 
+            border border-gray-200 dark:border-neutral-700 ">
           <label class="flex items-center space-x-4 cursor-pointer">
             <div class="relative">
               <input type="checkbox" [(ngModel)]="useOcr" class="sr-only peer" />
-              <div class="w-12 h-7 bg-gray-300 rounded-full peer peer-checked:bg-blue-500 transition-colors"></div>
+              <div class="w-12 h-7 bg-gray-300 dark:bg-neutral-700 rounded-full peer peer-checked:bg-[#691831] dark:bg-[#c44569] transition-colors"></div>
               <div class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
             </div>
             <div class="flex-1">
-              <span class="text-gray-900 font-semibold">Usar OCR para extracción de texto</span>
-              <p class="text-sm text-gray-600 mt-1">Recomendado para PDFs escaneados. El proceso puede tardar más tiempo.</p>
+              <span class="text-gray-900 dark:text-neutral-100 font-semibold">Usar OCR para extracción de texto</span>
+              <p class="text-sm text-gray-600 dark:text-neutral-400 mt-1">Recomendado para PDFs escaneados. El proceso puede tardar más tiempo.</p>
             </div>
           </label>
         </div>
 
         <!-- Upload Button -->
-        <button (click)="uploadFile()" [disabled]="selectedFiles.length === 0 || isUploading()"
-          class="w-full mt-6 py-4 border-2 border-blue-500 bg-blue-500 text-white font-bold rounded-xl transition-all hover:bg-blue-600 hover:border-blue-600 disabled:border-gray-300 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center">
+      <button (click)="uploadFile()" [disabled]="selectedFiles.length === 0 || isUploading()" class="w-full mt-6 py-4
+              border-2 border-[#A02142]
+              bg-[#691831] dark:bg-[#c44569]
+              text-white font-bold rounded-xl
+              transition-all
+              hover:bg-[#A02142] hover:border-[#691831]
+              disabled:border-gray-300 disabled:bg-gray-300
+              dark:disabled:border-neutral-700 dark:disabled:bg-neutral-700
+              disabled:cursor-not-allowed
+              flex items-center justify-center">
           <span *ngIf="!isUploading()" class="flex items-center space-x-2">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-            </svg>
-            <span>Subir y procesar PDF</span>
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              <span>Subir y procesar PDF</span>
           </span>
+
           <span *ngIf="isUploading()" class="flex items-center space-x-3">
-            <div class="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
-            <span>Procesando...</span>
+              <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span>Procesando…</span>
           </span>
-        </button>
+      </button>
 
         <!-- Upload Status -->
-        <div *ngIf="isUploading()" class="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+        <div *ngIf="isUploading()" class="mt-6 p-4 bg-[#691831] dark:bg-[#c44569] rounded-xl border border-blue-200 dark:border-blue-700">
           <div class="flex items-center justify-between text-sm mb-3">
-            <span class="text-gray-700 font-medium">Estado del procesamiento:</span>
-            <span class="font-semibold text-blue-500">En progreso</span>
+            <span class="text-gray-700 dark:text-neutral-300 font-medium">Estado del procesamiento:</span>
+            <span class="font-semibold  text-[#691831] dark:text-[#c44569]">En progreso</span>
           </div>
-          <div class="w-full bg-gray-200 rounded-full h-3">
-            <div class="bg-blue-500 h-3 rounded-full animate-pulse" style="width: 70%"></div>
+          <div class="w-full bg-gray-200 dark:bg-neutral-700 rounded-full h-3">
+            <div class="bg-[#691831] dark:bg-[#c44569] h-3 rounded-full animate-pulse" style="width: 70%"></div>
           </div>
-          <p class="text-xs text-gray-600 text-center mt-3">El archivo aparecerá en la lista cuando termine el procesamiento.</p>
+          <p class="text-xs text-gray-600 dark:text-neutral-300 text-center mt-3">El archivo aparecerá en la lista cuando termine el procesamiento.</p>
         </div>
       </div>
     </div>
 
     <!-- Recent Uploads -->
     <div class="lg:col-span-1">
-      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-          <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <div class="bg-white dark:bg-[#050505] rounded-xl shadow-sm p-6 border border-gray-200 dark:border-neutral-700">
+        <h3 class="text-lg font-bold text-gray-900 dark:text-neutral-100 mb-4 flex items-center">
+          <svg class="w-5 h-5 mr-2  text-[#691831] dark:text-[#c44569]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           Procesos Recientes
@@ -119,13 +130,13 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <p class="text-sm text-gray-500">No hay procesos recientes</p>
+          <p class="text-sm text-gray-500 dark:text-neutral-400">No hay procesos recientes</p>
         </div>
 
         <div *ngIf="recentUploads.length > 0" class="space-y-3 max-h-96 overflow-y-auto">
-          <div *ngFor="let upload of recentUploads" class="p-3 border border-gray-200 rounded-lg">
+          <div *ngFor="let upload of recentUploads" class="p-3 border border-gray-200 dark:border-neutral-700 rounded-lg">
             <div class="flex items-center justify-between mb-2">
-              <p class="text-sm font-medium text-gray-900 truncate flex-1">{{ upload.filename }}</p>
+              <p class="text-sm font-medium text-gray-900 dark:text-neutral-100 truncate flex-1">{{ upload.filename }}</p>
               <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ml-2" [ngClass]="{
                   'bg-green-100 text-green-800': upload.status === 'completed',
                   'bg-yellow-100 text-yellow-800': upload.status === 'processing',
@@ -137,11 +148,11 @@
                    upload.status === 'completed' ? 'Completado' : 'Error' }}
               </span>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-1.5">
+            <div class="w-full bg-gray-200 dark:bg-neutral-700 rounded-full h-1.5">
               <div class="h-1.5 rounded-full transition-all duration-300" [ngClass]="{
                   'bg-green-500': upload.status === 'completed',
                   'bg-yellow-500': upload.status === 'processing',
-                  'bg-blue-500': upload.status === 'uploading',
+                  'bg-[#691831] dark:bg-[#c44569]': upload.status === 'uploading',
                   'bg-red-500': upload.status === 'failed'
                 }" [style.width.%]="upload.progress"></div>
             </div>

@@ -134,11 +134,11 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
     // this.startPolling();
   }
-  recargar() {
+  // recargar() {
 
-    this.loadPdfsList();
-    this.loadLotesUsuario();
-  }
+  //   // this.loadPdfsList();
+  //   this.loadLotesUsuario();
+  // }
   loadLotesUsuario(): void {
     this.isLoadingLotes.set(true);
 
@@ -192,6 +192,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
   // ========== FUNCIONES PARA BÚSQUEDA INDIVIDUAL ==========
   loadPdfsList(): void {
+    this.loadLotesUsuario();
     this.pdfService.listPdfs()
       .subscribe({
         next: (result) => {
