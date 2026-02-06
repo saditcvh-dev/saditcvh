@@ -9,7 +9,7 @@ import { AutorizacionTreeService } from '../../../../core/services/explorador-au
 })
 export class Header implements OnInit {
 
-
+  searchText:string=''
   themeSubmenuOpen = false;
   currentTheme: 'light' | 'dark' | 'system' = 'system';
 
@@ -225,6 +225,35 @@ export class Header implements OnInit {
       }
     }
   }
+
+  goToProfile() {
+    // Navegar al perfil
+    console.log('Ir al perfil');
+  }
+
+  logout() {
+    // Lógica de cierre de sesión
+    console.log('Cerrar sesión');
+  }
+
+
+
+  // nuevas funciones para busqueda con modal 
+  
+  isSearchModalOpen!:boolean;
+    // Se activa al hacer clic en el input del header
+  openSearch() {
+    this.isSearchModalOpen = true;
+  }
+
+  // Se activa cuando el modal emite el evento de cerrar
+  handleClose() {
+    this.isSearchModalOpen = false;
+  }
+
+
+
+
 
   /**
     * Maneja la lógica de cierre de sesión.

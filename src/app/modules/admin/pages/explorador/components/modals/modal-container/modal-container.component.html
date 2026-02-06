@@ -45,6 +45,19 @@
 				</app-create-autorizacion-modal>
 			</div>
 			<!-- Modal de Confirmación de Eliminación -->
+			<div *ngIf="activeModalType === 'delete'">
+			<app-delete-confirmation-modal
+				[modalState]="modalState"
+				(confirm)="onModalAction()"
+				(cancel)="onCloseModal()">
+			</app-delete-confirmation-modal>
+			</div>
+			<!-- <div *ngIf="activeModalType === 'delete'" class="space-y-4">
+			<p class="text-sm text-gray-700 dark:text-neutral-300">
+				{{ modalState().message }}
+			</p>
+			</div> -->
+			<!-- Modal de Confirmación de Eliminación -->
 			<!-- <div *ngIf="activeModalType === 'delete'">
         <app-delete-confirmation-modal
           [modalState]="modalState">
