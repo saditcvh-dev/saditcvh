@@ -51,30 +51,7 @@ export class AutorizacionTreeService {
   })
 );
 
-  // tree$ = combineLatest([
-  //   this.municipioService.municipios$,
-  //   this.tipoService.tipos$,
-  //   this.autorizacionService.autorizaciones$,
-  //   this.autorizacionService.filtros$
-  // ]).pipe(
-  //   map(([municipios, tipos, autorizaciones, filtros]) => {
-  //     if (this.lastTree) {
-  //       this.saveOpenState(this.lastTree);
-  //     }
 
-  //     const newTree = this.buildCompleteTree(
-  //       municipios,
-  //       tipos,
-  //       autorizaciones,
-  //       !!filtros
-  //     );
-
-  //     this.restoreOpenState(newTree);
-  //     this.lastTree = newTree;
-
-  //     return newTree;
-  //   })
-  // );
 
   reset(): void {
     this.municipioService.reset();
