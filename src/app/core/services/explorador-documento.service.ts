@@ -94,6 +94,7 @@ export class DocumentoService {
     this.loadingState.set(true);
     this.errorState.set(null);
 
+    console.log("aqui--")
     this.http.get<ApiResponse<Documento[]>>(`${this.apiUrl}/autorizacion/${autorizacionId}`,{withCredentials: true})
       .pipe(
         catchError(this.handleError)

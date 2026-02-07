@@ -13,8 +13,8 @@ export class ContextMenuComponent {
   @Output() action = new EventEmitter<string>();
   @Output() close = new EventEmitter<void>();
   @ViewChild('menuContainer') menuContainer!: ElementRef;
+  private authService = inject(AuthService);
   @HostListener('document:click', ['$event'])
-    private authService = inject(AuthService);
 
   onDocumentClick(event: MouseEvent): void {
     if (!this.contextMenu || !this.contextMenu.visible) return;

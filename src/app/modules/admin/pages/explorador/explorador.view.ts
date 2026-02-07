@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, effect } from '@angular/core';
 import { AutorizacionTreeNode } from '../../../../core/models/autorizacion-tree.model';
 import { AutorizacionTreeService } from '../../../../core/services/explorador-autorizacion-tree.service';
 import { AutorizacionService } from '../../../../core/services/explorador-autorizacion.service';
@@ -82,10 +82,20 @@ export class ExploradorView implements OnInit {
   toggleExplorer() {
     this.isCollapsed = !this.isCollapsed;
   }
-    // showControlPanel = signal<boolean>(true);
-  
-  // ... resto de propiedades
-  
+  constructor() {
+    effect(() => {
+      const node = this.selectedNode();
+
+      if (node?.type === 'autorizacion') {
+        const autorizacionId = node.data.id;
+
+        this.selectedAutorizacionId.set(autorizacionId);
+        this.documentoService.cargarDocumentosPorAutorizacion(autorizacionId);
+      }
+    });
+  }
+
+
   onShowControlPanelChange(value: boolean): void {
     this.showControlPanel.set(value);
   }
@@ -156,7 +166,7 @@ export class ExploradorView implements OnInit {
     if (node.type === 'autorizacion') {
 
       this.selectedAutorizacionId.set(node.data.id);
-      this.documentoService.cargarDocumentosPorAutorizacion(node.data.id);
+      // this.documentoService.cargarDocumentosPorAutorizacion(node.data.id);
 
     }
   }

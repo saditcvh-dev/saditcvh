@@ -31,6 +31,8 @@ export class ExploradorStateService {
 
   selectNode(node: AutorizacionTreeNode, closeMenu: boolean = true,expand: boolean = false
 ): void {
+  console.log("node")
+  console.log(node)
     this._selectedNode.set(node);
     this.updateBreadcrumbs(node);
 

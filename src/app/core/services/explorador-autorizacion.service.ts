@@ -177,6 +177,7 @@ reset(): void {
   }
 
   getAutorizacionPorId(id: number): Observable<{ success: boolean; message: string; data: Autorizacion }> {
+
     this.updateState({ loading: true, error: null });
 
     return this.http.get<{ success: boolean; message: string; data: Autorizacion }>(`${this.apiUrl}/${id}`,{ withCredentials: true }).pipe(
