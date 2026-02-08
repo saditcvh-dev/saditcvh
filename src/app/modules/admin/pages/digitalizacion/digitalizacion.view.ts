@@ -348,11 +348,11 @@ export class DigitalizacionView implements OnInit, OnDestroy {
       return;
     }
 
-    const url = `/docs/${pdf.id}`;
+    const url = `/docs/${pdf.id}.pdf`;
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${pdf.filename}.pdf`;
+    a.download = `${pdf.filename}`;
     a.click();
   }
   viewText(pdfId: string): void {
