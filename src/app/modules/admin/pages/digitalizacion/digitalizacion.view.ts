@@ -347,11 +347,8 @@ export class DigitalizacionView implements OnInit, OnDestroy {
       this.stateService.showToast('El PDF aún no ha terminado de procesarse', 'error');
       return;
     }
-    if (!pdf.extracted_text_path) return;
 
-    const realName = pdf.extracted_text_path.split('/').pop();
-
-    const url = `/docs/${realName}`;
+    const url = `/docs/${pdf.id}`;
 
     const a = document.createElement('a');
     a.href = url;
