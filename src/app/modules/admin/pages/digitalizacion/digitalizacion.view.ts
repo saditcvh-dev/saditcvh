@@ -15,6 +15,8 @@ import {
 import { ExploradorStateService } from '../explorador/services/explorador-state.service';
 import { CargaMasivaService, LoteOCR } from '../../../../core/services/digitalizacion-carga-masiva.service';
 // import Swal from 'sweetalert2';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 
 @Component({
   standalone: false,
