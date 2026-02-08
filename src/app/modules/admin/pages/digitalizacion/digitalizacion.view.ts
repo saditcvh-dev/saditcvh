@@ -127,13 +127,20 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
     // private spinner: NgxSpinnerService
   ) { }
+  private refresh$ = new Subject<void>();
+  private destroy$ = new Subject<void>();
 
   ngOnInit() {
-    this.loadPdfsList();
-    this.loadLotesUsuario();
-
-    // this.startPolling();
+    this.refresh$
+      .pipe(
+        debounceTime(500),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => this.loadPdfsList());
+  
+    this.refresh$.next();
   }
+
   // recargar() {
 
   //   // this.loadPdfsList();
@@ -187,6 +194,8 @@ export class DigitalizacionView implements OnInit, OnDestroy {
       clearInterval(this.pollTimer);
       this.pollTimer = null;
     }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 
@@ -536,7 +545,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   get totalPdfsCount(): number {
     return this.pdfsList.length;
   }
-  onUploadCompleted(): void {
-    this.loadPdfsList();
+  onUploadCompleted() {
+    this.refresh$.next();
   }
 }
