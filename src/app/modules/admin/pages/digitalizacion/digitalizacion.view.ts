@@ -346,21 +346,12 @@ export class DigitalizacionView implements OnInit, OnDestroy {
       return;
     }
 
-    this.pdfService.getSearchablePdf(pdfId)   // nuevo endpoint que debes crear
-      .subscribe({
-        next: (blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${pdf.filename}_searchable.pdf`;
-          a.click();
-          window.URL.revokeObjectURL(url);
-          this.stateService.showToast('PDF con texto descargado correctamente', 'success');
-        },
-        error: (error) => {
-          this.stateService.showToast('No se pudo descargar el PDF con texto', 'error');
-        }
-      });
+    const url = `/docs/${pdf.filename}.pdf`;
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${pdf.filename}.pdf`;
+    a.click();
   }
   viewText(pdfId: string): void {
     const pdf = this.pdfsList.find(p => p.id === pdfId);
