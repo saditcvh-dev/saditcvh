@@ -68,7 +68,6 @@ export class ExpRecentComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('📄 Iniciando componente de expedientes recientes...');
     this.loadDocumentosRecientes();
     this.setupAutoRefresh();
   }
@@ -85,13 +84,10 @@ export class ExpRecentComponent implements OnInit, OnDestroy {
   private loadDocumentosRecientes(): void {
     this.isLoading = true;
     this.hasError = false;
-    
-    console.log('📥 Cargando documentos recientes...');
-    
+
     this.http.get<DocumentosResponse>(this.apiUrl)
       .pipe(
         catchError(error => {
-          console.error('❌ Error cargando documentos recientes:', error);
           this.handleError(error);
           return of({
             success: false,
@@ -102,20 +98,15 @@ export class ExpRecentComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(response => {
-        console.log('📄 Respuesta de documentos recientes:', response);
-        
         if (response.success && response.data && response.data.length > 0) {
-          console.log('✅ Documentos recientes cargados exitosamente');
-          
           // Procesar datos del backend
           this.documentos = this.procesarDocumentos(response.data);
           this.hasError = false;
         } else {
-          console.log('⚠️ No se encontraron documentos recientes, usando datos de ejemplo');
           this.documentos = this.getDocumentosEjemplo();
           
           if (response.message) {
-            console.warn('Advertencia:', response.message);
+
           }
         }
         
@@ -124,8 +115,6 @@ export class ExpRecentComponent implements OnInit, OnDestroy {
         
         // Forzar detección de cambios
         this.cdr.detectChanges();
-        console.log('🔄 Estado actualizado, isLoading:', this.isLoading);
-        console.log('📊 Documentos cargados:', this.documentos.length);
       });
   }
 
@@ -262,7 +251,6 @@ export class ExpRecentComponent implements OnInit, OnDestroy {
     
     this.subscription.add(
       refresh$.subscribe(() => {
-        console.log('🔄 Actualizando documentos recientes automáticamente...');
         this.loadDocumentosRecientes();
       })
     );
@@ -272,8 +260,6 @@ export class ExpRecentComponent implements OnInit, OnDestroy {
    *  MANEJO DE ERRORES
    *  =============================== */
   private handleError(error: any): void {
-    console.error('❌ Error en componente de expedientes recientes:', error);
-    
     this.hasError = true;
     this.errorMessage = this.getErrorMessage(error);
     
@@ -341,21 +327,8 @@ export class ExpRecentComponent implements OnInit, OnDestroy {
    *  MÉTODOS PÚBLICOS
    *  =============================== */
   refreshDocumentos(): void {
-    console.log('🔄 Recargando documentos recientes manualmente...');
     this.isLoading = true;
     this.hasError = false;
     this.loadDocumentosRecientes();
-  }
-
-  verExpediente(documentoId: number): void {
-    console.log(`🔍 Ver expediente: ${documentoId}`);
-    // Aquí puedes implementar la navegación al detalle del documento
-    // Ejemplo: this.router.navigate(['/documentos', documentoId]);
-  }
-
-  verTodosDocumentos(): void {
-    console.log('📂 Ver todos los documentos');
-    // Navegar a la lista completa de documentos
-    // Ejemplo: this.router.navigate(['/documentos']);
   }
 }

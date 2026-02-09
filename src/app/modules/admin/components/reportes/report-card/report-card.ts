@@ -38,8 +38,7 @@ export class ReportCard {
     if (this.isLoadingDocumentos) return;
     
     this.isLoadingDocumentos = true;
-    console.log('📄 Generando reporte de documentos...');
-    
+
     this.http.get(this.reporteDocumentosUrl, { responseType: 'blob' })
       .subscribe({
         next: (blob: Blob) => {
@@ -48,11 +47,8 @@ export class ReportCard {
           
           downloadBlob(blob, filename);
           this.isLoadingDocumentos = false;
-          
-          console.log('✅ Reporte de documentos descargado:', filename);
         },
         error: (error) => {
-          console.error('❌ Error generando reporte de documentos:', error);
           this.isLoadingDocumentos = false;
         }
       });
@@ -65,8 +61,7 @@ export class ReportCard {
     if (this.isLoadingUsuarios) return;
     
     this.isLoadingUsuarios = true;
-    console.log('👥 Generando reporte de usuarios...');
-    
+
     this.http.get(this.reporteUsuariosUrl, { responseType: 'blob' })
       .subscribe({
         next: (blob: Blob) => {
@@ -75,11 +70,8 @@ export class ReportCard {
           
           downloadBlob(blob, filename);
           this.isLoadingUsuarios = false;
-          
-          console.log('✅ Reporte de usuarios descargado:', filename);
         },
         error: (error) => {
-          console.error('❌ Error generando reporte de usuarios:', error);
           this.isLoadingUsuarios = false;
         }
       });
