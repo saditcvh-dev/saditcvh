@@ -121,7 +121,6 @@ export class CardsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('🔄 Iniciando componente Cards...');
     this.loadData();
     this.setupAutoRefresh();
   }
@@ -136,14 +135,12 @@ export class CardsComponent implements OnInit, OnDestroy {
    *  CARGA INICIAL
    *  =============================== */
   private loadData(): void {
-    console.log('📥 Solicitando datos al servidor...');
     this.isLoading = true;
     this.hasError = false;
     
     this.http.get<DashboardResponse>(this.apiUrl)
       .pipe(
         catchError(error => {
-          console.error('❌ Error cargando datos KPI:', error);
           this.hasError = true;
           this.errorMessage = this.getErrorMessage(error);
           this.isLoading = false;
@@ -152,19 +149,14 @@ export class CardsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(response => {
-        console.log('📊 Respuesta recibida:', response);
-        
         if (response?.success && response.data) {
-          console.log('✅ Datos recibidos correctamente:', response.data);
           this.updateCards(response.data);
           this.hasError = false;
         } else if (response && !response.success) {
-          console.error('❌ Error en la respuesta del servidor:', response.message);
           this.hasError = true;
           this.errorMessage = response.message || 'Error en el servidor';
           this.setErrorState(true);
         } else if (!response) {
-          console.error('❌ No se recibió respuesta del servidor');
           this.hasError = true;
           this.errorMessage = 'No se recibió respuesta del servidor';
           this.setErrorState(true);
@@ -175,7 +167,6 @@ export class CardsComponent implements OnInit, OnDestroy {
         
         // Forzar detección de cambios
         this.cdr.detectChanges();
-        console.log('🔄 Cards actualizadas:', this.cards);
       });
   }
 
@@ -183,14 +174,10 @@ export class CardsComponent implements OnInit, OnDestroy {
    *  AUTO REFRESH
    *  =============================== */
   private setupAutoRefresh(): void {
-    console.log(`🔄 Configurando auto-refresh cada ${this.refreshInterval / 1000}s`);
-    
     const refresh$ = timer(this.refreshInterval, this.refreshInterval).pipe(
       switchMap(() => {
-        console.log('🔄 Actualización automática...');
         return this.http.get<DashboardResponse>(this.apiUrl).pipe(
           catchError(error => {
-            console.warn('⚠️ Error en auto-refresh:', error);
             return of(null);
           })
         );
@@ -200,7 +187,6 @@ export class CardsComponent implements OnInit, OnDestroy {
     this.subscription.add(
       refresh$.subscribe(response => {
         if (response?.success && response.data) {
-          console.log('✅ Auto-refresh exitoso');
           this.updateCards(response.data);
           this.lastUpdateTime = new Date();
           this.cdr.detectChanges();
@@ -213,8 +199,6 @@ export class CardsComponent implements OnInit, OnDestroy {
    *  ACTUALIZAR CARDS (MÉTODO CORREGIDO)
    *  =============================== */
   private updateCards(data: KPIData): void {
-    console.log('🔄 Actualizando cards con datos:', data);
-    
     // 1. Documentos Digitalizados
     const documentosOldValue = Number(this.cards[0].value) || 0;
     this.cards[0].value = data.total_documentos || 0;
@@ -268,8 +252,6 @@ export class CardsComponent implements OnInit, OnDestroy {
 
     // Forzar cambio de referencia para que Angular detecte los cambios
     this.cards = [...this.cards];
-    
-    console.log('✅ Cards después de actualizar:', this.cards);
   }
 
   private calculateTrend(oldValue: number, newValue: number): number {
@@ -303,7 +285,6 @@ export class CardsComponent implements OnInit, OnDestroy {
    *  MÉTODOS PÚBLICOS
    *  =============================== */
   refreshData(): void {
-    console.log('🔄 Recarga manual solicitada');
     this.isLoading = true;
     this.hasError = false;
     this.errorMessage = '';

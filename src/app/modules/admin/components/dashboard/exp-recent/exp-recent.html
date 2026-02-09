@@ -29,7 +29,6 @@
         </div>
     </div>
     
-    <!-- Debug info (puedes remover esto después) -->
     <div *ngIf="false" class="mb-4 p-2 bg-gray-50 rounded text-xs">
         <strong>Debug:</strong> 
         isLoading: {{ isLoading }}, 
@@ -54,8 +53,7 @@
         
         <!-- Documento -->
         <div *ngFor="let doc of documentos" 
-             class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-all duration-200 border border-transparent hover:border-[#691831]/20 group"
-             (click)="verExpediente(doc.documento_id)">
+             class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-all duration-200 border border-transparent hover:border-[#691831]/20 group">
             
             <div class="flex-1 min-w-0">
                 <!-- Número y título del documento -->

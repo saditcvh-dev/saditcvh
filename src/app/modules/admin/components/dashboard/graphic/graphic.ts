@@ -71,7 +71,6 @@ export class GraphicComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('📊 Iniciando componente de gráfica...');
     this.loadChartData();
     this.setupAutoRefresh();
     this.startTimeUpdates();
@@ -93,12 +92,9 @@ export class GraphicComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.hasError = false;
     
-    console.log('📥 Cargando datos para gráfica...');
-    
     this.http.get<ChartResponse>(this.apiUrl)
       .pipe(
         catchError(error => {
-          console.error('❌ Error cargando datos de gráfica:', error);
           this.handleError(error);
           return of({
             success: false,
@@ -109,18 +105,14 @@ export class GraphicComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response) => {
-          console.log('📊 Respuesta de gráfica:', response);
-          
           if (response.success && response.data?.documentos_por_dia?.length > 0) {
-            console.log('✅ Datos de gráfica recibidos correctamente');
             this.processChartData(response.data.documentos_por_dia);
             this.hasError = false;
           } else {
-            console.log('⚠️ Usando datos por defecto para gráfica');
             this.useDefaultData();
             
             if (response.message) {
-              console.warn('Advertencia:', response.message);
+
             }
           }
           
@@ -132,11 +124,8 @@ export class GraphicComponent implements OnInit, OnDestroy {
           this.ngZone.run(() => {
             this.cdr.markForCheck();
           });
-          
-          console.log('🔄 Estado actualizado, isLoading:', this.isLoading);
         },
         error: (error) => {
-          console.error('❌ Error en la suscripción:', error);
           this.handleError(error);
         }
       });
@@ -153,9 +142,7 @@ export class GraphicComponent implements OnInit, OnDestroy {
       dia_semana: this.translateDay(item.dia_semana),
       cantidad: this.parseCantidad(item.cantidad)
     }));
-    
-    console.log('📊 Datos normalizados:', normalizedData);
-    
+  
     // 2. Eliminar duplicados por fecha
     const datosUnicos = this.eliminarDuplicadosPorFecha(normalizedData);
     
@@ -167,9 +154,6 @@ export class GraphicComponent implements OnInit, OnDestroy {
     
     // 5. Calcular estadísticas
     this.calculateStatistics();
-    
-    console.log('📊 Datos procesados para gráfica (orden cronológico):', this.chartData);
-    console.log('📊 Fechas desde:', this.chartData[0]?.fecha, 'hasta:', this.chartData[6]?.fecha);
   }
 
   /** ===============================
@@ -334,7 +318,6 @@ export class GraphicComponent implements OnInit, OnDestroy {
     
     this.subscription.add(
       refresh$.subscribe(() => {
-        console.log('🔄 Actualizando gráfica automáticamente...');
         this.loadChartData();
       })
     );
@@ -368,7 +351,6 @@ export class GraphicComponent implements OnInit, OnDestroy {
    *  MANEJO DE ERRORES
    *  =============================== */
   private handleError(error: any): void {
-    console.error('❌ Error en componente de gráfica:', error);
     this.hasError = true;
     this.errorMessage = this.getErrorMessage(error);
     this.useDefaultData();
@@ -432,7 +414,6 @@ export class GraphicComponent implements OnInit, OnDestroy {
    *  MÉTODOS PÚBLICOS
    *  =============================== */
   refreshChart(): void {
-    console.log('🔄 Recargando gráfica manualmente...');
     this.isLoading = true;
     this.hasError = false;
     this.loadChartData();
