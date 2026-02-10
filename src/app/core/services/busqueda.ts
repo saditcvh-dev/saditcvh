@@ -3,6 +3,7 @@ import { AutorizacionTreeNode } from '../models/autorizacion-tree.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { BusquedaResponse } from '../models/busqueda.model';
 export interface AutocompleteItem {
   tipo: 'autorizacion' | 'documento' | 'archivo';
   label: string;
@@ -65,10 +66,7 @@ export class BusquedaService {
     { params, withCredentials: true }
   );
 }
-  // autocomplete(term: string): Observable<string[]> {
-  //   const params = new HttpParams().set('q', term);
-  //   return this.http.get<string[]>(`${this.baseUrl}/autocomplete`, { params,withCredentials: true });
-  // }
+
 
   estadisticas(): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/estadisticas`, { withCredentials: true });
@@ -79,6 +77,22 @@ export class BusquedaService {
     return this.http.get(`${this.baseUrl}/export`, {
       params,
       responseType: 'blob',withCredentials: true
+    });
+  }
+    
+  // Modificar el método existente para aceptar parámetros
+   busquedaAvanzada(params: any): Observable<BusquedaResponse> {
+    let httpParams = new HttpParams();
+    
+    Object.keys(params).forEach(key => {
+      if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+        httpParams = httpParams.set(key, params[key].toString());
+      }
+    });
+    
+    return this.http.get<BusquedaResponse>(this.baseUrl, { 
+      params: httpParams,
+      withCredentials: true 
     });
   }
 }
