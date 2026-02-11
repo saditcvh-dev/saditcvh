@@ -20,7 +20,8 @@ export class RespaldosView implements OnInit, OnDestroy {
     cpuHistory: [] as number[],
     ramHistory: [] as number[],
     currentCpu: 0,
-    currentRam: 0
+    currentRam: 0,
+    ramValueGB: '' // Label específico para mostrar GB usados/totales
   };
 
   private subscriptions = new Subscription();
@@ -36,13 +37,13 @@ export class RespaldosView implements OnInit, OnDestroy {
   }
 
   private initMonitoring(): void {
-    // Rendimiento cada 10 seg (Histórico)
+    // Rendimiento cada 10 seg (CPU y RAM)
     this.subscriptions.add(
       interval(10000).pipe(switchMap(() => this.respaldosService.getLiveMetrics()))
         .subscribe(res => this.processPerformance(res))
     );
 
-    // Almacenamiento cada 5 min (Estático)
+    // Almacenamiento cada 5 min (Disco e Inodos)
     this.subscriptions.add(
       interval(300000).pipe(switchMap(() => this.respaldosService.getStorageMetrics()))
         .subscribe(res => this.processStorage(res))
@@ -57,20 +58,44 @@ export class RespaldosView implements OnInit, OnDestroy {
   }
 
   /**
-   * Procesa CPU/RAM como histórico
-   * Mapea el array de arrays a un array simple de porcentajes
+   * Procesa CPU y RAM
+   * CPU: Suma todas las dimensiones excepto 'time' para obtener el % total
+   * RAM: Suma used+cached+buffers y convierte de MB a GB
    */
   private processPerformance(res: any): void {
     if (res?.success && res.data) {
-      // Suponiendo que res.data.cpu.data es el array de [time, value]
-      // Invertimos con .reverse() para que el tiempo corra de izquierda a derecha
-      this.performanceData.cpuHistory = res.data.cpu.data.map((item: any[]) => Math.round(item[1])).reverse();
-      this.performanceData.ramHistory = res.data.ram.data.map((item: any[]) => Math.round(item[1])).reverse();
-      
-      // El valor actual es el primero del array original (el más reciente)
-      this.performanceData.currentCpu = Math.round(res.data.cpu.data[0][1]);
-      this.performanceData.currentRam = Math.round(res.data.ram.data[0][1]);
-      
+      const { cpu, ram } = res.data;
+
+      // --- PROCESAMIENTO CPU ---
+      const timeIdxCpu = cpu.labels.indexOf('time');
+      // Sumamos todas las columnas de la fila (excepto el tiempo) para obtener el uso total
+      this.performanceData.cpuHistory = cpu.data.map((row: any[]) => {
+        const totalUsage = row.reduce((acc, val, idx) => idx === timeIdxCpu ? acc : acc + val, 0);
+        return Math.min(Math.round(totalUsage), 100); // Tope de 100% por seguridad
+      }).reverse();
+
+      // --- PROCESAMIENTO RAM ---
+      const idxFree = ram.labels.indexOf('free');
+      const idxUsed = ram.labels.indexOf('used');
+      const idxCached = ram.labels.indexOf('cached');
+      const idxBuffers = ram.labels.indexOf('buffers');
+
+      this.performanceData.ramHistory = ram.data.map((row: any[]) => {
+        const usedReal = row[idxUsed] + row[idxCached] + row[idxBuffers];
+        const total = usedReal + row[idxFree];
+        return total > 0 ? Math.round((usedReal / total) * 100) : 0;
+      }).reverse();
+
+      // Valores actuales (última posición del historial tras el reverse)
+      this.performanceData.currentCpu = this.performanceData.cpuHistory[this.performanceData.cpuHistory.length - 1];
+      this.performanceData.currentRam = this.performanceData.ramHistory[this.performanceData.ramHistory.length - 1];
+
+      // Cálculo de GB para el label (usando el dato más reciente de la respuesta original data[0])
+      const latestRam = ram.data[0];
+      const usedMB = latestRam[idxUsed] + latestRam[idxCached] + latestRam[idxBuffers];
+      const totalMB = usedMB + latestRam[idxFree];
+      this.performanceData.ramValueGB = `${(usedMB / 1024).toFixed(1)} GB de ${(totalMB / 1024).toFixed(0)} GB`;
+
       this.loadingPerformance = false;
       this.updateGlobalStatus();
       this.cdr.detectChanges();
@@ -78,36 +103,36 @@ export class RespaldosView implements OnInit, OnDestroy {
   }
 
   /**
-   * Procesa Disco como ESTÁTICO (estilo Windows)
-   * Usa: Total = avail + used
+   * Procesa Disco e Inodos (Archivos)
    */
   private processStorage(res: any): void {
-    if (res?.success && res.data?.disk) {
-      const labels = res.data.disk.labels; // ["time", "avail", "used", ...]
-      const latestEntry = res.data.disk.data[0]; // Tomamos solo el último punto en el tiempo
-      
-      // Encontrar índices dinámicamente según los labels que enviaste
-      const idxAvail = labels.indexOf('avail');
-      const idxUsed = labels.indexOf('used');
+    if (res?.success && res.data?.disk && res.data?.inodes) {
+      // 1. Procesar Disco
+      const dLabels = res.data.disk.labels;
+      const dLatest = res.data.disk.data[0];
+      const dAvail = dLatest[dLabels.indexOf('avail')];
+      const dUsed = dLatest[dLabels.indexOf('used')];
+      const dTotal = dAvail + dUsed;
+      const dPct = dTotal > 0 ? Math.round((dUsed / dTotal) * 100) : 0;
 
-      const avail = latestEntry[idxAvail];
-      const used = latestEntry[idxUsed];
-      const total = avail + used;
-      const pct = total > 0 ? Math.round((used / total) * 100) : 0;
+      // 2. Procesar Inodos (Archivos usados)
+      const iLabels = res.data.inodes.labels;
+      const iLatest = res.data.inodes.data[0];
+      const filesUsed = iLatest[iLabels.indexOf('used')];
 
       this.storageData = {
         disk: {
-          percentage: pct,
-          // Formateamos a GB (asumiendo que los datos vienen en MB o GB)
-          label: `${this.formatValue(avail)} disponibles de ${this.formatValue(total)}`,
-          status: pct >= 90 ? 'critical' : pct >= 75 ? 'warning' : 'good'
+          percentage: dPct,
+          availGB: this.formatValue(dAvail),
+          usedGB: this.formatValue(dUsed),
+          totalGB: this.formatValue(dTotal),
+          label: `${this.formatValue(dAvail)} disponibles de ${this.formatValue(dTotal)}`
         },
         files: {
-          total: res.data.files?.total || 0,
-          folders: res.data.files?.folders || 0
+          total: filesUsed
         }
       };
-      
+
       this.lastUpdated = new Date();
       this.loadingStorage = false;
       this.updateGlobalStatus();
@@ -118,19 +143,23 @@ export class RespaldosView implements OnInit, OnDestroy {
   private updateGlobalStatus(): void {
     const cpu = this.performanceData.currentCpu;
     const diskPct = this.storageData?.disk?.percentage || 0;
-    if (cpu > 90 || diskPct > 90) this.systemStatus = 'critical';
-    else if (cpu > 70 || diskPct > 80) this.systemStatus = 'warning';
-    else this.systemStatus = 'good';
+    
+    // Umbrales basados en la lógica institucional
+    if (cpu > 85 || diskPct > 90) this.systemStatus = 'critical';
+    else if (cpu > 60 || diskPct > 80) this.systemStatus = 'warning';
+    else if (this.performanceData.currentCpu > 0 || this.storageData) this.systemStatus = 'good';
   }
 
   private formatValue(val: number): string {
-    // Si los valores son muy grandes (ej. Netdata suele enviar en MB o unidades base)
-    if (val > 1024) return `${(val / 1024).toFixed(1)} TB`;
+    // Netdata envía estos valores de disco en GB generalmente, pero por si acaso:
+    if (val >= 1024) return `${(val / 1024).toFixed(1)} TB`;
     return `${Math.round(val)} GB`;
   }
 
+  /** Colores institucionales según porcentaje */
   getDiskClass(pct: number): string {
-    return pct >= 90 ? 'bg-red-600 border-red-700' : 'bg-[#2672ec] border-[#005a9e]';
+    if (pct >= 90) return 'bg-red-700 border-red-800'; // Alerta
+    return 'bg-[#691831] dark:bg-[#c44569] border-black/10'; // Institucional
   }
 
   refreshAll(): void {
