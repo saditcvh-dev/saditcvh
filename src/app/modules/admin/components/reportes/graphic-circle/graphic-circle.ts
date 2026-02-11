@@ -67,7 +67,6 @@ export class GraphicCircle implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('📊 Iniciando componente de gráfica circular...');
     this.loadTiposData();
     this.setupAutoRefresh();
     this.startTimeUpdates();
@@ -88,35 +87,25 @@ export class GraphicCircle implements OnInit, OnDestroy {
   private loadTiposData(): void {
     this.isLoading = true;
     this.hasError = false;
-    
-    console.log('📥 Cargando datos de tipos de documento desde:', this.apiUrl);
-    
     this.http.get<TiposResponse>(this.apiUrl)
       .pipe(
         catchError(error => {
-          console.error('❌ Error cargando datos de tipos:', error);
           return this.getTiposFromAlternativeSource();
         })
       )
       .subscribe({
         next: (response) => {
-          console.log('📊 Respuesta recibida del API:', response);
           this.apiResponse = response; // Guardar respuesta para debug
           this.processTiposData(response);
         },
         error: (error) => {
-          console.error('❌ Error en la suscripción:', error);
           this.handleError(error);
         }
       });
   }
 
   private processTiposData(response: TiposResponse): void {
-    console.log('📊 Procesando datos de tipos:', response);
-    
     if (response.success && (response.data?.tipos?.length ?? 0) > 0) {
-      console.log('✅ Datos de tipos recibidos correctamente');
-      
       const tiposRaw = response.data!.tipos;
       this.totalDocumentos = response.data!.total_documentos || 
         tiposRaw.reduce((sum: number, item: any) => sum + (item.cantidad || 0), 0);
@@ -134,15 +123,11 @@ export class GraphicCircle implements OnInit, OnDestroy {
       this.tiposData.sort((a, b) => b.porcentaje - a.porcentaje);
       
       this.hasError = false;
-      console.log('📊 Datos procesados:', this.tiposData);
-      
     } else {
-      console.log('⚠️ No se recibieron datos válidos, usando datos por defecto');
-      console.log('Respuesta completa:', response);
       this.useDefaultTiposData();
       
       if (response.message) {
-        console.warn('Advertencia:', response.message);
+
       }
     }
     
@@ -153,16 +138,12 @@ export class GraphicCircle implements OnInit, OnDestroy {
     this.ngZone.run(() => {
       this.cdr.markForCheck();
     });
-    
-    console.log('🔄 Datos finales de tipos:', this.tiposData);
-    console.log('🔄 Total de documentos:', this.totalDocumentos);
   }
 
   /** ===============================
    *  OBTENER DATOS DE FUENTE ALTERNATIVA
    *  =============================== */
   private getTiposFromAlternativeSource() {
-    console.log('⚠️ Usando fuente alternativa (datos de ejemplo)');
     // Datos de ejemplo estructurados igual que el API real
     return of({
       success: true,
@@ -281,7 +262,6 @@ export class GraphicCircle implements OnInit, OnDestroy {
     
     this.subscription.add(
       refresh$.subscribe(() => {
-        console.log('🔄 Actualizando gráfica circular automáticamente...');
         this.loadTiposData();
       })
     );
@@ -302,7 +282,6 @@ export class GraphicCircle implements OnInit, OnDestroy {
    *  MANEJO DE ERRORES
    *  =============================== */
   private handleError(error: any): void {
-    console.error('❌ Error en componente de gráfica circular:', error);
     this.hasError = true;
     this.errorMessage = this.getErrorMessage(error);
     this.useDefaultTiposData();
@@ -346,7 +325,6 @@ export class GraphicCircle implements OnInit, OnDestroy {
    *  MÉTODOS PÚBLICOS
    *  =============================== */
   refreshChart(): void {
-    console.log('🔄 Recargando gráfica circular manualmente...');
     this.isLoading = true;
     this.hasError = false;
     this.loadTiposData();

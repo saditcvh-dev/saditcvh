@@ -20,27 +20,14 @@
           </div>
         </div>
 
-        <div class="flex-1 max-w-xl mx-4 hidden md:block min-w-0">
+        <div class="flex-1 rounded-full max-w-xl mx-4 hidden md:block min-w-0">
           <label for="globalSearch" class="sr-only">Buscar en el sistema</label>
-          <div class="relative">
-            <input id="globalSearch" type="text" placeholder="Buscar expediente, serie, usuario…"
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white min-w-0"
-              (input)="onSearch($event)" (keydown)="onKeyDown($event)" />
-            <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400 dark:text-gray-500" fill="none"
-              stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <kbd
-              class="absolute right-3 top-2.5 px-1.5 py-0.5 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded">Ctrl
-              + K</kbd>
-          </div>
+          <input id="globalSearch" type="text" placeholder="Ingresa un texto para realizar la busqueda…"
+            class="w-full pl-10 pr-4 py-2 rounded-full  border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white min-w-0"
+            [(ngModel)]="searchText" (focus)="openSearch()" />
         </div>
 
         <div class="flex items-center gap-4 flex-shrink-0">
-
-
-
           <button *ngIf="isMobile" (click)="openMobileSearch()"
             class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-900 transit-rounded-lgion-colors flex-shrink-0"
             aria-label="Abrir búsqueda">
@@ -50,11 +37,9 @@
             </svg>
           </button>
 
-
-
           <div class="relative">
             <div class="flex items-center gap-2">
-      
+
               <div class="hidden md:block min-w-0">
                 <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{role_user}}</p>
                 <!-- <p class="text-xs text-gray-500 dark:text-gray-400 truncate">admin@hidalgo.gob.mx</p> -->
@@ -81,7 +66,7 @@
             <div *ngIf="profileOpen"
               class="absolute right-0 mt-2 w-64 bg-white dark:bg-[#050505] rounded-lg shadow-lg border border-gray-200 dark:border-neutral-900 z-50"
               (clickOutside)="profileOpen = false">
-              
+
 
               <div class="py-2">
                 <a *ngIf="isAdmin()" routerLink="/admin/usuarios" (click)="onNavLinkClick()"
@@ -111,57 +96,71 @@
                   Auditoría
                 </a>
 
-                <!-- Opción de Tema -->
-                <button (click)="toggleThemeSubmenu()"
-                  class="w-full text-left px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-neutral-900 flex items-center gap-2 transition-colors text-sm text-gray-700 dark:text-gray-300">
+                <button (click)="toggleThemeSubmenu()" class="w-full px-4 py-2.5 flex items-center gap-2 text-sm
+         text-gray-700 dark:text-gray-300
+         hover:bg-gray-50 dark:hover:bg-neutral-900
+         transition-colors">
+
+                  <!-- Icono Tema -->
                   <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                      d="M12 3a1 1 0 011 1v1a1 1 0 11-2 0V4a1 1 0 011-1zm6.364 2.636a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM21 11a1 1 0 110 2h-1a1 1 0 110-2h1zM17.657 16.243a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM12 18a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM6.343 16.243a1 1 0 010 1.414l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 0zM4 11a1 1 0 110 2H3a1 1 0 110-2h1zM6.343 5.636a1 1 0 011.414 0l.707.707A1 1 0 016.05 7.757l-.707-.707a1 1 0 010-1.414zM12 8a4 4 0 100 8 4 4 0 000-8z" />
                   </svg>
+
+
                   Tema
-                  <span class="ml-auto material-symbols-rounded text-gray-400 dark:text-gray-500 text-sm">
-                    {{ themeSubmenuOpen ? 'ver menos' : 'ver más' }}
-                  </span>
+
+                  <!-- Flecha -->
+                  <svg class="w-4 h-4 ml-auto text-gray-400 dark:text-gray-500 transition-transform"
+                    [class.rotate-180]="themeSubmenuOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
 
+
+
                 <!-- Submenú de temas -->
-                <div *ngIf="themeSubmenuOpen" class="pl-8 pr-2 py-1">
+                <div *ngIf="themeSubmenuOpen" class="pl-4  py-2 flex gap-2">
+
+                  <!-- Claro -->
                   <button (click)="setTheme('light')"
-                    class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2 transition-colors text-xs text-gray-700 dark:text-gray-300">
-                    <!-- en español -->
-                    <span class="material-symbols-rounded text-sm" [class.text-primary]="currentTheme === 'light'">
-                      <!-- en español light_mode -->
-                      Modo claro
-                    </span>
-                    <span *ngIf="currentTheme === 'light'"
-                      class="ml-auto material-symbols-rounded text-sm text-primary  px-2 bg-blue-400/20 rounded-full">
-                      ✓
-                    </span>
+                    class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition-colors"
+                    [class.bg-blue-500/15]="currentTheme === 'light'">
+                    <svg class="w-4 h-4" [class.text-blue-500]="currentTheme === 'light'" fill="none"
+                      stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m0-11.314l1.414 1.414m9.9 9.9l1.414 1.414M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                    </svg>
                   </button>
 
+                  <!-- Oscuro -->
                   <button (click)="setTheme('dark')"
-                    class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2 transition-colors text-xs text-gray-700 dark:text-gray-300">
-                    <span class="material-symbols-rounded text-sm" [class.text-primary]="currentTheme === 'dark'">
-                      Modo oscuro
-                    </span>
-                    <span *ngIf="currentTheme === 'dark'"
-                      class="ml-auto material-symbols-rounded text-sm px-2 bg-blue-400 rounded-xl text-black">
-                      ✓
-                    </span>
+                    class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition-colors"
+                    [class.bg-blue-500/15]="currentTheme === 'dark'">
+                    <svg class="w-4 h-4" [class.text-blue-500]="currentTheme === 'dark'" fill="none"
+                      stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+                    </svg>
                   </button>
 
+                  <!-- Sistema -->
                   <button (click)="setTheme('system')"
-                    class="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2 transition-colors text-xs text-gray-700 dark:text-gray-300">
-                    <span class="material-symbols-rounded text-sm" [class.text-primary]="currentTheme === 'system'">
-                      Tema del sistema
-                    </span>
-                    <span *ngIf="currentTheme === 'system'"
-                      class="ml-auto material-symbols-rounded text-sm px-2 bg-blue-400 rounded-xl text-black">
-                      ✓
-                    </span>
+                    class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-neutral-900 transition-colors"
+                    [class.bg-blue-500/15]="currentTheme === 'system'">
+                    <svg class="w-4 h-4" [class.text-blue-500]="currentTheme === 'system'" fill="none"
+                      stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 5h18v10H3V5zm4 14h10m-5-4v4" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
+                    </svg>
+
                   </button>
+
                 </div>
+
 
                 <div class="my-2 border-t border-gray-100 dark:border-gray-700"></div>
 
@@ -188,24 +187,41 @@
       </div>
 
       <div *ngIf="mobileSearchOpen && isMobile" class="md:hidden py-3 border-t border-gray-100 dark:border-gray-800">
-        <label for="mobileSearch" class="sr-only">Buscar</label>
-        <div class="relative">
-          <input id="mobileSearch" type="text" placeholder="Buscar expediente, serie, usuario…"
-            class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            (input)="onSearch($event)" (keydown.enter)="closeMobileSearch()" />
-          <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-400 dark:text-gray-500" fill="none"
-            stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <button (click)="closeMobileSearch()"
-            class="absolute right-3 top-3.5 p-1 rounded hover:bg-gray-100 dark:hover:bg-neutral-900">
-            <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <div class="rounded-lg rounded-xl rounded-2xl"
+          style="background-color: #e5e7eb; background: #e5e7eb; border-radius: 16px;">
+          <label for="mobileSearch" class="sr-only">Buscar</label>
+          <div class="relative p-4 px-4">
+            <input id="mobileSearch" type="text" placeholder="Buscar expediente, serie, usuario…"
+              class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg rounded-full rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              style="border-radius: 12px; border-radius: 16px;" (input)="onSearch($event)"
+              (keydown.enter)="closeMobileSearch()" />
+            <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-400 dark:text-gray-500" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-          </button>
+            <button (click)="closeMobileSearch()"
+              class="absolute right-3 top-3.5 p-1 rounded hover:bg-gray-100 dark:hover:bg-neutral-900">
+              <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </header>
+
+
+<!-- <app-busqueda [isVisible]="isSearchModalOpen" [(searchTerm)]="searchText" (close)="isSearchModalOpen = false" (searchSubmit)="onAdvancedSearch($event)"
+ (resultSelected)="onSearchResult($event)"
+>
+</app-busqueda> -->
+
+
+<app-busqueda [isVisibleInput]="isSearchModalOpen()" [searchTermInput]="searchText()"
+  (searchTermChange)="searchText.set($event)" (close)="isSearchModalOpen.set(false)"
+  (searchSubmit)="onAdvancedSearch($event)" (resultSelected)="onSearchResult($event)">
+</app-busqueda>

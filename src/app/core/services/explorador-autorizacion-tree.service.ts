@@ -6,6 +6,7 @@ import { Municipio, UserTerritory } from '../models/user.model';
 import { MunicipioService } from './explorador-municipio.service';
 import { TipoAutorizacion, TiposAutorizacionService } from './explorador-tipos-autorizacion.service';
 import { AutorizacionTreeNode } from '../models/autorizacion-tree.model';
+import { ExploradorStateService } from '../../modules/admin/pages/explorador/services/explorador-state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class AutorizacionTreeService {
   private autorizacionService = inject(AutorizacionService);
   private municipioService = inject(MunicipioService);
   private tipoService = inject(TiposAutorizacionService);
+  // private state = inject(ExploradorStateService);
   private openState = new Map<string, boolean>();
   private lastTree: AutorizacionTreeNode[] | null = null;
 
@@ -25,56 +27,37 @@ export class AutorizacionTreeService {
     // this.autorizacionService.autorizacionesPaginadas();
   }
   tree$ = combineLatest([
-  this.municipioService.municipios$,
-  this.tipoService.tipos$,
-  this.autorizacionService.autorizaciones$
-]).pipe(
-  map(([municipios, tipos, autorizaciones]) => {
+    this.municipioService.municipios$,
+    this.tipoService.tipos$,
+    this.autorizacionService.autorizaciones$
+  ]).pipe(
+    map(([municipios, tipos, autorizaciones]) => {
+      const hasFiltro = this.autorizacionService.filtros() !== null;
+      if (!hasFiltro && this.lastTree) {
+        this.saveOpenState(this.lastTree);
+      }
 
-    if (this.lastTree) {
-      this.saveOpenState(this.lastTree);
-    }
+      // const hasFiltro = this.autorizacionService.filtros() !== null;
 
-    const hasFiltro = this.autorizacionService.filtros() !== null;
+      const newTree = this.buildCompleteTree(
+        municipios,
+        tipos,
+        autorizaciones,
+        hasFiltro
+      );
 
-    const newTree = this.buildCompleteTree(
-      municipios,
-      tipos,
-      autorizaciones,
-      hasFiltro
-    );
+      if (hasFiltro) {
+        this.restoreOpenState(newTree, true);
+      } else {
+        this.restoreOpenState(newTree);
+      }
+      this.lastTree = newTree;
+      // this.state.reselectNodeFromTree(newTree);
+      return newTree;
+    })
+  );
 
-    this.restoreOpenState(newTree);
-    this.lastTree = newTree;
 
-    return newTree;
-  })
-);
-
-  // tree$ = combineLatest([
-  //   this.municipioService.municipios$,
-  //   this.tipoService.tipos$,
-  //   this.autorizacionService.autorizaciones$,
-  //   this.autorizacionService.filtros$
-  // ]).pipe(
-  //   map(([municipios, tipos, autorizaciones, filtros]) => {
-  //     if (this.lastTree) {
-  //       this.saveOpenState(this.lastTree);
-  //     }
-
-  //     const newTree = this.buildCompleteTree(
-  //       municipios,
-  //       tipos,
-  //       autorizaciones,
-  //       !!filtros
-  //     );
-
-  //     this.restoreOpenState(newTree);
-  //     this.lastTree = newTree;
-
-  //     return newTree;
-  //   })
-  // );
 
   reset(): void {
     this.municipioService.reset();
@@ -111,7 +94,7 @@ export class AutorizacionTreeService {
         nombre: `${municipio.id.toString().padStart(2, '0')}_${municipio.nombre}`,
         type: 'municipio',
         children: [],
-        _open: false,
+        _open: hasFiltro,
         data: { ...municipio, tieneRegistros: false }
       };
       const autorizacionesMunicipio = autorizaciones.filter(
@@ -130,7 +113,7 @@ export class AutorizacionTreeService {
           nombre: tipo.nombre,
           type: 'tipo',
           children: [],
-          _open: false,
+          _open: hasFiltro,
           data: { ...tipo }
         };
 
@@ -178,27 +161,31 @@ export class AutorizacionTreeService {
     return tree;
   }
 
-private generateFolderName(autorizacion: any): string {
-  const numero = autorizacion.numeroAutorizacion;
-  const municipio = autorizacion.municipio.num.toString().padStart(2, '0');
-  const modalidad = autorizacion.modalidad.num.toString().padStart(2, '0');
-  const consecutivo1 = autorizacion.consecutivo1.toString().padStart(2, '0');
-  const consecutivo2 = autorizacion.consecutivo2.toString().padStart(3, '0');
-  const tipo = autorizacion.tipoAutorizacion.abreviatura;
+  private generateFolderName(autorizacion: any): string {
+    const numero = autorizacion.numeroAutorizacion;
+    const municipio = autorizacion.municipio.num.toString().padStart(2, '0');
+    const modalidad = autorizacion.modalidad.num.toString().padStart(2, '0');
+    const consecutivo1 = autorizacion.consecutivo1.toString().padStart(2, '0');
+    const consecutivo2 = autorizacion.consecutivo2.toString().padStart(3, '0');
+    const tipo = autorizacion.tipoAutorizacion.abreviatura;
 
-  return `${numero} ${municipio}-${modalidad}-${consecutivo1}-${consecutivo2} ${tipo}`;
-}
+    return `${numero} ${municipio}-${modalidad}-${consecutivo1}-${consecutivo2} ${tipo}`;
+  }
 
 
 
   // estados del arbol
-  private restoreOpenState(nodes: AutorizacionTreeNode[]) {
+  private restoreOpenState(nodes: AutorizacionTreeNode[], forceOpen = false) {
     nodes.forEach(node => {
-      if (this.openState.has(node.id)) {
+
+      if (forceOpen) {
+        node._open = true;
+      } else if (this.openState.has(node.id)) {
         node._open = this.openState.get(node.id)!;
       }
+
       if (node.children) {
-        this.restoreOpenState(node.children);
+        this.restoreOpenState(node.children, forceOpen);
       }
     });
   }
@@ -213,5 +200,5 @@ private generateFolderName(autorizacion: any): string {
     });
   }
 
-
+  
 }

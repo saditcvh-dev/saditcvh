@@ -58,17 +58,18 @@ export class ModalService {
 
 
   openDeleteModal(node: AutorizacionTreeNode): void {
+    console.log("node----")
+    console.log(node)
     this.modalState.set({
       visible: true,
       type: 'delete',
       title: 'Eliminar Elemento',
-      message: `¿Estás seguro de eliminar "${node.nombre}"?`
+      message: `¿Estás seguro de eliminar "${node.nombre}"?`,
+      data: { node }
     });
   }
 
   async openUploadModal(autorizacionId: number, node: AutorizacionTreeNode | null): Promise<void> {
-    console.log("node")
-    console.log(node)
     try {
       const hasDocs = await this.documentoService
         .verificarDocumentosPorAutorizacion(autorizacionId)
@@ -154,6 +155,7 @@ export class ModalService {
 
     switch (modal.type) {
       case 'delete':
+        console.log(modal.data)
         this.deleteNode(modal.data?.node, stateService);
         break;
 
@@ -248,6 +250,8 @@ export class ModalService {
   }
 
   private deleteNode(node: AutorizacionTreeNode | undefined, stateService: any): void {
+    console.log("node***")
+    console.log(node)
     if (!node || node.type !== 'autorizacion') {
       stateService.showToast('Solo se pueden eliminar autorizaciones', 'error');
       this.closeModal();

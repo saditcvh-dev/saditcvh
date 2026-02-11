@@ -5,13 +5,25 @@ import { Observable, BehaviorSubject, interval, Subject } from 'rxjs';
 import { switchMap, takeWhile, startWith, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
+export interface ArchivoProcesado {
+  nombreArchivo: string;
+  documentoId: number | null;
+  metadata: any;
+  fechaProcesado: string | null;
+}
+
 export interface LoteOCR {
   loteId: string;
   totalArchivos: number;
   completados: number;
+  fallados: number;
   porcentaje: number;
   ultimoProceso: string;
+  errores: string[];
+  archivosProcesados: ArchivoProcesado[];
 }
+
+
 
 export interface EstadoOCR {
   success: boolean;

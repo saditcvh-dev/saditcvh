@@ -15,6 +15,8 @@ import {
 import { ExploradorStateService } from '../explorador/services/explorador-state.service';
 import { CargaMasivaService, LoteOCR } from '../../../../core/services/digitalizacion-carga-masiva.service';
 // import Swal from 'sweetalert2';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 
 @Component({
   standalone: false,
@@ -127,18 +129,25 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
     // private spinner: NgxSpinnerService
   ) { }
+  private refresh$ = new Subject<void>();
+  private destroy$ = new Subject<void>();
 
   ngOnInit() {
-    this.loadPdfsList();
-    this.loadLotesUsuario();
-
-    // this.startPolling();
+    this.refresh$
+      .pipe(
+        debounceTime(500),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => this.loadPdfsList());
+  
+    this.refresh$.next();
   }
-  recargar() {
 
-    this.loadPdfsList();
-    this.loadLotesUsuario();
-  }
+  // recargar() {
+
+  //   // this.loadPdfsList();
+  //   this.loadLotesUsuario();
+  // }
   loadLotesUsuario(): void {
     this.isLoadingLotes.set(true);
 
@@ -187,11 +196,14 @@ export class DigitalizacionView implements OnInit, OnDestroy {
       clearInterval(this.pollTimer);
       this.pollTimer = null;
     }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 
   // ========== FUNCIONES PARA BÚSQUEDA INDIVIDUAL ==========
   loadPdfsList(): void {
+    this.loadLotesUsuario();
     this.pdfService.listPdfs()
       .subscribe({
         next: (result) => {
@@ -336,21 +348,12 @@ export class DigitalizacionView implements OnInit, OnDestroy {
       return;
     }
 
-    this.pdfService.getSearchablePdf(pdfId)   // nuevo endpoint que debes crear
-      .subscribe({
-        next: (blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${pdf.filename}_searchable.pdf`;
-          a.click();
-          window.URL.revokeObjectURL(url);
-          this.stateService.showToast('PDF con texto descargado correctamente', 'success');
-        },
-        error: (error) => {
-          this.stateService.showToast('No se pudo descargar el PDF con texto', 'error');
-        }
-      });
+    const url = `/docs/${pdf.id}.pdf`;
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${pdf.filename}`;
+    a.click();
   }
   viewText(pdfId: string): void {
     const pdf = this.pdfsList.find(p => p.id === pdfId);
@@ -535,7 +538,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   get totalPdfsCount(): number {
     return this.pdfsList.length;
   }
-  onUploadCompleted(): void {
-    this.loadPdfsList();
+  onUploadCompleted() {
+    this.refresh$.next();
   }
 }

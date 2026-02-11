@@ -81,13 +81,53 @@ export class GraphicMunicipioMapComponent implements OnInit, OnDestroy {
   // Altura máxima de las barras en píxeles
   private maxBarHeight = 200;
   
-  // Mapa de regiones (agrupar municipios por región)
+  // Mapa de regiones (todos los municipios incluidos)
   regiones: Region[] = [
-    { id: 'centro', nombre: 'Región Centro', municipios: [47, 76, 40, 68, 75] },
-    { id: 'norte', nombre: 'Región Norte', municipios: [28, 53, 60, 81, 84] },
-    { id: 'sur', nombre: 'Región Sur', municipios: [1, 4, 7, 13, 17] },
-    { id: 'este', nombre: 'Región Este', municipios: [11, 24, 37, 42, 79] },
-    { id: 'oeste', nombre: 'Región Oeste', municipios: [29, 46, 58, 59, 70] }
+
+    {
+      id: 'centro',
+      nombre: 'Región Centro',
+      municipios: [
+        3, 5, 9, 19, 22, 23, 40, 41, 47, 49,
+        51, 54, 55, 66, 69, 77, 83
+      ]
+    },
+
+    {
+      id: 'norte',
+      nombre: 'Región Norte',
+      municipios: [
+        10, 20, 25, 26, 28, 31, 32, 33, 34, 35,
+        42, 43, 52, 53, 62, 67, 72, 78, 79, 80, 81
+      ]
+    },
+
+    {
+      id: 'sur',
+      nombre: 'Región Sur',
+      municipios: [
+        1, 4, 7, 13, 14, 17, 18, 21, 27, 48,
+        50, 57, 60, 70
+      ]
+    },
+
+    {
+      id: 'este',
+      nombre: 'Región Este',
+      municipios: [
+        2, 11, 15, 24, 36, 37, 38, 39, 56, 61,
+        68, 71, 74, 76
+      ]
+    },
+
+    {
+      id: 'oeste',
+      nombre: 'Región Oeste',
+      municipios: [
+        6, 8, 12, 16, 29, 30, 44, 45, 46, 58,
+        59, 63, 64, 65, 73, 75, 82, 84
+      ]
+    }
   ];
   
   private subscription: Subscription = new Subscription();
@@ -100,7 +140,6 @@ export class GraphicMunicipioMapComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('🗺️ Iniciando componente de gráfica por municipio...');
     this.loadMunicipioData();
     this.setupAutoRefresh();
     this.startTimeUpdates();
@@ -121,35 +160,25 @@ export class GraphicMunicipioMapComponent implements OnInit, OnDestroy {
   private loadMunicipioData(): void {
     this.isLoading = true;
     this.hasError = false;
-    
-    console.log('📥 Cargando datos de municipio desde:', this.apiUrl);
-    
     this.http.get<MunicipioResponse>(this.apiUrl)
       .pipe(
         catchError(error => {
-          console.error('❌ Error cargando datos de municipio:', error);
           return this.getMunicipioFromAlternativeSource();
         })
       )
       .subscribe({
         next: (response) => {
-          console.log('📊 Respuesta recibida del API:', response);
           this.apiResponse = response;
           this.processMunicipioData(response);
         },
         error: (error) => {
-          console.error('❌ Error en la suscripción:', error);
           this.handleError(error);
         }
       });
   }
 
   private processMunicipioData(response: MunicipioResponse): void {
-    console.log('📊 Procesando datos de municipio:', response);
-    
     if (response.success && response.data) {
-      console.log('✅ Datos de municipio recibidos correctamente');
-      
       this.municipiosData = response.data.datos_grafica || [];
       this.top10Municipios = response.data.top_10_municipios || [];
       this.totalDocumentos = response.data.total_documentos || 0;
@@ -161,15 +190,12 @@ export class GraphicMunicipioMapComponent implements OnInit, OnDestroy {
       this.top10Municipios.sort((a, b) => b.documentos.total - a.documentos.total);
       
       this.hasError = false;
-      console.log('📊 Datos procesados:', this.municipiosData.length, 'municipios');
       
     } else {
-      console.log('⚠️ No se recibieron datos válidos, usando datos por defecto');
-      console.log('Respuesta completa:', response);
       this.useDefaultMunicipioData();
       
       if (response.message) {
-        console.warn('Advertencia:', response.message);
+
       }
     }
     
@@ -186,7 +212,6 @@ export class GraphicMunicipioMapComponent implements OnInit, OnDestroy {
    *  OBTENER DATOS DE FUENTE ALTERNATIVA
    *  =============================== */
   private getMunicipioFromAlternativeSource() {
-    console.log('⚠️ Usando fuente alternativa (datos de ejemplo)');
     return of({
       success: true,
       data: {
@@ -368,7 +393,6 @@ export class GraphicMunicipioMapComponent implements OnInit, OnDestroy {
     
     this.subscription.add(
       refresh$.subscribe(() => {
-        console.log('🔄 Actualizando gráfica de municipio automáticamente...');
         this.loadMunicipioData();
       })
     );
@@ -389,7 +413,6 @@ export class GraphicMunicipioMapComponent implements OnInit, OnDestroy {
    *  MANEJO DE ERRORES
    *  =============================== */
   private handleError(error: any): void {
-    console.error('❌ Error en componente de gráfica por municipio:', error);
     this.hasError = true;
     this.errorMessage = this.getErrorMessage(error);
     this.useDefaultMunicipioData();
@@ -433,7 +456,6 @@ export class GraphicMunicipioMapComponent implements OnInit, OnDestroy {
    *  MÉTODOS PÚBLICOS
    *  =============================== */
   refreshChart(): void {
-    console.log('🔄 Recargando gráfica de municipio manualmente...');
     this.isLoading = true;
     this.hasError = false;
     this.loadMunicipioData();

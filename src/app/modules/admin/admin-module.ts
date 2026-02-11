@@ -45,6 +45,8 @@ import { PdfViewerView } from './components/pdf-viewer/pdf-viewer.view';
 import { ExploradorStateService } from './pages/explorador/services/explorador-state.service';
 import { PdfLocalSearchService } from './pages/digitalizacion/services/pdf-local-search.service';
 import { UploadSectionComponent } from './pages/digitalizacion/upload-section/upload-section';
+import { DeleteConfirmationModalComponent } from './pages/explorador/components/modals/delete-confirmation-modal/delete-confirmation-modal.component';
+import { Busqueda } from './components/busqueda/busqueda';
 import { AnotacionesService } from '../../core/services/anotaciones.service';
 import { Comentarios } from './pages/explorador/components/comentarios/comentarios';
 // import { UploadSectionComponent } from './pages/digitalizacion/upload-section/upload-section';
@@ -80,7 +82,7 @@ import { Comentarios } from './pages/explorador/components/comentarios/comentari
     ActionBadgeComponent,ExploradorView,ExplorerPanelComponent,
     ViewerPanelComponent, ToastComponent
     , TabsNavigationComponent, SecurityTabComponent, PreviewTabComponent, MetadataTabComponent, UploadModalComponent, CreateAutorizacionModalComponent, ModalContainerComponent
-    , ContextMenuComponent,HistoryTabComponent,TreeNodeComponent, UploadSectionComponent,
+    , ContextMenuComponent,HistoryTabComponent,TreeNodeComponent, UploadSectionComponent,DeleteConfirmationModalComponent, Busqueda
   ],
   imports: [
     CommonModule,

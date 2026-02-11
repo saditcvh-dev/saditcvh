@@ -127,8 +127,10 @@
         <li>
           <a routerLink="/admin/explorador" (click)="onNavLinkClick()"
             [routerLinkActive]="['bg-blue-400/30', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
-            class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-900 dark:text-neutral-400 hover:bg-gray-400/20 dark:hover:bg-neutral-900 transition duration-200 relative group">
-            <img src="assets/icons/explorer.png" alt="Carpeta" class="w-7 h-7 flex-shrink-0">
+            class="flex items-center justify-center px-2 py-2 rounded-lg text-gray-900 dark:text-neutral-400 hover:bg-gray-400/20 dark:hover:bg-neutral-900 transition duration-200 relative group" 
+            [ngClass]="{ 'gap-2 justify-start px-3': sidebarOpen || isMobile, 'justify-center px-2': !sidebarOpen && !isMobile }"
+            >
+            <img src="assets/icons/explorer.png" alt="Carpeta" class="w-7 h-7 flex-shrink-0 object-contain">
             <span *ngIf="sidebarOpen || isMobile" class="whitespace-nowrap text-sm">
               Explorador
             </span>
@@ -223,7 +225,7 @@
           </a>
         </li>
         
-        <li>
+        <!-- <li>
           <a routerLink="/admin/respaldos" (click)="onNavLinkClick()"
             [routerLinkActive]="['bg-blue-400/30', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
             class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-900 dark:text-neutral-400 hover:bg-gray-400/20 dark:hover:bg-neutral-900 transition duration-200 relative group">
@@ -235,14 +237,13 @@
               Respaldos
             </span>
 
-            <!-- Tooltip para sidebar cerrado en desktop -->
             <div *ngIf="!sidebarOpen && !isMobile" 
                  class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-[60] shadow-lg">
               Respaldos
               <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-0 border-r-4 border-r-gray-900 dark:border-r-gray-700 border-transparent"></div>
             </div>
           </a>
-        </li>
+        </li> -->
         
         <li>
           <a routerLink="/admin/auditoria" (click)="onNavLinkClick()"

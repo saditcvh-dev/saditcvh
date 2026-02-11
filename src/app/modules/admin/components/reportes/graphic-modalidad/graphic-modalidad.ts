@@ -80,7 +80,6 @@ export class GraphicModalidadBarsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('🚌 Iniciando componente de estadísticas por modalidad...');
     this.loadModalidadData();
     this.setupAutoRefresh();
     this.startTimeUpdates();
@@ -102,34 +101,25 @@ export class GraphicModalidadBarsComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.hasError = false;
     
-    console.log('📥 Cargando datos de modalidad desde:', this.apiUrl);
-    
     this.http.get<ModalidadResponse>(this.apiUrl)
       .pipe(
         catchError(error => {
-          console.error('❌ Error cargando datos de modalidad:', error);
           return this.getModalidadFromAlternativeSource();
         })
       )
       .subscribe({
         next: (response) => {
-          console.log('📊 Respuesta recibida del API:', response);
           this.apiResponse = response;
           this.processModalidadData(response);
         },
         error: (error) => {
-          console.error('❌ Error en la suscripción:', error);
           this.handleError(error);
         }
       });
   }
 
-  private processModalidadData(response: ModalidadResponse): void {
-    console.log('📊 Procesando datos de modalidad:', response);
-    
+  private processModalidadData(response: ModalidadResponse): void { 
     if (response.success && response.data) {
-      console.log('✅ Datos de modalidad recibidos correctamente');
-      
       this.modalidadesData = response.data.datos_grafica || [];
       this.totalDocumentos = response.data.total_documentos || 0;
       this.totalPaginas = response.data.total_paginas || 0;
@@ -139,15 +129,11 @@ export class GraphicModalidadBarsComponent implements OnInit, OnDestroy {
       this.sortData();
       
       this.hasError = false;
-      console.log('📊 Datos procesados:', this.modalidadesData.length, 'modalidades');
-      
     } else {
-      console.log('⚠️ No se recibieron datos válidos, usando datos por defecto');
-      console.log('Respuesta completa:', response);
       this.useDefaultModalidadData();
       
       if (response.message) {
-        console.warn('Advertencia:', response.message);
+
       }
     }
     
@@ -164,7 +150,6 @@ export class GraphicModalidadBarsComponent implements OnInit, OnDestroy {
    *  OBTENER DATOS DE FUENTE ALTERNATIVA
    *  =============================== */
   private getModalidadFromAlternativeSource() {
-    console.log('⚠️ Usando fuente alternativa (datos de ejemplo)');
     return of({
       success: true,
       data: {
@@ -350,7 +335,6 @@ export class GraphicModalidadBarsComponent implements OnInit, OnDestroy {
     
     this.subscription.add(
       refresh$.subscribe(() => {
-        console.log('🔄 Actualizando estadísticas de modalidad automáticamente...');
         this.loadModalidadData();
       })
     );
@@ -371,7 +355,6 @@ export class GraphicModalidadBarsComponent implements OnInit, OnDestroy {
    *  MANEJO DE ERRORES
    *  =============================== */
   private handleError(error: any): void {
-    console.error('❌ Error en componente de estadísticas por modalidad:', error);
     this.hasError = true;
     this.errorMessage = this.getErrorMessage(error);
     this.useDefaultModalidadData();
@@ -415,7 +398,6 @@ export class GraphicModalidadBarsComponent implements OnInit, OnDestroy {
    *  MÉTODOS PÚBLICOS
    *  =============================== */
   refreshChart(): void {
-    console.log('🔄 Recargando estadísticas de modalidad manualmente...');
     this.isLoading = true;
     this.hasError = false;
     this.loadModalidadData();

@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener, ViewChild, ElementRef, inject } from '@angular/core';
 import { ContextMenuState } from '../../models/explorador-state.model';
+import { AuthService } from '../../../../../../core/services/auth';
 
 @Component({
   selector: 'app-context-menu',
@@ -12,7 +13,9 @@ export class ContextMenuComponent {
   @Output() action = new EventEmitter<string>();
   @Output() close = new EventEmitter<void>();
   @ViewChild('menuContainer') menuContainer!: ElementRef;
+  private authService = inject(AuthService);
   @HostListener('document:click', ['$event'])
+
   onDocumentClick(event: MouseEvent): void {
     if (!this.contextMenu || !this.contextMenu.visible) return;
 
@@ -22,6 +25,9 @@ export class ContextMenuComponent {
     ) {
       this.close.emit();
     }
+  }
+  get isAdmin(): boolean {
+    return this.authService.currentUser()?.roles?.includes('administrador') ?? false;
   }
 
 
@@ -52,7 +58,7 @@ export class ContextMenuComponent {
         return node.type === 'municipio' || node.type === 'tipo';
 
       case 'delete':
-        return node.type === 'autorizacion';
+      return node.type === 'autorizacion' && this.isAdmin;
 
       case 'security':
       case 'open':

@@ -1,6 +1,9 @@
-import { Component, EventEmitter, HostListener, inject, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth';
 import { AutorizacionTreeService } from '../../../../core/services/explorador-autorizacion-tree.service';
+import { BusquedaService } from '../../../../core/services/busqueda';
+import { ResultadoBusqueda } from '../../../../core/models/busqueda.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -9,12 +12,12 @@ import { AutorizacionTreeService } from '../../../../core/services/explorador-au
 })
 export class Header implements OnInit {
 
-
+  searchText = signal('');
   themeSubmenuOpen = false;
   currentTheme: 'light' | 'dark' | 'system' = 'system';
 
   private treeService = inject(AutorizacionTreeService);
-
+  busquedaService = inject(BusquedaService);
   @Input() sidebarOpen!: boolean;
   @Input() isMobileView!: boolean;
 
@@ -24,6 +27,7 @@ export class Header implements OnInit {
   profileOpen = false;
   mobileSearchOpen = false;
 
+  private router = inject(Router);
   constructor(private authService: AuthService) {
     this.checkViewport();
   }
@@ -226,6 +230,27 @@ export class Header implements OnInit {
     }
   }
 
+
+
+
+    // nuevas funciones para busqueda con modal 
+
+    // isSearchModalOpen!: boolean;
+    isSearchModalOpen = signal(false);
+    // Se activa al hacer clic en el input del header
+    openSearch() {
+      this.isSearchModalOpen.set( true);
+    }
+
+    // Se activa cuando el modal emite el evento de cerrar
+    handleClose() {
+      this.isSearchModalOpen.set(false);
+    }
+
+
+
+
+
   /**
     * Maneja la lógica de cierre de sesión.
     * Llama al método logout del AuthService.
@@ -243,5 +268,26 @@ export class Header implements OnInit {
       }
     });
   }
+  onAdvancedSearch(term: string) {
+    this.busquedaService.buscar(term).subscribe({
+      next: (data) => {
+        console.log('Resultados globales:', data);
+        // aquí puedes:
+        // 🔹 actualizar un store
+        // 🔹 navegar con router
+        // 🔹 mostrar otra vista
+      },
+      error: () => {
+        console.warn('Sin resultados');
+      }
+    });
+  }
+  onSearchResult(result: ResultadoBusqueda) {
+    if (result.tipo === 'autorizacion') {
+      this.router.navigate(['/admin/explorador'], {
+        queryParams: { q: result.nombre_carpeta }
+      });
+    }
 
+  }
 }

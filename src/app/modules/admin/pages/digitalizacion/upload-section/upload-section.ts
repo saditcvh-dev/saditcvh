@@ -36,6 +36,7 @@ export class UploadSectionComponent {
   useOcr: boolean = false;
   uploadResult: PDFUploadResponse | null = null;
   useZip = false;
+  isDragging = false;
 
   // Signals
   isUploading = signal(false);
@@ -168,7 +169,7 @@ export class UploadSectionComponent {
                 this.emitRecentUploads();
               }
 
-              
+
               // const loteId = event.body?.loteId;
               // if (loteId) {
               //   this.monitorearLote(loteId, currentUpload);
@@ -247,4 +248,41 @@ export class UploadSectionComponent {
   private emitRecentUploads(): void {
     this.recentUploadsChange.emit(this.recentUploads);
   }
+  // eventos
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+
+    if (
+      event.clientX <= rect.left ||
+      event.clientX >= rect.right ||
+      event.clientY <= rect.top ||
+      event.clientY >= rect.bottom
+    ) {
+      this.isDragging = false;
+    }
+
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!event.dataTransfer?.files.length) return;
+
+    const files = Array.from(event.dataTransfer.files);
+
+    this.onFilesSelected({ target: { files } });
+    this.isDragging = false;
+
+  }
+
 }
