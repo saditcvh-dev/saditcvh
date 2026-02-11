@@ -13,6 +13,8 @@ export class RespaldosView implements OnInit, OnDestroy {
   loadingPerformance = true;
   lastUpdated?: Date;
   systemStatus: 'good' | 'warning' | 'critical' | 'unknown' = 'unknown';
+  cpuMax = 100;
+  ramMax = 100;
 
   // Datos para la UI
   storageData: any = null;
@@ -26,7 +28,7 @@ export class RespaldosView implements OnInit, OnDestroy {
 
   private subscriptions = new Subscription();
 
-  constructor(private respaldosService: RespaldosService, private cdr: ChangeDetectorRef) {}
+  constructor(private respaldosService: RespaldosService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.initMonitoring();
@@ -72,7 +74,7 @@ export class RespaldosView implements OnInit, OnDestroy {
       this.performanceData.cpuHistory = cpu.data.map((row: any[]) => {
         const totalUsage = row.reduce((acc, val, idx) => idx === timeIdxCpu ? acc : acc + val, 0);
         return Math.min(Math.round(totalUsage), 100); // Tope de 100% por seguridad
-      }).reverse();
+      });
 
       // --- PROCESAMIENTO RAM ---
       const idxFree = ram.labels.indexOf('free');
@@ -81,25 +83,31 @@ export class RespaldosView implements OnInit, OnDestroy {
       const idxBuffers = ram.labels.indexOf('buffers');
 
       this.performanceData.ramHistory = ram.data.map((row: any[]) => {
-        const usedReal = row[idxUsed] + row[idxCached] + row[idxBuffers];
+        const usedReal = row[idxUsed];
         const total = usedReal + row[idxFree];
         return total > 0 ? Math.round((usedReal / total) * 100) : 0;
       }).reverse();
 
       // Valores actuales (última posición del historial tras el reverse)
-      this.performanceData.currentCpu = this.performanceData.cpuHistory[this.performanceData.cpuHistory.length - 1];
+      this.performanceData.currentCpu = this.performanceData.cpuHistory[0];
       this.performanceData.currentRam = this.performanceData.ramHistory[this.performanceData.ramHistory.length - 1];
 
       // Cálculo de GB para el label (usando el dato más reciente de la respuesta original data[0])
       const latestRam = ram.data[0];
-      const usedMB = latestRam[idxUsed] + latestRam[idxCached] + latestRam[idxBuffers];
+      const usedMB = latestRam[idxUsed];
       const totalMB = usedMB + latestRam[idxFree];
       this.performanceData.ramValueGB = `${(usedMB / 1024).toFixed(1)} GB de ${(totalMB / 1024).toFixed(0)} GB`;
+      this.cpuMax = Math.max(...this.performanceData.cpuHistory, 10);
+      this.ramMax = Math.max(...this.performanceData.ramHistory, 10);
 
       this.loadingPerformance = false;
       this.updateGlobalStatus();
       this.cdr.detectChanges();
     }
+  }
+
+  scale(val: number, max: number): number {
+    return Math.max((val / max) * 100, 6); // mínimo visible
   }
 
   /**
@@ -143,7 +151,7 @@ export class RespaldosView implements OnInit, OnDestroy {
   private updateGlobalStatus(): void {
     const cpu = this.performanceData.currentCpu;
     const diskPct = this.storageData?.disk?.percentage || 0;
-    
+
     // Umbrales basados en la lógica institucional
     if (cpu > 85 || diskPct > 90) this.systemStatus = 'critical';
     else if (cpu > 60 || diskPct > 80) this.systemStatus = 'warning';

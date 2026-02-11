@@ -1,5 +1,5 @@
 <div class="p-6 dark:bg-[#131314] animate-fadeIn space-y-8">
-  
+
   <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
       <h1 class="text-2xl font-bold text-[#691831] dark:text-[#c44569] mb-2">
@@ -10,17 +10,16 @@
       </p>
     </div>
 
-    <div class="flex items-center gap-3 bg-white dark:bg-[#1a1a1b] p-2 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+    <div
+      class="flex items-center gap-3 bg-white dark:bg-[#1a1a1b] p-2 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
       <div class="flex items-center gap-2 px-2">
         <span class="flex h-3 w-3 relative">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-            [ngClass]="{
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" [ngClass]="{
               'bg-green-400': systemStatus === 'good',
               'bg-yellow-400': systemStatus === 'warning',
               'bg-red-400': systemStatus === 'critical'
             }"></span>
-          <span class="relative inline-flex rounded-full h-3 w-3"
-            [ngClass]="{
+          <span class="relative inline-flex rounded-full h-3 w-3" [ngClass]="{
               'bg-green-500': systemStatus === 'good',
               'bg-yellow-500': systemStatus === 'warning',
               'bg-red-500': systemStatus === 'critical'
@@ -30,64 +29,86 @@
           {{ systemStatus === 'good' ? 'Sistema Estable' : 'Revisión Necesaria' }}
         </span>
       </div>
-      
-      <button (click)="refreshAll()" 
+
+      <button (click)="refreshAll()"
         class="p-2 hover:bg-[#DDC9A3]/30 dark:hover:bg-[#d4a762]/20 text-[#691831] dark:text-[#c44569] rounded-lg transition-all border border-transparent hover:border-[#BC955B]/30">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
       </button>
     </div>
   </header>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    
-    <div class="bg-white dark:bg-[#1a1a1b] rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg dark:shadow-gray-900/50 p-6">
+
+    <div
+      class="bg-white dark:bg-[#1a1a1b] rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg dark:shadow-gray-900/50 p-6">
       <div class="flex justify-between items-start mb-6">
         <div>
-          <label class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1 block tracking-wider">Carga del Procesador</label>
+          <label
+            class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1 block tracking-wider">Carga del
+            Procesador</label>
           <h3 class="text-3xl font-black text-[#691831] dark:text-[#c44569]">{{ performanceData.currentCpu }}%</h3>
         </div>
-        <div class="p-3 bg-[#DDC9A3]/30 dark:bg-[#d4a762]/10 rounded-xl text-[#691831] dark:text-[#c44569] border border-[#BC955B]/20">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+        <div
+          class="p-3 bg-[#DDC9A3]/30 dark:bg-[#d4a762]/10 rounded-xl text-[#691831] dark:text-[#c44569] border border-[#BC955B]/20">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+          </svg>
         </div>
       </div>
-      
-      <div class="h-24 flex items-end gap-1.5 px-1 bg-gray-50/50 dark:bg-gray-900/30 rounded-lg p-2 border border-gray-100 dark:border-gray-800/50">
-        <div *ngFor="let val of performanceData.cpuHistory" 
-             class="flex-1 bg-[#BC955B] dark:bg-[#d4a762] opacity-60 hover:opacity-100 transition-all rounded-t-[2px] relative group"
-             [style.height.%]="val || 2">
-             <span class="invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 bg-[#691831] text-white text-[10px] px-2 py-1 rounded shadow-xl z-10">{{val}}%</span>
+
+      <div
+        class="h-24 flex items-end gap-1.5 px-1 bg-gray-50/50 dark:bg-gray-900/30 rounded-lg p-2 border border-gray-100 dark:border-gray-800/50">
+        <div *ngFor="let val of performanceData.cpuHistory"
+          class="flex-1 bg-[#BC955B] dark:bg-[#d4a762] opacity-60 hover:opacity-100 transition-all rounded-t-[2px] relative group"
+          [style.height.%]="scale(val, cpuMax)">
+          <span
+            class="invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 bg-[#691831] text-white text-[10px] px-2 py-1 rounded shadow-xl z-10">{{val}}%</span>
         </div>
       </div>
-      <div class="mt-4 flex justify-between text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tighter">
+      <div
+        class="mt-4 flex justify-between text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tighter">
         <span>Historial de carga (Sumatoria)</span>
         <span class="text-[#BC955B]">Tiempo Real</span>
       </div>
     </div>
 
-    <div class="bg-white dark:bg-[#1a1a1b] rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg dark:shadow-gray-900/50 p-6">
+    <div
+      class="bg-white dark:bg-[#1a1a1b] rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg dark:shadow-gray-900/50 p-6">
       <div class="flex justify-between items-start mb-6">
         <div>
-          <label class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1 block tracking-wider">Memoria RAM</label>
+          <label
+            class="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1 block tracking-wider">Memoria
+            RAM</label>
           <div class="flex items-baseline gap-2">
             <h3 class="text-3xl font-black text-[#691831] dark:text-[#c44569]">{{ performanceData.currentRam }}%</h3>
-            <span class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase">{{ performanceData.ramValueGB }}</span>
+            <span class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase">{{ performanceData.ramValueGB
+              }}</span>
           </div>
         </div>
-        <div class="p-3 bg-[#DDC9A3]/30 dark:bg-[#d4a762]/10 rounded-xl text-[#691831] dark:text-[#c44569] border border-[#BC955B]/20">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div
+          class="p-3 bg-[#DDC9A3]/30 dark:bg-[#d4a762]/10 rounded-xl text-[#691831] dark:text-[#c44569] border border-[#BC955B]/20">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
         </div>
       </div>
 
-      <div class="h-24 flex items-end gap-1.5 px-1 bg-gray-50/50 dark:bg-gray-900/30 rounded-lg p-2 border border-gray-100 dark:border-gray-800/50">
-        <div *ngFor="let val of performanceData.ramHistory" 
-             class="flex-1 bg-[#691831] dark:bg-[#c44569] opacity-40 hover:opacity-100 transition-all rounded-t-[2px] relative group"
-             [style.height.%]="val || 2">
-             <span class="invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 bg-[#BC955B] text-white text-[10px] px-2 py-1 rounded shadow-xl z-10">{{val}}%</span>
+      <div
+        class="h-24 flex items-end gap-1.5 px-1 bg-gray-50/50 dark:bg-gray-900/30 rounded-lg p-2 border border-gray-100 dark:border-gray-800/50">
+        <div *ngFor="let val of performanceData.ramHistory"
+          class="flex-1 bg-[#691831] dark:bg-[#c44569] opacity-40 hover:opacity-100 transition-all rounded-t-[2px] relative group"
+          [style.height.%]="scale(val, ramMax)">
+          <span
+            class="invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 bg-[#BC955B] text-white text-[10px] px-2 py-1 rounded shadow-xl z-10">{{val}}%</span>
         </div>
       </div>
-      <div class="mt-4 flex justify-between text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tighter">
+      <div
+        class="mt-4 flex justify-between text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tighter">
         <span>Uso de memoria (Incluye caché)</span>
         <span class="text-[#BC955B]">Dinámico</span>
       </div>
@@ -95,28 +116,31 @@
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    
-    <div class="lg:col-span-2 bg-white dark:bg-[#1a1a1b] rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg dark:shadow-gray-900/50 p-6 flex items-center gap-6">
-      <div class="hidden sm:flex flex-shrink-0 w-16 h-16 rounded-2xl bg-gray-50 dark:bg-[#131314] items-center justify-center border border-gray-200 dark:border-gray-800 shadow-inner">
+
+    <div
+      class="lg:col-span-2 bg-white dark:bg-[#1a1a1b] rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg dark:shadow-gray-900/50 p-6 flex items-center gap-6">
+      <div
+        class="hidden sm:flex flex-shrink-0 w-16 h-16 rounded-2xl bg-gray-50 dark:bg-[#131314] items-center justify-center border border-gray-200 dark:border-gray-800 shadow-inner">
         <svg class="w-10 h-10 text-[#BC955B] dark:text-[#d4a762]" viewBox="0 0 24 24" fill="currentColor">
           <path d="M19,15H5V13H19V15M19,19H5V17H19V19M19,7H5V5H19V7M21,3H3V21H21V3Z" />
         </svg>
       </div>
-      
+
       <div class="flex-1">
         <div class="flex justify-between items-end mb-2">
-          <h4 class="text-sm font-bold text-[#691831] dark:text-[#c44569] uppercase tracking-wide">Volumen de Datos Principal</h4>
+          <h4 class="text-sm font-bold text-[#691831] dark:text-[#c44569] uppercase tracking-wide">Volumen de Datos
+            Principal</h4>
           <span class="text-xs font-black text-gray-500" *ngIf="storageData">{{ storageData.disk.percentage }}%</span>
         </div>
-        
-        <div class="w-full h-6 bg-gray-100 dark:bg-[#131314] border border-gray-300 dark:border-neutral-900 rounded-[3px] overflow-hidden shadow-inner p-[1px]">
-          <div 
+
+        <div
+          class="w-full h-6 bg-gray-100 dark:bg-[#131314] border border-gray-300 dark:border-neutral-900 rounded-[3px] overflow-hidden shadow-inner p-[1px]">
+          <div
             class="h-full transition-all duration-1000 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] border-r border-black/10"
-            [ngClass]="getDiskClass(storageData?.disk.percentage)"
-            [style.width.%]="storageData?.disk.percentage">
+            [ngClass]="getDiskClass(storageData?.disk.percentage)" [style.width.%]="storageData?.disk.percentage">
           </div>
         </div>
-        
+
         <div class="flex flex-wrap justify-between mt-4 gap-4" *ngIf="storageData">
           <div class="flex flex-col">
             <span class="text-[10px] font-bold text-gray-400 uppercase">Disponible</span>
@@ -131,17 +155,25 @@
             <span class="text-sm font-bold text-gray-500">{{ storageData.disk.totalGB }}</span>
           </div>
         </div>
-        <div *ngIf="loadingStorage" class="h-10 w-full bg-gray-100 dark:bg-gray-800 animate-pulse mt-4 rounded-lg"></div>
+        <div *ngIf="loadingStorage" class="h-10 w-full bg-gray-100 dark:bg-gray-800 animate-pulse mt-4 rounded-lg">
+        </div>
       </div>
     </div>
 
-    <div class="bg-[#DDC9A3]/20 dark:bg-[#d4a762]/5 rounded-xl border-2 border-dashed border-[#BC955B]/30 dark:border-[#d4a762]/20 p-6 flex flex-col justify-center">
+    <div
+      class="bg-[#DDC9A3]/20 dark:bg-[#d4a762]/5 rounded-xl border-2 border-dashed border-[#BC955B]/30 dark:border-[#d4a762]/20 p-6 flex flex-col justify-center">
       <div class="flex items-center gap-4">
-        <div class="p-3 bg-white dark:bg-[#1a1a1b] rounded-xl text-[#691831] dark:text-[#c44569] shadow-sm border border-[#BC955B]/20">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1a2 2 0 002 2h1a2 2 0 012 2v1a2 2 0 01-2 2H5z"/></svg>
+        <div
+          class="p-3 bg-white dark:bg-[#1a1a1b] rounded-xl text-[#691831] dark:text-[#c44569] shadow-sm border border-[#BC955B]/20">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1a2 2 0 002 2h1a2 2 0 012 2v1a2 2 0 01-2 2H5z" />
+          </svg>
         </div>
         <div>
-          <label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest block mb-1">Archivos en Volumen</label>
+          <label
+            class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest block mb-1">Archivos
+            en Volumen</label>
           <h3 class="text-2xl font-black text-[#691831] dark:text-[#c44569]" *ngIf="!loadingStorage">
             {{ storageData?.files.total | number }}
           </h3>
@@ -153,10 +185,11 @@
     </div>
   </div>
 
-  <footer class="pt-4 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-gray-400">
+  <footer
+    class="pt-4 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-gray-400">
     <div class="flex items-center gap-3">
-        <div class="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[9px] font-bold uppercase">Netdata Engine</div>
-        <span class="text-[11px] font-medium tracking-tight">Sincronizado: {{ lastUpdated | date:'HH:mm:ss' }}</span>
+      <div class="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[9px] font-bold uppercase">Netdata Engine</div>
+      <span class="text-[11px] font-medium tracking-tight">Sincronizado: {{ lastUpdated | date:'HH:mm:ss' }}</span>
     </div>
     <div class="text-[10px] font-bold uppercase tracking-widest italic opacity-60">
       Actualización de volúmenes cada 5 minutos
