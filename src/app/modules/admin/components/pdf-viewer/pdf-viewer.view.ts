@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild, HostListener, OnInit, OnDestroy } from '@angular/core';
 import * as pdfjsLib from 'pdfjs-dist';
 import { FormsModule } from '@angular/forms';
-import 'pdfjs-dist/web/pdf_viewer.css';
+// import 'pdfjs-dist/web/pdf_viewer.css';
 
 // Configuración del worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(

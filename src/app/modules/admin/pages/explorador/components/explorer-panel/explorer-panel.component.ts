@@ -1,9 +1,10 @@
-import { Component, computed, HostListener, inject, input, output, signal } from "@angular/core";
+import { Component, computed, effect, HostListener, inject, input, output, signal } from "@angular/core";
 import { AutorizacionTreeNode } from "../../../../../../core/models/autorizacion-tree.model";
 import { AutorizacionService } from "../../../../../../core/services/explorador-autorizacion.service";
 import { ActivatedRoute } from "@angular/router";
 import { ExploradorStateService } from "../../services/explorador-state.service";
 import { AutorizacionTreeService } from "../../../../../../core/services/explorador-autorizacion-tree.service";
+import { delay, filter } from "rxjs";
 
 @Component({
   selector: 'app-explorer-panel', standalone: false,
@@ -13,8 +14,8 @@ import { AutorizacionTreeService } from "../../../../../../core/services/explora
 export class ExplorerPanelComponent {
 
   /* =======================
-   * Inputs / Outputs
-   * ======================= */
+  * Inputs / Outputs
+  * ======================= */
   tree = input<AutorizacionTreeNode[]>([]);
   selectedNode = input<AutorizacionTreeNode | null>(null);
   collapsed = input(false);
@@ -25,21 +26,42 @@ export class ExplorerPanelComponent {
   toggle = output<void>();
   nodeSelected = output<AutorizacionTreeNode>();
   nodeRightClick = output<{ mouseEvent: MouseEvent; node: AutorizacionTreeNode }>();
+  private searchTriggered = signal(false);
+  isLoading = signal(false);
   ngOnInit(): void {
 
     this.route.queryParams.subscribe(params => {
       const carpeta = params['q'];
-
       if (carpeta) {
         this.buscarYSeleccionarNodo(carpeta);
       }
     });
 
+    // Escuchar resultados de búsqueda
+    this.autorizacionService.autorizaciones$
+      .pipe(
+        filter(list => Array.isArray(list) && list.length > 0),
+        filter(() => this.searchTriggered())
+      )
+      .subscribe(list => {
+        if (list.length < 2) {
+          const primera = list[0];
+          const nombreCarpeta = primera.nombreCarpeta;
+
+          if (nombreCarpeta) {
+            this.buscarYSeleccionarNodo(nombreCarpeta);
+          }
+        }
+        this.searchTriggered.set(false);
+      });
+
   }
 
+
+
   /* =======================
-   * State (Signals)
-   * ======================= */
+  * State (Signals)
+  * ======================= */
   private autorizacionService = inject(AutorizacionService);
   filterText = signal('');
 
@@ -50,16 +72,16 @@ export class ExplorerPanelComponent {
   } | null>(null);
 
   /* =======================
-   * Computed
-   * ======================= */
+  * Computed
+  * ======================= */
   filteredTree = computed(() => {
     return this.tree();
   });
 
 
   /* =======================
-   * Events
-   * ======================= */
+  * Events
+  * ======================= */
   @HostListener('document:click', ['$event'])
   closeFloating(event: MouseEvent) {
     const target = event.target as HTMLElement;
@@ -78,8 +100,8 @@ export class ExplorerPanelComponent {
   }
 
   /* =======================
-   * Input handling
-   * ======================= */
+  * Input handling
+  * ======================= */
   onInputChange(event: Event): void {
     console.log("clic")
     const value = (event.target as HTMLInputElement).value;
@@ -95,18 +117,19 @@ export class ExplorerPanelComponent {
 
     if (!value) {
       this.autorizacionService.setFiltros(null);
+      this.searchTriggered.set(false);
       return;
     }
 
-    this.autorizacionService.setFiltros({
-      search: value
-    });
+    this.searchTriggered.set(true);
+    this.autorizacionService.setFiltros({ search: value });
   }
 
 
+
   /* =======================
-   * Helpers
-   * ======================= */
+  * Helpers
+  * ======================= */
   private buscarYSeleccionarNodo(query: string) {
 
     const trySearch = () => {
@@ -125,16 +148,15 @@ export class ExplorerPanelComponent {
 
       const targetNode = path[path.length - 1];
 
-      // Seleccionar nodo final
       this.state.selectNode(targetNode, true, true);
+      this.autorizacionService.setFiltros({
+        search: query,
+      });
 
       return true;
     };
 
-    // intento inmediato
     if (trySearch()) return;
-
-    // esperar a que cargue el árbol (async-safe)
     const interval = setInterval(() => {
       if (trySearch()) {
         clearInterval(interval);
@@ -142,39 +164,65 @@ export class ExplorerPanelComponent {
     }, 100);
   }
 
-private findNodePath(
-  nodes: AutorizacionTreeNode[],
-  query: string,
-  path: AutorizacionTreeNode[] = []
-): AutorizacionTreeNode[] | null {
+  private findNodePath(
+    nodes: AutorizacionTreeNode[],
+    query: string,
+    path: AutorizacionTreeNode[] = []
+  ): AutorizacionTreeNode[] | null {
 
-  const normalizedQuery = query.trim().toLowerCase();
+    const normalizedQuery = query.trim().toLowerCase();
 
-  for (const node of nodes) {
+    for (const node of nodes) {
 
-    const newPath = [...path, node];
+      const newPath = [...path, node];
+      const matchByNombre = node.nombre?.toLowerCase() === normalizedQuery;
+      const matchById = node.id?.toLowerCase() === normalizedQuery;
 
-    // 🔍 coincidencias posibles
-    const matchByNombre = node.nombre?.toLowerCase() === normalizedQuery;
-    const matchById = node.id?.toLowerCase() === normalizedQuery;
+      const matchByCarpeta =
+        node.type === 'autorizacion' &&
+        node.data?.nombreCarpeta?.toLowerCase() === normalizedQuery;
 
-    // match por data.nombreCarpeta (AUTORIZACION REAL)
-    const matchByCarpeta =
-      node.type === 'autorizacion' &&
-      node.data?.nombreCarpeta?.toLowerCase() === normalizedQuery;
+      if (matchByNombre || matchById || matchByCarpeta) {
+        return newPath;
+      }
 
-    if (matchByNombre || matchById || matchByCarpeta) {
-      return newPath;
+      if (node.children && node.children.length > 0) {
+        const result = this.findNodePath(node.children, query, newPath);
+        if (result) return result;
+      }
     }
 
-    if (node.children && node.children.length > 0) {
-      const result = this.findNodePath(node.children, query, newPath);
-      if (result) return result;
-    }
+    return null;
   }
 
-  return null;
-}
+  resetExplorer(): void {
+    this.isLoading.set(true);
 
+    setTimeout(() => {
+      // limpiar input
+      this.filterText.set('');
+
+      this.autorizacionService.setFiltros(null);
+      this.searchTriggered.set(false);
+      this.floatingState.set(null);
+
+      const closeTree = (nodes: AutorizacionTreeNode[]) => {
+        for (const node of nodes) {
+          node._open = false;
+          if (node.children?.length) {
+            closeTree(node.children);
+          }
+        }
+      };
+      closeTree(this.state.tree());
+
+      this.isLoading.set(false);
+    }, 200); 
+  }
+  clearInput(): void {
+    this.filterText.set('');
+    this.autorizacionService.setFiltros(null);
+    this.searchTriggered.set(false);
+  }
 
 }

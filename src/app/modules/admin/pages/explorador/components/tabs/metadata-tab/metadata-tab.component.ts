@@ -14,22 +14,24 @@ export class MetadataTabComponent {
   @Input() selectedNode!: AutorizacionTreeNode | null;
 
   get metadata(): any[] {
+    console.log("this.selectedNode")
+    console.log(this.selectedNode)
     if (!this.selectedNode) return [];
     const baseMetadata = [
       { label: 'Nombre', value: this.selectedNode.nombre || 'Sin nombre', icon: 'tag' },
       { label: 'ID', value: this.selectedNode.id || 'Sin ID', icon: 'hash' },
-      { label: 'Tipo', value: this.getTypeLabel(this.selectedNode.type), icon: 'type' },
-      {
-        label: 'Fecha de creación',
-        value: this.formatDate(this.selectedNode.data?.fechaCreacion),
-        icon: 'calendar'
-      }
+      { label: 'Autorizacion', value: this.selectedNode.data?.numeroAutorizacion, icon: 'type' },
+      // {
+      //   label: 'Fecha de creación',
+      //   value: this.formatDate(this.selectedNode.data?.fechaCreacion),
+      //   icon: 'calendar'
+      // }
     ];
 
     if (this.selectedNode.type === 'autorizacion') {
       return [
         ...baseMetadata,
-        { label: 'Solicitante', value: this.selectedNode.data?.solicitante, icon: 'user' },
+        // { label: 'Solicitante', value: this.selectedNode.data?.solicitante, icon: 'user' },
         { label: 'Modalidad', value: this.selectedNode.data?.modalidad?.nombre, icon: 'folder' },
         { label: 'Municipio', value: this.selectedNode.data?.municipio?.nombre, icon: 'map' },
         {

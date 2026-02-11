@@ -14,6 +14,7 @@ export class ExploradorStateService {
   private _pdfUrl = signal<SafeResourceUrl | null>(null);
   private _contextMenu = signal<ContextMenuState>({ visible: false, x: 0, y: 0, node: null });
   private _toast = signal<ToastState>({ visible: false, message: '', type: 'success' });
+  private _selectedNodeId = signal<string | null>(null);
 
   tree = this._tree.asReadonly();
   selectedNode = this._selectedNode.asReadonly();
