@@ -86,20 +86,21 @@ export class RespaldosView implements OnInit, OnDestroy {
         const usedReal = row[idxUsed];
         const total = usedReal + row[idxFree];
         return total > 0 ? Math.round((usedReal / total) * 100) : 0;
-      }).reverse();
+      });
 
       // Valores actuales (última posición del historial tras el reverse)
       this.performanceData.currentCpu = this.performanceData.cpuHistory[0];
-      this.performanceData.currentRam = this.performanceData.ramHistory[this.performanceData.ramHistory.length - 1];
+      this.performanceData.currentRam = this.performanceData.ramHistory[0];
 
       // Cálculo de GB para el label (usando el dato más reciente de la respuesta original data[0])
       const latestRam = ram.data[0];
       const usedMB = latestRam[idxUsed];
       const totalMB = usedMB + latestRam[idxFree];
-      this.performanceData.ramValueGB = `${(usedMB / 1024).toFixed(1)} GB de ${(totalMB / 1024).toFixed(0)} GB`;
+      this.performanceData.ramValueGB = `${(usedMB / 1024).toFixed(2)} GB de ${(totalMB / 1024).toFixed(2)} GB`;
       this.cpuMax = Math.max(...this.performanceData.cpuHistory, 10);
       this.ramMax = Math.max(...this.performanceData.ramHistory, 10);
 
+      this.lastUpdated = new Date();
       this.loadingPerformance = false;
       this.updateGlobalStatus();
       this.cdr.detectChanges();
