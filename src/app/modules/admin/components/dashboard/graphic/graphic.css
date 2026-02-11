@@ -1,5 +1,6 @@
 :host {
   display: block;
+  position: relative;
 }
 
 /* Asegurar que las barras se vean */
@@ -19,6 +20,32 @@
   background-color: rgba(105, 24, 49, 0.8);
 }
 
+/* Z-INDEX CRÍTICO - Asegurar que los tooltips estén por encima de todo */
+.z-50 {
+  z-index: 50 !important;
+}
+
+.z-40 {
+  z-index: 40 !important;
+}
+
+.z-30 {
+  z-index: 30 !important;
+}
+
+.z-20 {
+  z-index: 20 !important;
+}
+
+.z-10 {
+  z-index: 10 !important;
+}
+
+/* Asegurar que el contenedor de la gráfica permita overflow visible */
+.overflow-visible {
+  overflow: visible !important;
+}
+
 /* Animaciones */
 .animate-spin {
   animation: spin 1s linear infinite;
@@ -34,27 +61,34 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Tooltip styling */
-.tooltip {
-  position: relative;
+/* Tooltip styling mejorado */
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1 !important;
 }
 
-.tooltip .tooltip-text {
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s;
+.group:hover .group-hover\:visible {
+  visibility: visible !important;
 }
 
-.tooltip:hover .tooltip-text {
-  visibility: visible;
-  opacity: 1;
+/* Estilos específicos para tooltips de gráficas */
+.tooltip-grafica {
+  position: absolute;
+  z-index: 9999 !important;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+}
+
+/* Asegurar que las barras no tengan overflow hidden */
+.bar-container {
+  overflow: visible !important;
 }
 
 /* Estilos específicos para la gráfica - CRECIMIENTO DESDE ABAJO */
 .chart-bar-container {
   display: flex;
-  align-items: flex-end; /* Esto hace que las barras crezcan desde abajo */
+  align-items: flex-end;
   height: 100%;
+  overflow: visible !important;
 }
 
 /* Para asegurar que las barras tengan una altura mínima */
@@ -84,6 +118,19 @@
   cursor: not-allowed;
 }
 
+/* Mejoras para tooltips en barras altas */
+.group:hover .tooltip-above {
+  top: auto !important;
+  bottom: calc(100% + 10px) !important;
+  transform: translateX(-50%) !important;
+}
+
+/* Asegurar que los tooltips no se corten */
+.force-above {
+  position: fixed !important;
+  z-index: 99999 !important;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .text-2xl {
@@ -108,6 +155,11 @@
     padding-left: 0.25rem;
     padding-right: 0.25rem;
   }
+  
+  /* Ajustar tooltips en móvil */
+  .min-w-\[140px\] {
+    min-width: 120px !important;
+  }
 }
 
 @media (max-width: 640px) {
@@ -131,5 +183,12 @@
   
   .p-3 {
     padding: 0.5rem;
+  }
+  
+  /* Tooltips más pequeños en móvil */
+  .min-w-\[140px\] {
+    min-width: 100px !important;
+    font-size: 0.65rem;
+    padding: 0.25rem 0.5rem;
   }
 }

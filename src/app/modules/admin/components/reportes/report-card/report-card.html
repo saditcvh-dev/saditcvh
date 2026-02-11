@@ -45,7 +45,7 @@
                 </div>
             </div>
 
-            <!-- Reporte 2 - Actividad de usuarios -->
+            <!-- Reporte 2 - Detalles de usuarios -->
             <div 
                 class="border border-[#A02142]/20 dark:border-[#c44569]/30 rounded-lg p-5 hover:border-[#A02142] dark:hover:border-[#c44569] hover:shadow-md dark:hover:shadow-gray-900/50 transition-all cursor-pointer bg-white dark:bg-[#1a1a1a]"
                 (click)="generarReporteUsuarios()"
@@ -64,6 +64,38 @@
                         </div>
                         <div>
                             <h4 class="font-medium text-[#A02142] dark:text-[#c44569]">
+                                Detalles de usuarios
+                                <span *ngIf="isLoadingUsuarios" class="text-xs ml-2">(Generando...)</span>
+                            </h4>
+                            <p class="text-xs text-[#6F7271] dark:text-gray-400">Información detallada de roles y permisos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-xs text-[#6F7271] dark:text-gray-400 mt-2">
+                    <i class="fas fa-file-pdf mr-1"></i>
+                    Descargar PDF
+                </div>
+            </div>
+
+            <!-- Reporte 3 - Actividad de usuarios -->
+            <div 
+                class="border border-[#2563EB]/20 dark:border-[#60A5FA]/30 rounded-lg p-5 hover:border-[#2563EB] dark:hover:border-[#60A5FA] hover:shadow-md dark:hover:shadow-gray-900/50 transition-all cursor-pointer bg-white dark:bg-[#1a1a1a]"
+                (click)="generarReporteActividadUsuarios()"
+                [class.opacity-50]="isLoadingActividadUsuarios"
+                [class.cursor-wait]="isLoadingActividadUsuarios"
+            >
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-[#2563EB]/10 dark:bg-[#60A5FA]/20 flex items-center justify-center mr-3">
+                            <i 
+                                class="fas text-[#2563EB] dark:text-[#60A5FA]" 
+                                [class.fa-users]="!isLoadingActividadUsuarios"
+                                [class.fa-spinner]="isLoadingActividadUsuarios"
+                                [class.fa-spin]="isLoadingActividadUsuarios"
+                            ></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-[#2563EB] dark:text-[#60A5FA]">
                                 Actividad de usuarios
                                 <span *ngIf="isLoadingUsuarios" class="text-xs ml-2">(Generando...)</span>
                             </h4>
