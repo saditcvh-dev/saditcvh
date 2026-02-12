@@ -1,9 +1,10 @@
 // src/app/core/services/dashboard.service.ts
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { GraphicService } from './graphic.service';
 
 export interface KPIData {
   total_documentos: number;
@@ -56,6 +57,7 @@ export interface CardValue {
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
   private http = inject(HttpClient);
+  private graphicService = inject(GraphicService);
   private readonly API_URL = `${environment.apiUrl}/dashboard/estadisticas`;
   
   // Signals de estado
@@ -155,7 +157,8 @@ export class DashboardService {
     return time.toLocaleTimeString('es-MX', {
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit'
+      second: '2-digit',
+      hour12: true
     });
   });
 
@@ -179,6 +182,12 @@ export class DashboardService {
           this.updateKPIData(response.data);
           this.hasError.set(false);
           this.lastUpdateTime.set(new Date());
+          
+          // Calcular documentos hoy desde la gráfica después de que se cargue
+          setTimeout(() => {
+            this.calcularDocumentosHoy();
+          }, 300);
+          
         } else if (response && !response.success) {
           this.hasError.set(true);
           this.errorMessage.set(response.message || 'Error en el servidor');
@@ -247,28 +256,146 @@ export class DashboardService {
       error: false
     }));
     
-    // 4. Actualizar Documentos Hoy
-    const documentosHoyValue = data.documentos_hoy || 0;
-    const documentosHoyTrend = this.calculateTrend(prev['documentos_hoy'] || 0, documentosHoyValue);
+    // 4. NO actualizar Documentos Hoy aquí, se hará desde calcularDocumentosHoy()
+    // Solo guardamos el valor del backend por si acaso
+    if (data.documentos_hoy !== undefined) {
+      this.previousValues.update(prev => ({
+        ...prev,
+        documentos_hoy_backend: data.documentos_hoy || 0
+      }));
+    }
+    
+    // Guardar valores actuales para próxima comparación
+    this.previousValues.update(prev => ({
+      ...prev,
+      documentos: documentosValue,
+      paginas: paginasValue,
+      usuarios: usuariosValue
+    }));
+  }
+
+  /**
+   * Calcula los documentos de hoy usando los datos de la gráfica
+   * que ya tienen el ajuste de -6 horas
+   */
+  calcularDocumentosHoy(): void {
+    try {
+      // Obtener los datos de la gráfica (ya tienen el ajuste de -6 horas)
+      const datosGrafica = this.graphicService.chartData();
+      
+      if (datosGrafica && datosGrafica.length > 0) {
+        // Buscar el día de hoy (último día del array)
+        const hoy = datosGrafica[datosGrafica.length - 1];
+        
+        if (hoy && hoy.cantidad !== undefined) {
+          const cantidadHoy = typeof hoy.cantidad === 'string' 
+            ? parseInt(hoy.cantidad, 10) 
+            : hoy.cantidad;
+          
+          const documentosHoyValue = cantidadHoy || 0;
+          const documentosHoyTrend = this.calculateTrend(
+            this.previousValues()['documentos_hoy'] || 0, 
+            documentosHoyValue
+          );
+          
+          this.documentosHoyCard.update(card => ({
+            ...card,
+            value: documentosHoyValue,
+            description: `Digitalizados hoy: ${documentosHoyValue}`,
+            trend: {
+              value: documentosHoyTrend,
+              isPositive: documentosHoyValue >= (this.previousValues()['documentos_hoy'] || 0)
+            },
+            loading: false,
+            error: false
+          }));
+          
+          // Guardar el valor para próxima comparación
+          this.previousValues.update(prev => ({
+            ...prev,
+            documentos_hoy: documentosHoyValue
+          }));
+          
+          return;
+        }
+      }
+      
+      // Si no hay datos de la gráfica, usar el valor del backend
+      this.usarDocumentosHoyDesdeBackend();
+      
+    } catch (error) {
+      console.error('Error al calcular documentos hoy desde gráfica:', error);
+      this.usarDocumentosHoyDesdeBackend();
+    }
+  }
+
+  /**
+   * Fallback: usar documentos_hoy del backend si existe
+   */
+  private usarDocumentosHoyDesdeBackend(): void {
+    const data = this.kpiData();
+    if (data && data.documentos_hoy !== undefined) {
+      const documentosHoyValue = data.documentos_hoy || 0;
+      const documentosHoyTrend = this.calculateTrend(
+        this.previousValues()['documentos_hoy'] || 0, 
+        documentosHoyValue
+      );
+      
+      this.documentosHoyCard.update(card => ({
+        ...card,
+        value: documentosHoyValue,
+        description: `Digitalizados hoy: ${documentosHoyValue}`,
+        trend: {
+          value: documentosHoyTrend,
+          isPositive: documentosHoyValue >= (this.previousValues()['documentos_hoy'] || 0)
+        },
+        loading: false,
+        error: false
+      }));
+      
+      this.previousValues.update(prev => ({
+        ...prev,
+        documentos_hoy: documentosHoyValue
+      }));
+    } else {
+      // Si no hay ningún dato, poner 0
+      this.documentosHoyCard.update(card => ({
+        ...card,
+        value: 0,
+        description: 'Digitalizados hoy: 0',
+        trend: { value: 0, isPositive: true },
+        loading: false,
+        error: false
+      }));
+    }
+  }
+
+  /**
+   * Establece manualmente el valor de documentos hoy
+   */
+  setDocumentosHoy(cantidad: number): void {
+    const documentosHoyValue = cantidad || 0;
+    const documentosHoyTrend = this.calculateTrend(
+      this.previousValues()['documentos_hoy'] || 0, 
+      documentosHoyValue
+    );
+    
     this.documentosHoyCard.update(card => ({
       ...card,
       value: documentosHoyValue,
       description: `Digitalizados hoy: ${documentosHoyValue}`,
       trend: {
         value: documentosHoyTrend,
-        isPositive: documentosHoyValue >= (prev['documentos_hoy'] || 0)
+        isPositive: documentosHoyValue >= (this.previousValues()['documentos_hoy'] || 0)
       },
       loading: false,
       error: false
     }));
     
-    // Guardar valores actuales para próxima comparación
-    this.previousValues.set({
-      documentos: documentosValue,
-      paginas: paginasValue,
-      usuarios: usuariosValue,
+    this.previousValues.update(prev => ({
+      ...prev,
       documentos_hoy: documentosHoyValue
-    });
+    }));
   }
 
   /**
@@ -306,6 +433,11 @@ export class DashboardService {
     
     this.errorMessage.set(message);
     this.setErrorState(true);
+    
+    // Intentar calcular documentos hoy desde la gráfica igualmente
+    setTimeout(() => {
+      this.calcularDocumentosHoy();
+    }, 500);
   }
 
   /**
@@ -323,6 +455,10 @@ export class DashboardService {
    */
   refresh(): void {
     this.loadDashboardData();
+    // Forzar recálculo de documentos hoy
+    setTimeout(() => {
+      this.calcularDocumentosHoy();
+    }, 500);
   }
 
   /**
@@ -353,5 +489,33 @@ export class DashboardService {
     
     const sign = trendValue > 0 ? '+' : '';
     return `${sign}${trendValue.toFixed(1)}%`;
+  }
+
+  /**
+   * Verifica si hay error general
+   */
+  hasErrorState(): boolean {
+    return this.hasError();
+  }
+
+  /**
+   * Verifica si todas las cards están en error
+   */
+  allCardsError(): boolean {
+    const cards = this.cards();
+    return cards.every(card => card.error);
+  }
+
+  /**
+   * Obtiene la clase CSS para cada card
+   */
+  getCardClass(card: CardValue): string {
+    const baseClass = 'bg-white dark:bg-[#050505] rounded-xl border border-gray-200 dark:border-neutral-900 p-5 shadow-sm transition-all duration-300 hover:shadow-md';
+    
+    if (card.error) {
+      return `${baseClass} border-red-200 dark:border-red-900/50`;
+    }
+    
+    return baseClass;
   }
 }
