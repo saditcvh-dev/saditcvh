@@ -125,6 +125,15 @@ onClickOutside(event: MouseEvent) {
 }
 
 
+openInNewWindow(node: AutorizacionTreeNode) {
+  console.log(node);
+
+  const sanitized = node.nombre.replace(/[\s-]/g, '_');
+
+  const url = `/admin/explorador?q=${sanitized}`;
+  window.open(url, '_blank');
+}
+
 
 
 }

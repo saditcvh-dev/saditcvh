@@ -48,7 +48,7 @@ export class TabsNavigationComponent {
   toggleMainHeader(): void {
     this.showMainHeader = !this.showMainHeader;
     this.showMainHeaderChange.emit(this.showMainHeader);
-    console.log('showMainHeader aqui :', this.showMainHeader);
+    //console.log('showMainHeader aqui :', this.showMainHeader);
   }
 
 
@@ -82,4 +82,5 @@ export class TabsNavigationComponent {
   toggleControlPanel(): void {
     this.showControlPanel = !this.showControlPanel;
   }
+  
 }

@@ -194,7 +194,7 @@ export class UsuariosView implements OnInit {
 
     if (event.success && event.data) {
       const user = event.data;
-      console.log('Usuario procesado:', event.message);
+      //console.log('Usuario procesado:', event.message);
 
       // 1. Caso: Usuario nuevo que NO es Administrador (Fase 5)
       const isNewNonAdmin = wasCreating && !user.roles?.some(r => r.id === 1);

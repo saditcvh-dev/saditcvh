@@ -68,7 +68,7 @@ export class ExploradorView implements OnInit {
   // Computed
   tiposAutorizacion = this.tiposAutorizacionSvc.tipos;
   modalidades = this.modalidadSvc.modalidadesOrdenadas;
-
+    private autorizacionIdCargado = signal<number | null>(null);
   documentVersions = computed(() => {
     const autorizacionId = this.selectedAutorizacionId();
     const documentos = this.documentoService.documentos();
@@ -82,15 +82,40 @@ export class ExploradorView implements OnInit {
   toggleExplorer() {
     this.isCollapsed = !this.isCollapsed;
   }
-  constructor() {
+  // constructor() {
+  //   effect(() => {
+  //     const node = this.selectedNode();
+
+  //     if (node?.type === 'autorizacion') {
+  //       const autorizacionId = node.data.id;
+
+  //       this.selectedAutorizacionId.set(autorizacionId);
+  //       this.documentoService.cargarDocumentosPorAutorizacion(autorizacionId);
+  //     }
+  //   });
+  // }  
+    constructor() {
     effect(() => {
       const node = this.selectedNode();
+      const autorizacionId = node?.data?.id;
 
-      if (node?.type === 'autorizacion') {
-        const autorizacionId = node.data.id;
-
-        this.selectedAutorizacionId.set(autorizacionId);
-        this.documentoService.cargarDocumentosPorAutorizacion(autorizacionId);
+      if (node?.type === 'autorizacion' && autorizacionId) {
+        // Solo cargar si es diferente al último cargado
+        if (this.autorizacionIdCargado() !== autorizacionId) {
+          this.autorizacionIdCargado.set(autorizacionId);
+          this.selectedAutorizacionId.set(autorizacionId);
+          
+          console.log(` Efecto: Cargando documentos para autorización ${autorizacionId}`);
+          
+          // Usar la versión que retorna Observable para mejor control
+          this.documentoService.cargarDocumentosPorAutorizacion(autorizacionId)
+            .subscribe({
+              next: (docs) => console.log(`Documentos cargados: ${docs.length}`),
+              error: (err) => console.error(' Error cargando documentos:', err)
+            });
+        } else {
+          console.log(` Usando datos existentes para autorización ${autorizacionId}`);
+        }
       }
     });
   }

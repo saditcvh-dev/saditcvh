@@ -59,13 +59,16 @@ export class DocumentoService {
   private documentosState = signal<Documento[]>([]);
   private loadingState = signal<boolean>(false);
   private errorState = signal<string | null>(null);
-   selectedDocumentoState = signal<Documento | null>(null);
+  selectedDocumentoState = signal<Documento | null>(null);
+  // Cache interno de documentos por ID
+  private documentosCache = new Map<number, Documento>();
 
+  private autorizacionesCache = new Map<number, Documento[]>();
   documentos = this.documentosState.asReadonly();
   loading = this.loadingState.asReadonly();
   error = this.errorState.asReadonly();
   selectedDocumento = this.selectedDocumentoState.asReadonly();
-    // Método para descargar archivo
+  // Método para descargar archivo
   descargarArchivo(archivoId: number): Observable<Blob> {
     this.loadingState.set(true);
     this.errorState.set(null);
@@ -85,38 +88,106 @@ export class DocumentoService {
 
 
   verificarDocumentosPorAutorizacion(autorizacionId: number): Observable<boolean> {
-    return this.http.get<ApiResponse<Documento[]>>(`${this.apiUrl}/autorizacion/${autorizacionId}`,{withCredentials: true}).pipe(
+    return this.http.get<ApiResponse<Documento[]>>(`${this.apiUrl}/autorizacion/${autorizacionId}`, { withCredentials: true }).pipe(
       map(response => response.data && response.data.length > 0),
       catchError(() => of(false))
     );
   }
-  cargarDocumentosPorAutorizacion(autorizacionId: number): void {
-    this.loadingState.set(true);
+
+  cargarDocumentosPorAutorizacion(autorizacionId: number): Observable<Documento[]> {
     this.errorState.set(null);
 
-    console.log("aqui--")
-    this.http.get<ApiResponse<Documento[]>>(`${this.apiUrl}/autorizacion/${autorizacionId}`,{withCredentials: true})
-      .pipe(
-        catchError(this.handleError)
-      )
-      .subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.documentosState.set(response.data);
-          }
-          this.loadingState.set(false);
-        },
-        error: (error) => {
-          this.errorState.set(error.message);
-          this.loadingState.set(false);
-        }
-      });
+    // Verificar caché primero
+    if (this.autorizacionesCache.has(autorizacionId)) {
+      console.log(` Usando caché para autorización ${autorizacionId}`);
+      const docs = this.autorizacionesCache.get(autorizacionId)!;
+      this.documentosState.set(docs);
+      return of(docs); // Retornar Observable para mejor control
+    }
+
+    console.log(` Cargando documentos para autorización ${autorizacionId} desde API`);
+    this.loadingState.set(true);
+
+    return this.http.get<ApiResponse<Documento[]>>(
+      `${this.apiUrl}/autorizacion/${autorizacionId}`, 
+      { withCredentials: true }
+    ).pipe(
+      map(response => response.data),
+      tap(docs => {
+        // Guardar en caché
+        this.autorizacionesCache.set(autorizacionId, docs);
+        docs.forEach(doc => this.documentosCache.set(doc.id, doc));
+        this.documentosState.set(docs);
+        this.loadingState.set(false);
+      }),
+      catchError(error => {
+        this.errorState.set(error.message);
+        this.loadingState.set(false);
+        return throwError(() => error);
+      })
+    );
   }
+
+  // Versión que no retorna Observable (para compatibilidad)
+  cargarDocumentosPorAutorizacionVoid(autorizacionId: number): void {
+    this.cargarDocumentosPorAutorizacion(autorizacionId).subscribe();
+  }
+
+  // cargarDocumentosPorAutorizacion(autorizacionId: number): void {
+  //   this.loadingState.set(true);
+  //   this.errorState.set(null);
+
+  //   console.log("aqui--")
+  //   this.http.get<ApiResponse<Documento[]>>(`${this.apiUrl}/autorizacion/${autorizacionId}`,{withCredentials: true})
+  //     .pipe(
+  //       catchError(this.handleError)
+  //     )
+  //     .subscribe({
+  //       next: (response) => {
+  //         if (response.success) {
+  //           this.documentosState.set(response.data);
+  //         }
+  //         this.loadingState.set(false);
+  //       },
+  //       error: (error) => {
+  //         this.errorState.set(error.message);
+  //         this.loadingState.set(false);
+  //       }
+  //     });
+  // }
+  // obtenerDocumentoPorId(id: number): void {
+  //   this.loadingState.set(true);
+  //   this.errorState.set(null);
+
+  //   this.http.get<ApiResponse<Documento>>(`${this.apiUrl}/${id}`,{withCredentials: true})
+  //     .pipe(
+  //       catchError(this.handleError)
+  //     )
+  //     .subscribe({
+  //       next: (response) => {
+  //         if (response.success) {
+  //           this.selectedDocumentoState.set(response.data);
+  //         }
+  //         this.loadingState.set(false);
+  //       },
+  //       error: (error) => {
+  //         this.errorState.set(error.message);
+  //         this.loadingState.set(false);
+  //       }
+  //     });
+  // }
   obtenerDocumentoPorId(id: number): void {
-    this.loadingState.set(true);
     this.errorState.set(null);
 
-    this.http.get<ApiResponse<Documento>>(`${this.apiUrl}/${id}`,{withCredentials: true})
+    // Primero revisamos si ya tenemos el documento en cache
+    if (this.documentosCache.has(id)) {
+      this.selectedDocumentoState.set(this.documentosCache.get(id)!);
+      return; // No hace falta llamar al backend
+    }
+
+    this.loadingState.set(true);
+
+    this.http.get<ApiResponse<Documento>>(`${this.apiUrl}/${id}`, { withCredentials: true })
       .pipe(
         catchError(this.handleError)
       )
@@ -124,6 +195,7 @@ export class DocumentoService {
         next: (response) => {
           if (response.success) {
             this.selectedDocumentoState.set(response.data);
+            this.documentosCache.set(id, response.data); // Guardamos en cache
           }
           this.loadingState.set(false);
         },
@@ -133,6 +205,7 @@ export class DocumentoService {
         }
       });
   }
+
   crearDocumento(documentoData: DocumentoRequest, archivo: File): Observable<ApiResponse<Documento>> {
     this.loadingState.set(true);
     this.errorState.set(null);
@@ -162,7 +235,7 @@ export class DocumentoService {
       formData.append('archivo', archivo);
     }
 
-    return this.http.post<ApiResponse<Documento>>(this.apiUrl, formData,{withCredentials: true})
+    return this.http.post<ApiResponse<Documento>>(this.apiUrl, formData, { withCredentials: true })
       .pipe(
         tap((response) => {
           if (response.success) {
@@ -199,7 +272,7 @@ export class DocumentoService {
 
     formData.append('archivo', archivo);
 
-    return this.http.post<ApiResponse<Documento>>(`${this.apiUrl}/${documentoId}/version`, formData,{withCredentials: true})
+    return this.http.post<ApiResponse<Documento>>(`${this.apiUrl}/${documentoId}/version`, formData, { withCredentials: true })
       .pipe(
         tap((response) => {
           if (response.success) {

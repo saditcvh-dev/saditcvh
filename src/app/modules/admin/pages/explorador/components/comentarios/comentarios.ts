@@ -1,21 +1,9 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnInit,
-  OnDestroy,
-  SimpleChanges,
-  OnChanges,
-  ViewChild,
-  ElementRef,
-  ChangeDetectorRef,
-  SecurityContext
-} from '@angular/core';
+
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { AnotacionesService } from '../../../../../../core/services/anotaciones.service';
 import { AuthService } from '../../../../../../core/services/auth';
 import { AutorizacionTreeNode } from '../../../../../../core/models/autorizacion-tree.model';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SecurityContext, signal, SimpleChanges, ViewChild } from '@angular/core';
 
 export interface PdfComment {
   id: number;
@@ -56,7 +44,8 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
   // PÁGINA MANUAL - El usuario siempre escribe aquí
   manualCommentPage = 1;
 
-  comments: PdfComment[] = [];
+  // comments: PdfComment[] = [];
+  comments = signal<PdfComment[]>([]);
   newCommentText = '';
   selectedComment: PdfComment | null = null;
   nextCommentId = 1;
@@ -139,7 +128,9 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     if (!this.validateComment()) return;
 
     const comment = this.createComment();
-    this.comments.push(comment);
+    // this.comments.push(comment);
+
+    this.comments.update(list => [...list, comment]);
     this.resetCommentForm();
 
     this.saveCommentsToServer();
@@ -189,7 +180,11 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       this.eliminarComentarioDelServidor(comment);
 
       // Eliminar localmente
-      this.comments = this.comments.filter(c => c.id !== comment.id);
+      // this.comments = this.comments.filter(c => c.id !== comment.id);
+      this.comments.update(list =>
+        list.filter(c => c.id !== comment.id)
+      );
+
       this.saveToLocalStorage();
       this.commentDeleted.emit(comment);
       this.showToast('Comentario eliminado', 'warning');
@@ -260,17 +255,25 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       this.showToast('No puedes editar este comentario', 'error');
       return;
     }
+    // const index = this.comments().findIndex(...)
 
     // Actualizar el comentario
-    const index = this.comments.findIndex(c => c.id === this.selectedComment!.id);
+    const index = this.comments().findIndex(c => c.id === this.selectedComment!.id);
     if (index !== -1) {
-      this.comments[index] = {
-        ...this.comments[index],
-        text: this.newCommentText,
-        color: this.selectedColor,
-        page: this.manualCommentPage,
-        date: new Date()
-      };
+      this.comments.update(list =>
+        list.map(c =>
+          c.id === this.selectedComment!.id
+            ? {
+              ...c,
+              text: this.newCommentText,
+              color: this.selectedColor,
+              page: this.manualCommentPage,
+              date: new Date()
+            }
+            : c
+        )
+      );
+
 
       // Guardar cambios
       this.saveComments();
@@ -307,7 +310,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
   // ========== FILTRADO ==========
 
   get filteredComments() {
-    let filtered = this.comments.filter(c => c.documentId === this.pdfIdentifier);
+    let filtered = this.comments().filter(c => c.documentId === this.pdfIdentifier);
 
     if (this.filterByPage) {
       filtered = filtered.filter(c => c.page === this.filterByPage);
@@ -374,7 +377,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     }
 
     // Filtrar solo los comentarios del usuario actual
-    const misComentarios = this.comments.filter(c =>
+    const misComentarios = this.comments().filter(c =>
       c.usuario_id === currentUserId || c.esMio === true
     );
 
@@ -415,9 +418,9 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
             const allComments = this.extractAllCommentsFromResponse(response);
 
             if (allComments.length > 0) {
-              this.comments = allComments;
-              this.nextCommentId = Math.max(...this.comments.map(c => c.id), 0) + 1;
-              this.commentsLoaded.emit(this.comments);
+              this.comments.set( allComments);
+              this.nextCommentId = Math.max(...this.comments().map(c => c.id), 0) + 1;
+              this.commentsLoaded.emit(this.comments());
 
               console.log(`Cargados ${allComments.length} comentarios de todos los usuarios`);
             } else {
@@ -490,7 +493,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
 
   private loadFromLocalStorage(): void {
     if (!this.pdfIdentifier) {
-      this.comments = [];
+      this.comments.set([]);
       this.nextCommentId = 1;
       return;
     }
@@ -506,12 +509,12 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
           documentId: comment.documentId || this.pdfIdentifier
         }));
 
-        this.nextCommentId = Math.max(...this.comments.map(c => c.id), 0) + 1;
-        this.commentsLoaded.emit(this.comments);
+        this.nextCommentId = Math.max(...this.comments().map(c => c.id), 0) + 1;
+        this.commentsLoaded.emit(this.comments());
       }
     } catch (error) {
       console.error('Error cargando de localStorage:', error);
-      this.comments = [];
+      this.comments.set([]) ;
       this.nextCommentId = 1;
     }
   }
@@ -603,7 +606,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     const user = this.authService.currentUser();
     const currentUserId = user?.id;
 
-    this.comments.forEach(comment => {
+    this.comments().forEach(comment => {
       if (comment.usuario_id === currentUserId) {
         comment.autor = this.autor;
         comment.esMio = true;
@@ -667,9 +670,9 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       const currentUserId = user?.id;
 
       if (currentUserId) {
-        this.comments = this.comments.filter(c => c.usuario_id !== currentUserId);
+        this.comments.set( this.comments().filter(c => c.usuario_id !== currentUserId));
       } else {
-        this.comments = [];
+        this.comments .set([])
       }
 
       this.saveToLocalStorage();

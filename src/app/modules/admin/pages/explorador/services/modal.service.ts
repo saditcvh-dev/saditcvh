@@ -58,8 +58,8 @@ export class ModalService {
 
 
   openDeleteModal(node: AutorizacionTreeNode): void {
-    console.log("node----")
-    console.log(node)
+    //console.log("node----")
+    //console.log(node)
     this.modalState.set({
       visible: true,
       type: 'delete',
@@ -155,7 +155,7 @@ export class ModalService {
 
     switch (modal.type) {
       case 'delete':
-        console.log(modal.data)
+        //console.log(modal.data)
         this.deleteNode(modal.data?.node, stateService);
         break;
 
@@ -185,7 +185,7 @@ export class ModalService {
   }
 
   private openNewDocumentModal(autorizacionId: number, node: AutorizacionTreeNode | null): void {
-    console.log("node")
+    //console.log("node")
     this.modalState.set({
       visible: true,
       type: 'create_documento',
@@ -250,8 +250,8 @@ export class ModalService {
   }
 
   private deleteNode(node: AutorizacionTreeNode | undefined, stateService: any): void {
-    console.log("node***")
-    console.log(node)
+    //console.log("node***")
+    //console.log(node)
     if (!node || node.type !== 'autorizacion') {
       stateService.showToast('Solo se pueden eliminar autorizaciones', 'error');
       this.closeModal();

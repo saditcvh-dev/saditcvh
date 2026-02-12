@@ -53,7 +53,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     this.handlePdfMessageBound = this.handlePdfMessage.bind(this);
 
     effect(() => {
-      console.log(`📄 [PreviewTab] Página actual: ${this.currentPage()}`);
+      //console.log(`📄 [PreviewTab] Página actual: ${this.currentPage()}`);
     });
    
   }
@@ -83,7 +83,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // Si la pestaña se activa
     if (changes['isActive'] && this.isActive) {
-      console.log('🔄 Pestaña activada');
+      //console.log('🔄 Pestaña activada');
       if (this.pdfUrl) {
         this.loadPdf();
       }
@@ -93,19 +93,19 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
     // Si la pestaña se desactiva
     if (changes['isActive'] && !this.isActive) {
-      console.log('🔄 Pestaña desactivada');
+      //console.log('🔄 Pestaña desactivada');
       this.pageDetectionActive = false;
     }
 
     // Si cambia el nodo seleccionado
     if (changes['selectedNode'] && this.selectedNode) {
-      console.log('🔄 Nodo seleccionado cambiado:', this.selectedNode.nombre);
+      //console.log('🔄 Nodo seleccionado cambiado:', this.selectedNode.nombre);
       this.handleNodeChange();
     }
 
     // Si cambia la URL del PDF
     if (changes['pdfUrl'] && this.pdfUrl && this.isActive) {
-      console.log('🔄 URL del PDF cambiada');
+      //console.log('🔄 URL del PDF cambiada');
       this.loadPdf();
     }
   }
@@ -114,7 +114,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
   private handleNodeChange(): void {
     if (this.selectedNode?.type === 'autorizacion') {
-      console.log('📄 Es una autorización, reseteando documento...');
+      //console.log('📄 Es una autorización, reseteando documento...');
 
       // Resetear el visor cuando cambia el nodo
       this.resetDocument();
@@ -127,25 +127,25 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
         }, 50);
       }
     } else {
-      console.log('📄 No es una autorización, mostrando icono...');
+      //console.log('📄 No es una autorización, mostrando icono...');
     }
   }
 
   private loadPdf(): void {
     if (!this.pdfUrl || !this.selectedNode || !this.isActive) {
-      console.log('⚠️ Condiciones no cumplidas para cargar PDF');
+      //console.log('⚠️ Condiciones no cumplidas para cargar PDF');
       return;
     }
 
     // Si ya estamos cargando, salir
     if (this.isLoading) {
-      console.log('⚠️ Ya se está cargando un PDF');
+      //console.log('⚠️ Ya se está cargando un PDF');
       return;
     }
 
     // Extraer el nombre del archivo para mostrar en la UI
     this.currentFileName = this.extractFileNameFromUrl(this.pdfUrl);
-    console.log('📄 Nombre del archivo:', this.currentFileName);
+    //console.log('📄 Nombre del archivo:', this.currentFileName);
 
     this.isLoading = true;
     this.hasError.set(false);
@@ -155,7 +155,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     this.totalPages.set(0);
     this.lastDetectedPage = 1;
 
-    console.log('🔄 Iniciando carga del PDF...');
+    //console.log('🔄 Iniciando carga del PDF...');
     this.cdr.detectChanges();
   }
 
@@ -177,7 +177,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
       const cleanFileName = fileName.split('?')[0];
 
-      console.log('📄 Nombre extraído para mostrar:', cleanFileName);
+      //console.log('📄 Nombre extraído para mostrar:', cleanFileName);
       return cleanFileName;
     } catch (error) {
       console.error('❌ Error al extraer nombre de archivo:', error);
@@ -201,7 +201,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       // Método 1: Intentar acceder al Shadow DOM del visor
       const pageFromShadowDOM = this.getPageFromShadowDOM();
       if (pageFromShadowDOM !== null && pageFromShadowDOM !== this.lastDetectedPage) {
-        console.log(`🎯 Página detectada desde Shadow DOM: ${pageFromShadowDOM}`);
+        //console.log(`🎯 Página detectada desde Shadow DOM: ${pageFromShadowDOM}`);
         this.lastDetectedPage = pageFromShadowDOM;
         this.currentPage.set(pageFromShadowDOM);
         this.cdr.detectChanges();
@@ -211,7 +211,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       // Método 2: Intentar leer de la URL
       const pageFromUrl = this.getPageFromUrl();
       if (pageFromUrl !== null && pageFromUrl !== this.currentPage()) {
-        console.log(`🌐 Página detectada desde URL: ${pageFromUrl}`);
+        //console.log(`🌐 Página detectada desde URL: ${pageFromUrl}`);
         this.currentPage.set(pageFromUrl);
         this.cdr.detectChanges();
       }
@@ -221,7 +221,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
     } catch (error) {
       // Error de cross-origin, es normal
-      // console.log('🔒 Error cross-origin al detectar página');
+      // //console.log('🔒 Error cross-origin al detectar página');
     }
   }
 
@@ -246,7 +246,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       return null; // La respuesta vendrá por el event listener
 
     } catch (error) {
-      console.log('🔒 Error cross-origin (esperado):');
+      //console.log('🔒 Error cross-origin (esperado):');
       return null;
     }
   }
@@ -270,7 +270,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
         const script = iframeDoc.createElement('script');
         script.textContent = `
         (function() {
-          console.log('📄 Script de detección de página inyectado');
+          //console.log('📄 Script de detección de página inyectado');
           
           // Buscar el input de página
           function findPageInput() {
@@ -309,7 +309,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
               }, '*');
             });
             
-            console.log('🎯 Listener de página configurado');
+            //console.log('🎯 Listener de página configurado');
           }
           
           // Iniciar
@@ -322,7 +322,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       `;
 
         iframeDoc.head.appendChild(script);
-        console.log('✅ Script de detección inyectado en iframe');
+        //console.log('✅ Script de detección inyectado en iframe');
       }
 
     } catch (error) {
@@ -333,7 +333,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
   // ALTERNATIVA: Usar postMessage bidireccional
   private setupPostMessageCommunication(): void {
-    console.log('🔄 Configurando comunicación por postMessage...');
+    //console.log('🔄 Configurando comunicación por postMessage...');
 
     // Ya tenemos el listener en setupPdfJsListeners()
     // Ahora enviaremos mensajes periódicos
@@ -341,7 +341,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
   // MODIFICA onIframeLoad:
   onIframeLoad(): void {
-    console.log('✅ Iframe del PDF cargado');
+    //console.log('✅ Iframe del PDF cargado');
     this.isLoading = false;
     this.hasError.set(false);
 
@@ -350,7 +350,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       try {
         this.injectPageDetectionScript();
       } catch (error) {
-        console.log('⚠️ No se pudo inyectar script, usando postMessage');
+        //console.log('⚠️ No se pudo inyectar script, usando postMessage');
         this.setupPollingDetection();
       }
 
@@ -364,7 +364,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
   // NUEVO: Detección por polling (más confiable para cross-origin)
   private setupPollingDetection(): void {
-    console.log('⏱️ Configurando detección por polling...');
+    //console.log('⏱️ Configurando detección por polling...');
 
     // Enviar mensaje periódico al iframe
     const pollInterval = setInterval(() => {
@@ -412,7 +412,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       if (pageMatch) {
         const pageNum = parseInt(pageMatch[1]);
         if (pageNum && pageNum !== this.currentPage()) {
-          console.log(`🌐 Página detectada desde URL: ${pageNum}`);
+          //console.log(`🌐 Página detectada desde URL: ${pageNum}`);
           this.currentPage.set(pageNum);
           this.cdr.detectChanges();
         }
@@ -424,7 +424,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       if (pMatch) {
         const pageNum = parseInt(pMatch[1]);
         if (pageNum && pageNum !== this.currentPage()) {
-          console.log(`🌐 Página detectada desde parámetro p: ${pageNum}`);
+          //console.log(`🌐 Página detectada desde parámetro p: ${pageNum}`);
           this.currentPage.set(pageNum);
           this.cdr.detectChanges();
         }
@@ -436,7 +436,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       if (hashMatch) {
         const pageNum = parseInt(hashMatch[1]);
         if (pageNum && pageNum !== this.currentPage()) {
-          console.log(`🌐 Página detectada desde hash: ${pageNum}`);
+          //console.log(`🌐 Página detectada desde hash: ${pageNum}`);
           this.currentPage.set(pageNum);
           this.cdr.detectChanges();
         }
@@ -452,14 +452,14 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     // Solo procesar mensajes relevantes
     if (!event.data || typeof event.data !== 'object') return;
 
-    console.log('📩 Mensaje recibido:', event.data.type);
+    //console.log('📩 Mensaje recibido:', event.data.type);
 
     switch (event.data.type) {
       case 'PDF_PAGE_CHANGED':
       case 'PAGE_CHANGED':
         const newPage = event.data.page;
         if (newPage && newPage !== this.currentPage()) {
-          console.log(`📄 Página recibida: ${newPage}`);
+          //console.log(`📄 Página recibida: ${newPage}`);
           this.currentPage.set(newPage);
           this.cdr.detectChanges();
         }
@@ -468,7 +468,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       case 'PDF_CURRENT_PAGE_RESPONSE':
         const currentPage = event.data.currentPage;
         if (currentPage && currentPage !== this.currentPage()) {
-          console.log(`📄 Respuesta de página actual: ${currentPage}`);
+          //console.log(`📄 Respuesta de página actual: ${currentPage}`);
           this.currentPage.set(currentPage);
           this.cdr.detectChanges();
         }
@@ -477,7 +477,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       case 'PDF_TOTAL_PAGES':
         const totalPages = event.data.totalPages;
         if (totalPages && totalPages !== this.totalPages()) {
-          console.log(`📚 Total de páginas recibido: ${totalPages}`);
+          //console.log(`📚 Total de páginas recibido: ${totalPages}`);
           this.totalPages.set(totalPages);
           this.cdr.detectChanges();
         }
@@ -486,13 +486,13 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       case 'PDF_LOADED':
         this.isLoading = false;
         this.totalPages.set(event.data.totalPages || 0);
-        console.log('✅ PDF cargado completamente');
+        //console.log('✅ PDF cargado completamente');
         this.cdr.detectChanges();
         break;
 
       case 'PDF_READY':
         // El iframe está listo para recibir mensajes
-        console.log('✅ PDF listo para comunicación');
+        //console.log('✅ PDF listo para comunicación');
         break;
     }
   }
@@ -511,7 +511,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       // Solo cambiar si es diferente
       if (newUrl !== currentUrl) {
         iframe.src = newUrl;
-        console.log(`🌐 Navegando por URL a página ${pageNumber}`);
+        //console.log(`🌐 Navegando por URL a página ${pageNumber}`);
       }
 
     } catch (error) {
@@ -521,7 +521,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
   // MODIFICA scrollToPage para usar navegación por URL:
   scrollToPage(pageNumber: number): void {
-    console.log(`🎯 Navegando a página ${pageNumber} desde comentarios`);
+    //console.log(`🎯 Navegando a página ${pageNumber} desde comentarios`);
 
     // Validar rango
     if (this.totalPages() > 0 && (pageNumber < 1 || pageNumber > this.totalPages())) {
@@ -559,7 +559,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
   // MODIFICA ngOnDestroy para limpiar:
   // ngOnDestroy(): void {
-  //   console.log('🧹 Destruyendo PreviewTabComponent...');
+  //   //console.log('🧹 Destruyendo PreviewTabComponent...');
 
   //   if (this.pageCheckInterval) {
   //     clearInterval(this.pageCheckInterval);
@@ -574,7 +574,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   //   document.removeEventListener('fullscreenchange', () => { });
   //   document.removeEventListener('fullscreenerror', () => { });
 
-  //   console.log('✅ PreviewTabComponent destruido');
+  //   //console.log('✅ PreviewTabComponent destruido');
   // }
 
   // AGREGAR al inicio de la clase:
@@ -655,7 +655,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       if (pageLengthSpan && pageLengthSpan.textContent) {
         const totalPages = parseInt(pageLengthSpan.textContent.trim());
         if (!isNaN(totalPages) && totalPages !== this.totalPages()) {
-          console.log(`📚 Total de páginas detectado: ${totalPages}`);
+          //console.log(`📚 Total de páginas detectado: ${totalPages}`);
           this.totalPages.set(totalPages);
           this.cdr.detectChanges();
         }
@@ -667,7 +667,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
   // Método para forzar la detección (puedes llamarlo manualmente)
   forcePageDetection(): void {
-    console.log('🔍 Forzando detección de página...');
+    //console.log('🔍 Forzando detección de página...');
     this.detectCurrentPage();
   }
 
@@ -677,14 +677,14 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   // private handlePdfMessage(event: MessageEvent): void {
   //   // Procesar mensajes del visor de PDF
   //   if (event.data && event.data.type) {
-  //     console.log('📩 Mensaje recibido del iframe:', event.data.type);
+  //     //console.log('📩 Mensaje recibido del iframe:', event.data.type);
 
   //     switch (event.data.type) {
   //       case 'pageChange':
   //       case 'page':
   //         const newPage = event.data.page;
   //         if (newPage && newPage !== this.currentPage()) {
-  //           console.log(`📩 Página recibida: ${newPage}`);
+  //           //console.log(`📩 Página recibida: ${newPage}`);
   //           this.currentPage.set(newPage);
   //           this.cdr.detectChanges();
   //         }
@@ -694,7 +694,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   //       case 'pages':
   //         const total = event.data.total || event.data.pages;
   //         if (total && total !== this.totalPages()) {
-  //           console.log(`📩 Total de páginas recibido: ${total}`);
+  //           //console.log(`📩 Total de páginas recibido: ${total}`);
   //           this.totalPages.set(total);
   //           this.cdr.detectChanges();
   //         }
@@ -703,14 +703,14 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   //       case 'loaded':
   //         this.isLoading = false;
   //         this.totalPages.set(event.data.totalPages || 0);
-  //         console.log('✅ PDF cargado completamente');
+  //         //console.log('✅ PDF cargado completamente');
   //         this.cdr.detectChanges();
   //         break;
 
   //       case 'currentPageResponse':
   //         const currentPage = event.data.currentPage;
   //         if (currentPage && currentPage !== this.currentPage()) {
-  //           console.log(`📩 Respuesta de página actual: ${currentPage}`);
+  //           //console.log(`📩 Respuesta de página actual: ${currentPage}`);
   //           this.currentPage.set(currentPage);
   //           this.cdr.detectChanges();
   //         }
@@ -722,7 +722,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   // ========== GESTIÓN DE DOCUMENTO ==========
 
   resetDocument(): void {
-    console.log('🔄 Reseteando documento...');
+    //console.log('🔄 Reseteando documento...');
     this.currentFileName = '';
     this.currentPage.set(1);
     this.totalPages.set(0);
@@ -768,7 +768,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
   toggleCommentsPanel(): void {
     this.showCommentsPanel = !this.showCommentsPanel;
-    console.log(`💬 Panel de comentarios: ${this.showCommentsPanel ? 'Mostrando' : 'Ocultando'}`);
+    //console.log(`💬 Panel de comentarios: ${this.showCommentsPanel ? 'Mostrando' : 'Ocultando'}`);
 
     // Cuando se abren comentarios, forzar detección de página
     if (this.showCommentsPanel) {
@@ -793,7 +793,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
    * Método para hacer scroll a una página específica
    */
   // scrollToPage(pageNumber: number): void {
-  //   console.log(`🎯 Navegando a página ${pageNumber} desde comentarios`);
+  //   //console.log(`🎯 Navegando a página ${pageNumber} desde comentarios`);
 
   //   // Validar que la página esté dentro del rango
   //   if (this.totalPages() > 0 && (pageNumber < 1 || pageNumber > this.totalPages())) {
@@ -809,7 +809,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   //   try {
   //     const iframe = this.pdfIframe?.nativeElement;
   //     if (iframe && iframe.contentWindow) {
-  //       console.log(`🔄 Intentando navegar a página ${pageNumber} en el visor...`);
+  //       //console.log(`🔄 Intentando navegar a página ${pageNumber} en el visor...`);
 
   //       // Método 1: Cambiar página en el Shadow DOM
   //       this.setPageInShadowDOM(pageNumber);
@@ -849,20 +849,20 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       // Buscar el selector de página
       const pageSelector = iframeDoc.querySelector('viewer-page-selector');
       if (!pageSelector) {
-        console.log('❌ No se encontró viewer-page-selector para cambiar página');
+        //console.log('❌ No se encontró viewer-page-selector para cambiar página');
         return;
       }
 
       const shadowRoot = pageSelector.shadowRoot;
       if (!shadowRoot) {
-        console.log('❌ No hay shadowRoot en viewer-page-selector');
+        //console.log('❌ No hay shadowRoot en viewer-page-selector');
         return;
       }
 
       // Buscar el input de página
       const pageInput = shadowRoot.querySelector('#pageSelector') as HTMLInputElement;
       if (!pageInput) {
-        console.log('❌ No se encontró #pageSelector en shadowRoot');
+        //console.log('❌ No se encontró #pageSelector en shadowRoot');
         return;
       }
 
@@ -881,7 +881,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
         bubbles: true
       }));
 
-      console.log(`✅ Página seteada en Shadow DOM: ${pageNumber}`);
+      //console.log(`✅ Página seteada en Shadow DOM: ${pageNumber}`);
 
     } catch (error) {
       console.error('❌ Error al cambiar página en Shadow DOM:', error);
@@ -959,13 +959,13 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   // ========== EVENT HANDLERS PARA EL TEMPLATE ==========
 
   // onIframeLoad(): void {
-  //   console.log('✅ Iframe del PDF cargado');
+  //   //console.log('✅ Iframe del PDF cargado');
   //   this.isLoading = false;
   //   this.hasError.set(false);
 
   //   // Esperar a que el visor se inicialice completamente
   //   setTimeout(() => {
-  //     console.log('🔍 Iniciando detección de página después de carga...');
+  //     //console.log('🔍 Iniciando detección de página después de carga...');
   //     this.forcePageDetection();
 
   //     // Intentar detectar varias veces (el visor puede tardar en cargar)
@@ -973,11 +973,11 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   //     const detectionInterval = setInterval(() => {
   //       this.forcePageDetection();
   //       attempts++;
-  //       console.log(`🔍 Intento de detección ${attempts}/5`);
+  //       //console.log(`🔍 Intento de detección ${attempts}/5`);
 
   //       if (attempts >= 5) {
   //         clearInterval(detectionInterval);
-  //         console.log('✅ Finalizada detección inicial de página');
+  //         //console.log('✅ Finalizada detección inicial de página');
   //       }
   //     }, 1000);
 
@@ -1000,61 +1000,61 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
    * Método para debug: mostrar información del visor
    */
   debugViewerInfo(): void {
-    console.log('=== DEBUG VISOR PDF ===');
-    console.log('Current Page:', this.currentPage());
-    console.log('Total Pages:', this.totalPages());
-    console.log('Is Loading:', this.isLoading);
-    console.log('Has Error:', this.hasError());
-    console.log('Show Comments:', this.showCommentsPanel);
-    console.log('Is Active:', this.isActive);
-    console.log('File Name:', this.currentFileName);
+    //console.log('=== DEBUG VISOR PDF ===');
+    //console.log('Current Page:', this.currentPage());
+    //console.log('Total Pages:', this.totalPages());
+    //console.log('Is Loading:', this.isLoading);
+    //console.log('Has Error:', this.hasError());
+    //console.log('Show Comments:', this.showCommentsPanel);
+    //console.log('Is Active:', this.isActive);
+    //console.log('File Name:', this.currentFileName);
 
     try {
       const iframe = this.pdfIframe?.nativeElement;
       if (iframe) {
-        console.log('Iframe SRC:', iframe.src);
-        console.log('Iframe exists:', !!iframe);
+        //console.log('Iframe SRC:', iframe.src);
+        //console.log('Iframe exists:', !!iframe);
 
         // Intentar acceder al contenido
         try {
           const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
           if (iframeDoc) {
-            console.log('Iframe document accessible:', !!iframeDoc);
+            //console.log('Iframe document accessible:', !!iframeDoc);
 
             const pageSelector = iframeDoc.querySelector('viewer-page-selector');
-            console.log('viewer-page-selector found:', !!pageSelector);
+            //console.log('viewer-page-selector found:', !!pageSelector);
 
             if (pageSelector) {
-              console.log('Has shadowRoot:', !!pageSelector.shadowRoot);
+              //console.log('Has shadowRoot:', !!pageSelector.shadowRoot);
 
               if (pageSelector.shadowRoot) {
                 const pageInput = pageSelector.shadowRoot.querySelector('#pageSelector');
-                console.log('#pageSelector found:', !!pageInput);
+                //console.log('#pageSelector found:', !!pageInput);
                 if (pageInput) {
-                  console.log('Current input value:', (pageInput as HTMLInputElement).value);
+                  //console.log('Current input value:', (pageInput as HTMLInputElement).value);
                 }
               }
             }
           }
         } catch (e) {
-          console.log('Cross-origin error accessing iframe content');
+          //console.log('Cross-origin error accessing iframe content');
         }
       }
     } catch (error) {
       console.error('Error in debug:', error);
     }
 
-    console.log('=== END DEBUG ===');
+    //console.log('=== END DEBUG ===');
   }
 
   // ========== LIMPIEZA ==========
 
   ngOnDestroy(): void {
-    console.log('🧹 Destruyendo PreviewTabComponent...');
+    //console.log('🧹 Destruyendo PreviewTabComponent...');
 
     if (this.pageCheckInterval) {
       clearInterval(this.pageCheckInterval);
-      console.log('✅ Intervalo de detección limpiado');
+      //console.log('✅ Intervalo de detección limpiado');
     }
 
     // Remover event listeners
@@ -1064,6 +1064,6 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     document.removeEventListener('keyup', () => { });
     window.removeEventListener('message', (event) => this.handlePdfMessage(event));
 
-    console.log('✅ PreviewTabComponent destruido');
+    //console.log('✅ PreviewTabComponent destruido');
   }
 }
