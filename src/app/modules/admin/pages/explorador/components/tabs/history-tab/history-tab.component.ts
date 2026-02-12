@@ -68,9 +68,8 @@ export class HistoryTabComponent {
   }
 
   onMergePdf(event: { version: any; file: File; position: 'start' | 'end' }): void {
-    console.log("event?.version")
-    console.log(event?.version)
-    if (!event?.version || !event?.file) return;
+  if (!event?.version || !event?.file) return;
+
     const archivo = event.version.archivosDigitales?.[0];
 
     if (!archivo?.ruta_almacenamiento) {
@@ -78,19 +77,13 @@ export class HistoryTabComponent {
       return;
     }
 
-    // Soporta tanto \ como /
-    const nombreArchivo = archivo.ruta_almacenamiento.split(/[/\\]/).pop();
+    //  Normalizar 
+    const firstPdfPath = archivo.ruta_almacenamiento.replace(/\\/g, '/');
 
-    if (!nombreArchivo) {
-      console.error('No se pudo obtener el nombre del archivo');
-      return;
-    }
-
-    const firstPdfId = nombreArchivo.replace(/\.pdf$/i, '');
     this.loadingService.show();
 
     this.pdfService.mergeWithOutput(
-      firstPdfId,
+      firstPdfPath,
       event.file,
       true,
       event.position
