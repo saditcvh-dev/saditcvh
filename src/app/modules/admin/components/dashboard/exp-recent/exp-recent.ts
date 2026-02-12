@@ -1,4 +1,4 @@
-// src/app/explorador/exp-recent/exp-recent.component.ts
+// src/app/dashboard/exp-recent/exp-recent.component.ts
 import { Component, OnInit, OnDestroy, inject, computed } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -11,7 +11,9 @@ import { ExpRecentService } from '../../../../../core/services/exp-recent.servic
 })
 export class ExpRecentComponent implements OnInit, OnDestroy {
   private expRecentService = inject(ExpRecentService);
-  private refreshInterval = 30000;
+
+  private refreshInterval = 300000; // 5 MINUTOS
+  
   private subscription: Subscription = new Subscription();
 
   // Exponer signals del servicio
@@ -20,7 +22,7 @@ export class ExpRecentComponent implements OnInit, OnDestroy {
   errorMessage = this.expRecentService.errorMessage;
   documentos = this.expRecentService.documentos;
   lastUpdateTimeFormatted = this.expRecentService.lastUpdateTimeFormatted;
-  lastUpdateTime = this.expRecentService.lastUpdateTime; // Para mantener compatibilidad
+  lastUpdateTime = this.expRecentService.lastUpdateTime;
   totalDocumentos = this.expRecentService.totalDocumentos;
 
   // Signal computado para determinar si mostrar sin datos
@@ -54,7 +56,7 @@ export class ExpRecentComponent implements OnInit, OnDestroy {
   }
 
   /** ===============================
-   *  AUTO REFRESH
+   *  AUTO REFRESH INTELIGENTE
    *  =============================== */
   private setupAutoRefresh(): void {
     const refresh$ = timer(this.refreshInterval, this.refreshInterval);
@@ -62,9 +64,13 @@ export class ExpRecentComponent implements OnInit, OnDestroy {
     this.subscription.add(
       refresh$.pipe(
         switchMap(() => {
-          // Solo recargar si no hay error
-          if (!this.expRecentService.hasError()) {
+          // SOLO recargar si:
+          // 1. La pestaña está visible (NO document.hidden)
+          // 2. No hay error en el servicio
+          if (!document.hidden && !this.expRecentService.hasError()) {
             this.expRecentService.loadDocumentosRecientes();
+          } else if (document.hidden) {
+
           }
           return [];
         })

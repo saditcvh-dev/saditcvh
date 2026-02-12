@@ -1,4 +1,3 @@
-// src/app/dashboard/graphic-modalidad/graphic-modalidad.component.ts
 import { Component, OnInit, OnDestroy, inject, computed, effect } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -12,26 +11,17 @@ import { GraphicModalidadService, FilterType, SortColumn } from '../../../../../
 })
 export class GraphicModalidadBarsComponent implements OnInit, OnDestroy {
   private graphicModalidadService = inject(GraphicModalidadService);
-  private refreshInterval = 60000; // 1 minuto
+  private refreshInterval = 300000; // 5 MINUTOS
   private subscription: Subscription = new Subscription();
   
-  // Exponer signals del servicio (usando los computados públicos)
+  // Exponer signals del servicio
   isLoading = this.graphicModalidadService.isLoading;
   hasError = this.graphicModalidadService.hasError;
   errorMessage = this.graphicModalidadService.errorMessage;
-  
-  // Usar filteredModalidades en lugar de rawModalidadesData
   filteredModalidades = this.graphicModalidadService.filteredModalidades;
   
-  // Para el conteo total de modalidades, usamos un computed
-  modalidadesCount = computed(() => {
-    return this.graphicModalidadService.getTotalModalidades();
-  });
-  
-  // Para verificar si hay datos
-  hasData = computed(() => {
-    return this.graphicModalidadService.filteredModalidades().length > 0;
-  });
+  modalidadesCount = computed(() => this.graphicModalidadService.getTotalModalidades());
+  hasData = computed(() => this.graphicModalidadService.filteredModalidades().length > 0);
   
   totalDocumentos = this.graphicModalidadService.totalDocumentos;
   totalPaginas = this.graphicModalidadService.totalPaginas;
@@ -46,86 +36,75 @@ export class GraphicModalidadBarsComponent implements OnInit, OnDestroy {
   updateAgoText = this.graphicModalidadService.updateAgoText;
   apiResponse = this.graphicModalidadService.apiResponse;
   
-  // Signal computado para estado vacío
-  showEmptyState = computed(() => {
-    return !this.isLoading() && 
-           !this.hasError() && 
-           this.filteredModalidades().length === 0;
-  });
+  showEmptyState = computed(() => 
+    !this.isLoading() && !this.hasError() && this.filteredModalidades().length === 0
+  );
   
-  // Signal computado para estado de error con datos de ejemplo
-  showErrorState = computed(() => {
-    return this.hasError() && !this.isLoading();
-  });
+  showErrorState = computed(() => 
+    this.hasError() && !this.isLoading()
+  );
 
-  // Efecto para programar el refresco al corte del día
   private scheduleEndOfDayRefresh = effect(() => {
     const ahora = new Date();
     const manana = new Date(ahora);
     manana.setDate(manana.getDate() + 1);
-    manana.setHours(0, 0, 0, 0); // Mañana a las 00:00:00
-    
-    const tiempoHastaManana = manana.getTime() - ahora.getTime();
+    manana.setHours(0, 0, 0, 0);
     
     const timeoutId = setTimeout(() => {
       this.graphicModalidadService.refresh();
-      
-      // Programar refresco diario recurrente
-      setInterval(() => {
-        this.graphicModalidadService.refresh();
-      }, 24 * 60 * 60 * 1000); // Cada 24 horas
-      
-    }, tiempoHastaManana);
+      setInterval(() => this.graphicModalidadService.refresh(), 24 * 60 * 60 * 1000);
+    }, manana.getTime() - ahora.getTime());
     
     return () => clearTimeout(timeoutId);
   }, { allowSignalWrites: false });
 
+  // 🟢 Manejador de visibilidad
+  private visibilityHandler = () => {
+    if (!document.hidden) {
+      this.graphicModalidadService.loadModalidadData();
+    }
+  };
+
+  private setupVisibilityListener(): void {
+    document.addEventListener('visibilitychange', this.visibilityHandler);
+  }
+
+  private removeVisibilityListener(): void {
+    document.removeEventListener('visibilitychange', this.visibilityHandler);
+  }
+
   ngOnInit(): void {
     this.loadData();
     this.setupAutoRefresh();
+    this.setupVisibilityListener();
   }
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.subscription.unsubscribe();
+    this.removeVisibilityListener();
   }
 
-  /**
-   * Carga inicial de datos
-   */
   private loadData(): void {
     this.graphicModalidadService.loadModalidadData();
   }
 
-  /**
-   * Configura auto-refresh
-   */
   private setupAutoRefresh(): void {
-    const refresh$ = timer(this.refreshInterval, this.refreshInterval);
-    
-    this.subscription.add(
-      refresh$.pipe(
+    timer(this.refreshInterval, this.refreshInterval)
+      .pipe(
         switchMap(() => {
-          if (!this.graphicModalidadService.hasError()) {
+          if (!document.hidden && !this.graphicModalidadService.hasError()) {
             this.graphicModalidadService.loadModalidadData();
           }
           return [];
         })
-      ).subscribe()
-    );
+      )
+      .subscribe();
   }
 
-  /**
-   * Refresca los datos
-   */
   refreshChart(): void {
     this.graphicModalidadService.refresh();
   }
 
-  /**
-   * Delegar métodos al servicio
-   */
   setFilter(filter: FilterType): void {
     this.graphicModalidadService.setFilter(filter);
   }
@@ -150,9 +129,6 @@ export class GraphicModalidadBarsComponent implements OnInit, OnDestroy {
     return this.graphicModalidadService.getModalidadCompletadosPercentage(modalidad);
   }
 
-  /**
-   * Métodos de tiempo para la vista (compatibilidad)
-   */
   getLastUpdateTime(): string {
     return this.lastUpdateTimeFormatted();
   }
@@ -161,9 +137,6 @@ export class GraphicModalidadBarsComponent implements OnInit, OnDestroy {
     return this.updateAgoText();
   }
 
-  /**
-   * Métodos para debug
-   */
   getApiResponse(): any {
     return this.apiResponse();
   }

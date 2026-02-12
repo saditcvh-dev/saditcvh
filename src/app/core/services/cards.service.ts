@@ -1,4 +1,3 @@
-// src/app/core/services/dashboard.service.ts
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
@@ -324,7 +323,6 @@ export class DashboardService {
       this.usarDocumentosHoyDesdeBackend();
       
     } catch (error) {
-      console.error('Error al calcular documentos hoy desde gráfica:', error);
       this.usarDocumentosHoyDesdeBackend();
     }
   }

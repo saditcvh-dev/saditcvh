@@ -1,4 +1,3 @@
-// src/app/dashboard/graphic-circle/graphic-circle.component.ts
 import { Component, OnInit, OnDestroy, inject, computed, effect } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -12,7 +11,7 @@ import { GraphicCircleService } from '../../../../../core/services/graphic-circl
 })
 export class GraphicCircle implements OnInit, OnDestroy {
   private graphicCircleService = inject(GraphicCircleService);
-  private refreshInterval = 60000; // 1 minuto
+  private refreshInterval = 300000; // 5 MINUTOS
   private subscription: Subscription = new Subscription();
   
   // Exponer signals del servicio
@@ -27,91 +26,79 @@ export class GraphicCircle implements OnInit, OnDestroy {
   apiResponse = this.graphicCircleService.apiResponse;
   hasTwoTypes = this.graphicCircleService.hasTwoTypes;
   
-  // Signal computado para el total a mostrar
-  totalDisplay = computed(() => {
-    return this.graphicCircleService.getTotalDisplay();
-  });
+  totalDisplay = computed(() => this.graphicCircleService.getTotalDisplay());
   
-  // Signal computado para estado vacío
-  showEmptyState = computed(() => {
-    return !this.isLoading() && 
-           !this.hasError() && 
-           this.tiposData().length === 0;
-  });
+  showEmptyState = computed(() => 
+    !this.isLoading() && !this.hasError() && this.tiposData().length === 0
+  );
   
-  // Signal computado para estado de error con datos de ejemplo
-  showErrorState = computed(() => {
-    return this.hasError() && !this.isLoading();
-  });
+  showErrorState = computed(() => 
+    this.hasError() && !this.isLoading()
+  );
 
-  // Efecto para programar el refresco al corte del día
   private scheduleEndOfDayRefresh = effect(() => {
     const ahora = new Date();
     const manana = new Date(ahora);
     manana.setDate(manana.getDate() + 1);
-    manana.setHours(0, 0, 0, 0); // Mañana a las 00:00:00
-    
-    const tiempoHastaManana = manana.getTime() - ahora.getTime();
+    manana.setHours(0, 0, 0, 0);
     
     const timeoutId = setTimeout(() => {
       this.graphicCircleService.refresh();
-      
-      // Programar refresco diario recurrente
-      setInterval(() => {
-        this.graphicCircleService.refresh();
-      }, 24 * 60 * 60 * 1000); // Cada 24 horas
-      
-    }, tiempoHastaManana);
+      setInterval(() => this.graphicCircleService.refresh(), 24 * 60 * 60 * 1000);
+    }, manana.getTime() - ahora.getTime());
     
     return () => clearTimeout(timeoutId);
   }, { allowSignalWrites: false });
 
+  // Manejador de visibilidad
+  private visibilityHandler = () => {
+    if (!document.hidden) {
+      // Actualizar al volver a la pestaña
+      this.graphicCircleService.loadTiposData();
+    }
+  };
+
+  private setupVisibilityListener(): void {
+    document.addEventListener('visibilitychange', this.visibilityHandler);
+  }
+
+  private removeVisibilityListener(): void {
+    document.removeEventListener('visibilitychange', this.visibilityHandler);
+  }
+
   ngOnInit(): void {
     this.loadData();
     this.setupAutoRefresh();
+    this.setupVisibilityListener();
   }
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.subscription.unsubscribe();
+    this.removeVisibilityListener();
   }
 
-  /**
-   * Carga inicial de datos
-   */
   private loadData(): void {
     this.graphicCircleService.loadTiposData();
   }
 
-  /**
-   * Configura auto-refresh
-   */
   private setupAutoRefresh(): void {
-    const refresh$ = timer(this.refreshInterval, this.refreshInterval);
-    
-    this.subscription.add(
-      refresh$.pipe(
+    timer(this.refreshInterval, this.refreshInterval)
+      .pipe(
         switchMap(() => {
-          if (!this.graphicCircleService.hasError()) {
+          // SOLO si la pestaña está visible
+          if (!document.hidden && !this.graphicCircleService.hasError()) {
             this.graphicCircleService.loadTiposData();
           }
           return [];
         })
-      ).subscribe()
-    );
+      )
+      .subscribe();
   }
 
-  /**
-   * Refresca los datos
-   */
   refreshChart(): void {
     this.graphicCircleService.refresh();
   }
 
-  /**
-   * Delegar métodos al servicio
-   */
   getCircleStyle(index: number): any {
     return this.graphicCircleService.getCircleStyle(index);
   }
@@ -136,9 +123,6 @@ export class GraphicCircle implements OnInit, OnDestroy {
     return this.graphicCircleService.getTipoColor(tipo);
   }
 
-  /**
-   * Métodos de tiempo para la vista (compatibilidad)
-   */
   getLastUpdateTime(): string {
     return this.lastUpdateTimeFormatted();
   }
@@ -147,9 +131,6 @@ export class GraphicCircle implements OnInit, OnDestroy {
     return this.updateAgoText();
   }
 
-  /**
-   * Métodos para debug
-   */
   getApiResponse(): any {
     return this.apiResponse();
   }

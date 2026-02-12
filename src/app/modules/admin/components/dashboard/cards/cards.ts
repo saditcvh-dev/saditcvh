@@ -1,4 +1,3 @@
-// src/app/dashboard/cards/cards.component.ts
 import { Component, OnInit, OnDestroy, inject, computed } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -12,10 +11,12 @@ import { DashboardService } from '../../../../../core/services/cards.service';
 })
 export class CardsComponent implements OnInit, OnDestroy {
   private dashboardService = inject(DashboardService);
-  private refreshInterval = 30000;
+  
+  private refreshInterval = 300000; // 5 MINUTOS
+  
   private subscription: Subscription = new Subscription();
 
-  // Exponer signals del servicio para la vista
+  // signals del servicio para la vista
   isLoading = this.dashboardService.isLoading;
   hasError = this.dashboardService.hasError;
   errorMessage = this.dashboardService.errorMessage;
@@ -48,7 +49,7 @@ export class CardsComponent implements OnInit, OnDestroy {
   }
 
   /** ===============================
-   *  AUTO REFRESH
+   *  AUTO REFRESH INTELIGENTE
    *  =============================== */
   private setupAutoRefresh(): void {
     const refresh$ = timer(this.refreshInterval, this.refreshInterval);
@@ -56,9 +57,13 @@ export class CardsComponent implements OnInit, OnDestroy {
     this.subscription.add(
       refresh$.pipe(
         switchMap(() => {
-          // Solo recargar si no hay error o si ya pasó el tiempo
-          if (!this.dashboardService.hasError()) {
+          // SOLO recargar si:
+          // 1. La pestaña está visible (document.hidden = false)
+          // 2. No hay error en el dashboard
+          if (!document.hidden && !this.dashboardService.hasError()) {
             this.dashboardService.loadDashboardData();
+          } else if (document.hidden) {
+            
           }
           return [];
         })
