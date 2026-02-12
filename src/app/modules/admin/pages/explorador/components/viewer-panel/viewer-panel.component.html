@@ -99,7 +99,8 @@
       <div *ngIf="activeTab === 'history' && selectedNode.type === 'autorizacion'" class="h-full">
         <app-history-tab [selectedNode]="selectedNode" [documentVersions]="documentVersions"
           (openUploadModal)="onOpenUploadModal()" (downloadVersion)="onDownloadVersion($event)"
-          (restoreVersion)="onRestoreVersion($event)" [fullScreenMode]="!showMainHeader">
+          (restoreVersion)="onRestoreVersion($event)" [fullScreenMode]="!showMainHeader"   (versionCreated)="reloadVersions()"
+>
         </app-history-tab>
       </div>
 

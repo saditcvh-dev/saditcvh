@@ -1,0 +1,97 @@
+<div class=" border border-gray-200 dark:border-neutral-700 rounded-xl p-5
+         bg-gray-50 dark:bg-neutral-900 shadow-sm">
+
+
+
+  <!-- Lista de versiones -->
+  <div class="space-y-2 mb-5 max-h-40 overflow-y-auto pr-1">
+    <button *ngFor="let version of documentVersions" (click)="onSelectVersion(version)" class="w-full flex justify-between items-center px-3 py-2 rounded-lg
+               border text-xs transition-colors
+               hover:bg-[#BC955B]/10 dark:hover:bg-neutral-800"
+      [class.border-[#BC955B]]="selectedVersion()?.id === version.id"
+      [class.bg-[#BC955B]/20]="selectedVersion()?.id === version.id"
+      [class.border-gray-200]="selectedVersion()?.id !== version.id"
+      [class.dark:border-neutral-700]="selectedVersion()?.id !== version.id">
+
+      <!-- LADO IZQUIERDO -->
+      <div class="flex flex-col items-start text-left">
+        <span class="font-medium">
+          Versión v{{ version.version }}
+        </span>
+
+        <span class="text-[11px] text-gray-500 dark:text-neutral-400  max-w-[180px]">
+          {{ getFileNameFromPath(version.archivosDigitales?.[0]?.ruta_almacenamiento) }}
+        </span>
+      </div>
+
+      <!-- LADO DERECHO -->
+      <span class="text-gray-400 text-[11px]">
+        {{ version.archivosDigitales?.[0]?.fecha_digitalizacion | fechaLocal }}
+      </span>
+
+    </button>
+
+  </div>
+
+  <!-- Opción de unión -->
+  <div class="mb-5">
+    <label class="block text-xs font-medium text-gray-600 dark:text-neutral-300 mb-2">
+      ¿Dónde deseas agregar el nuevo PDF?
+    </label>
+
+    <div class="flex gap-3">
+      <button type="button" (click)="mergePosition.set('start')" class="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-xs rounded-lg border
+               transition-colors" [class.bg-[#BC955B]/20]="mergePosition() === 'start'"
+        [class.border-[#BC955B]]="mergePosition() === 'start'" [class.text-[#691831]]="mergePosition() === 'start'"
+        [class.dark:bg-blue-900/30]="mergePosition() === 'start'"
+        [class.dark:border-blue-700]="mergePosition() === 'start'">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h10M7 12h6M7 17h3" />
+        </svg>
+        Agregar al inicio
+      </button>
+
+      <button type="button" (click)="mergePosition.set('end')" class="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-xs rounded-lg border
+               transition-colors" [class.bg-green-50]="mergePosition() === 'end'"
+        [class.border-green-400]="mergePosition() === 'end'" [class.text-green-700]="mergePosition() === 'end'"
+        [class.dark:bg-green-900/30]="mergePosition() === 'end'"
+        [class.dark:border-green-700]="mergePosition() === 'end'">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 7H7m10 5H7m10 5H7" />
+        </svg>
+        Agregar al final
+      </button>
+    </div>
+  </div>
+
+  <!-- Upload PDF -->
+  <label class="flex flex-col items-center justify-center border-2 border-dashed
+           border-gray-300 dark:border-neutral-700 rounded-lg p-4 mb-5
+           cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-800 transition">
+
+    <svg class="w-6 h-6 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 16v-8m0 0l-4 4m4-4l4 4M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1" />
+    </svg>
+
+    <span class="text-xs text-gray-600 dark:text-neutral-300">
+      {{ selectedFile() ? selectedFile()?.name : 'Selecciona un archivo PDF' }}
+    </span>
+
+    <input type="file" accept="application/pdf" (change)="onFileSelected($event)" class="hidden" />
+  </label>
+
+  <!-- Acción -->
+  <button (click)="onMerge()" [disabled]="!selectedVersion() || !selectedFile()" class="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium rounded-lg
+           text-white bg-[#691831]
+           disabled:opacity-40 disabled:cursor-not-allowed
+           hover:bg-[#501225] transition-colors">
+
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h10M7 12h10M7 17h10" />
+    </svg>
+
+    Unir PDF
+  </button>
+
+</div>

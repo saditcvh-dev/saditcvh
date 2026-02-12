@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { UserService } from '../../core/services/user.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -14,13 +14,14 @@ export class Admin implements OnInit {
   isMobileView = false;
   @ViewChild('sidebar') sidebarComponent!: Sidebar;
   private userService = inject(UserService);
-  territoriesCount = 0;
-  
+  territoriesCount = signal(0);
+
+
   ngOnInit(): void {
     this.updateMobileView();  // ✅ Actualizar estado móvil al inicio
     this.logUserPermissions();
   }
-  
+
   ngAfterViewInit(): void {
     // ✅ CORREGIDO: Sincronizar con el estado REAL del sidebar
     setTimeout(() => {
@@ -30,12 +31,12 @@ export class Admin implements OnInit {
       }
     });
   }
-  
+
   @HostListener('window:resize')
   onResize(): void {
     const wasMobile = this.isMobileView;
     this.updateMobileView();
-    
+
     // ✅ Si cambia de desktop a mobile, cerrar sidebar
     if (!wasMobile && this.isMobileView && this.sidebarOpen) {
       this.sidebarOpen = false;
@@ -60,7 +61,7 @@ export class Admin implements OnInit {
       this.sidebarComponent.toggleSidebar();
     }
   }
-  
+
   private logUserPermissions(): void {
     console.log('%c--- Iniciando sesión administrativa ---', 'color: #691831; font-weight: bold; font-size: 12px;');
 
@@ -83,7 +84,7 @@ export class Admin implements OnInit {
 
         if (summary.length > 0) {
           console.table(summary);
-          this.territoriesCount = response.data.length;
+          this.territoriesCount.set(response.data.length);
         } else {
           console.warn('El usuario no tiene territorios asignados en la matriz.');
         }

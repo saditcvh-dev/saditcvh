@@ -139,7 +139,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(() => this.loadPdfsList());
-  
+
     this.refresh$.next();
   }
 
@@ -541,4 +541,73 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   onUploadCompleted() {
     this.refresh$.next();
   }
+
+  // buildExploradorUrl(nombreArchivo: string): string | null {
+  //   if (!nombreArchivo) return null;
+
+  //   // daatos prueba:
+  //   // 9982 3-11-01-025 C.pdf
+  //   // 411 2-11-10-027 C Terminado (344pag.).pdf
+  //   // 2909 2-11-01-025 C Terminado (428 pag.).pdf
+  //   // 7929 2-11-64-249 C.pdf
+
+  //   const regex = /(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([A-Z])/i;
+  //   const match = nombreArchivo.match(regex);
+
+  //   if (!match) return null;
+
+  //   const [
+  //     _,
+  //     numeroAutorizacion,
+  //     municipio,
+  //     modalidad,
+  //     consecutivo1,
+  //     consecutivo2,
+  //     tipo
+  //   ] = match;
+
+  //   // Formato con ceros
+  //   const query = [
+  //     numeroAutorizacion,
+  //     municipio.padStart(2, '0'),
+  //     modalidad.padStart(2, '0'),
+  //     consecutivo1.padStart(2, '0'),
+  //     consecutivo2.padStart(3, '0'),
+  //     tipo.toUpperCase()
+  //   ].join('_');
+
+  //   return `http://localhost:4200/admin/explorador?q=${query}`;
+  // }
+  buildExploradorUrl(nombreArchivo: string): string | null {
+  if (!nombreArchivo) return null;
+
+  const regex = /(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([A-Z])/i;
+  const match = nombreArchivo.match(regex);
+
+  if (!match) return null;
+
+  const [
+    _,
+    numeroAutorizacion,
+    municipio,
+    modalidad,
+    consecutivo1,
+    consecutivo2,
+    tipo
+  ] = match;
+
+  const query = [
+    numeroAutorizacion,
+    municipio.padStart(2, '0'),
+    modalidad.padStart(2, '0'),
+    consecutivo1.padStart(2, '0'),
+    consecutivo2.padStart(3, '0'),
+    tipo.toUpperCase()
+  ].join('_');
+
+  // 
+  return `/admin/explorador?q=${query}`;
 }
+
+}
+

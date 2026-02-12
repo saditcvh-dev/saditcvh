@@ -306,8 +306,6 @@ export class AutorizacionService {
   }
 
   private updateState(partialState: Partial<AutorizacionState>): void {
-    console.log("partialState")
-    console.log(partialState)
     this.state.update(current => ({
       ...current,
       ...partialState

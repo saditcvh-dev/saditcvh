@@ -5,6 +5,7 @@ import { AutorizacionTreeNode } from '../../../../../../core/models/autorizacion
 import { DocumentoService } from '../../../../../../core/services/explorador-documento.service';
 import { AuthService } from '../../../../../../core/services/auth';
 import { getAllowedTabsByRoles, ViewerTab } from '../../../../../../core/helpers/tabs-permissions.helper';
+import { LoadingService } from '../../../../../../core/services/explorador-loading.service';
 
 @Component({
   selector: 'app-viewer-panel',
@@ -16,7 +17,7 @@ export class ViewerPanelComponent {
   // Inputs con two-way data binding
   private _showMainHeader = true;
   private _showControlPanel = true;
-
+  private loadingService = inject(LoadingService)
   @Input()
   get showMainHeader(): boolean {
     return this._showMainHeader;
@@ -245,4 +246,24 @@ export class ViewerPanelComponent {
     this._showControlPanel = value;
     this.showControlPanelChange.emit(value);
   }
+  reloadVersions(): void {
+    if (!this.selectedNode?.data?.id) return;
+
+    this.loadingService.show();
+
+    this.documentoService.cargarDocumentosPorAutorizacion(
+      this.selectedNode.data.id
+    );
+
+    // Esperamos a que el loading interno del service termine
+    const checkLoading = setInterval(() => {
+      if (!this.documentoService.loading()) {
+        this.documentVersions = this.documentoService.documentos();
+        this.loadingService.hide();
+        clearInterval(checkLoading);
+      }
+    }, 100);
+  }
+
+
 }

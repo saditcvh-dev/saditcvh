@@ -49,6 +49,7 @@ import { DeleteConfirmationModalComponent } from './pages/explorador/components/
 import { Busqueda } from './components/busqueda/busqueda';
 import { AnotacionesService } from '../../core/services/anotaciones.service';
 import { Comentarios } from './pages/explorador/components/comentarios/comentarios';
+import { MergePdfInline } from './pages/explorador/components/merge-pdf-inline/merge-pdf-inline';
 // import { UploadSectionComponent } from './pages/digitalizacion/upload-section/upload-section';
 
 @NgModule({
@@ -82,7 +83,7 @@ import { Comentarios } from './pages/explorador/components/comentarios/comentari
     ActionBadgeComponent,ExploradorView,ExplorerPanelComponent,
     ViewerPanelComponent, ToastComponent
     , TabsNavigationComponent, SecurityTabComponent, PreviewTabComponent, MetadataTabComponent, UploadModalComponent, CreateAutorizacionModalComponent, ModalContainerComponent
-    , ContextMenuComponent,HistoryTabComponent,TreeNodeComponent, UploadSectionComponent,DeleteConfirmationModalComponent, Busqueda
+    , ContextMenuComponent,HistoryTabComponent,TreeNodeComponent, UploadSectionComponent,DeleteConfirmationModalComponent, Busqueda, MergePdfInline,MergePdfInline
   ],
   imports: [
     CommonModule,
