@@ -16,25 +16,26 @@
     </div>
     
     <!-- Iterar sobre las cards -->
-    <div *ngFor="let card of cards()" [class]="getCardClass(card)">
+    <div *ngFor="let card of cards()" 
+         class="bg-white dark:bg-[#050505] rounded-xl border border-gray-200 dark:border-neutral-900 p-5 shadow-sm">
         
         <!-- Estado de carga -->
         <div *ngIf="card.loading" class="animate-pulse">
             <div class="flex justify-between items-start mb-4">
                 <div class="space-y-3">
-                    <div class="h-4 w-24 bg-gray-200 rounded"></div>
-                    <div class="h-8 w-32 bg-gray-300 rounded"></div>
+                    <div class="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div class="h-8 w-32 bg-gray-300 dark:bg-gray-600 rounded"></div>
                 </div>
-                <div class="w-10 h-10 bg-gray-200 rounded-lg"></div>
+                <div class="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
             </div>
-            <div class="h-2 w-20 bg-gray-200 rounded mt-4"></div>
+            <div class="h-2 w-20 bg-gray-200 dark:bg-gray-700 rounded mt-4"></div>
         </div>
         
         <!-- Estado normal o con error -->
         <div *ngIf="!card.loading">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">{{ card.title }}</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ card.title }}</p>
                     <p class="text-3xl font-bold mt-2" [style.color]="card.color">
                         {{ formatValue(card.value) }}
                     </p>
@@ -47,7 +48,7 @@
             
             <!-- Descripción y tendencia -->
             <div class="mt-4 flex items-center justify-between">
-                <p class="text-xs text-gray-500">{{ card.description }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-500">{{ card.description }}</p>
                 
                 <div *ngIf="!card.error" class="flex items-center space-x-1">
                     <i [class]="'fas fa-arrow-' + (card.trend.isPositive ? 'up' : 'down') 
@@ -68,7 +69,7 @@
     </div>
     
     <!-- Información de última actualización -->
-    <div class="col-span-full flex justify-end items-center mt-4 text-xs text-gray-400">
+    <div class="col-span-full flex justify-end items-center mt-4 text-xs text-gray-400 dark:text-gray-500">
         <div class="flex items-center space-x-3">
             <span>
                 <i class="fas fa-clock mr-1"></i>
@@ -79,7 +80,7 @@
             <button 
                 (click)="refreshData()" 
                 [disabled]="isLoading()"
-                class="p-1.5 text-[#691831] hover:bg-[#691831]/10 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                class="p-1.5 text-[#691831] dark:text-[#9f4a5f] hover:bg-[#691831]/10 dark:hover:bg-[#9f4a5f]/20 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Actualizar datos"
             >
                 <i class="fas fa-sync-alt text-sm" [class.fa-spin]="isLoading()"></i>
