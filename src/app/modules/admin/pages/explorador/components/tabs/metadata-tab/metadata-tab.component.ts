@@ -14,8 +14,8 @@ export class MetadataTabComponent {
   @Input() selectedNode!: AutorizacionTreeNode | null;
 
   get metadata(): any[] {
-    console.log("this.selectedNode")
-    console.log(this.selectedNode)
+    // console.log("this.selectedNode")
+    // console.log(this.selectedNode)
     if (!this.selectedNode) return [];
     const baseMetadata = [
       { label: 'Nombre', value: this.selectedNode.nombre || 'Sin nombre', icon: 'tag' },

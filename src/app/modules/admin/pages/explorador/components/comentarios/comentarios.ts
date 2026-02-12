@@ -15,6 +15,7 @@ import {
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { AnotacionesService } from '../../../../../../core/services/anotaciones.service';
 import { AuthService } from '../../../../../../core/services/auth';
+import { AutorizacionTreeNode } from '../../../../../../core/models/autorizacion-tree.model';
 
 export interface PdfComment {
   id: number;
@@ -44,6 +45,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
   @Output() commentAdded = new EventEmitter<PdfComment>();
   @Output() commentDeleted = new EventEmitter<PdfComment>();
   @Output() commentsLoaded = new EventEmitter<PdfComment[]>();
+  @Input() selectedNode: AutorizacionTreeNode | null = null;
 
   @ViewChild('commentTextarea') commentTextarea!: ElementRef<HTMLTextAreaElement>;
 
@@ -89,6 +91,14 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     if (changes['pdfUrl'] && this.pdfUrl) {
       this.extractFileNameFromUrl();
     }
+    // if (changes['selectedNode'] && this.selectedNode) {
+    //   console.log('Nodo recibido en comentarios:', this.selectedNode);
+
+    //   // Ejemplo: usar ID como identificador del documento
+    //   this.pdfIdentifier = this.selectedNode.id;
+
+    //   // this.cargarComentarios();
+    // }
     if (changes['autor'] && this.autor) {
       this.updateCommentsAuthor();
     }
@@ -125,7 +135,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       this.showToast('No hay documento identificado', 'warning');
       return;
     }
-    
+
     if (!this.validateComment()) return;
 
     const comment = this.createComment();
@@ -156,7 +166,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
 
     return {
       id: this.nextCommentId++,
-      page: this.manualCommentPage, 
+      page: this.manualCommentPage,
       text: this.newCommentText,
       date: new Date(),
       color: this.selectedColor,
@@ -177,7 +187,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     if (confirm('¿Eliminar este comentario?')) {
       // Intentar eliminar del servidor
       this.eliminarComentarioDelServidor(comment);
-      
+
       // Eliminar localmente
       this.comments = this.comments.filter(c => c.id !== comment.id);
       this.saveToLocalStorage();
@@ -284,12 +294,12 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
   esComentarioEditable(comment: PdfComment): boolean {
     const user = this.authService.currentUser();
     const currentUserId = user?.id;
-    
+
     // Si el comentario tiene usuario_id y coincide con el usuario actual
     if (comment.usuario_id && currentUserId) {
       return comment.usuario_id === currentUserId;
     }
-    
+
     // Si no tiene usuario_id, verificar por esMio
     return comment.esMio === true;
   }
@@ -356,7 +366,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     const pdfUrlString = this.sanitizer.sanitize(SecurityContext.URL, this.pdfUrl) || '';
     const user = this.authService.currentUser();
     const currentUserId = user?.id;
-    
+
     if (!currentUserId) {
       this.saveToLocalStorage();
       this.showToast('No hay usuario autenticado', 'warning');
@@ -364,7 +374,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     }
 
     // Filtrar solo los comentarios del usuario actual
-    const misComentarios = this.comments.filter(c => 
+    const misComentarios = this.comments.filter(c =>
       c.usuario_id === currentUserId || c.esMio === true
     );
 
@@ -373,12 +383,12 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     }
 
     this.anotacionesService.guardarAnotacionesPorArchivo(
-      this.pdfIdentifier, 
-      pdfUrlString, 
+      this.pdfIdentifier,
+      pdfUrlString,
       misComentarios
     ).subscribe({
       next: () => {
-        console.log('✅ Comentarios del usuario guardados en servidor');
+        console.log(' Comentarios del usuario guardados en servidor');
       },
       error: (error) => {
         console.error('Error guardando comentarios:', error);
@@ -395,7 +405,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     }
 
     this.isLoading = true;
-    
+
     // Obtener TODAS las anotaciones de todos los usuarios
     this.anotacionesService.obtenerTodasAnotacionesPorArchivo(this.pdfIdentifier)
       .subscribe({
@@ -403,12 +413,12 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
           if (response.success && response.data) {
             // Extraer TODOS los comentarios de la respuesta
             const allComments = this.extractAllCommentsFromResponse(response);
-            
+
             if (allComments.length > 0) {
               this.comments = allComments;
               this.nextCommentId = Math.max(...this.comments.map(c => c.id), 0) + 1;
               this.commentsLoaded.emit(this.comments);
-              
+
               console.log(`Cargados ${allComments.length} comentarios de todos los usuarios`);
             } else {
               this.loadFromLocalStorage();
@@ -441,7 +451,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       if (anotacion.comentarios && Array.isArray(anotacion.comentarios)) {
         anotacion.comentarios.forEach((comment: any) => {
           const esMio = anotacion.usuario_id === currentUserId;
-          
+
           allComments.push({
             id: comment.id || Date.now() + Math.random(),
             page: comment.page || 1,
@@ -507,7 +517,6 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
   }
 
   // ========== EXTRACCIÓN NOMBRE ARCHIVO ==========
-
   private extractFileNameFromUrl(): void {
     if (!this.pdfUrl) {
       this.pdfIdentifier = '';
@@ -515,17 +524,35 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     }
 
     try {
-      const urlString = this.sanitizer.sanitize(SecurityContext.URL, this.pdfUrl) || '';
-      if (!urlString) {
+      const sanitizedUrl =
+        this.sanitizer.sanitize(SecurityContext.URL, this.pdfUrl) || '';
+
+      if (!sanitizedUrl) {
         this.pdfIdentifier = 'documento.pdf';
         return;
       }
 
-      const url = new URL(urlString);
-      let fileName = url.pathname.split('/').pop() || 'documento.pdf';
+      let fileName = 'documento.pdf';
+
+      // Intentar usar URL constructor (para URLs absolutas)
+      try {
+        const url = new URL(sanitizedUrl, window.location.origin);
+        fileName = url.pathname.split('/').pop() || fileName;
+      } catch {
+        // Fallback manual si falla URL()
+        fileName = sanitizedUrl.split('/').pop() || fileName;
+      }
+
+      // Eliminar parámetros si existen
       fileName = fileName.split('?')[0];
 
+      // Decodificar por si viene con %20 etc
+      fileName = decodeURIComponent(fileName);
+
+      console.log('fileName:', fileName);
+
       this.pdfIdentifier = this.cleanFileName(fileName);
+
       this.loadCommentsFromServer();
 
     } catch (error) {
@@ -533,6 +560,34 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       this.pdfIdentifier = 'documento.pdf';
     }
   }
+
+
+  // private extractFileNameFromUrl(): void {
+  //   if (!this.pdfUrl) {
+  //     this.pdfIdentifier = '';
+  //     return;
+  //   }
+
+  //   try {
+  //     const urlString = this.sanitizer.sanitize(SecurityContext.URL, this.pdfUrl) || '';
+  //     if (!urlString) {
+  //       this.pdfIdentifier = 'documento.pdf';
+  //       return;
+  //     }
+
+  //     const url = new URL(urlString);
+  //     let fileName = url.pathname.split('/').pop() || 'documento.pdf';
+  //     fileName = fileName.split('?')[0];
+  //     console.log("fileName")
+  //     console.log(fileName)
+  //     this.pdfIdentifier = this.cleanFileName(fileName);
+  //     this.loadCommentsFromServer();
+
+  //   } catch (error) {
+  //     console.error('Error extrayendo nombre***:', error);
+  //     this.pdfIdentifier = 'documento.pdf';
+  //   }
+  // }
 
   private cleanFileName(fileName: string): string {
     let cleanName = fileName.replace(/\.pdf\.pdf$/i, '.pdf');
@@ -547,7 +602,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
   private updateCommentsAuthor(): void {
     const user = this.authService.currentUser();
     const currentUserId = user?.id;
-    
+
     this.comments.forEach(comment => {
       if (comment.usuario_id === currentUserId) {
         comment.autor = this.autor;
@@ -610,13 +665,13 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       // Vaciar solo los comentarios del usuario actual
       const user = this.authService.currentUser();
       const currentUserId = user?.id;
-      
+
       if (currentUserId) {
         this.comments = this.comments.filter(c => c.usuario_id !== currentUserId);
       } else {
         this.comments = [];
       }
-      
+
       this.saveToLocalStorage();
       this.saveCommentsToServer();
       this.showToast('Comentarios vaciados', 'success');

@@ -52,7 +52,7 @@ export class Admin implements OnInit {
   }
 
   onSidebarToggled(isOpen: boolean): void {
-    // ✅ Recibe el estado real del sidebar
+    //  Recibe el estado real del sidebar
     this.sidebarOpen = isOpen;
   }
 
@@ -63,7 +63,7 @@ export class Admin implements OnInit {
   }
 
   private logUserPermissions(): void {
-    console.log('%c--- Iniciando sesión administrativa ---', 'color: #691831; font-weight: bold; font-size: 12px;');
+    // console.log('%c--- Iniciando sesión administrativa ---', 'color: #691831; font-weight: bold; font-size: 12px;');
 
     this.userService.getMyTerritories().pipe(
       catchError(err => {
@@ -74,7 +74,7 @@ export class Admin implements OnInit {
       if (response && response.success) {
         const territories = response.data;
 
-        console.log(`%cTerritorios asignados: ${territories.length}`, 'color: #BC955B; font-weight: bold;');
+        // console.log(`%cTerritorios asignados: ${territories.length}`, 'color: #BC955B; font-weight: bold;');
 
         // Formateamos la data para que el log sea legible en tabla
         const summary = territories.map(t => ({
@@ -83,7 +83,7 @@ export class Admin implements OnInit {
         }));
 
         if (summary.length > 0) {
-          console.table(summary);
+          // console.table(summary);
           this.territoriesCount.set(response.data.length);
         } else {
           console.warn('El usuario no tiene territorios asignados en la matriz.');
