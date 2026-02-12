@@ -1,34 +1,8 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Subscription, timer, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-
-interface TipoDocumentoData {
-  tipo: string;
-  count: number;
-  porcentaje: number;
-  color: string;
-  abreviatura?: string;
-}
-
-interface TiposResponse {
-  success: boolean;
-  data?: {
-    tipos: Array<{
-      tipo: string;
-      abreviatura: string;
-      cantidad: number;
-      porcentaje: number;
-      color: string;
-    }>;
-    total_documentos?: number;
-    resumen?: any;
-    fecha_actualizacion?: string;
-  };
-  metadata?: any;
-  message?: string;
-  error?: string;
-}
+// src/app/dashboard/graphic-circle/graphic-circle.component.ts
+import { Component, OnInit, OnDestroy, inject, computed, effect } from '@angular/core';
+import { Subscription, timer } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { GraphicCircleService } from '../../../../../core/services/graphic-circle.service';
 
 @Component({
   selector: 'app-graphic-circle',
@@ -37,337 +11,150 @@ interface TiposResponse {
   styleUrls: ['./graphic-circle.css'],
 })
 export class GraphicCircle implements OnInit, OnDestroy {
-  private apiUrl = 'http://localhost:4000/api/dashboard/estadisticas/tipos';
-  private refreshInterval = 60000;
-  
-  // Datos para la gráfica
-  tiposData: TipoDocumentoData[] = [];
-  totalDocumentos = 0;
-  isLoading = true;
-  hasError = false;
-  errorMessage = '';
-  lastUpdateTime: Date | null = null;
-  apiResponse: any = null;
-  
-  // Colores para los tipos
-  private coloresMap: { [key: string]: string } = {
-    'Permiso': '#BC955B',
-    'Concesión': '#A02142',
-    'Conceción': '#A02142', // Por si viene con tilde
-    'default': '#99999A'
-  };
-  
+  private graphicCircleService = inject(GraphicCircleService);
+  private refreshInterval = 60000; // 1 minuto
   private subscription: Subscription = new Subscription();
-  private timeUpdateSubscription: Subscription = new Subscription();
+  
+  // Exponer signals del servicio
+  isLoading = this.graphicCircleService.isLoading;
+  hasError = this.graphicCircleService.hasError;
+  errorMessage = this.graphicCircleService.errorMessage;
+  tiposData = this.graphicCircleService.tiposData;
+  totalDocumentos = this.graphicCircleService.totalDocumentos;
+  lastUpdateTimeFormatted = this.graphicCircleService.lastUpdateTimeFormatted;
+  lastUpdateFullDate = this.graphicCircleService.lastUpdateFullDate;
+  updateAgoText = this.graphicCircleService.updateAgoText;
+  apiResponse = this.graphicCircleService.apiResponse;
+  hasTwoTypes = this.graphicCircleService.hasTwoTypes;
+  
+  // Signal computado para el total a mostrar
+  totalDisplay = computed(() => {
+    return this.graphicCircleService.getTotalDisplay();
+  });
+  
+  // Signal computado para estado vacío
+  showEmptyState = computed(() => {
+    return !this.isLoading() && 
+           !this.hasError() && 
+           this.tiposData().length === 0;
+  });
+  
+  // Signal computado para estado de error con datos de ejemplo
+  showErrorState = computed(() => {
+    return this.hasError() && !this.isLoading();
+  });
 
-  constructor(
-    private http: HttpClient,
-    private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
-  ) {}
+  // Efecto para programar el refresco al corte del día
+  private scheduleEndOfDayRefresh = effect(() => {
+    const ahora = new Date();
+    const manana = new Date(ahora);
+    manana.setDate(manana.getDate() + 1);
+    manana.setHours(0, 0, 0, 0); // Mañana a las 00:00:00
+    
+    const tiempoHastaManana = manana.getTime() - ahora.getTime();
+    
+    const timeoutId = setTimeout(() => {
+      this.graphicCircleService.refresh();
+      
+      // Programar refresco diario recurrente
+      setInterval(() => {
+        this.graphicCircleService.refresh();
+      }, 24 * 60 * 60 * 1000); // Cada 24 horas
+      
+    }, tiempoHastaManana);
+    
+    return () => clearTimeout(timeoutId);
+  }, { allowSignalWrites: false });
 
   ngOnInit(): void {
-    this.loadTiposData();
+    this.loadData();
     this.setupAutoRefresh();
-    this.startTimeUpdates();
   }
 
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    if (this.timeUpdateSubscription) {
-      this.timeUpdateSubscription.unsubscribe();
-    }
   }
 
-  /** ===============================
-   *  CARGA DE DATOS DE TIPOS
-   *  =============================== */
-  private loadTiposData(): void {
-    this.isLoading = true;
-    this.hasError = false;
-    this.http.get<TiposResponse>(this.apiUrl)
-      .pipe(
-        catchError(error => {
-          return this.getTiposFromAlternativeSource();
-        })
-      )
-      .subscribe({
-        next: (response) => {
-          this.apiResponse = response; // Guardar respuesta para debug
-          this.processTiposData(response);
-        },
-        error: (error) => {
-          this.handleError(error);
-        }
-      });
+  /**
+   * Carga inicial de datos
+   */
+  private loadData(): void {
+    this.graphicCircleService.loadTiposData();
   }
 
-  private processTiposData(response: TiposResponse): void {
-    if (response.success && (response.data?.tipos?.length ?? 0) > 0) {
-      const tiposRaw = response.data!.tipos;
-      this.totalDocumentos = response.data!.total_documentos || 
-        tiposRaw.reduce((sum: number, item: any) => sum + (item.cantidad || 0), 0);
-      
-      // Convertir datos del API al formato del componente
-      this.tiposData = tiposRaw.map(item => ({
-        tipo: this.normalizeTipoNombre(item.tipo),
-        count: item.cantidad || 0,
-        porcentaje: item.porcentaje || 0,
-        color: item.color || this.getColorForTipo(item.tipo),
-        abreviatura: item.abreviatura
-      }));
-      
-      // Ordenar por porcentaje descendente
-      this.tiposData.sort((a, b) => b.porcentaje - a.porcentaje);
-      
-      this.hasError = false;
-    } else {
-      this.useDefaultTiposData();
-      
-      if (response.message) {
-
-      }
-    }
-    
-    this.isLoading = false;
-    this.lastUpdateTime = new Date();
-    
-    // Actualizar vista
-    this.ngZone.run(() => {
-      this.cdr.markForCheck();
-    });
-  }
-
-  /** ===============================
-   *  OBTENER DATOS DE FUENTE ALTERNATIVA
-   *  =============================== */
-  private getTiposFromAlternativeSource() {
-    // Datos de ejemplo estructurados igual que el API real
-    return of({
-      success: true,
-      data: {
-        total_documentos: 100,
-        tipos: [
-          { 
-            tipo: 'Concesión', 
-            abreviatura: 'C', 
-            cantidad: 64, 
-            porcentaje: 64.0,
-            color: '#A02142'
-          },
-          { 
-            tipo: 'Permiso', 
-            abreviatura: 'P', 
-            cantidad: 36, 
-            porcentaje: 36.0,
-            color: '#BC955B'
-          }
-        ],
-        resumen: {
-          proporcion: "64 Concesión / 36 Permiso",
-          tipo_mayoritario: "Concesión"
-        },
-        fecha_actualizacion: new Date().toISOString()
-      },
-      metadata: {
-        processing_time_ms: 0,
-        request_timestamp: new Date().toISOString(),
-        period: 'todos',
-        tipos_count: 2,
-        warning: 'Datos de ejemplo'
-      }
-    });
-  }
-
-  /** ===============================
-   *  NORMALIZAR NOMBRE DEL TIPO
-   *  =============================== */
-  private normalizeTipoNombre(tipo: string): string {
-    if (!tipo) return 'Desconocido';
-    
-    const tipoLower = tipo.toString().toLowerCase().trim();
-    
-    // Mapear nombres
-    if (tipoLower.includes('permiso')) return 'Permiso';
-    if (tipoLower.includes('conces')) return 'Concesión';
-    
-    // Por si viene con acento
-    if (tipo === 'Conceción') return 'Concesión';
-    if (tipo === 'PERMISO') return 'Permiso';
-    if (tipo === 'CONCESIÓN') return 'Concesión';
-    
-    return tipo;
-  }
-
-  /** ===============================
-   *  OBTENER COLOR PARA EL TIPO
-   *  =============================== */
-  private getColorForTipo(tipo: string): string {
-    const tipoNormalizado = this.normalizeTipoNombre(tipo);
-    return this.coloresMap[tipoNormalizado] || this.coloresMap['default'];
-  }
-
-  /** ===============================
-   *  USAR DATOS POR DEFECTO
-   *  =============================== */
-  private useDefaultTiposData(): void {
-    this.tiposData = [
-      { tipo: 'Concesión', count: 64, porcentaje: 64.0, color: '#A02142', abreviatura: 'C' },
-      { tipo: 'Permiso', count: 36, porcentaje: 36.0, color: '#BC955B', abreviatura: 'P' }
-    ];
-    this.totalDocumentos = 100;
-  }
-
-  /** ===============================
-   *  OBTENER ÁNGULO PARA LA GRÁFICA CIRCULAR
-   *  =============================== */
-  getCircleAngle(porcentaje: number): number {
-    return (porcentaje / 100) * 360;
-  }
-
-  /** ===============================
-   *  OBTENER CSS PARA SECTOR CIRCULAR
-   *  =============================== */
-  getCircleStyle(index: number): any {
-    if (!this.tiposData || this.tiposData.length === 0) return {};
-    
-    // Calcular ángulos acumulativos
-    let startAngle = 0;
-    for (let i = 0; i < index; i++) {
-      startAngle += this.getCircleAngle(this.tiposData[i].porcentaje);
-    }
-    
-    const porcentaje = this.tiposData[index].porcentaje;
-    const angle = this.getCircleAngle(porcentaje);
-    
-    // Crear conic-gradient para sector circular
-    const conicGradient = `conic-gradient(
-      ${this.tiposData[index].color} 0deg ${angle}deg,
-      transparent ${angle}deg 360deg
-    )`;
-    
-    return {
-      background: conicGradient,
-      transform: `rotate(${startAngle}deg)`
-    };
-  }
-
-  /** ===============================
-   *  AUTO REFRESH
-   *  =============================== */
+  /**
+   * Configura auto-refresh
+   */
   private setupAutoRefresh(): void {
     const refresh$ = timer(this.refreshInterval, this.refreshInterval);
     
     this.subscription.add(
-      refresh$.subscribe(() => {
-        this.loadTiposData();
-      })
+      refresh$.pipe(
+        switchMap(() => {
+          if (!this.graphicCircleService.hasError()) {
+            this.graphicCircleService.loadTiposData();
+          }
+          return [];
+        })
+      ).subscribe()
     );
   }
 
-  /** ===============================
-   *  ACTUALIZACIONES DE TIEMPO
-   *  =============================== */
-  private startTimeUpdates(): void {
-    this.timeUpdateSubscription = timer(0, 30000).subscribe(() => {
-      this.ngZone.run(() => {
-        this.cdr.markForCheck();
-      });
-    });
-  }
-
-  /** ===============================
-   *  MANEJO DE ERRORES
-   *  =============================== */
-  private handleError(error: any): void {
-    this.hasError = true;
-    this.errorMessage = this.getErrorMessage(error);
-    this.useDefaultTiposData();
-    this.isLoading = false;
-    this.lastUpdateTime = new Date();
-    
-    this.ngZone.run(() => {
-      this.cdr.markForCheck();
-    });
-  }
-
-  private getErrorMessage(error: any): string {
-    if (error.status === 0) return 'No se puede conectar con el servidor';
-    if (error.status === 404) return 'Servicio de estadísticas no disponible';
-    if (error.status === 500) return 'Error interno del servidor';
-    return 'Error al cargar datos de tipos';
-  }
-
-  /** ===============================
-   *  MÉTODOS PARA LA VISTA
-   *  =============================== */
-  getLastUpdateTime(): string {
-    if (!this.lastUpdateTime) return 'Nunca';
-    return this.lastUpdateTime.toLocaleTimeString('es-MX', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
-
-  getUpdateAgo(): string {
-    if (!this.lastUpdateTime) return '';
-    const diffMs = new Date().getTime() - this.lastUpdateTime.getTime();
-    const diffMin = Math.floor(diffMs / 60000);
-    
-    if (diffMin < 1) return 'hace unos segundos';
-    if (diffMin === 1) return 'hace 1 minuto';
-    return `hace ${diffMin} minutos`;
-  }
-
-  /** ===============================
-   *  MÉTODOS PÚBLICOS
-   *  =============================== */
+  /**
+   * Refresca los datos
+   */
   refreshChart(): void {
-    this.isLoading = true;
-    this.hasError = false;
-    this.loadTiposData();
+    this.graphicCircleService.refresh();
+  }
+
+  /**
+   * Delegar métodos al servicio
+   */
+  getCircleStyle(index: number): any {
+    return this.graphicCircleService.getCircleStyle(index);
   }
 
   formatNumber(value: number): string {
-    return value.toLocaleString('es-MX');
+    return this.graphicCircleService.formatNumber(value);
   }
 
   formatPorcentaje(value: number): string {
-    return value.toFixed(1);
-  }
-
-  /** ===============================
-   *  MÉTODOS PARA LA GRÁFICA CIRCULAR
-   *  =============================== */
-  getTotalCount(): number {
-    return this.tiposData.reduce((sum, item) => sum + item.count, 0);
+    return this.graphicCircleService.formatPorcentaje(value);
   }
 
   getTipoCount(tipo: string): number {
-    const item = this.tiposData.find(t => t.tipo === tipo);
-    return item ? item.count : 0;
+    return this.graphicCircleService.getTipoCount(tipo);
   }
 
   getTipoPorcentaje(tipo: string): number {
-    const item = this.tiposData.find(t => t.tipo === tipo);
-    return item ? item.porcentaje : 0;
+    return this.graphicCircleService.getTipoPorcentaje(tipo);
   }
 
   getTipoColor(tipo: string): string {
-    const item = this.tiposData.find(t => t.tipo === tipo);
-    return item ? item.color : '#99999A';
+    return this.graphicCircleService.getTipoColor(tipo);
   }
 
-  /** ===============================
-   *  MÉTODOS PARA DEBUG
-   *  =============================== */
+  /**
+   * Métodos de tiempo para la vista (compatibilidad)
+   */
+  getLastUpdateTime(): string {
+    return this.lastUpdateTimeFormatted();
+  }
+
+  getUpdateAgo(): string {
+    return this.updateAgoText();
+  }
+
+  /**
+   * Métodos para debug
+   */
   getApiResponse(): any {
-    return this.apiResponse;
+    return this.apiResponse();
   }
 
   getTiposDataForDisplay(): any {
-    return this.tiposData;
+    return this.tiposData();
   }
 }
