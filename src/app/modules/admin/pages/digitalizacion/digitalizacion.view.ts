@@ -487,6 +487,8 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     const url = this.buildExploradorUrl(filename);
 
     if (url) {
+      console.log("url")
+      console.log(url)
       this.router.navigateByUrl(url);
     } else {
       this.stateService.showToast('No se pudo construir la URL del explorador', 'error');
