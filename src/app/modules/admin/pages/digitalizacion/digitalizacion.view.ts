@@ -17,6 +17,7 @@ import { CargaMasivaService, LoteOCR } from '../../../../core/services/digitaliz
 // import Swal from 'sweetalert2';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: false,
@@ -48,6 +49,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   }
 
   private stateService = inject(ExploradorStateService);
+  private router = inject(Router);
   toast = this.stateService.toast;
   closeToast(): void {
     this.stateService.closeToast();
@@ -480,7 +482,15 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     this.activeTab = 'search';
     this.onPdfSelect(pdfId);
     this.stateService.showToast(`Navegando a búsqueda en "${filename || 'el documento seleccionado'}"`, 'success');
-    this.buildExploradorUrl(filename)
+    // this.buildExploradorUrl(filename)
+
+    const url = this.buildExploradorUrl(filename);
+
+    if (url) {
+      this.router.navigateByUrl(url);
+    } else {
+      this.stateService.showToast('No se pudo construir la URL del explorador', 'error');
+    }
   }
 
   // ========== FUNCIONES DE UTILIDAD ==========
@@ -579,35 +589,35 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   //   return `http://localhost:4200/admin/explorador?q=${query}`;
   // }
   buildExploradorUrl(nombreArchivo: string): string | null {
-  if (!nombreArchivo) return null;
+    if (!nombreArchivo) return null;
 
-  const regex = /(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([A-Z])/i;
-  const match = nombreArchivo.match(regex);
+    const regex = /(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([A-Z])/i;
+    const match = nombreArchivo.match(regex);
 
-  if (!match) return null;
+    if (!match) return null;
 
-  const [
-    _,
-    numeroAutorizacion,
-    municipio,
-    modalidad,
-    consecutivo1,
-    consecutivo2,
-    tipo
-  ] = match;
+    const [
+      _,
+      numeroAutorizacion,
+      municipio,
+      modalidad,
+      consecutivo1,
+      consecutivo2,
+      tipo
+    ] = match;
 
-  const query = [
-    numeroAutorizacion,
-    municipio.padStart(2, '0'),
-    modalidad.padStart(2, '0'),
-    consecutivo1.padStart(2, '0'),
-    consecutivo2.padStart(3, '0'),
-    tipo.toUpperCase()
-  ].join('_');
+    const query = [
+      numeroAutorizacion,
+      municipio.padStart(2, '0'),
+      modalidad.padStart(2, '0'),
+      consecutivo1.padStart(2, '0'),
+      consecutivo2.padStart(3, '0'),
+      tipo.toUpperCase()
+    ].join('_');
 
-  // 
-  return `/admin/explorador?q=${query}`;
-}
+    // 
+    return `/admin/explorador?q=${query}`;
+  }
 
 }
 
