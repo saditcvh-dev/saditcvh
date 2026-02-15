@@ -6,6 +6,7 @@ import { DocumentoService } from '../../../../../../core/services/explorador-doc
 import { AuthService } from '../../../../../../core/services/auth';
 import { getAllowedTabsByRoles, ViewerTab } from '../../../../../../core/helpers/tabs-permissions.helper';
 import { LoadingService } from '../../../../../../core/services/explorador-loading.service';
+import { ExploradorStateService } from '../../services/explorador-state.service';
 
 @Component({
   selector: 'app-viewer-panel',
@@ -55,7 +56,8 @@ export class ViewerPanelComponent {
   private authService = inject(AuthService);
   constructor(private sanitizer: DomSanitizer) { }
   private documentoService = inject(DocumentoService);
-
+  private stateService = inject(ExploradorStateService);
+// private stateService: ExploradorStateService
   get nodeTypeLabel(): string {
     if (!this.selectedNode) return '';
 
@@ -133,15 +135,22 @@ export class ViewerPanelComponent {
     const archivo = version.archivosDigitales?.[0];
     if (!archivo) return;
 
-    this.documentoService.descargarArchivo(archivo.id)
-      .subscribe(blob => {
+ this.documentoService.descargarArchivo(archivo.id)
+    .subscribe({
+      next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = archivo.nombre_archivo;
         a.click();
         window.URL.revokeObjectURL(url);
-      });
+
+        this.stateService.showToast('Descarga iniciada correctamente', 'success');
+      },
+      error: () => {
+        this.stateService.showToast('Error al descargar el archivo', 'error');
+      }
+    });
   }
 
   onRestoreVersion(version: any): void {

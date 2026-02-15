@@ -78,7 +78,7 @@ export class ExploradorStateService {
 
     setTimeout(() => {
       this.closeToast();
-    }, 3000);
+    }, 5000);
   }
 
   closeToast(): void {

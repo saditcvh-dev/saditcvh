@@ -479,8 +479,8 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     this.caseSensitive = this.globalCaseSensitive;
     this.activeTab = 'search';
     this.onPdfSelect(pdfId);
-
     this.stateService.showToast(`Navegando a búsqueda en "${filename || 'el documento seleccionado'}"`, 'success');
+    this.buildExploradorUrl(filename)
   }
 
   // ========== FUNCIONES DE UTILIDAD ==========
