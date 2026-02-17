@@ -255,24 +255,23 @@ export class ViewerPanelComponent {
     this._showControlPanel = value;
     this.showControlPanelChange.emit(value);
   }
-  reloadVersions(): void {
-    if (!this.selectedNode?.data?.id) return;
+reloadVersions(): void {
+  if (!this.selectedNode?.data?.id) return;
 
-    this.loadingService.show();
+  this.loadingService.show();
 
-    this.documentoService.cargarDocumentosPorAutorizacion(
-      this.selectedNode.data.id
-    );
-
-    // Esperamos a que el loading interno del service termine
-    const checkLoading = setInterval(() => {
-      if (!this.documentoService.loading()) {
-        this.documentVersions = this.documentoService.documentos();
+  this.documentoService
+    .cargarDocumentosPorAutorizacion(this.selectedNode.data.id)
+    .subscribe({
+      next: (docs) => {
+        this.documentVersions = docs;
         this.loadingService.hide();
-        clearInterval(checkLoading);
+      },
+      error: () => {
+        this.loadingService.hide();
       }
-    }, 100);
-  }
+    });
+}
 
 
 }
