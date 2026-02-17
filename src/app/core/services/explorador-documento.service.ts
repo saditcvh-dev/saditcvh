@@ -93,40 +93,63 @@ export class DocumentoService {
       catchError(() => of(false))
     );
   }
-
-  cargarDocumentosPorAutorizacion(autorizacionId: number): Observable<Documento[]> {
+  cargarDocumentosPorAutorizacion(autorizacionId: number, force = false): Observable < Documento[] > {
     this.errorState.set(null);
-
-    // Verificar caché primero
-    if (this.autorizacionesCache.has(autorizacionId)) {
-      console.log(` Usando caché para autorización ${autorizacionId}`);
-      const docs = this.autorizacionesCache.get(autorizacionId)!;
+    // Si no es forzado y existe cache → usarlo
+    if(!force && this.autorizacionesCache.has(autorizacionId)) {
+      console.log(`Usando caché para autorización ${autorizacionId}`);
+      const docs = this.autorizacionesCache.get(autorizacionId) !;
       this.documentosState.set(docs);
-      return of(docs); // Retornar Observable para mejor control
+      return of(docs);
     }
-
-    console.log(` Cargando documentos para autorización ${autorizacionId} desde API`);
+    console.log(`Cargando documentos desde API ${autorizacionId}`);
     this.loadingState.set(true);
-
-    return this.http.get<ApiResponse<Documento[]>>(
-      `${this.apiUrl}/autorizacion/${autorizacionId}`, 
-      { withCredentials: true }
-    ).pipe(
-      map(response => response.data),
-      tap(docs => {
-        // Guardar en caché
-        this.autorizacionesCache.set(autorizacionId, docs);
-        docs.forEach(doc => this.documentosCache.set(doc.id, doc));
-        this.documentosState.set(docs);
-        this.loadingState.set(false);
-      }),
-      catchError(error => {
-        this.errorState.set(error.message);
-        this.loadingState.set(false);
-        return throwError(() => error);
-      })
-    );
+    return this.http.get < ApiResponse < Documento[] >> (`${this.apiUrl}/autorizacion/${autorizacionId}`, {
+      withCredentials: true
+    }).pipe(map(response => response.data), tap(docs => {
+      this.autorizacionesCache.set(autorizacionId, docs);
+      docs.forEach(doc => this.documentosCache.set(doc.id, doc));
+      this.documentosState.set(docs);
+      this.loadingState.set(false);
+    }), catchError(error => {
+      this.errorState.set(error.message);
+      this.loadingState.set(false);
+      return throwError(() => error);
+    }));
   }
+  // cargarDocumentosPorAutorizacion(autorizacionId: number): Observable<Documento[]> {
+  //   this.errorState.set(null);
+
+  //   // Verificar caché primero
+  //   if (this.autorizacionesCache.has(autorizacionId)) {
+  //     console.log(` Usando caché para autorización ${autorizacionId}`);
+  //     const docs = this.autorizacionesCache.get(autorizacionId)!;
+  //     this.documentosState.set(docs);
+  //     return of(docs); // Retornar Observable para mejor control
+  //   }
+
+  //   console.log(` Cargando documentos para autorización ${autorizacionId} desde API`);
+  //   this.loadingState.set(true);
+
+  //   return this.http.get<ApiResponse<Documento[]>>(
+  //     `${this.apiUrl}/autorizacion/${autorizacionId}`, 
+  //     { withCredentials: true }
+  //   ).pipe(
+  //     map(response => response.data),
+  //     tap(docs => {
+  //       // Guardar en caché
+  //       this.autorizacionesCache.set(autorizacionId, docs);
+  //       docs.forEach(doc => this.documentosCache.set(doc.id, doc));
+  //       this.documentosState.set(docs);
+  //       this.loadingState.set(false);
+  //     }),
+  //     catchError(error => {
+  //       this.errorState.set(error.message);
+  //       this.loadingState.set(false);
+  //       return throwError(() => error);
+  //     })
+  //   );
+  // }
 
   // Versión que no retorna Observable (para compatibilidad)
   cargarDocumentosPorAutorizacionVoid(autorizacionId: number): void {
