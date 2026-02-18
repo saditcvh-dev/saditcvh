@@ -90,16 +90,27 @@ export class UploadSectionComponent {
     }
     // Si son PDFs individuales
     else {
-      const validPdfs = files.filter(f =>
+      const candidatePdfs = files.filter(f =>
         f.type === 'application/pdf' ||
         f.name.toLowerCase().endsWith('.pdf')
       );
 
-      if (validPdfs.length === 0) {
+      if (candidatePdfs.length === 0) {
         this.stateService.showToast('Selecciona al menos un PDF o archivo comprimido válido', 'error');
         return;
       }
 
+      // Validar nomenclatura obligatoria y separar válidos/ inválidos
+      const validPdfs = candidatePdfs.filter(f => this.validateNomenclature(f.name));
+      const invalidPdfs = candidatePdfs.filter(f => !this.validateNomenclature(f.name));
+
+      if (validPdfs.length === 0) {
+        const names = invalidPdfs.map(f => f.name).join(', ');
+        this.stateService.showToast(`Ningún archivo cumple la nomenclatura obligatoria: ${names}`, 'error');
+        return;
+      }
+
+      // Añadir válidos
       validPdfs.forEach(file => {
         this.selectedFiles.push(file);
 
@@ -112,6 +123,12 @@ export class UploadSectionComponent {
           timestamp: new Date()
         });
       });
+
+      // Informar sobre inválidos (si los hay)
+      if (invalidPdfs.length > 0) {
+        const names = invalidPdfs.map(f => f.name).join(', ');
+        this.stateService.showToast(`Se omitieron archivos que no cumplen la nomenclatura: ${names}`, 'error');
+      }
 
       this.stateService.showToast(
         `${validPdfs.length} PDF(s) seleccionados correctamente`,
@@ -247,6 +264,20 @@ export class UploadSectionComponent {
 
   private emitRecentUploads(): void {
     this.recentUploadsChange.emit(this.recentUploads);
+  }
+  
+  // Valida la nomenclatura obligatoria del archivo PDF.
+  // Formato esperado (al inicio del nombre, antes de cualquier texto adicional):
+  // autorizacion municipio-modalidad-consecutivo1-consecutivo2 tipo(C|P)
+  // Ejemplo: "1478 47-10-01-017 C"
+  private validateNomenclature(filename: string): boolean {
+    if (!filename) return false;
+    // quitar extension
+    const base = filename.replace(/\.[^/.]+$/, '').trim();
+
+    // Regex anclado al inicio; permite que haya texto adicional después
+    const re = /^(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([CP])\b/i;
+    return re.test(base);
   }
   // eventos
   onDragOver(event: DragEvent): void {
