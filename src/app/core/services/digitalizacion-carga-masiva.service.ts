@@ -12,17 +12,31 @@ export interface ArchivoProcesado {
   fechaProcesado: string | null;
 }
 
+// export interface LoteOCR {
+//   loteId: string;
+//   totalArchivos: number;
+//   completados: number;
+//   fallados: number;
+//   porcentaje: number;
+//   ultimoProceso: string;
+//   errores: string[];
+//   archivosProcesados: ArchivoProcesado[];
+// }
+
 export interface LoteOCR {
   loteId: string;
+  tipoProceso: 'NORMAL' | 'OCR';
+  origen: string;
+
   totalArchivos: number;
   completados: number;
   fallados: number;
   porcentaje: number;
+
   ultimoProceso: string;
   errores: string[];
   archivosProcesados: ArchivoProcesado[];
 }
-
 
 
 export interface EstadoOCR {

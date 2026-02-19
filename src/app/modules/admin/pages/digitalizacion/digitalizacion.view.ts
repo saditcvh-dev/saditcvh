@@ -15,7 +15,7 @@ import {
 import { ExploradorStateService } from '../explorador/services/explorador-state.service';
 import { CargaMasivaService, LoteOCR } from '../../../../core/services/digitalizacion-carga-masiva.service';
 // import Swal from 'sweetalert2';
-import { Subject } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
@@ -33,6 +33,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   contextMenuX = 0;
   contextMenuY = 0;
   contextMenuPdf: any = null;
+  isRefreshing = signal(false);
 
   // Agrega estos metodos:
   onContextMenu(event: MouseEvent, pdf: any) {
@@ -151,6 +152,9 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   //   this.loadLotesUsuario();
   // }
   loadLotesUsuario(): void {
+    // if (this.isRefreshing()) return;
+
+    this.isRefreshing.set(true);
     this.isLoadingLotes.set(true);
 
     this.cargaMasivaService.listarLotesUsuario(20, 0)
@@ -159,14 +163,17 @@ export class DigitalizacionView implements OnInit, OnDestroy {
           if (resp.success) {
             this.lotesUsuario = resp.lotes;
           }
-          this.isLoadingLotes.set(false);
         },
         error: (err) => {
           console.error('Error cargando lotes:', err);
+        },
+        complete: () => {
           this.isLoadingLotes.set(false);
+          this.isRefreshing.set(false);
         }
       });
   }
+
   // startPolling(): void {
   //   this.pollTimer = setInterval(() => {
   //     try {
@@ -205,42 +212,81 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
   // ========== FUNCIONES PARA BÚSQUEDA INDIVIDUAL ==========
   loadPdfsList(): void {
-    this.loadLotesUsuario();
-    this.pdfService.listPdfs()
-      .subscribe({
-        next: (result) => {
-          const updatedList = (result.pdfs || []).map(p => ({
-            id: p.id,
-            filename: p.filename,
-            pages: (p as any).pages ?? null,
-            size: (p as any).size_bytes ?? (p as any).size ?? ((p as any).size_mb ? Math.round((p as any).size_mb * 1024 * 1024) : 0),
-            status: (p as any).status ?? 'pending',
-            progress: this.calculateProgress(p as any),
-            task_id: (p as any).task_id,
-            upload_time: (p as any).upload_time,
-            created_at: (p as any).created_at,
-            completed_at: (p as any).completed_at,
-            extracted_text_path: (p as any).extracted_text_path,
-            used_ocr: (p as any).used_ocr ?? false,
-            error: (p as any).error
-          } as PDFListItem));
+    if (this.isRefreshing()) return;
 
-          this.pdfsList = updatedList;
+    this.isRefreshing.set(true);
 
-          this.recentUploads.forEach(upload => {
-            const matchingPdf = updatedList.find(p => p.filename === upload.filename);
-            if (matchingPdf && matchingPdf.status === 'completed') {
-              upload.status = 'completed';
-              upload.progress = 100;
-              upload.id = matchingPdf.id;
-            }
-          });
-        },
-        error: (error) => {
-          console.error('Error cargando lista de PDFs:', error);
+    // Ejecutar ambos en paralelo
+    forkJoin({
+      lotes: this.cargaMasivaService.listarLotesUsuario(20, 0),
+      pdfs: this.pdfService.listPdfs()
+    }).subscribe({
+      next: ({ lotes, pdfs }) => {
+
+        // Actualizar lotes
+        if (lotes.success) {
+          this.lotesUsuario = lotes.lotes;
         }
-      });
+
+        // Actualizar PDFs
+        const updatedList = (pdfs.pdfs || []).map(p => ({
+          id: p.id,
+          filename: p.filename,
+          pages: (p as any).pages ?? null,
+          size: (p as any).size_bytes ?? 0,
+          status: (p as any).status ?? 'pending',
+          progress: this.calculateProgress(p),
+          used_ocr: (p as any).used_ocr ?? false
+        }));
+
+        this.pdfsList = updatedList;
+      },
+      error: (err) => {
+        console.error('Error en actualización:', err);
+      },
+      complete: () => {
+        this.isRefreshing.set(false);
+      }
+    });
   }
+
+  // loadPdfsList(): void {
+  //   this.loadLotesUsuario();
+  //   this.pdfService.listPdfs()
+  //     .subscribe({
+  //       next: (result) => {
+  //         const updatedList = (result.pdfs || []).map(p => ({
+  //           id: p.id,
+  //           filename: p.filename,
+  //           pages: (p as any).pages ?? null,
+  //           size: (p as any).size_bytes ?? (p as any).size ?? ((p as any).size_mb ? Math.round((p as any).size_mb * 1024 * 1024) : 0),
+  //           status: (p as any).status ?? 'pending',
+  //           progress: this.calculateProgress(p as any),
+  //           task_id: (p as any).task_id,
+  //           upload_time: (p as any).upload_time,
+  //           created_at: (p as any).created_at,
+  //           completed_at: (p as any).completed_at,
+  //           extracted_text_path: (p as any).extracted_text_path,
+  //           used_ocr: (p as any).used_ocr ?? false,
+  //           error: (p as any).error
+  //         } as PDFListItem));
+
+  //         this.pdfsList = updatedList;
+
+  //         this.recentUploads.forEach(upload => {
+  //           const matchingPdf = updatedList.find(p => p.filename === upload.filename);
+  //           if (matchingPdf && matchingPdf.status === 'completed') {
+  //             upload.status = 'completed';
+  //             upload.progress = 100;
+  //             upload.id = matchingPdf.id;
+  //           }
+  //         });
+  //       },
+  //       error: (error) => {
+  //         console.error('Error cargando lista de PDFs:', error);
+  //       }
+  //     });
+  // }
 
   calculateProgress(pdf: any): number {
     if (pdf.status === 'completed') return 100;
