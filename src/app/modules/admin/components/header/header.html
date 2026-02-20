@@ -20,12 +20,12 @@
           </div>
         </div>
 
-        <div class="flex-1 rounded-full max-w-xl mx-4 hidden md:block min-w-0">
+        <!-- <div class="flex-1 rounded-full max-w-xl mx-4 hidden md:block min-w-0">
           <label for="globalSearch" class="sr-only">Buscar en el sistema</label>
           <input id="globalSearch" type="text" placeholder="Ingresa un texto para realizar la busqueda…"
             class="w-full pl-10 pr-4 py-2 rounded-full  border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white min-w-0"
             [(ngModel)]="searchText" (focus)="openSearch()" />
-        </div>
+        </div> -->
 
         <div class="flex items-center gap-4 flex-shrink-0">
           <button *ngIf="isMobile" (click)="openMobileSearch()"
@@ -186,7 +186,7 @@
         </div>
       </div>
 
-      <div *ngIf="mobileSearchOpen && isMobile" class="md:hidden py-3 border-t border-gray-100 dark:border-gray-800">
+      <!-- <div *ngIf="mobileSearchOpen && isMobile" class="md:hidden py-3 border-t border-gray-100 dark:border-gray-800">
         <div class="rounded-lg rounded-xl rounded-2xl"
           style="background-color: #e5e7eb; background: #e5e7eb; border-radius: 16px;">
           <label for="mobileSearch" class="sr-only">Buscar</label>
@@ -209,7 +209,7 @@
             </button>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </header>
