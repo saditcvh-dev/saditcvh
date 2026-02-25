@@ -212,9 +212,9 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
   // ========== FUNCIONES PARA BÚSQUEDA INDIVIDUAL ==========
   loadPdfsList(): void {
-    if (this.isRefreshing()) return;
+    // if (this.isRefreshing()) return;
 
-    this.isRefreshing.set(true);
+    // this.isRefreshing.set(true);
 
     // Ejecutar ambos en paralelo
     forkJoin({
