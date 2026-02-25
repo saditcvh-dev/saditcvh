@@ -389,20 +389,29 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
 
 
-  downloadSearchablePDF(pdfId: string): void {
-    const pdf = this.pdfsList.find(p => p.id === pdfId);
-    if (pdf?.status !== 'completed') {
-      this.stateService.showToast('El PDF aún no ha terminado de procesarse', 'error');
-      return;
-    }
+downloadSearchablePDF(pdfId: string): void {
+  const pdf = this.pdfsList.find(p => p.id === pdfId);
 
-    const url = `/docs/${pdf.id}.pdf`;
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${pdf.filename}`;
-    a.click();
+  if (pdf?.status !== 'completed') {
+    this.stateService.showToast('El PDF aún no ha terminado de procesarse', 'error');
+    return;
   }
+
+  this.pdfService.getSearchablePdf(pdfId).subscribe({
+    next: (blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = pdf.filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    },
+    error: (err) => {
+      console.error(err);
+      this.stateService.showToast('Error al descargar el PDF', 'error');
+    }
+  });
+}
   viewText(pdfId: string): void {
     const pdf = this.pdfsList.find(p => p.id === pdfId);
     if (pdf?.status !== 'completed') {
