@@ -83,10 +83,11 @@
 		(nodeRightClick)="onNodeRightClick($event)">
 	</app-tree-node>
 </div>
-<div *ngIf="collapsed() && floatingState()?.node as node" class="fixed z-[9999] bg-white border border-gray-200 rounded-lg shadow-xl
+<div *ngIf="collapsed() && floatingState()?.node as node" class="fixed z-[9999] bg-white dark:bg-[#131314] 
+ border border-gray-200 dark:border-neutral-700 rounded-lg shadow-xl
          min-w-[240px] p-2 max-h-64 overflow-auto floating-node" [style.top.px]="floatingState()?.y"
 	[style.left.px]="floatingState()?.x">
-	<div class="text-xs font-semibold text-gray-500 mb-1 px-1">
+<div class="text-xs font-semibold text-gray-500 dark:text-neutral-400 mb-1 px-1">
 		{{ node.nombre }}
 	</div>
 	<app-tree-node *ngFor="let child of node.children" [node]="child" [selectedNode]="selectedNode()"
