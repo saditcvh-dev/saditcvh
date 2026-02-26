@@ -31,8 +31,9 @@
                 }}</span></span>
           </div>
 
-          
-          <button (click)="loadPdfsList()"   class="px-4 py-2 border-2 border-[#691831]  text-[#691831] rounded-lg hover:bg-[#691831]/10 dark:border-[#c44569] dark:text-[#c44569] dark:hover:bg-[#c44569]/20 transition-colors flex items-center space-x-2 font-medium">
+
+          <button (click)="loadPdfsList()"
+            class="px-4 py-2 border-2 border-[#691831]  text-[#691831] rounded-lg hover:bg-[#691831]/10 dark:border-[#c44569] dark:text-[#c44569] dark:hover:bg-[#c44569]/20 transition-colors flex items-center space-x-2 font-medium">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -94,14 +95,15 @@
           <span>Archivos ({{ totalPdfsCount }})</span>
         </button>
         <button (click)="activeTab = 'lotes'"
-        [class]="activeTab === 'lotes' ? 'border-b-2 border-[#691831] text-[#691831] dark:border-[#c44569] dark:text-[#c44569]' : 'text-gray-500 hover:text-[#A02142] dark:hover:text-[#c44569]'"
-        class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round"
-          d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
-        </svg>
-        <span>Procesos de carga </span>
-      </button>
+          [class]="activeTab === 'lotes' ? 'border-b-2 border-[#691831] text-[#691831] dark:border-[#c44569] dark:text-[#c44569]' : 'text-gray-500 hover:text-[#A02142] dark:hover:text-[#c44569]'"
+          class="px-4 py-3 text-sm font-medium transition-colors flex items-center space-x-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+          </svg>
+          <!-- <span>Procesos de carga </span> -->
+           <span>Procesos de carga ({{ totalArchivosLotes() }})</span>
+        </button>
       </nav>
     </div>
   </header>
@@ -817,19 +819,37 @@
       </h3>
 
       <!-- Loading -->
-      <div *ngIf="isLoadingLotes()" class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-        <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-        </svg>
-        <span>Cargando lotes...</span>
+        <!-- Skeleton -->
+        <div *ngIf="isLoadingLotes()"
+            class="bg-gray-50 dark:bg-[#131314] rounded-xl overflow-hidden shadow-sm animate-pulse">
+
+          <table class="min-w-full">
+            <thead class="bg-gray-100 dark:bg-neutral-800">
+              <tr>
+                <th *ngFor="let i of [1,2,3,4,5,6,7]"
+                    class="px-6 py-3">
+                  <div class="h-3 w-20 bg-gray-300 dark:bg-neutral-700 rounded"></div>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+              <tr *ngFor="let row of [1,2,3,4,5]"
+                  class="dark:bg-neutral-800">
+                <td *ngFor="let col of [1,2,3,4,5,6,7]"
+                    class="px-6 py-4">
+                  <div class="h-4 bg-gray-300 dark:bg-neutral-700 rounded w-full"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
       </div>
 
       <!-- Table -->
-      <div *ngIf="!isLoadingLotes() && lotesUsuario.length > 0"
+      <div *ngIf="!isLoadingLotes() && lotesUsuario().length > 0"
         class="bg-gray-50 dark:bg-[#131314] rounded-xl overflow-visible shadow-sm">
 
-        <table class="min-w-full divide-y divide-gray-200">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700"   [class.opacity-50]="isLoadingLotes()">
           <thead class="bg-gray-100 dark:bg-neutral-800">
             <tr>
               <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider
@@ -846,152 +866,198 @@
  text-gray-700 dark:text-gray-300">
                 Estado
               </th>
-            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider
+              <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider
             text-gray-700 dark:text-gray-300">
-              Tipo
-            </th>
+                Tipo
+              </th>
 
             </tr>
           </thead>
 
           <tbody class="bg-gray-50 dark:bg-[#131314] divide-y divide-gray-200 dark:divide-neutral-700">
-            <ng-container *ngFor="let lote of lotesUsuario">
-                          <tr 
-              class="transition-colors hover:bg-gray-100 dark:hover:bg-neutral-700 dark:bg-neutral-800">
+            <ng-container *ngFor="let lote of lotesUsuario()">
+              <tr class="transition-colors hover:bg-gray-100 dark:hover:bg-neutral-700 dark:bg-neutral-800">
 
-              <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
-                {{ lote.loteId }}
-              </td>
+                <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {{ lote.loteId }}
+                </td>
 
-              <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                {{ lote.totalArchivos }}
-              </td>
+                <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                  {{ lote.totalArchivos }}
+                </td>
 
-              <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                <div class="flex items-center justify-between text-xs text-gray-600">
-                  <!-- <span>{{ lote.completados }} / {{ lote.totalArchivos }}</span> -->
-                  <span class="font-semibold">
-                    {{ lote.completados }} / {{ lote.totalArchivos }}
-                  </span>
+                <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                  <div class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+                    <!-- <span>{{ lote.completados }} / {{ lote.totalArchivos }}</span> -->
+                    <span class="font-semibold">
+                      {{ lote.completados }} / {{ lote.totalArchivos }}
+                    </span>
 
-                </div>
+                  </div>
 
-              </td>
-              <td class="px-6 py-4">
-                <div class="flex flex-col space-y-1">
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex flex-col space-y-1">
 
-                  <!-- Barra -->
-                  <div class="flex items-center space-x-3">
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                      <div class="h-2 rounded-full transition-all" [ngClass]="{
-                    'bg-green-500': (lote?.porcentaje ?? 0) === 100 && (lote?.fallados ?? 0) === 0,
-                    'bg-red-500': (lote?.fallados ?? 0) > 0,
-                    'bg-yellow-500': (lote?.porcentaje ?? 0) < 100 && (lote?.fallados ?? 0) === 0
-                  }" [style.width.%]="lote?.porcentaje ?? 0">
+                    <!-- Barra -->
+                    <!-- Barra -->
+                    <div class="flex items-center space-x-3 relative group">
+
+                      <div class="w-full bg-gray-200 dark:bg-neutral-700 rounded-full h-2">
+                        <div
+                          class="h-2 rounded-full transition-all"
+                          [ngClass]="{
+                            'bg-green-500': getProgresoReal(lote) === 100 && (lote?.fallados ?? 0) === 0,
+                            'bg-red-500': (lote?.fallados ?? 0) > 0,
+                            'bg-yellow-500': getProgresoReal(lote) < 100 && (lote?.fallados ?? 0) === 0
+                          }"
+                          [style.width.%]="getProgresoReal(lote)">
+                        </div>
+                      </div>
+
+                      <!-- Porcentaje visible -->
+                      <span class="text-xs font-medium text-gray-700 dark:text-gray-300 min-w-[40px] cursor-pointer">
+                        {{ getProgresoReal(lote) }}%
+                      </span>
+
+                      <!-- Tooltip -->
+                      <div *ngIf="getProgresoReal(lote) < 100"
+                          class="absolute bottom-8 left-1/2 -translate-x-1/2 
+                                  opacity-0 group-hover:opacity-100 
+                                  transition-all duration-200 
+                                  bg-gray-800 text-white text-xs 
+                                  px-3 py-2 rounded-lg shadow-lg 
+                                  whitespace-nowrap z-50">
+
+                        <div class="flex items-center gap-2">
+                          <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"
+                              stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 3"></path>
+                          </svg>
+
+                          <span>
+                            Procesando {{ lote.paginasTotales }} páginas<br>
+                            {{ estimarTiempoRestante(lote) }}
+                          </span>
+                        </div>
                       </div>
 
                     </div>
-                    <span class="text-xs font-medium text-gray-700 min-w-[40px]">
-                      {{ lote.porcentaje }}%
-                    </span>
-                  </div>
+                    <!-- Mensaje de error con tooltip -->
+                    <div *ngIf="(lote?.fallados ?? 0) > 0"
+                      class="relative group text-xs text-red-600 dark:text-red-400 flex items-center gap-1 ">
 
-                  <!-- Mensaje de error con tooltip -->
-                  <div *ngIf="(lote?.fallados ?? 0) > 0"
-                    class="relative group text-xs text-red-600 dark:text-red-400 flex items-center gap-1 ">
+                      <!-- Icono alerta -->
+                      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 9v4"></path>
+                        <path d="M12 17h.01"></path>
+                        <path d="M10.29 3.86l-7.1 12.28A2 2 0 005 19h14a2 2 0 001.81-2.86l-7.1-12.28a2 2 0 00-3.42 0z">
+                        </path>
+                      </svg>
 
-                    ⚠ {{ lote?.fallados }} archivo(s) con error
+                      <span>
+                        {{ lote?.fallados }} archivo(s) con error
+                      </span>
 
-                    <!-- Tooltip -->
-                    <div class="absolute z-[9999] hidden group-hover:block
+                      <!-- Tooltip -->
+                      <div class="absolute z-[9999] hidden group-hover:block
                   top-full left-0 mt-2 w-80
                   bg-gray-900 text-white text-xs
                   rounded-lg shadow-lg p-3">
 
-                      <ul class="list-disc pl-4 space-y-1">
-                        <li *ngFor="let error of lote?.errores">
-                          {{ error }}
-                        </li>
-                      </ul>
+                        <ul class="list-disc pl-4 space-y-1">
+                          <li *ngFor="let error of lote?.errores">
+                            {{ error }}
+                          </li>
+                        </ul>
+                      </div>
                     </div>
+
+
                   </div>
+                </td>
 
 
-                </div>
-              </td>
-  
-
-              <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                {{ formatDate(lote.ultimoProceso) }}
-              </td>
-              <td class="px-6 py-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="{
-      'bg-green-100 text-green-700': lote.porcentaje === 100 && lote.fallados === 0,
-      'bg-red-100 text-red-700': lote.fallados > 0,
-      'bg-yellow-100 text-yellow-700': lote.porcentaje < 100 && lote.fallados === 0
+                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                  {{ formatDate(lote.ultimoProceso) }}
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="{
+      'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300': lote.porcentaje === 100 && lote.fallados === 0,
+      'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300': lote.fallados > 0,
+      'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300': lote.porcentaje < 100 && lote.fallados === 0
     }">
-                  <ng-container *ngIf="lote.porcentaje === 100 && lote.fallados === 0">
-                    Completado
-                  </ng-container>
-                  <ng-container *ngIf="lote.fallados > 0">
-                    Con errores
-                  </ng-container>
-                  <ng-container *ngIf="lote.porcentaje < 100 && lote.fallados === 0">
-                    En proceso
-                  </ng-container>
-                </span>
-              </td>
-              <td class="px-6 py-4 text-sm">
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold"
-                  [ngClass]="{
-                    'bg-blue-100 text-blue-700': lote.tipoProceso === 'OCR',
-                    'bg-gray-200 text-gray-700': lote.tipoProceso === 'NORMAL'
+                    <ng-container *ngIf="lote.porcentaje === 100 && lote.fallados === 0">
+                      Completado
+                    </ng-container>
+                    <ng-container *ngIf="lote.fallados > 0">
+                      Con errores
+                    </ng-container>
+                    <ng-container *ngIf="lote.porcentaje < 100 && lote.fallados === 0">
+                      En proceso
+                    </ng-container>
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold" [ngClass]="{
+                    'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300': lote.tipoProceso === 'OCR',
+                    'bg-gray-200 text-gray-700 dark:bg-neutral-700 dark:text-gray-300': lote.tipoProceso === 'NORMAL'
                   }">
-                  {{ lote.tipoProceso }}
-                </span>
-              </td>
+                    {{ lote.tipoProceso }}
+                  </span>
+                </td>
 
 
-            </tr>
+              </tr>
 
 
-            <!-- Fila extra: archivos procesados -->
-            <tr *ngIf="lote.porcentaje === 100 && lote.fallados === 0 && lote.archivosProcesados.length"
-              class="bg-white dark:bg-neutral-900">
-              <td colspan="7" class="px-6 py-4">
-                <div class="space-y-2">
-                  <h4 class="text-sm font-semibold text-green-700 dark:text-green-400">
-                    📄 Archivos procesados
-                  </h4>
-
-                  <ul class="space-y-1 text-sm text-gray-700 dark:text-gray-300">
-                    <li *ngFor="let archivo of lote.archivosProcesados" class="flex items-center justify-between p-2 rounded-lg
+              <!-- Fila extra: archivos procesados -->
+              <tr *ngIf="lote.porcentaje === 100 && lote.archivosProcesados.length"
+                class="bg-white dark:bg-neutral-900">
+                <td colspan="7" class="px-6 py-4">
+                  <div class="space-y-2">
+                    <h4 class="text-sm font-semibold text-green-700 dark:text-green-400 flex items-center gap-2">
+                      <!-- Icono documento -->
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+                        <path d="M14 2v6h6"></path>
+                      </svg>
+                      <span>Archivos procesados</span>
+                    </h4>
+                    <ul class="space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                      <li *ngFor="let archivo of lote.archivosProcesados" class="flex items-center justify-between p-2 rounded-lg
                               bg-gray-50 dark:bg-neutral-800">
 
                         <div class="flex flex-col">
-                           
-                            <a *ngIf="buildExploradorUrl(archivo.nombreArchivo) as url" [href]="url" target="_blank" class="font-medium text-blue-600 hover:underline hover:text-blue-800 transition">
-                                {{ archivo.nombreArchivo }}
-                            </a>
 
-                            <!-- Si no se puede parsear -->
-                            <span *ngIf="!buildExploradorUrl(archivo.nombreArchivo)" class="font-medium text-gray-700">
-                                {{ archivo.nombreArchivo }}
-                            </span>
+                          <a *ngIf="buildExploradorUrl(archivo.nombreArchivo) as url" [href]="url" target="_blank"
+                            class="font-medium text-blue-600 hover:underline hover:text-blue-800 transition">
+                            {{ archivo.nombreArchivo }}
+                          </a>
 
-                            <span class="text-xs text-gray-500">
-                                Documento ID: {{ archivo.metadata?.documentoId ?? '—' }}
-                            </span>
+                          <!-- Si no se puede parsear -->
+                          <span *ngIf="!buildExploradorUrl(archivo.nombreArchivo)" class="font-medium text-gray-700">
+                            {{ archivo.nombreArchivo }}
+                          </span>
+
+                          <span class="text-xs text-gray-500">
+                            Documento ID: {{ archivo.metadata?.documentoId ?? '—' }}
+                          </span>
                         </div>
 
-                        <span class="text-xs text-green-600 font-semibold">
-                            ✔ Procesado
-                        </span>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
+                        <span class="flex items-center gap-1 text-xs text-green-600 font-semibold">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 13l4 4L19 7"></path>
+                          </svg> Procesado </span>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
 
             </ng-container>
 
@@ -1000,7 +1066,7 @@
       </div>
 
       <!-- Empty state -->
-      <div *ngIf="!isLoadingLotes() && lotesUsuario.length === 0" class="text-center text-gray-500 py-8">
+      <div *ngIf="!isLoadingLotes() && lotesUsuario().length === 0" class="text-center text-gray-500 dark:text-gray-400 py-8">
         No hay lotes registrados.
       </div>
 

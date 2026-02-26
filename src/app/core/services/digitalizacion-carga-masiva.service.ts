@@ -26,14 +26,19 @@ export interface ArchivoProcesado {
 export interface LoteOCR {
   loteId: string;
   tipoProceso: 'NORMAL' | 'OCR';
-  origen: string;
+  origen: 'DIRECTO' | string; // puedes ampliar si luego agregas más orígenes
 
   totalArchivos: number;
   completados: number;
   fallados: number;
-  porcentaje: number;
 
-  ultimoProceso: string;
+  porcentaje: number;      // progreso general (archivos)
+  progresoOCR?: number;    // progreso por páginas (solo cuando tipoProceso === 'OCR')
+
+  paginasTotales?: number; // total de páginas procesadas en OCR
+
+  ultimoProceso: string;   // ISO date string
+
   errores: string[];
   archivosProcesados: ArchivoProcesado[];
 }

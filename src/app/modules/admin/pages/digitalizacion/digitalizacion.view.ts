@@ -16,7 +16,7 @@ import { ExploradorStateService } from '../explorador/services/explorador-state.
 import { CargaMasivaService, LoteOCR } from '../../../../core/services/digitalizacion-carga-masiva.service';
 // import Swal from 'sweetalert2';
 import { forkJoin, Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, finalize, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 @Component({
@@ -124,7 +124,8 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   // Polling para actualizar la lista automáticamente
   pollIntervalMs: number = 3000; // 3 segundos (más rápido)
   private pollTimer: any = null;
-  lotesUsuario: LoteOCR[] = [];
+  // lotesUsuario: LoteOCR[] = [];
+  lotesUsuario = signal<LoteOCR[]>([]);
   isLoadingLotes = signal(false);
   constructor(
     private pdfService: PdfService,
@@ -161,7 +162,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
       .subscribe({
         next: (resp) => {
           if (resp.success) {
-            this.lotesUsuario = resp.lotes;
+            this.lotesUsuario .set(resp.lotes);
           }
         },
         error: (err) => {
@@ -216,38 +217,71 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     
     // if (this.isRefreshing()) return;    
     // this.isRefreshing.set(true);    // Ejecutar ambos en paralelo
+    this.isLoadingLotes.set(true);
+    // forkJoin({
+    //   lotes: this.cargaMasivaService.listarLotesUsuario(20, 0),
+    //   pdfs: this.pdfService.listPdfs()
+    // }).subscribe({
+    //   next: ({ lotes, pdfs }) => {
 
-    forkJoin({
-      lotes: this.cargaMasivaService.listarLotesUsuario(20, 0),
-      pdfs: this.pdfService.listPdfs()
-    }).subscribe({
-      next: ({ lotes, pdfs }) => {
+    //     // Actualizar lotes
+    //     if (lotes.success) {
+    //       this.lotesUsuario.set(lotes.lotes);
+    //     }
 
-        // Actualizar lotes
-        if (lotes.success) {
-          this.lotesUsuario = lotes.lotes;
-        }
+    //     // Actualizar PDFs
+    //     const updatedList = (pdfs.pdfs || []).map(p => ({
+    //       id: p.id,
+    //       filename: p.filename,
+    //       pages: (p as any).pages ?? null,
+    //       size: (p as any).size_bytes ?? 0,
+    //       status: (p as any).status ?? 'pending',
+    //       progress: this.calculateProgress(p),
+    //       used_ocr: (p as any).used_ocr ?? false
+    //     }));
 
-        // Actualizar PDFs
-        const updatedList = (pdfs.pdfs || []).map(p => ({
-          id: p.id,
-          filename: p.filename,
-          pages: (p as any).pages ?? null,
-          size: (p as any).size_bytes ?? 0,
-          status: (p as any).status ?? 'pending',
-          progress: this.calculateProgress(p),
-          used_ocr: (p as any).used_ocr ?? false
-        }));
+    //     this.pdfsList = updatedList;
+    //   },
+    //   error: (err) => {
+    //     console.error('Error en actualización:', err);
+    //   },
+    //   complete: () => {
+    //      this.isLoadingLotes.set(true);
+    //     this.isRefreshing.set(false);
+    //   }
+    // });
+      forkJoin({
+          lotes: this.cargaMasivaService.listarLotesUsuario(20, 0),
+          pdfs: this.pdfService.listPdfs()
+        })
+        .pipe(
+          finalize(() => {
+            this.isLoadingLotes.set(false);
+            this.isRefreshing.set(false);
+          })
+        )
+        .subscribe({
+          next: ({ lotes, pdfs }) => {
+            if (lotes.success) {
+              this.lotesUsuario.set(lotes.lotes);
+            }
 
-        this.pdfsList = updatedList;
-      },
-      error: (err) => {
-        console.error('Error en actualización:', err);
-      },
-      complete: () => {
-        this.isRefreshing.set(false);
-      }
-    });
+            const updatedList = (pdfs.pdfs || []).map(p => ({
+              id: p.id,
+              filename: p.filename,
+              pages: (p as any).pages ?? null,
+              size: (p as any).size_bytes ?? 0,
+              status: (p as any).status ?? 'pending',
+              progress: this.calculateProgress(p),
+              used_ocr: (p as any).used_ocr ?? false
+            }));
+
+            this.pdfsList = updatedList;
+          },
+          error: (err) => {
+            console.error('Error en actualización:', err);
+          }
+        });
   }
 
   // loadPdfsList(): void {
@@ -690,6 +724,51 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     // 
     return `/admin/explorador?q=${query}`;
   }
+    estimarTiempoRestante(lote: any): string {
+    const progreso = lote?.progresoOCR ?? lote?.porcentaje ?? 0;
 
+    if (!progreso || progreso <= 0 || !lote?.ultimoProceso) {
+      return 'Calculando...';
+    }
+
+    const ahora = new Date().getTime();
+    const inicio = new Date(lote.ultimoProceso).getTime();
+
+    const tiempoTranscurridoMs = ahora - inicio;
+    const progresoDecimal = progreso / 100;
+
+    if (progresoDecimal <= 0) return 'Calculando...';
+
+    const estimadoTotal = tiempoTranscurridoMs / progresoDecimal;
+    const restanteMs = estimadoTotal - tiempoTranscurridoMs;
+
+    if (restanteMs <= 0) return 'Finalizando...';
+
+    const minutos = Math.floor(restanteMs / 60000);
+    const segundos = Math.floor((restanteMs % 60000) / 1000);
+
+    return `${minutos}m ${segundos}s restantes`;
+  }
+    getProgresoReal(lote: any): number {
+
+    // Si ya terminó correctamente
+    if (
+      lote?.porcentaje === 100 &&
+      lote?.fallados === 0 &&
+      lote?.archivosProcesados?.length > 0
+    ) {
+      return 100;
+    }
+
+    // Si está en proceso OCR
+    if (lote?.progresoOCR != null) {
+      return lote.progresoOCR;
+    }
+
+    return lote?.porcentaje ?? 0;
+  }
+  totalArchivosLotes = computed(() =>
+    this.lotesUsuario().reduce((acc, lote) => acc + (lote.totalArchivos || 0), 0)
+  );
 }
 
