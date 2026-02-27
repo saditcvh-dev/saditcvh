@@ -5,6 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { AutocompleteItem, BusquedaService } from '../../../../core/services/busqueda';
 import { BusquedaResponse, DashboardData, ResultadoBusqueda } from '../../../../core/models/busqueda.model';
 import { signal, computed, effect } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-busqueda',
@@ -49,6 +50,7 @@ export class Busqueda implements OnInit, OnChanges, OnDestroy {
   showAutocomplete = signal(false);
   
   private busquedaService = inject(BusquedaService);
+  private router = inject(Router);
 
   // Computed properties
   autorizaciones = computed(() => {
@@ -163,8 +165,14 @@ export class Busqueda implements OnInit, OnChanges, OnDestroy {
     this.searchTermChange.emit(term);
   }
 
-  openPdf(pdf: any) {
-    window.open(`/api/pdf/${pdf.id_interno}/searchable-pdf`, '_blank');
+  verEnExplorador(idOrFileName: string) {
+    if (!idOrFileName) return;
+    // Quita extensión si existe: "archivo.pdf" → "archivo"
+    const sinExtension = idOrFileName.replace(/\.[^.]+$/, '');
+    // Quita el hash hexadecimal al final: "556_01_11_22_222_C_c7226321" → "556_01_11_22_222_C"
+    const carpeta = sinExtension.replace(/_[a-f0-9]{8,}$/i, '');
+    this.closeModal();
+    this.router.navigate(['/admin/explorador'], { queryParams: { q: carpeta } });
   }
 
   cleanFileName(name: string | undefined): string {
