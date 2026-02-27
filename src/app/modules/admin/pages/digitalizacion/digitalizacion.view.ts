@@ -461,6 +461,15 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     }
   });
 }
+
+  irAlExplorador(pdf: PDFListItem): void {
+    const url = this.buildExploradorUrl(pdf.filename);
+    if (url) {
+      this.router.navigateByUrl(url);
+    } else {
+      this.stateService.showToast('No se pudo construir la ruta del explorador para este archivo', 'error');
+    }
+  }
   viewText(pdfId: string): void {
     const pdf = this.pdfsList.find(p => p.id === pdfId);
     if (pdf?.status !== 'completed') {
@@ -771,4 +780,3 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     this.lotesUsuario().reduce((acc, lote) => acc + (lote.totalArchivos || 0), 0)
   );
 }
-

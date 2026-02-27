@@ -714,7 +714,7 @@
               [disabled]="pdf.status !== 'completed'">
               TXT
             </button>
-            <button (click)="$event.stopPropagation(); downloadSearchablePDF(pdf.id)"
+            <button (click)="$event.stopPropagation(); irAlExplorador(pdf)"
               class="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
               PDF
             </button>
@@ -797,7 +797,7 @@
                     [disabled]="pdf.status !== 'completed'">
                     TXT
                   </button>
-                  <button (click)="$event.stopPropagation(); downloadSearchablePDF(pdf.id)"
+                  <button (click)="$event.stopPropagation(); irAlExplorador(pdf)"
                     class="px-3 py-1.5 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
                     PDF
                   </button>
