@@ -167,6 +167,15 @@ export class Busqueda implements OnInit, OnChanges, OnDestroy {
     window.open(`/api/pdf/${pdf.id_interno}/searchable-pdf`, '_blank');
   }
 
+  cleanFileName(name: string | undefined): string {
+    if (!name) return '';
+    // Elimina el hash hexadecimal al final: _c7226321863db184 (antes de la extensión)
+    let clean = name.replace(/_[a-f0-9]{8,}(?=\.[^.]+$|$)/i, '');
+    // Reemplaza guiones bajos restantes por espacios
+    clean = clean.replace(/_/g, ' ');
+    return clean;
+  }
+
   getStatusText(status: string): string {
     return status.replace(/[⏳✅❌⏸️]/g, '').trim();
   }
