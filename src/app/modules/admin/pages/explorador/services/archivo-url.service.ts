@@ -10,7 +10,7 @@ export class ArchivoUrlService {
     if (!documentoId) {
       return '';
     }
-
+    console.log('Construyendo URL de vista previa para documento ID:', documentoId);
     return `${this.API_BASE_URL}/${documentoId}/preview`;
   }
 }
