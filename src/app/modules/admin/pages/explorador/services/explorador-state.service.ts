@@ -135,4 +135,74 @@ export class ExploradorStateService {
 
     return iconMap[node.type] || '/assets/icons/folder.svg';
   }
+
+  /**
+   * Busca en el árbol un nodo cuyo nombre/id/carpeta coincida con la cadena
+   * y, cuando lo encuentra, lo selecciona y expande la ruta completa. Si
+   * el árbol aún no se ha cargado se vuelve a intentar cada 100 ms hasta que
+   * esté disponible.
+   */
+  selectNodeByQuery(query: string): void {
+    if (!query) return;
+
+    const trySelect = (): boolean => {
+      const tree = this._tree();
+      if (!tree || tree.length === 0) {
+        return false;
+      }
+
+      const path = this.findNodePathByQuery(tree, query);
+      if (!path) {
+        return false;
+      }
+
+      for (const node of path) {
+        node._open = true;
+      }
+
+      const target = path[path.length - 1];
+      this.selectNode(target, true, true);
+      return true;
+    };
+
+    if (trySelect()) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (trySelect()) {
+        clearInterval(interval);
+      }
+    }, 100);
+  }
+
+  private findNodePathByQuery(
+    nodes: AutorizacionTreeNode[],
+    query: string,
+    path: AutorizacionTreeNode[] = []
+  ): AutorizacionTreeNode[] | null {
+    const normalized = query.trim().toLowerCase();
+
+    for (const node of nodes) {
+      const newPath = [...path, node];
+      const matchByNombre = node.nombre?.toLowerCase() === normalized;
+      const matchById = node.id?.toLowerCase() === normalized;
+      const matchByCarpeta =
+        node.type === 'autorizacion' &&
+        node.data?.nombreCarpeta?.toLowerCase() === normalized;
+
+      if (matchByNombre || matchById || matchByCarpeta) {
+        return newPath;
+      }
+
+      if (node.children && node.children.length > 0) {
+        const result = this.findNodePathByQuery(node.children, query, newPath);
+        if (result) {
+          return result;
+        }
+      }
+    }
+
+    return null;
+  }
 }

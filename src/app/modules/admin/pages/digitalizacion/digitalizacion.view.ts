@@ -465,7 +465,17 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   irAlExplorador(pdf: PDFListItem): void {
     const url = this.buildExploradorUrl(pdf.filename);
     if (url) {
-      this.router.navigateByUrl(url);
+      // el builder devuelve algo como "/admin/explorador?q=123_01_.."; nos quedamos sólo
+      // con el valor de la query y utilizamos navigate para que Angular genere
+      // correctamente la UrlTree y dispare la suscripción en el explorador.
+      const qMatch = url.match(/\?q=(.*)$/);
+      const q = qMatch ? qMatch[1] : null;
+      if (q) {
+        this.router.navigate(['/admin/explorador'], { queryParams: { q } });
+      } else {
+        // fallback al comportamiento anterior en caso de que el regex falle
+        this.router.navigateByUrl(url);
+      }
     } else {
       this.stateService.showToast('No se pudo construir la ruta del explorador para este archivo', 'error');
     }
