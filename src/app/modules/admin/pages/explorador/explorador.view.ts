@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal, computed, effect } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AutorizacionTreeNode } from '../../../../core/models/autorizacion-tree.model';
 import { AutorizacionTreeService } from '../../../../core/services/explorador-autorizacion-tree.service';
 import { AutorizacionService } from '../../../../core/services/explorador-autorizacion.service';
@@ -94,7 +95,9 @@ export class ExploradorView implements OnInit {
   //     }
   //   });
   // }  
-    constructor() {
+    private route = inject(ActivatedRoute);
+
+  constructor() {
     effect(() => {
       const node = this.selectedNode();
       const autorizacionId = node?.data?.id;
@@ -168,6 +171,15 @@ export class ExploradorView implements OnInit {
     this.treeService.init();
     this.initializeServices();
     this.subscribeToTree();
+
+    // también reaccionamos a cambios en el parámetro "q" para que la
+    // selección se aplique incluso si el usuario viene desde otra ruta.
+    this.route.queryParamMap.subscribe(map => {
+      const q = map.get('q');
+      if (q) {
+        this.stateService.selectNodeByQuery(q);
+      }
+    });
   }
 
   private initializeServices(): void {
