@@ -265,7 +265,7 @@ export class UploadSectionComponent {
   private emitRecentUploads(): void {
     this.recentUploadsChange.emit(this.recentUploads);
   }
-  
+
   // Valida la nomenclatura obligatoria del archivo PDF.
   // Formato esperado (al inicio del nombre, antes de cualquier texto adicional):
   // autorizacion municipio-modalidad-consecutivo1-consecutivo2 tipo(C|P)
