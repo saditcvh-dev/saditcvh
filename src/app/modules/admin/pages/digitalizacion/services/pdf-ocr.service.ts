@@ -99,7 +99,7 @@ export class PdfService {
 
   constructor(private http: HttpClient) { }
 
-  uploadPdf(file: File, useOcr: boolean = true): Observable<PDFUploadResponse> {
+  uploadPdf(file: File, useOcr: boolean = false): Observable<PDFUploadResponse> {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -110,19 +110,19 @@ export class PdfService {
   }
 
   searchPdf(pdfId: string, term: string, caseSensitive: boolean = false): Observable<SearchResponse> {
-  return this.http.post<SearchResponse>(
-    `${this.apiUrl}/${pdfId}/search`, 
-    { 
-      term, 
-      case_sensitive: caseSensitive 
-    }
-  ).pipe(
-    catchError((error:any) => {
-      console.error('Error en búsqueda:', error);
-      throw error;
-    })
-  );
-}
+    return this.http.post<SearchResponse>(
+      `${this.apiUrl}/${pdfId}/search`,
+      {
+        term,
+        case_sensitive: caseSensitive
+      }
+    ).pipe(
+      catchError((error: any) => {
+        console.error('Error en búsqueda:', error);
+        throw error;
+      })
+    );
+  }
 
   getPdfText(pdfId: string): Observable<Blob> {
     return this.http.get(
@@ -137,7 +137,7 @@ export class PdfService {
     );
   }
 
-  quickSearch(file: File, term: string, useOcr: boolean = true): Observable<SearchResponse> {
+  quickSearch(file: File, term: string, useOcr: boolean = false): Observable<SearchResponse> {
     const formData = new FormData();
     formData.append('file', file);
 
