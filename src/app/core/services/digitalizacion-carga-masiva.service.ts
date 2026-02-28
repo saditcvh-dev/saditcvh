@@ -89,7 +89,7 @@ export interface ResultadoOCR {
 })
 export class CargaMasivaService {
   private readonly baseUrl = `${environment.apiUrl}/carga-masiva`;
-  
+
   // Subjects para comunicación entre componentes
   private loteProcesando = new BehaviorSubject<string | null>(null);
   private estadoLote = new BehaviorSubject<EstadoOCR | null>(null);
@@ -100,7 +100,7 @@ export class CargaMasivaService {
   public estadoLote$ = this.estadoLote.asObservable();
   public resultadoLote$ = this.resultadoLote.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Subir archivo comprimido
   subirArchivoComprimido(archivo: File, useOcr: boolean = false): Observable<HttpEvent<any>> {
@@ -182,16 +182,16 @@ export class CargaMasivaService {
   }
 
   // Listar lotes del usuario
-  listarLotesUsuario(limit: number = 20, offset: number = 0): Observable<{success: boolean, lotes: LoteOCR[]}> {
+  listarLotesUsuario(limit: number = 20, offset: number = 0): Observable<{ success: boolean, lotes: LoteOCR[] }> {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString());
 
-    return this.http.get<{success: boolean, lotes: LoteOCR[]}>(
+    return this.http.get<{ success: boolean, lotes: LoteOCR[] }>(
       `${this.baseUrl}/lotes`,
-      { 
+      {
         params,
-        withCredentials: true 
+        withCredentials: true
       }
     );
   }
@@ -247,5 +247,5 @@ export class CargaMasivaService {
     if (nombre.endsWith('.rar')) return 'rar';
     return archivo.type;
   }
-  
+
 }
