@@ -76,6 +76,7 @@ import { PdfViewerDocument } from '../../shared/pdf-viewer/pdf-viewer';
     GraphicMunicipioMapComponent,
     ExpRecentComponent,
     GraphicCircle,
+    PreviewTabComponent,
     ReportCard,
     UserFormComponent,
     PasswordToggleComponent,
