@@ -68,7 +68,7 @@ export class ExploradorView implements OnInit {
   // Computed
   tiposAutorizacion = this.tiposAutorizacionSvc.tipos;
   modalidades = this.modalidadSvc.modalidadesOrdenadas;
-    private autorizacionIdCargado = signal<number | null>(null);
+  private autorizacionIdCargado = signal<number | null>(null);
   documentVersions = computed(() => {
     const autorizacionId = this.selectedAutorizacionId();
     const documentos = this.documentoService.documentos();
@@ -94,7 +94,7 @@ export class ExploradorView implements OnInit {
   //     }
   //   });
   // }  
-    constructor() {
+  constructor() {
     effect(() => {
       const node = this.selectedNode();
       const autorizacionId = node?.data?.id;
@@ -104,9 +104,9 @@ export class ExploradorView implements OnInit {
         if (this.autorizacionIdCargado() !== autorizacionId) {
           this.autorizacionIdCargado.set(autorizacionId);
           this.selectedAutorizacionId.set(autorizacionId);
-          
+
           console.log(` Efecto: Cargando documentos para autorización ${autorizacionId}`);
-          
+
           // Usar la versión que retorna Observable para mejor control
           this.documentoService.cargarDocumentosPorAutorizacion(autorizacionId)
             .subscribe({
@@ -128,41 +128,16 @@ export class ExploradorView implements OnInit {
   pdfUrl = computed(() => {
     const autorizacionId = this.selectedAutorizacionId();
     const documentos = this.documentoService.documentos();
-    // debugger
-    // console.log('DEBUG pdfUrl:', {
-    //   autorizacionId,
-    //   documentosCount: documentos.length,
-    //   documentos: documentos
-    // });
-
-    // if (!autorizacionId) {
-    //   // console.log('DEBUG: No autorizacionId');
-    //   return this.archivoUrlService.empty();
-    // }
-
-    // if (documentos.length === 0) {
-    //   // console.log('DEBUG: No documentos');
-    //   return this.archivoUrlService.empty();
-    // }
 
     const documentosFiltrados = documentos.filter(d => d.autorizacionId === autorizacionId);
-    // // console.log('DEBUG: Documentos filtrados:', documentosFiltrados);
-
-    // if (documentosFiltrados.length === 0) {
-    //   // console.log('DEBUG: No documentos para esta autorización');
-    //   return this.archivoUrlService.empty();
-    // }
-
     const ultimoDocumento = documentosFiltrados.sort((a, b) => b.version - a.version)[0];
-    // // console.log('DEBUG: Último documento:', ultimoDocumento);
-
     const archivo = ultimoDocumento?.archivosDigitales?.[0];
-    // // console.log('DEBUG: Archivo:', archivo);
 
     const url = this.archivoUrlService.buildPreviewUrl(archivo?.id);
-    // console.log('DEBUG: URL generada:', url);
 
-    return url;
+    if (!url) return null;
+
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   });
   ngOnInit() {
     this.treeService.init();

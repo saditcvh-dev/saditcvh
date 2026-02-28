@@ -44,7 +44,7 @@ export class ViewerPanelComponent {
   @Input() selectedNode: AutorizacionTreeNode | null = null;
   @Input() breadcrumbs: Breadcrumb[] = [];
   @Input() activeTab: ViewerTab = 'metadata';
-  @Input() pdfUrl!: SafeResourceUrl;
+  @Input() pdfUrl!: SafeResourceUrl | null;
   @Input() documentVersions: any[] = [];
 
   @Output() breadcrumbClick = new EventEmitter<AutorizacionTreeNode | null>();

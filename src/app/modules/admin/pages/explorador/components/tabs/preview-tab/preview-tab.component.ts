@@ -23,7 +23,7 @@ import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizac
 })
 export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   @Input() selectedNode: AutorizacionTreeNode | null = null;
-  @Input() pdfUrl!: SafeResourceUrl;
+  @Input() pdfUrl!: SafeResourceUrl | null;
   @Input() isActive: boolean = false;
 
   @ViewChild('pdfIframe') pdfIframe!: ElementRef;

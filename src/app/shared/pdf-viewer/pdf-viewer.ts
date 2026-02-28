@@ -16,13 +16,13 @@ import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
 pdfjsLib.GlobalWorkerOptions.workerSrc = '/assets/pdfjs-dist/pdf.worker.min.js';
 
 @Component({
-  selector: 'app-pdf-viewer',
+  selector: 'app-pdf-viewer-document',
   standalone: true,
   imports: [],
   templateUrl: './pdf-viewer.html',
   styleUrl: './pdf-viewer.css',
 })
-export class PdfViewer implements OnChanges, OnDestroy {
+export class PdfViewerDocument implements OnChanges, OnDestroy {
 
   @Input() src!: string;
   @Output() pageChanged = new EventEmitter<number>();
@@ -36,6 +36,7 @@ export class PdfViewer implements OnChanges, OnDestroy {
   totalPages = 0;
   private scale = 1.2;
   private loadingTask: any;
+  private renderTask: any;
 
   async ngOnChanges(changes: SimpleChanges) {
     if (changes['src'] && this.src) {
@@ -52,7 +53,9 @@ export class PdfViewer implements OnChanges, OnDestroy {
     this.loadingTask = pdfjsLib.getDocument({
       url: this.src,
       withCredentials: true,
-      rangeChunkSize: 65536 // optimiza archivos grandes
+      rangeChunkSize: 262144, // 256 KB (mejor que 64 KB)
+      disableStream: false,
+      disableAutoFetch: false
     });
 
     this.pdfDoc = await this.loadingTask.promise;
@@ -65,6 +68,11 @@ export class PdfViewer implements OnChanges, OnDestroy {
   }
 
   async renderPage(pageNumber: number) {
+
+    if (this.renderTask) {
+      this.renderTask.cancel();
+    }
+
     const page = await this.pdfDoc.getPage(pageNumber);
     const viewport = page.getViewport({ scale: this.scale });
 
@@ -74,10 +82,12 @@ export class PdfViewer implements OnChanges, OnDestroy {
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
-    await page.render({
+    this.renderTask = page.render({
       canvasContext: context,
       viewport: viewport
-    }).promise;
+    });
+
+    await this.renderTask.promise;
 
     this.currentPage = pageNumber;
     this.pageChanged.emit(this.currentPage);
@@ -97,9 +107,13 @@ export class PdfViewer implements OnChanges, OnDestroy {
     if (page < 1 || page > this.totalPages) return;
     this.renderPage(page);
   }
-  ngOnDestroy() {
-  if (this.loadingTask) {
-    this.loadingTask.destroy();
+  async ngOnDestroy() {
+    if (this.pdfDoc) {
+      await this.pdfDoc.destroy();
+    }
+
+    if (this.loadingTask) {
+      await this.loadingTask.destroy();
+    }
   }
-}
 }
