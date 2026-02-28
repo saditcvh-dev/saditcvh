@@ -30,10 +30,13 @@ export class ExplorerPanelComponent {
   isLoading = signal(false);
   ngOnInit(): void {
 
+    // cuando el valor `q` cambia en la URL, pedimos al servicio de estado
+    // que seleccione el nodo correspondiente. el servicio ya sabe esperar
+    // a que el árbol esté cargado.
     this.route.queryParams.subscribe(params => {
       const carpeta = params['q'];
       if (carpeta) {
-        this.buscarYSeleccionarNodo(carpeta);
+        this.state.selectNodeByQuery(carpeta);
       }
     });
 
@@ -49,7 +52,7 @@ export class ExplorerPanelComponent {
           const nombreCarpeta = primera.nombreCarpeta;
 
           if (nombreCarpeta) {
-            this.buscarYSeleccionarNodo(nombreCarpeta);
+            this.state.selectNodeByQuery(nombreCarpeta);
           }
         }
         this.searchTriggered.set(false);
@@ -130,70 +133,9 @@ export class ExplorerPanelComponent {
   /* =======================
   * Helpers
   * ======================= */
-  private buscarYSeleccionarNodo(query: string) {
+  // ya no necesitamos la lógica local para encontrar nodos; el servicio de
+  // estado cuenta con un método dedicado.
 
-    const trySearch = () => {
-      const tree = this.state.tree();
-
-      if (!tree || tree.length === 0) return false;
-
-      const path = this.findNodePath(tree, query);
-
-      if (!path) return false;
-
-      // Expandir toda la ruta
-      for (const node of path) {
-        node._open = true;
-      }
-
-      const targetNode = path[path.length - 1];
-
-      this.state.selectNode(targetNode, true, true);
-      this.autorizacionService.setFiltros({
-        search: query,
-      });
-
-      return true;
-    };
-
-    if (trySearch()) return;
-    const interval = setInterval(() => {
-      if (trySearch()) {
-        clearInterval(interval);
-      }
-    }, 100);
-  }
-
-  private findNodePath(
-    nodes: AutorizacionTreeNode[],
-    query: string,
-    path: AutorizacionTreeNode[] = []
-  ): AutorizacionTreeNode[] | null {
-
-    const normalizedQuery = query.trim().toLowerCase();
-
-    for (const node of nodes) {
-
-      const newPath = [...path, node];
-      const matchByNombre = node.nombre?.toLowerCase() === normalizedQuery;
-      const matchById = node.id?.toLowerCase() === normalizedQuery;
-
-      const matchByCarpeta =
-        node.type === 'autorizacion' &&
-        node.data?.nombreCarpeta?.toLowerCase() === normalizedQuery;
-
-      if (matchByNombre || matchById || matchByCarpeta) {
-        return newPath;
-      }
-
-      if (node.children && node.children.length > 0) {
-        const result = this.findNodePath(node.children, query, newPath);
-        if (result) return result;
-      }
-    }
-
-    return null;
-  }
 
   resetExplorer(): void {
     this.isLoading.set(true);
