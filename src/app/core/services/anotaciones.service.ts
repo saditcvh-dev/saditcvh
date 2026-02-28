@@ -49,18 +49,18 @@ export class AnotacionesService {
   // ========== METODOS POR NOMBRE DE ARCHIVO ==========
 
   // Obtener TODAS las anotaciones por nombre de archivo (sin filtrar por usuario)
-  obtenerTodasAnotacionesPorArchivo(nombreArchivo: string): Observable<AnotacionResponse> {
-    console.log('Obteniendo TODAS las anotaciones para archivo:', nombreArchivo);
+  obtenerTodasAnotacionesPorArchivo(id: number): Observable<AnotacionResponse> {
+    console.log('Obteniendo TODAS las anotaciones para archivo:', id);
 
     return this.http.get<AnotacionResponse>(
-      `${this.apiUrl}/documento/${encodeURIComponent(nombreArchivo)}`,
+      `${this.apiUrl}/documento/${encodeURIComponent(id)}`,
       { withCredentials: true }
     ).pipe(
       tap((response) => {
         if (response.success && response.data) {
           const totalComentarios = response.data.reduce((total, anotacion) => 
             total + (anotacion.comentarios?.length || 0), 0);
-          console.log(`${response.data.length} anotaciones cargadas para ${nombreArchivo}:`,
+          console.log(`${response.data.length} anotaciones cargadas para ${id}:`,
             totalComentarios, 'comentarios totales');
         } else {
           console.log('No hay anotaciones para este archivo en el servidor');
@@ -138,7 +138,7 @@ export class AnotacionesService {
   }
 
   // Exportar anotaciones por nombre de archivo
-  exportarAnotacionesPorArchivo(nombreArchivo: string): Observable<Blob> {
+  exportarAnotacionesPorArchivo(nombreArchivo: number): Observable<Blob> {
     console.log('Exportando anotaciones para archivo:', nombreArchivo);
 
     return this.http.get(`${this.apiUrl}/exportar-archivo/${encodeURIComponent(nombreArchivo)}`, {
@@ -151,7 +151,7 @@ export class AnotacionesService {
   }
 
   // Metodo auxiliar para descargar exportacion por nombre de archivo
-  descargarExportacionPorArchivo(nombreArchivo: string, nombreDisplay?: string): void {
+  descargarExportacionPorArchivo(nombreArchivo: number, nombreDisplay?: string): void {
     console.log('Descargando exportacion para archivo:', nombreArchivo);
 
     this.exportarAnotacionesPorArchivo(nombreArchivo).subscribe({
@@ -160,7 +160,7 @@ export class AnotacionesService {
         const a = document.createElement('a');
         a.href = url;
         const nombreDescarga = nombreDisplay || nombreArchivo;
-        a.download = `${this.sanitizarNombreArchivo(nombreDescarga)}_anotaciones.json`;
+        a.download = `${this.sanitizarNombreArchivo(nombreDescarga.toString())}_anotaciones.json`;
         a.click();
         window.URL.revokeObjectURL(url);
         console.log('Anotaciones exportadas por nombre de archivo');
@@ -356,9 +356,11 @@ export class AnotacionesService {
   obtenerComentarios(identificador: number | string): Observable<AnotacionResponse> {
     if (typeof identificador === 'number') {
       return this.obtenerAnotaciones(identificador);
-    } else if (typeof identificador === 'string') {
-      return this.obtenerTodasAnotacionesPorArchivo(identificador);
-    } else {
+    } 
+    // else if (typeof identificador === 'string') {
+    //   return this.obtenerTodasAnotacionesPorArchivo(identificador);
+    // } 
+    else {
       return throwError(() => new Error('Identificador invalido'));
     }
   }

@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild, HostListener, OnInit, OnDestroy } from '@angular/core';
 import * as pdfjsLib from 'pdfjs-dist';
+import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
 import { FormsModule } from '@angular/forms';
 // import 'pdfjs-dist/web/pdf_viewer.css';
 

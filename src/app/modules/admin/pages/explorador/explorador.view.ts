@@ -8,9 +8,9 @@ import { DocumentoService } from '../../../../core/services/explorador-documento
 import { ExploradorStateService } from './services/explorador-state.service';
 import { ModalService } from './services/modal.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ArchivoUrlService } from './services/archivo-url.service';
 import { LoadingService } from '../../../../core/services/explorador-loading.service';
 import { ViewerTab } from '../../../../core/helpers/tabs-permissions.helper';
+import { ArchivoUrlService } from './services/archivo-url.service';
 
 @Component({
   selector: 'app-explorador', standalone: false,
@@ -124,7 +124,7 @@ export class ExploradorView implements OnInit {
   onShowControlPanelChange(value: boolean): void {
     this.showControlPanel.set(value);
   }
-  // En ExploradorView
+  // // En ExploradorView
   pdfUrl = computed(() => {
     const autorizacionId = this.selectedAutorizacionId();
     const documentos = this.documentoService.documentos();
@@ -135,31 +135,31 @@ export class ExploradorView implements OnInit {
     //   documentos: documentos
     // });
 
-    if (!autorizacionId) {
-      // console.log('DEBUG: No autorizacionId');
-      return this.archivoUrlService.empty();
-    }
+    // if (!autorizacionId) {
+    //   // console.log('DEBUG: No autorizacionId');
+    //   return this.archivoUrlService.empty();
+    // }
 
-    if (documentos.length === 0) {
-      // console.log('DEBUG: No documentos');
-      return this.archivoUrlService.empty();
-    }
+    // if (documentos.length === 0) {
+    //   // console.log('DEBUG: No documentos');
+    //   return this.archivoUrlService.empty();
+    // }
 
     const documentosFiltrados = documentos.filter(d => d.autorizacionId === autorizacionId);
-    // console.log('DEBUG: Documentos filtrados:', documentosFiltrados);
+    // // console.log('DEBUG: Documentos filtrados:', documentosFiltrados);
 
-    if (documentosFiltrados.length === 0) {
-      // console.log('DEBUG: No documentos para esta autorización');
-      return this.archivoUrlService.empty();
-    }
+    // if (documentosFiltrados.length === 0) {
+    //   // console.log('DEBUG: No documentos para esta autorización');
+    //   return this.archivoUrlService.empty();
+    // }
 
     const ultimoDocumento = documentosFiltrados.sort((a, b) => b.version - a.version)[0];
-    // console.log('DEBUG: Último documento:', ultimoDocumento);
+    // // console.log('DEBUG: Último documento:', ultimoDocumento);
 
     const archivo = ultimoDocumento?.archivosDigitales?.[0];
-    // console.log('DEBUG: Archivo:', archivo);
+    // // console.log('DEBUG: Archivo:', archivo);
 
-    const url = this.archivoUrlService.buildPdfUrl(archivo);
+    const url = this.archivoUrlService.buildPreviewUrl(archivo?.id);
     // console.log('DEBUG: URL generada:', url);
 
     return url;

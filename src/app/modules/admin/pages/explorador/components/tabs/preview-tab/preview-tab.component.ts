@@ -9,7 +9,8 @@ import {
   OnChanges,
   ViewChild,
   ElementRef,
-  effect
+  effect,
+  SecurityContext
 } from '@angular/core';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizacion-tree.model';
@@ -37,13 +38,14 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   currentFileName: string = '';
 
   // Signals para páginas - REACTIVIDAD AUTOMÁTICA
+  pdfUrlString: string = '';
   currentPage = signal(1);
   totalPages = signal(0);
 
   // Para detectar cambios de página
-  private pageCheckInterval: any;
-  private lastDetectedPage = 1;
-  private pageDetectionActive = false;
+  // private pageCheckInterval: any;
+  // private lastDetectedPage = 1;
+  // private pageDetectionActive = false;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -58,26 +60,26 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
    
   }
 
-  // MODIFICA setupPdfJsListeners:
-  private setupPdfJsListeners(): void {
-    // Usar el método bindeado
-    window.addEventListener('message', this.handlePdfMessageBound);
+  // // MODIFICA setupPdfJsListeners:
+  // private setupPdfJsListeners(): void {
+  //   // Usar el método bindeado
+  //   window.addEventListener('message', this.handlePdfMessageBound);
 
-    document.addEventListener('fullscreenchange', () => {
-      this.isFullscreen = !!document.fullscreenElement;
-      this.cdr.detectChanges();
-    });
+  //   document.addEventListener('fullscreenchange', () => {
+  //     this.isFullscreen = !!document.fullscreenElement;
+  //     this.cdr.detectChanges();
+  //   });
 
-    document.addEventListener('fullscreenerror', () => {
-      console.error('Error al cambiar pantalla completa');
-      this.showToast('Error al cambiar a pantalla completa', 'error');
-    });
-  }
+  //   document.addEventListener('fullscreenerror', () => {
+  //     console.error('Error al cambiar pantalla completa');
+  //     this.showToast('Error al cambiar a pantalla completa', 'error');
+  //   });
+  // }
 
   ngOnInit() {
     this.setupFullscreenListener();
-    this.setupPdfJsListeners();
-    this.setupPageDetection();
+    // this.setupPdfJsListeners();
+    // this.setupPageDetection();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -88,24 +90,27 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
         this.loadPdf();
       }
       // Activar detección de página
-      this.pageDetectionActive = true;
+      // this.pageDetectionActive = true;
     }
 
-    // Si la pestaña se desactiva
-    if (changes['isActive'] && !this.isActive) {
-      //console.log('🔄 Pestaña desactivada');
-      this.pageDetectionActive = false;
-    }
+    // // Si la pestaña se desactiva
+    // if (changes['isActive'] && !this.isActive) {
+    //   //console.log('🔄 Pestaña desactivada');
+    //   this.pageDetectionActive = false;
+    // }
 
     // Si cambia el nodo seleccionado
     if (changes['selectedNode'] && this.selectedNode) {
       //console.log('🔄 Nodo seleccionado cambiado:', this.selectedNode.nombre);
+      this.currentPage.set(1);
+      this.totalPages.set(0);
       this.handleNodeChange();
     }
 
     // Si cambia la URL del PDF
     if (changes['pdfUrl'] && this.pdfUrl && this.isActive) {
       //console.log('🔄 URL del PDF cambiada');
+      this.pdfUrlString =this.sanitizer.sanitize(SecurityContext.RESOURCE_URL, this.pdfUrl) ?? '';
       this.loadPdf();
     }
   }
@@ -130,7 +135,13 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       //console.log('📄 No es una autorización, mostrando icono...');
     }
   }
+  onPageChanged(page: number) {
+    this.currentPage.set(page);
+  }
 
+  onDocumentLoaded(total: number) {
+    this.totalPages.set(total);
+  }
   private loadPdf(): void {
     if (!this.pdfUrl || !this.selectedNode || !this.isActive) {
       //console.log('⚠️ Condiciones no cumplidas para cargar PDF');
@@ -153,7 +164,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     // Resetear contadores de página
     this.currentPage.set(1);
     this.totalPages.set(0);
-    this.lastDetectedPage = 1;
+    // this.lastDetectedPage = 1;
 
     //console.log('🔄 Iniciando carga del PDF...');
     this.cdr.detectChanges();
@@ -187,26 +198,26 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
   // ========== DETECCIÓN DE PÁGINA DESDE SHADOW DOM ==========
 
-  private setupPageDetection(): void {
-    // Verificar cada 800ms (menos intrusivo)
-    this.pageCheckInterval = setInterval(() => {
-      if (this.pageDetectionActive && this.showCommentsPanel && this.pdfUrl && !this.isLoading) {
-        this.detectCurrentPage();
-      }
-    }, 800);
-  }
+  // private setupPageDetection(): void {
+  //   // Verificar cada 800ms (menos intrusivo)
+  //   this.pageCheckInterval = setInterval(() => {
+  //     if (this.pageDetectionActive && this.showCommentsPanel && this.pdfUrl && !this.isLoading) {
+  //       this.detectCurrentPage();
+  //     }
+  //   }, 800);
+  // }
 
   private detectCurrentPage(): void {
     try {
       // Método 1: Intentar acceder al Shadow DOM del visor
-      const pageFromShadowDOM = this.getPageFromShadowDOM();
-      if (pageFromShadowDOM !== null && pageFromShadowDOM !== this.lastDetectedPage) {
-        //console.log(`🎯 Página detectada desde Shadow DOM: ${pageFromShadowDOM}`);
-        this.lastDetectedPage = pageFromShadowDOM;
-        this.currentPage.set(pageFromShadowDOM);
-        this.cdr.detectChanges();
-        return;
-      }
+      // const pageFromShadowDOM = this.getPageFromShadowDOM();
+      // if (pageFromShadowDOM !== null && pageFromShadowDOM !== this.lastDetectedPage) {
+      //   //console.log(`🎯 Página detectada desde Shadow DOM: ${pageFromShadowDOM}`);
+      //   // this.lastDetectedPage = pageFromShadowDOM;
+      //   this.currentPage.set(pageFromShadowDOM);
+      //   this.cdr.detectChanges();
+      //   return;
+      // }
 
       // Método 2: Intentar leer de la URL
       const pageFromUrl = this.getPageFromUrl();
@@ -227,29 +238,29 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
   // En preview-tab.component.ts - REEMPLAZA los métodos problemáticos:
 
-  private getPageFromShadowDOM(): number | null {
-    try {
-      // NO podemos acceder directamente por cross-origin
-      // Usaremos postMessage para comunicarnos
+  // private getPageFromShadowDOM(): number | null {
+  //   try {
+  //     // NO podemos acceder directamente por cross-origin
+  //     // Usaremos postMessage para comunicarnos
 
-      const iframe = this.pdfIframe?.nativeElement;
-      if (!iframe || !iframe.contentWindow) {
-        return null;
-      }
+  //     const iframe = this.pdfIframe?.nativeElement;
+  //     if (!iframe || !iframe.contentWindow) {
+  //       return null;
+  //     }
 
-      // Enviar mensaje al iframe para pedir la página actual
-      iframe.contentWindow.postMessage({
-        type: 'GET_CURRENT_PAGE',
-        requestId: Date.now()
-      }, '*');
+  //     // Enviar mensaje al iframe para pedir la página actual
+  //     iframe.contentWindow.postMessage({
+  //       type: 'GET_CURRENT_PAGE',
+  //       requestId: Date.now()
+  //     }, '*');
 
-      return null; // La respuesta vendrá por el event listener
+  //     return null; // La respuesta vendrá por el event listener
 
-    } catch (error) {
-      //console.log('🔒 Error cross-origin (esperado):');
-      return null;
-    }
-  }
+  //   } catch (error) {
+  //     //console.log('🔒 Error cross-origin (esperado):');
+  //     return null;
+  //   }
+  // }
 
   // NUEVO: Método para inyectar script en el iframe (si es del mismo origen)
   private injectPageDetectionScript(): void {
@@ -531,7 +542,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
     // Actualizar estado
     this.currentPage.set(pageNumber);
-    this.lastDetectedPage = pageNumber;
+    // this.lastDetectedPage = pageNumber;
 
     // Método 1: Navegación por URL (funciona con cross-origin)
     this.navigateByUrl(pageNumber);
@@ -726,7 +737,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     this.currentFileName = '';
     this.currentPage.set(1);
     this.totalPages.set(0);
-    this.lastDetectedPage = 1;
+    // this.lastDetectedPage = 1;
     this.hasError.set(false);
     this.isLoading = false;
     this.showCommentsPanel = false;
@@ -1052,10 +1063,10 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   ngOnDestroy(): void {
     //console.log('🧹 Destruyendo PreviewTabComponent...');
 
-    if (this.pageCheckInterval) {
-      clearInterval(this.pageCheckInterval);
-      //console.log('✅ Intervalo de detección limpiado');
-    }
+    // if (this.pageCheckInterval) {
+    //   clearInterval(this.pageCheckInterval);
+    //   //console.log('✅ Intervalo de detección limpiado');
+    // }
 
     // Remover event listeners
     document.removeEventListener('fullscreenchange', () => { });

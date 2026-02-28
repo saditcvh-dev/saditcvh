@@ -42,13 +42,12 @@
 						{{ commentModeActive ? 'Activo' : 'Nuevo' }}
 					</button>
 				</div>
-				<input type="number" min="1" [(ngModel)]="manualCommentPage" (change)="validateManualPage()" class="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 bg-transparent rounded focus:ring-1 focus:ring-blue-500 dark:text-white">
 			</div>
 			<!-- Formulario Nuevo Comentario -->
 			<div *ngIf="commentModeActive" class="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 p-3 shadow-sm">
 				<div class="flex items-center justify-between mb-2">
 					<span class="text-xs font-semibold text-gray-800 dark:text-gray-200">Nuevo Comentario</span>
-					<span class="text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded font-medium"> Pág {{manualCommentPage}}
+					<span class="text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded font-medium"> Pág {{currentPage}}
 					</span>
 				</div>
 				<textarea #commentTextarea [(ngModel)]="newCommentText" placeholder="Escribe tu comentario..." rows="2" maxlength="300" (keydown.enter)="addComment($event)" class="w-full px-2 py-1.5 text-xs border border-gray-300 dark:border-gray-600 bg-transparent rounded focus:ring-1 focus:ring-blue-500 resize-none dark:text-gray-200"></textarea>
@@ -71,8 +70,8 @@
 					<input type="text" [(ngModel)]="searchQuery" placeholder="Buscar..." class="w-full pl-7 pr-2 py-1.5 text-xs border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 rounded focus:ring-1 focus:ring-blue-500 dark:text-white">
 				</div>
 				<div class="flex items-center justify-between">
-					<button (click)="filterByPage = filterByPage ? null : manualCommentPage" [class]="filterByPage ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 dark:text-gray-300 border-gray-300 dark:border-gray-600'" class="px-3 py-1 text-[10px] font-bold border rounded uppercase transition-all">
-						{{ filterByPage ? 'Ver Todos' : 'Solo Pág ' + manualCommentPage }}
+					<button (click)="filterByPage = filterByPage ? null : currentPage" [class]="filterByPage ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 dark:text-gray-300 border-gray-300 dark:border-gray-600'" class="px-3 py-1 text-[10px] font-bold border rounded uppercase transition-all">
+						{{ filterByPage ? 'Ver Todos' : 'Solo Pág ' + currentPage }}
 					</button>
 					<span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">
 						{{filteredComments.length}} Resultados </span>

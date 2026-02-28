@@ -92,7 +92,7 @@
 							<div *ngIf="pdfUrl && !isLoading && !hasError()" class="w-full"
 								style="height: calc(100vh - 160px);">
 								<!-- Usando iframe en lugar de object para mejor compatibilidad -->
-								<iframe [src]="pdfUrl" class="w-full h-full border-0" frameborder="0" allow="fullscreen"
+								<!-- <iframe [src]="pdfUrl" class="w-full h-full border-0" frameborder="0" allow="fullscreen"
 									title="Vista previa del PDF - {{ currentFileName }}" (load)="onIframeLoad()"
 									(error)="onIframeError()" #pdfIframe>
 									<p>Tu navegador no soporta iframes.
@@ -100,7 +100,12 @@
 											Descarga el PDF
 										</a>
 									</p>
-								</iframe>
+								</iframe> -->
+								<app-pdf-viewer
+									[src]="pdfUrlString"
+									(pageChanged)="onPageChanged($event)"
+									(documentLoaded)="onDocumentLoaded($event)">
+								</app-pdf-viewer>
 							</div>
 						</div>
 
@@ -122,7 +127,10 @@
 
 							<!-- Contenido del panel de comentarios -->
 							<div class="flex-1 " style="height: calc(100vh - 220px); ">
-								<app-comentarios [pdfUrl]="pdfUrl"  [selectedNode]="selectedNode">
+								<app-comentarios
+									[documentoId]="selectedNode?.data?.id"
+									[currentPage]="currentPage()"
+									[selectedNode]="selectedNode">
 								</app-comentarios>
 							</div>
 						</div>

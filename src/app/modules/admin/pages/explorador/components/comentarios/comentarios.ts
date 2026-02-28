@@ -13,7 +13,7 @@ export interface PdfComment {
   color: string;
   autor: string;
   resolved?: boolean;
-  documentId?: string;
+  documentId?: number;
   esMio?: boolean;
   usuario_id?: number;
   editable?: boolean;
@@ -27,7 +27,8 @@ export interface PdfComment {
 })
 export class Comentarios implements OnInit, OnDestroy, OnChanges {
   // Inputs y Outputs básicos
-  @Input() pdfUrl!: SafeResourceUrl;
+  @Input() documentoId!: number;
+  @Input() currentPage!: number;
   @Input() autor: string = 'Usuario';
 
   @Output() commentAdded = new EventEmitter<PdfComment>();
@@ -39,10 +40,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
 
   // Estado principal
   showCommentsPanel = true;
-  pdfIdentifier = '';
-
-  // PÁGINA MANUAL - El usuario siempre escribe aquí
-  manualCommentPage = 1;
+  pdfIdentifier: number | null = null;
 
   // comments: PdfComment[] = [];
   comments = signal<PdfComment[]>([]);
@@ -77,34 +75,15 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['pdfUrl'] && this.pdfUrl) {
-      this.extractFileNameFromUrl();
-    }
-    // if (changes['selectedNode'] && this.selectedNode) {
-    //   console.log('Nodo recibido en comentarios:', this.selectedNode);
-
-    //   // Ejemplo: usar ID como identificador del documento
-    //   this.pdfIdentifier = this.selectedNode.id;
-
-    //   // this.cargarComentarios();
-    // }
-    if (changes['autor'] && this.autor) {
-      this.updateCommentsAuthor();
+    if (changes['documentoId'] && this.documentoId) {
+      this.pdfIdentifier = this.documentoId;
+      this.loadCommentsFromServer();
     }
   }
 
   ngOnDestroy() {
     if (this.autoSaveInterval) {
       clearInterval(this.autoSaveInterval);
-    }
-  }
-
-  // ========== VALIDACIÓN PÁGINA MANUAL ==========
-
-  validateManualPage(): void {
-    if (this.manualCommentPage < 1) {
-      this.manualCommentPage = 1;
-      this.showToast('La página debe ser 1 o mayor', 'warning');
     }
   }
 
@@ -143,10 +122,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       this.showToast('Comentario: 1-1000 caracteres', 'warning');
       return false;
     }
-    if (this.manualCommentPage < 1) {
-      this.showToast('Página debe ser 1 o mayor', 'warning');
-      return false;
-    }
+    
     return true;
   }
 
@@ -157,12 +133,12 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
 
     return {
       id: this.nextCommentId++,
-      page: this.manualCommentPage,
+      page: this.currentPage,
       text: this.newCommentText,
       date: new Date(),
       color: this.selectedColor,
       autor: currentUsername,
-      documentId: this.pdfIdentifier,
+      documentId: this.pdfIdentifier??0,
       esMio: true,
       usuario_id: currentUserId,
       editable: true
@@ -207,7 +183,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
 
     this.showToast(
       this.commentModeActive ?
-        `Modo comentario activado (página ${this.manualCommentPage})` :
+        `Modo comentario activado (página ${this.currentPage})` :
         'Modo comentario desactivado',
       'info'
     );
@@ -221,7 +197,6 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
   private resetCommentForm(): void {
     this.newCommentText = '';
     this.selectedColor = this.commentColors[0];
-    this.manualCommentPage = 1;
     this.commentModeActive = false;
     this.selectedComment = null;
   }
@@ -237,7 +212,6 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     this.selectedComment = comment;
     this.newCommentText = comment.text;
     this.selectedColor = comment.color;
-    this.manualCommentPage = comment.page;
     this.commentModeActive = true;
 
     setTimeout(() => this.commentTextarea?.nativeElement?.focus(), 100);
@@ -267,7 +241,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
               ...c,
               text: this.newCommentText,
               color: this.selectedColor,
-              page: this.manualCommentPage,
+              page: this.currentPage,
               date: new Date()
             }
             : c
@@ -289,7 +263,6 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     this.selectedComment = null;
     this.newCommentText = '';
     this.selectedColor = this.commentColors[0];
-    this.manualCommentPage = 1;
     this.commentModeActive = false;
   }
 
@@ -352,7 +325,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
 
   private setupAutoSave(): void {
     this.autoSaveInterval = setInterval(() => {
-      if (this.comments.length > 0 && !this.isSaving && this.pdfIdentifier) {
+      if (this.comments().length > 0 && !this.isSaving && this.pdfIdentifier) {
         this.isSaving = true;
         this.saveCommentsToServer();
         this.isSaving = false;
@@ -361,44 +334,30 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
   }
 
   private saveCommentsToServer(): void {
-    if (!this.pdfIdentifier) {
-      this.saveToLocalStorage();
-      return;
-    }
 
-    const pdfUrlString = this.sanitizer.sanitize(SecurityContext.URL, this.pdfUrl) || '';
+    if (!this.pdfIdentifier) return;
+
     const user = this.authService.currentUser();
     const currentUserId = user?.id;
 
     if (!currentUserId) {
-      this.saveToLocalStorage();
       this.showToast('No hay usuario autenticado', 'warning');
       return;
     }
 
-    // Filtrar solo los comentarios del usuario actual
     const misComentarios = this.comments().filter(c =>
-      c.usuario_id === currentUserId || c.esMio === true
+      c.usuario_id === currentUserId
     );
 
-    if (misComentarios.length === 0) {
-      return;
-    }
+    if (misComentarios.length === 0) return;
 
-    this.anotacionesService.guardarAnotacionesPorArchivo(
-      this.pdfIdentifier,
-      pdfUrlString,
-      misComentarios
-    ).subscribe({
-      next: () => {
-        console.log(' Comentarios del usuario guardados en servidor');
-      },
-      error: (error) => {
-        console.error('Error guardando comentarios:', error);
-        this.saveToLocalStorage();
-        this.showToast('Guardado local por error en servidor', 'warning');
-      }
-    });
+    this.anotacionesService
+      .guardarAnotaciones(this.pdfIdentifier, misComentarios)
+      .subscribe({
+        error: () => {
+          this.saveToLocalStorage();
+        }
+      });
   }
 
   private loadCommentsFromServer(): void {
@@ -418,7 +377,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
             const allComments = this.extractAllCommentsFromResponse(response);
 
             if (allComments.length > 0) {
-              this.comments.set( allComments);
+              this.comments.set(allComments);
               this.nextCommentId = Math.max(...this.comments().map(c => c.id), 0) + 1;
               this.commentsLoaded.emit(this.comments());
 
@@ -463,7 +422,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
             color: comment.color || '#FFEB3B',
             autor: comment.autor || (esMio ? currentUsername : `Usuario-${anotacion.usuario_id}`),
             resolved: comment.resolved || false,
-            documentId: this.pdfIdentifier,
+            documentId: this.pdfIdentifier??0,
             esMio: esMio,
             usuario_id: anotacion.usuario_id,
             editable: esMio
@@ -485,7 +444,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
 
     try {
       const key = `pdfComments_${this.pdfIdentifier}`;
-      localStorage.setItem(key, JSON.stringify(this.comments));
+      localStorage.setItem(key, JSON.stringify(this.comments()));
     } catch (error) {
       console.error('Error guardando en localStorage:', error);
     }
@@ -503,66 +462,66 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       const saved = localStorage.getItem(key);
 
       if (saved) {
-        this.comments = JSON.parse(saved).map((comment: PdfComment) => ({
+        this.comments.set(JSON.parse(saved).map((comment: PdfComment) => ({
           ...comment,
           date: new Date(comment.date),
           documentId: comment.documentId || this.pdfIdentifier
-        }));
+        })));
 
         this.nextCommentId = Math.max(...this.comments().map(c => c.id), 0) + 1;
         this.commentsLoaded.emit(this.comments());
       }
     } catch (error) {
       console.error('Error cargando de localStorage:', error);
-      this.comments.set([]) ;
+      this.comments.set([]);
       this.nextCommentId = 1;
     }
   }
 
   // ========== EXTRACCIÓN NOMBRE ARCHIVO ==========
-  private extractFileNameFromUrl(): void {
-    if (!this.pdfUrl) {
-      this.pdfIdentifier = '';
-      return;
-    }
+  // private extractFileNameFromUrl(): void {
+  //   if (!this.pdfUrl) {
+  //     this.pdfIdentifier = '';
+  //     return;
+  //   }
 
-    try {
-      const sanitizedUrl =
-        this.sanitizer.sanitize(SecurityContext.URL, this.pdfUrl) || '';
+  //   try {
+  //     const sanitizedUrl =
+  //       this.sanitizer.sanitize(SecurityContext.URL, this.pdfUrl) || '';
 
-      if (!sanitizedUrl) {
-        this.pdfIdentifier = 'documento.pdf';
-        return;
-      }
+  //     if (!sanitizedUrl) {
+  //       this.pdfIdentifier = 'documento.pdf';
+  //       return;
+  //     }
 
-      let fileName = 'documento.pdf';
+  //     let fileName = 'documento.pdf';
 
-      // Intentar usar URL constructor (para URLs absolutas)
-      try {
-        const url = new URL(sanitizedUrl, window.location.origin);
-        fileName = url.pathname.split('/').pop() || fileName;
-      } catch {
-        // Fallback manual si falla URL()
-        fileName = sanitizedUrl.split('/').pop() || fileName;
-      }
+  //     // Intentar usar URL constructor (para URLs absolutas)
+  //     try {
+  //       const url = new URL(sanitizedUrl, window.location.origin);
+  //       fileName = url.pathname.split('/').pop() || fileName;
+  //     } catch {
+  //       // Fallback manual si falla URL()
+  //       fileName = sanitizedUrl.split('/').pop() || fileName;
+  //     }
 
-      // Eliminar parámetros si existen
-      fileName = fileName.split('?')[0];
+  //     // Eliminar parámetros si existen
+  //     fileName = fileName.split('?')[0];
 
-      // Decodificar por si viene con %20 etc
-      fileName = decodeURIComponent(fileName);
+  //     // Decodificar por si viene con %20 etc
+  //     fileName = decodeURIComponent(fileName);
 
-      console.log('fileName:', fileName);
+  //     console.log('fileName:', fileName);
 
-      this.pdfIdentifier = this.cleanFileName(fileName);
+  //     this.pdfIdentifier = this.cleanFileName(fileName);
 
-      this.loadCommentsFromServer();
+  //     this.loadCommentsFromServer();
 
-    } catch (error) {
-      console.error('Error extrayendo nombre:', error);
-      this.pdfIdentifier = 'documento.pdf';
-    }
-  }
+  //   } catch (error) {
+  //     console.error('Error extrayendo nombre:', error);
+  //     this.pdfIdentifier = 'documento.pdf';
+  //   }
+  // }
 
 
   // private extractFileNameFromUrl(): void {
@@ -592,35 +551,35 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
   //   }
   // }
 
-  private cleanFileName(fileName: string): string {
-    let cleanName = fileName.replace(/\.pdf\.pdf$/i, '.pdf');
-    if (!cleanName.toLowerCase().endsWith('.pdf')) {
-      cleanName += '.pdf';
-    }
-    return cleanName;
-  }
+  // private cleanFileName(fileName: string): string {
+  //   let cleanName = fileName.replace(/\.pdf\.pdf$/i, '.pdf');
+  //   if (!cleanName.toLowerCase().endsWith('.pdf')) {
+  //     cleanName += '.pdf';
+  //   }
+  //   return cleanName;
+  // }
 
   // ========== UTILIDADES ==========
 
-  private updateCommentsAuthor(): void {
-    const user = this.authService.currentUser();
-    const currentUserId = user?.id;
+  // private updateCommentsAuthor(): void {
+  //   const user = this.authService.currentUser();
+  //   const currentUserId = user?.id;
 
-    this.comments().forEach(comment => {
-      if (comment.usuario_id === currentUserId) {
-        comment.autor = this.autor;
-        comment.esMio = true;
-      }
-    });
-  }
+  //   this.comments().forEach(comment => {
+  //     if (comment.usuario_id === currentUserId) {
+  //       comment.autor = this.autor;
+  //       comment.esMio = true;
+  //     }
+  //   });
+  // }
 
-  private resolveAutor(): string {
-    const user = this.authService.currentUser();
-    if (user) {
-      return user.username || `Usuario-${user.id}`;
-    }
-    return 'Usuario';
-  }
+  // private resolveAutor(): string {
+  //   const user = this.authService.currentUser();
+  //   if (user) {
+  //     return user.username || `Usuario-${user.id}`;
+  //   }
+  //   return 'Usuario';
+  // }
 
   formatTimeAgo(date: Date): string {
     const diff = new Date().getTime() - new Date(date).getTime();
@@ -656,11 +615,11 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
   // ========== EXPORTACIÓN ==========
 
   exportarAnotaciones(): void {
-    if (!this.pdfIdentifier || this.comments.length === 0) {
+    if (!this.pdfIdentifier || this.comments().length === 0) {
       this.showToast('No hay comentarios para exportar', 'warning');
       return;
     }
-    this.anotacionesService.descargarExportacionPorArchivo(this.pdfIdentifier, this.pdfIdentifier);
+    this.anotacionesService.descargarExportacionPorArchivo(this.pdfIdentifier);
   }
 
   vaciarComentarios(): void {
@@ -670,9 +629,9 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       const currentUserId = user?.id;
 
       if (currentUserId) {
-        this.comments.set( this.comments().filter(c => c.usuario_id !== currentUserId));
+        this.comments.set(this.comments().filter(c => c.usuario_id !== currentUserId));
       } else {
-        this.comments .set([])
+        this.comments.set([])
       }
 
       this.saveToLocalStorage();

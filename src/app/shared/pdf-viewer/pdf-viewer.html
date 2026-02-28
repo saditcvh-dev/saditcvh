@@ -1,0 +1,18 @@
+<div class="flex flex-col h-full">
+
+  <div class="flex items-center justify-between p-2 border-b text-sm">
+    <div>
+      Página {{ currentPage }} / {{ totalPages }}
+    </div>
+
+    <div class="space-x-2">
+      <button (click)="prevPage()">Anterior</button>
+      <button (click)="nextPage()">Siguiente</button>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-auto flex justify-center bg-gray-100">
+    <canvas #canvas></canvas>
+  </div>
+
+</div>

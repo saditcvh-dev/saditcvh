@@ -1,30 +1,16 @@
-import { Injectable, inject } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ArchivoDigital } from '../../../../../core/models/archivo-digital.model';
+import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ArchivoUrlService {
 
-    private sanitizer = inject(DomSanitizer);
+  private readonly API_BASE_URL = `${environment.apiUrl}/api/documentos`;
 
-    private readonly STORAGE_BASE_URL = `${environment.apiUrlstorage}/storage`;
-    buildPdfUrl(archivo?: ArchivoDigital | null): SafeResourceUrl {
-        if (!archivo?.ruta_almacenamiento) {
-            return this.empty();
-        }
-
-        const rutaNormalizada = archivo.ruta_almacenamiento
-            .replace(/\\/g, '/')
-            .split('/')
-            .map(segment => encodeURIComponent(segment))
-            .join('/');
-
-        const url = `${this.STORAGE_BASE_URL}/${rutaNormalizada}`;
-
-        return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  buildPreviewUrl(documentoId?: number | null): string {
+    if (!documentoId) {
+      return '';
     }
-    empty(): SafeResourceUrl {
-        return this.sanitizer.bypassSecurityTrustResourceUrl('');
-    }
+
+    return `${this.API_BASE_URL}/${documentoId}/preview`;
+  }
 }

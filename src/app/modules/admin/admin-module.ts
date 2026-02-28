@@ -50,6 +50,7 @@ import { Busqueda } from './components/busqueda/busqueda';
 import { AnotacionesService } from '../../core/services/anotaciones.service';
 import { Comentarios } from './pages/explorador/components/comentarios/comentarios';
 import { MergePdfInline } from './pages/explorador/components/merge-pdf-inline/merge-pdf-inline';
+import { PdfViewer } from '../../shared/pdf-viewer/pdf-viewer';
 // import { UploadSectionComponent } from './pages/digitalizacion/upload-section/upload-section';
 
 @NgModule({
@@ -89,7 +90,8 @@ import { MergePdfInline } from './pages/explorador/components/merge-pdf-inline/m
     CommonModule,
     ReactiveFormsModule,
     AdminRoutingModule,
-    FormsModule,FechaLocalPipe
+    FormsModule,FechaLocalPipe,
+    PdfViewer
   ],  providers: [AnotacionesService
     ,ExploradorStateService,PdfLocalSearchService]
   
