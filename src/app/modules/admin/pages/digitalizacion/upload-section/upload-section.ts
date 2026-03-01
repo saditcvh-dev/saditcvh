@@ -110,14 +110,20 @@ export class UploadSectionComponent {
         return;
       }
 
-      // Añadir válidos
+      // Añadir válidos reconstruyendo el nombre solo con la nomenclatura deseada
       validPdfs.forEach(file => {
-        this.selectedFiles.push(file);
+        // Obtenemos solo la nomenclatura estricta mediante Regex
+        const match = file.name.match(/^(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([CP])/i);
+        const nuevoNombre = match ? `${match[0]}.pdf` : file.name;
 
-        const uploadId = `upload-${Date.now()}-${file.name}`;
+        // Recrear el archivo File para que se suba con el nombre limpio
+        const cleanFile = new File([file], nuevoNombre, { type: file.type });
+        this.selectedFiles.push(cleanFile);
+
+        const uploadId = `upload-${Date.now()}-${cleanFile.name}`;
         this.recentUploads.unshift({
           id: uploadId,
-          filename: file.name,
+          filename: cleanFile.name,
           status: 'uploading',
           progress: 0,
           timestamp: new Date()
