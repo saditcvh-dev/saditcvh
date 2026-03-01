@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -15,7 +16,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `${window.location.protocol}//${window.
 @Component({
   selector: 'app-pdf-viewer-document',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './pdf-viewer.html',
   styleUrl: './pdf-viewer.css',
 })
@@ -45,7 +46,7 @@ export class PdfViewerDocument implements OnDestroy {
   private pdfDoc!: PDFDocumentProxy;
   currentPage = 1;
   totalPages = 0;
-  private scale = 1.2;
+  scale = 1.2;
   private loadingTask: any;
   private renderTask: any;
   private scrollTimeout: any;
@@ -224,7 +225,56 @@ export class PdfViewerDocument implements OnDestroy {
       }).promise;
     }
   }
+  goToPage(page: number) {
+    if (!this.pdfDoc) return;
 
+    if (page < 1) page = 1;
+    if (page > this.totalPages) page = this.totalPages;
+
+    const container = this.containerRef.nativeElement;
+    const target = container.querySelector(`[data-page="${page}"]`);
+
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+
+      this.currentPage = page;
+      this.pageChanged.emit(page);
+    }
+  }
+
+  onPageInputChange(event: any) {
+    const value = Number(event.target.value);
+    if (!isNaN(value)) {
+      this.goToPage(value);
+    }
+  }
+  zoomIn() {
+  this.scale = Math.min(this.scale + 0.2, 3);
+  this.reRenderVisiblePages();
+}
+
+zoomOut() {
+  this.scale = Math.max(this.scale - 0.2, 0.5);
+  this.reRenderVisiblePages();
+}
+private async reRenderVisiblePages() {
+  const visiblePages = Array.from(this.renderedPages.keys());
+
+  for (const pageNumber of visiblePages) {
+    const canvas = this.renderedPages.get(pageNumber);
+    if (canvas) {
+      canvas.remove();
+    }
+
+    this.renderedPages.delete(pageNumber);
+    this.renderingPages.delete(pageNumber);
+
+    await this.renderPageIfNeeded(pageNumber);
+  }
+}
   async ngOnDestroy() {
     clearTimeout(this.scrollTimeout);
 

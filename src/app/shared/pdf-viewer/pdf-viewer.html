@@ -1,12 +1,26 @@
-<div class="flex flex-col h-full">
+<div class="flex items-center justify-between p-2 border-b text-sm gap-4">
 
-  <div class="flex items-center justify-between p-2 border-b text-sm">
-    <div>
-      Página {{ currentPage }} / {{ totalPages }}
-    </div>
+  <!-- Navegación de página -->
+  <div class="flex items-center gap-2">
+    <button (click)="goToPage(currentPage - 1)" class="px-2 py-1 border rounded text-xs">
+      ◀
+    </button>
+
+    <input type="number" [value]="currentPage" (change)="onPageInputChange($event)"
+      class="w-16 text-center border rounded px-1 py-0.5 text-xs" min="1" [max]="totalPages" />
+
+    <span>/ {{ totalPages }}</span>
+
+    <button (click)="goToPage(currentPage + 1)" class="px-2 py-1 border rounded text-xs">
+      ▶
+    </button>
   </div>
 
-  <div #container class="flex-1 overflow-auto bg-gray-100 p-6 space-y-8">
+  <!-- Zoom -->
+  <div class="flex items-center gap-2">
+    <button (click)="zoomOut()" class="px-2 py-1 border rounded text-xs">−</button>
+    <span>{{ (scale * 100) | number:'1.0-0' }}%</span>
+    <button (click)="zoomIn()" class="px-2 py-1 border rounded text-xs">+</button>
   </div>
 
 </div>
