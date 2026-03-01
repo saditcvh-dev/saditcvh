@@ -276,9 +276,11 @@ export class DigitalizacionView implements OnInit, OnDestroy {
           }));
 
           this.pdfsList = updatedList;
+          this.cdr.markForCheck();
         },
         error: (err) => {
           console.error('Error en actualización:', err);
+          this.cdr.markForCheck();
         }
       });
   }
