@@ -1,8 +1,9 @@
 export interface Pagination {
   total: number;
-  page: number;
   limit: number;
-  totalPages: number;
+  page?: number;
+  totalPages?: number;
+  nextCursor?: number | null;
 }
 
 export interface PaginatedResponse<T> {
