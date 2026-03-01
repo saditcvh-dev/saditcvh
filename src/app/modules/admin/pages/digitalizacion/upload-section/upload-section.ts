@@ -196,16 +196,16 @@ export class UploadSectionComponent {
 
             if (event.type === HttpEventType.Response) {
               if (currentUpload) {
-                currentUpload.status = 'processing';
+                // Si el backend es asíncrono con OCR, podríamos dejarlo en processing, pero
+                // al menos la transferencia HTTP cerró. Lo marcamos completado y delegamos actualización.
+                currentUpload.status = 'completed';
                 currentUpload.progress = 100;
                 this.emitRecentUploads();
               }
 
-
-              // const loteId = event.body?.loteId;
-              // if (loteId) {
-              //   this.monitorearLote(loteId, currentUpload);
-              // }
+              this.isUploading.set(false);
+              this.uploadCompleted.emit();
+              this.stateService.showToast('Archivo comprimido procesado y almacenado correctamente.', 'success');
             }
           },
           error: (err) => {
