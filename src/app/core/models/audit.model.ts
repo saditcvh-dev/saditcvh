@@ -23,7 +23,7 @@ export interface AuditLogSummary extends AuditLogBase {
 export interface AuditLog extends AuditLogBase {
   user_agent: string;
   details: AuditDetails;
-  user?: Partial<User> & { roles?: any[] }; 
+  user?: Partial<User> & { roles?: any[] };
 }
 
 export interface AuditDetails {
@@ -36,7 +36,7 @@ export interface AuditDetails {
   changes?: {
     added?: string[];
     removed?: string[];
-    [key: string]: any; 
+    [key: string]: any;
   };
   data?: any;                // <-- Para creación de usuarios
   [key: string]: any;
@@ -45,6 +45,7 @@ export interface AuditDetails {
 export interface AuditParams {
   page?: number;
   limit?: number;
+  cursor?: number | null;
   module?: string;
   action?: string;
   search?: string;
