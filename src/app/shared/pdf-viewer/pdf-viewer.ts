@@ -48,7 +48,7 @@ export class PdfViewerDocument implements OnDestroy {
   private scale = 1.2;
   private loadingTask: any;
   private renderTask: any;
-
+  private scrollTimeout: any;
   async loadPdf() {
     if (this.observer) {
       this.observer.disconnect();
@@ -92,12 +92,8 @@ export class PdfViewerDocument implements OnDestroy {
   private setupLazyRendering() {
     const container = this.containerRef.nativeElement;
     container.innerHTML = '';
-
     this.observer = new IntersectionObserver(
       (entries) => {
-
-        let mostVisiblePage = this.currentPage;
-        let maxRatio = 0;
 
         entries.forEach(entry => {
           const pageNumber = Number(
@@ -105,26 +101,17 @@ export class PdfViewerDocument implements OnDestroy {
           );
 
           if (entry.isIntersecting) {
-
-            // Para determinar la página actual REAL
-            if (entry.intersectionRatio > maxRatio) {
-              maxRatio = entry.intersectionRatio;
-              mostVisiblePage = pageNumber;
-            }
-
             this.renderPageIfNeeded(pageNumber);
           }
         });
 
-        if (mostVisiblePage !== this.currentPage) {
-          this.currentPage = mostVisiblePage;
-          this.pageChanged.emit(mostVisiblePage);
-        }
+        this.updateCurrentPageByCenterDebounced();
+
       },
       {
         root: container,
         rootMargin: '300px',
-        threshold: [0.1, 0.5, 0.75, 1]
+        threshold: 0
       }
     );
 
@@ -145,6 +132,39 @@ export class PdfViewerDocument implements OnDestroy {
       container.appendChild(placeholder);
       this.observer.observe(placeholder);
     }
+  }
+  private updateCurrentPageByCenter() {
+    const container = this.containerRef.nativeElement;
+    const containerRect = container.getBoundingClientRect();
+    const containerCenter = containerRect.top + containerRect.height / 2;
+
+    let closestPage = this.currentPage;
+    let minDistance = Infinity;
+
+    const placeholders = container.querySelectorAll('[data-page]');
+
+    placeholders.forEach((el: Element) => {
+      const rect = el.getBoundingClientRect();
+      const pageCenter = rect.top + rect.height / 2;
+      const distance = Math.abs(containerCenter - pageCenter);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestPage = Number((el as HTMLElement).dataset['page']);
+      }
+    });
+
+    if (closestPage !== this.currentPage) {
+      this.currentPage = closestPage;
+      this.pageChanged.emit(closestPage);
+    }
+  }
+
+  private updateCurrentPageByCenterDebounced() {
+    clearTimeout(this.scrollTimeout);
+    this.scrollTimeout = setTimeout(() => {
+      this.updateCurrentPageByCenter();
+    }, 50); // 50ms es perfecto
   }
   private renderingPages = new Set<number>();
 
@@ -207,6 +227,8 @@ export class PdfViewerDocument implements OnDestroy {
   }
 
   async ngOnDestroy() {
+    clearTimeout(this.scrollTimeout);
+
     if (this.pdfDoc) {
       await this.pdfDoc.destroy();
     }
@@ -214,6 +236,7 @@ export class PdfViewerDocument implements OnDestroy {
     if (this.loadingTask) {
       await this.loadingTask.destroy();
     }
+
     if (this.observer) {
       this.observer.disconnect();
     }
