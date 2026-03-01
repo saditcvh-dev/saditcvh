@@ -37,7 +37,7 @@ export class PdfViewerDocument implements OnDestroy {
   }
   @Output() pageChanged = new EventEmitter<number>();
   @Output() documentLoaded = new EventEmitter<number>();
-
+  @Output() loadingProgress = new EventEmitter<number>();
   @ViewChild('container', { static: true })
   containerRef!: ElementRef<HTMLDivElement>;
   private observer!: IntersectionObserver;
@@ -72,8 +72,15 @@ export class PdfViewerDocument implements OnDestroy {
       disableAutoFetch: false,
       disableRange: false
     });
-
+    this.loadingTask.onProgress = (progress: any) => {
+      if (progress && progress.total) {
+        const percent = Math.round((progress.loaded / progress.total) * 100);
+        this.loadingProgress.emit(percent);
+        console.log('Progreso PDF:', percent + '%');
+      }
+    };
     this.pdfDoc = await this.loadingTask.promise;
+    this.loadingProgress.emit(100);
     if (this.src !== currentSrc) {
       return; // usuario cambió documento mientras cargaba
     }
@@ -197,46 +204,6 @@ export class PdfViewerDocument implements OnDestroy {
     }
   }
 
-  // async renderPage(pageNumber: number) {
-
-  //   if (this.renderTask) {
-  //     this.renderTask.cancel();
-  //   }
-
-  //   const page = await this.pdfDoc.getPage(pageNumber);
-  //   const viewport = page.getViewport({ scale: this.scale });
-
-  //   const canvas = this.canvasRef.nativeElement;
-  //   const context = canvas.getContext('2d')!;
-
-  //   canvas.height = viewport.height;
-  //   canvas.width = viewport.width;
-
-  //   this.renderTask = page.render({
-  //     canvasContext: context,
-  //     viewport: viewport
-  //   });
-
-  //   await this.renderTask.promise;
-
-  //   this.currentPage = pageNumber;
-  //   this.pageChanged.emit(this.currentPage);
-  // }
-
-  // nextPage() {
-  //   if (this.currentPage >= this.totalPages) return;
-  //   this.renderPage(this.currentPage + 1);
-  // }
-
-  // prevPage() {
-  //   if (this.currentPage <= 1) return;
-  //   this.renderPage(this.currentPage - 1);
-  // }
-
-  // goToPage(page: number) {
-  //   if (page < 1 || page > this.totalPages) return;
-  //   this.renderPage(page);
-  // }
   async ngOnDestroy() {
     if (this.pdfDoc) {
       await this.pdfDoc.destroy();

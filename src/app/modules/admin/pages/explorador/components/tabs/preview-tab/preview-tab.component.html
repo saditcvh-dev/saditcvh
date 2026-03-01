@@ -72,7 +72,8 @@
 							<!-- Loading -->
 							<div *ngIf="isLoading" class="absolute top-0 left-0 z-20 w-full">
 								<div class="h-1 w-full bg-gray-200 overflow-hidden">
-									<div class="h-full w-1/3 bg-blue-500 animate-[loading_1.2s_ease-in-out_infinite]">
+									<div class="h-full bg-blue-500 transition-all duration-200"
+										[style.width.%]="loadingProgress">
 									</div>
 								</div>
 							</div>
@@ -89,8 +90,7 @@
 							</div>
 
 							<!-- PDF usando object/iframe -->
-							<div *ngIf="pdfUrl  && !hasError()" class="w-full"
-								style="height: calc(100vh - 160px);">
+							<div *ngIf="pdfUrl  && !hasError()" class="w-full" style="height: calc(100vh - 160px);">
 								<!-- Usando iframe en lugar de object para mejor compatibilidad -->
 								<!-- <iframe [src]="pdfUrl" class="w-full h-full border-0" frameborder="0" allow="fullscreen"
 									title="Vista previa del PDF - {{ currentFileName }}" (load)="onIframeLoad()"
@@ -102,7 +102,8 @@
 									</p>
 								</iframe> -->
 								<app-pdf-viewer-document *ngIf="pdfUrlString" [src]="pdfUrlString"
-									(pageChanged)="onPageChanged($event)" (documentLoaded)="onDocumentLoaded($event)">
+									(pageChanged)="onPageChanged($event)" (documentLoaded)="onDocumentLoaded($event)"
+									(loadingProgress)="onPdfProgress($event)">
 								</app-pdf-viewer-document>
 							</div>
 						</div>

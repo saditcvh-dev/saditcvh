@@ -91,7 +91,12 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       // this.loadPdf();
     }
   }
+  loadingProgress = 0;
 
+  onPdfProgress(progress: number) {
+    this.loadingProgress = progress;
+    this.isLoading = progress < 100;
+  }
   // ========== MANEJO DE CAMBIOS ==========
 
   private handleNodeChange(): void {
