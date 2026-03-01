@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed, effect } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AutorizacionTreeNode } from '../../../../core/models/autorizacion-tree.model';
 import { AutorizacionTreeService } from '../../../../core/services/explorador-autorizacion-tree.service';
@@ -18,7 +18,8 @@ import { ArchivoUrlService } from './services/archivo-url.service';
   templateUrl: './explorador.view.html',
   providers: [ExploradorStateService, ModalService]
 })
-export class ExploradorView implements OnInit {
+export class ExploradorView implements OnInit, OnDestroy {
+  refreshInterval: any;
   showControlPanel = signal<boolean>(false);  // Añade esta señal si quieres controlarlo
   // Servicios
   showMainHeader: boolean = true;
@@ -147,6 +148,11 @@ export class ExploradorView implements OnInit {
     this.initializeServices();
     this.subscribeToTree();
 
+    // Iniciar auto-refresh cada 5 minutos (300000 ms)
+    this.refreshInterval = setInterval(() => {
+      this.autorizacionService.refresh();
+    }, 300000);
+
     // también reaccionamos a cambios en el parámetro "q" para que la
     // selección se aplique incluso si el usuario viene desde otra ruta.
     this.route.queryParamMap.subscribe(map => {
@@ -165,6 +171,12 @@ export class ExploradorView implements OnInit {
         });
       }
     });
+  }
+
+  ngOnDestroy() {
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
   }
 
   private initializeServices(): void {
