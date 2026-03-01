@@ -3,10 +3,8 @@ import { Injectable } from '@angular/core';
 import * as pdfjsLib from 'pdfjs-dist';
 import type { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
-  import.meta.url
-).toString();
+pdfjsLib.GlobalWorkerOptions.workerSrc = `${window.location.protocol}//${window.location.host}/assets/pdfjs-dist/pdf.worker.min.js`;
+
 
 export interface LocalSearchResult {
   page: number;

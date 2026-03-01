@@ -5,10 +5,7 @@ import { FormsModule } from '@angular/forms';
 // import 'pdfjs-dist/web/pdf_viewer.css';
 
 // Configuración del worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url
-).toString();
+pdfjsLib.GlobalWorkerOptions.workerSrc = `${window.location.protocol}//${window.location.host}/assets/pdfjs-dist/pdf.worker.min.js`;
 
 // 
 // pdfjsLib.GlobalWorkerOptions.workerSrc = 
