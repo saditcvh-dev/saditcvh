@@ -57,24 +57,8 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     effect(() => {
       //console.log(`📄 [PreviewTab] Página actual: ${this.currentPage()}`);
     });
-   
+
   }
-
-  // // MODIFICA setupPdfJsListeners:
-  // private setupPdfJsListeners(): void {
-  //   // Usar el método bindeado
-  //   window.addEventListener('message', this.handlePdfMessageBound);
-
-  //   document.addEventListener('fullscreenchange', () => {
-  //     this.isFullscreen = !!document.fullscreenElement;
-  //     this.cdr.detectChanges();
-  //   });
-
-  //   document.addEventListener('fullscreenerror', () => {
-  //     console.error('Error al cambiar pantalla completa');
-  //     this.showToast('Error al cambiar a pantalla completa', 'error');
-  //   });
-  // }
 
   ngOnInit() {
     this.setupFullscreenListener();
@@ -89,15 +73,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       if (this.pdfUrl) {
         this.loadPdf();
       }
-      // Activar detección de página
-      // this.pageDetectionActive = true;
     }
-
-    // // Si la pestaña se desactiva
-    // if (changes['isActive'] && !this.isActive) {
-    //   //console.log('🔄 Pestaña desactivada');
-    //   this.pageDetectionActive = false;
-    // }
 
     // Si cambia el nodo seleccionado
     if (changes['selectedNode'] && this.selectedNode) {
@@ -109,8 +85,11 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
     // Si cambia la URL del PDF
     if (changes['pdfUrl'] && this.pdfUrl && this.isActive) {
-      //console.log('🔄 URL del PDF cambiada');
-      this.pdfUrlString =this.sanitizer.sanitize(SecurityContext.RESOURCE_URL, this.pdfUrl) ?? '';
+      this.pdfUrlString =
+        this.sanitizer.sanitize(SecurityContext.RESOURCE_URL, this.pdfUrl) ?? '';
+
+      console.log('📄 pdfUrlString:', this.pdfUrlString);
+
       this.loadPdf();
     }
   }
@@ -196,29 +175,8 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  // ========== DETECCIÓN DE PÁGINA DESDE SHADOW DOM ==========
-
-  // private setupPageDetection(): void {
-  //   // Verificar cada 800ms (menos intrusivo)
-  //   this.pageCheckInterval = setInterval(() => {
-  //     if (this.pageDetectionActive && this.showCommentsPanel && this.pdfUrl && !this.isLoading) {
-  //       this.detectCurrentPage();
-  //     }
-  //   }, 800);
-  // }
-
   private detectCurrentPage(): void {
     try {
-      // Método 1: Intentar acceder al Shadow DOM del visor
-      // const pageFromShadowDOM = this.getPageFromShadowDOM();
-      // if (pageFromShadowDOM !== null && pageFromShadowDOM !== this.lastDetectedPage) {
-      //   //console.log(`🎯 Página detectada desde Shadow DOM: ${pageFromShadowDOM}`);
-      //   // this.lastDetectedPage = pageFromShadowDOM;
-      //   this.currentPage.set(pageFromShadowDOM);
-      //   this.cdr.detectChanges();
-      //   return;
-      // }
-
       // Método 2: Intentar leer de la URL
       const pageFromUrl = this.getPageFromUrl();
       if (pageFromUrl !== null && pageFromUrl !== this.currentPage()) {
@@ -236,31 +194,6 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  // En preview-tab.component.ts - REEMPLAZA los métodos problemáticos:
-
-  // private getPageFromShadowDOM(): number | null {
-  //   try {
-  //     // NO podemos acceder directamente por cross-origin
-  //     // Usaremos postMessage para comunicarnos
-
-  //     const iframe = this.pdfIframe?.nativeElement;
-  //     if (!iframe || !iframe.contentWindow) {
-  //       return null;
-  //     }
-
-  //     // Enviar mensaje al iframe para pedir la página actual
-  //     iframe.contentWindow.postMessage({
-  //       type: 'GET_CURRENT_PAGE',
-  //       requestId: Date.now()
-  //     }, '*');
-
-  //     return null; // La respuesta vendrá por el event listener
-
-  //   } catch (error) {
-  //     //console.log('🔒 Error cross-origin (esperado):');
-  //     return null;
-  //   }
-  // }
 
   // NUEVO: Método para inyectar script en el iframe (si es del mismo origen)
   private injectPageDetectionScript(): void {
@@ -568,32 +501,8 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   // AGREGA esta propiedad a la clase:
   private pollingInterval: any;
 
-  // MODIFICA ngOnDestroy para limpiar:
-  // ngOnDestroy(): void {
-  //   //console.log('🧹 Destruyendo PreviewTabComponent...');
-
-  //   if (this.pageCheckInterval) {
-  //     clearInterval(this.pageCheckInterval);
-  //   }
-
-  //   if (this.pollingInterval) {
-  //     clearInterval(this.pollingInterval);
-  //   }
-
-  //   // Limpiar listeners
-  //   window.removeEventListener('message', this.handlePdfMessageBound);
-  //   document.removeEventListener('fullscreenchange', () => { });
-  //   document.removeEventListener('fullscreenerror', () => { });
-
-  //   //console.log('✅ PreviewTabComponent destruido');
-  // }
-
   // AGREGAR al inicio de la clase:
   private handlePdfMessageBound: any;
-
-  // MODIFICA el constructor:
- 
-  // ---------------------------------
 
   private getPageFromUrl(): number | null {
     try {
@@ -682,54 +591,6 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     this.detectCurrentPage();
   }
 
-  // ========== COMUNICACIÓN CON IFRAME ==========
-
-
-  // private handlePdfMessage(event: MessageEvent): void {
-  //   // Procesar mensajes del visor de PDF
-  //   if (event.data && event.data.type) {
-  //     //console.log('📩 Mensaje recibido del iframe:', event.data.type);
-
-  //     switch (event.data.type) {
-  //       case 'pageChange':
-  //       case 'page':
-  //         const newPage = event.data.page;
-  //         if (newPage && newPage !== this.currentPage()) {
-  //           //console.log(`📩 Página recibida: ${newPage}`);
-  //           this.currentPage.set(newPage);
-  //           this.cdr.detectChanges();
-  //         }
-  //         break;
-
-  //       case 'totalPages':
-  //       case 'pages':
-  //         const total = event.data.total || event.data.pages;
-  //         if (total && total !== this.totalPages()) {
-  //           //console.log(`📩 Total de páginas recibido: ${total}`);
-  //           this.totalPages.set(total);
-  //           this.cdr.detectChanges();
-  //         }
-  //         break;
-
-  //       case 'loaded':
-  //         this.isLoading = false;
-  //         this.totalPages.set(event.data.totalPages || 0);
-  //         //console.log('✅ PDF cargado completamente');
-  //         this.cdr.detectChanges();
-  //         break;
-
-  //       case 'currentPageResponse':
-  //         const currentPage = event.data.currentPage;
-  //         if (currentPage && currentPage !== this.currentPage()) {
-  //           //console.log(`📩 Respuesta de página actual: ${currentPage}`);
-  //           this.currentPage.set(currentPage);
-  //           this.cdr.detectChanges();
-  //         }
-  //         break;
-  //     }
-  //   }
-  // }
-
   // ========== GESTIÓN DE DOCUMENTO ==========
 
   resetDocument(): void {
@@ -796,107 +657,6 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     this.cdr.detectChanges();
-  }
-
-  // ========== NAVEGACIÓN A PÁGINA ==========
-
-  /**
-   * Método para hacer scroll a una página específica
-   */
-  // scrollToPage(pageNumber: number): void {
-  //   //console.log(`🎯 Navegando a página ${pageNumber} desde comentarios`);
-
-  //   // Validar que la página esté dentro del rango
-  //   if (this.totalPages() > 0 && (pageNumber < 1 || pageNumber > this.totalPages())) {
-  //     this.showToast(`Página ${pageNumber} fuera de rango (1-${this.totalPages()})`, 'error');
-  //     return;
-  //   }
-
-  //   // Actualizar nuestro estado primero
-  //   this.currentPage.set(pageNumber);
-  //   this.lastDetectedPage = pageNumber;
-
-  //   // Intentar navegar en el visor
-  //   try {
-  //     const iframe = this.pdfIframe?.nativeElement;
-  //     if (iframe && iframe.contentWindow) {
-  //       //console.log(`🔄 Intentando navegar a página ${pageNumber} en el visor...`);
-
-  //       // Método 1: Cambiar página en el Shadow DOM
-  //       this.setPageInShadowDOM(pageNumber);
-
-  //       // Método 2: Cambiar URL del iframe
-  //       const currentSrc = iframe.src;
-  //       const baseUrl = currentSrc.split('#')[0];
-  //       iframe.src = `${baseUrl}#page=${pageNumber}`;
-
-  //       // Método 3: Enviar mensaje al iframe
-  //       iframe.contentWindow.postMessage({
-  //         type: 'goToPage',
-  //         page: pageNumber,
-  //         timestamp: Date.now()
-  //       }, '*');
-
-  //       this.showToast(`Navegando a página ${pageNumber}`, 'info');
-  //     } else {
-  //       this.showToast(`Página ${pageNumber} seleccionada`, 'info');
-  //     }
-  //   } catch (error) {
-  //     console.error('❌ Error al navegar a página:', error);
-  //     this.showToast('No se pudo navegar a la página', 'error');
-  //   }
-
-  //   this.cdr.detectChanges();
-  // }
-
-  private setPageInShadowDOM(pageNumber: number): void {
-    try {
-      const iframe = this.pdfIframe?.nativeElement;
-      if (!iframe) return;
-
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-      if (!iframeDoc) return;
-
-      // Buscar el selector de página
-      const pageSelector = iframeDoc.querySelector('viewer-page-selector');
-      if (!pageSelector) {
-        //console.log('❌ No se encontró viewer-page-selector para cambiar página');
-        return;
-      }
-
-      const shadowRoot = pageSelector.shadowRoot;
-      if (!shadowRoot) {
-        //console.log('❌ No hay shadowRoot en viewer-page-selector');
-        return;
-      }
-
-      // Buscar el input de página
-      const pageInput = shadowRoot.querySelector('#pageSelector') as HTMLInputElement;
-      if (!pageInput) {
-        //console.log('❌ No se encontró #pageSelector en shadowRoot');
-        return;
-      }
-
-      // Cambiar el valor del input
-      pageInput.value = pageNumber.toString();
-
-      // Disparar eventos para que el visor reaccione
-      pageInput.dispatchEvent(new Event('input', { bubbles: true }));
-      pageInput.dispatchEvent(new Event('change', { bubbles: true }));
-
-      // También disparar evento keyup (Enter)
-      pageInput.dispatchEvent(new KeyboardEvent('keyup', {
-        key: 'Enter',
-        code: 'Enter',
-        keyCode: 13,
-        bubbles: true
-      }));
-
-      //console.log(`✅ Página seteada en Shadow DOM: ${pageNumber}`);
-
-    } catch (error) {
-      console.error('❌ Error al cambiar página en Shadow DOM:', error);
-    }
   }
 
   // ========== UTILIDADES ==========
@@ -967,36 +727,6 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     }, 3000);
   }
 
-  // ========== EVENT HANDLERS PARA EL TEMPLATE ==========
-
-  // onIframeLoad(): void {
-  //   //console.log('✅ Iframe del PDF cargado');
-  //   this.isLoading = false;
-  //   this.hasError.set(false);
-
-  //   // Esperar a que el visor se inicialice completamente
-  //   setTimeout(() => {
-  //     //console.log('🔍 Iniciando detección de página después de carga...');
-  //     this.forcePageDetection();
-
-  //     // Intentar detectar varias veces (el visor puede tardar en cargar)
-  //     let attempts = 0;
-  //     const detectionInterval = setInterval(() => {
-  //       this.forcePageDetection();
-  //       attempts++;
-  //       //console.log(`🔍 Intento de detección ${attempts}/5`);
-
-  //       if (attempts >= 5) {
-  //         clearInterval(detectionInterval);
-  //         //console.log('✅ Finalizada detección inicial de página');
-  //       }
-  //     }, 1000);
-
-  //   }, 2000);
-
-  //   this.cdr.detectChanges();
-  // }
-
   onIframeError(): void {
     console.error('❌ Error al cargar el PDF en el iframe');
     this.hasError.set(true);
@@ -1011,14 +741,6 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
    * Método para debug: mostrar información del visor
    */
   debugViewerInfo(): void {
-    //console.log('=== DEBUG VISOR PDF ===');
-    //console.log('Current Page:', this.currentPage());
-    //console.log('Total Pages:', this.totalPages());
-    //console.log('Is Loading:', this.isLoading);
-    //console.log('Has Error:', this.hasError());
-    //console.log('Show Comments:', this.showCommentsPanel);
-    //console.log('Is Active:', this.isActive);
-    //console.log('File Name:', this.currentFileName);
 
     try {
       const iframe = this.pdfIframe?.nativeElement;
@@ -1061,13 +783,6 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   // ========== LIMPIEZA ==========
 
   ngOnDestroy(): void {
-    //console.log('🧹 Destruyendo PreviewTabComponent...');
-
-    // if (this.pageCheckInterval) {
-    //   clearInterval(this.pageCheckInterval);
-    //   //console.log('✅ Intervalo de detección limpiado');
-    // }
-
     // Remover event listeners
     document.removeEventListener('fullscreenchange', () => { });
     document.removeEventListener('fullscreenerror', () => { });

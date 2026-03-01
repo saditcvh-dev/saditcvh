@@ -45,7 +45,7 @@ export class PdfViewerDocument implements OnChanges, OnDestroy {
   }
 
   async loadPdf() {
-
+    console.log('loadPdf llamado con src:', this.src);
     if (this.loadingTask) {
       await this.loadingTask.destroy();
     }

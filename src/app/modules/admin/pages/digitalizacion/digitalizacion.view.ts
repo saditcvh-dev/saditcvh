@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -13,7 +13,6 @@ import {
   DocumentMatch
 } from './services/pdf-ocr.service';
 import { ExploradorStateService } from '../explorador/services/explorador-state.service';
-import { AutorizacionTreeService } from '../../../../core/services/explorador-autorizacion-tree.service';
 import { CargaMasivaService, LoteOCR } from '../../../../core/services/digitalizacion-carga-masiva.service';
 // import Swal from 'sweetalert2';
 import { forkJoin, Subject } from 'rxjs';
@@ -51,7 +50,6 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   }
 
   private stateService = inject(ExploradorStateService);
-  private treeService = inject(AutorizacionTreeService);
   private router = inject(Router);
   toast = this.stateService.toast;
   closeToast(): void {
@@ -132,7 +130,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   constructor(
     private pdfService: PdfService,
     private cargaMasivaService: CargaMasivaService,
-
+    private cdr: ChangeDetectorRef
     // private spinner: NgxSpinnerService
   ) { }
   private refresh$ = new Subject<void>();
@@ -164,7 +162,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
       .subscribe({
         next: (resp) => {
           if (resp.success) {
-            this.lotesUsuario .set(resp.lotes);
+            this.lotesUsuario.set(resp.lotes);
           }
         },
         error: (err) => {
@@ -215,8 +213,8 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
   // ========== FUNCIONES PARA BÚSQUEDA INDIVIDUAL ==========
   loadPdfsList(): void {
-    
-    
+
+
     // if (this.isRefreshing()) return;    
     // this.isRefreshing.set(true);    // Ejecutar ambos en paralelo
     this.isLoadingLotes.set(true);
@@ -252,38 +250,38 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     //     this.isRefreshing.set(false);
     //   }
     // });
-      forkJoin({
-          lotes: this.cargaMasivaService.listarLotesUsuario(20, 0),
-          pdfs: this.pdfService.listPdfs()
+    forkJoin({
+      lotes: this.cargaMasivaService.listarLotesUsuario(20, 0),
+      pdfs: this.pdfService.listPdfs()
+    })
+      .pipe(
+        finalize(() => {
+          this.isLoadingLotes.set(false);
+          this.isRefreshing.set(false);
         })
-        .pipe(
-          finalize(() => {
-            this.isLoadingLotes.set(false);
-            this.isRefreshing.set(false);
-          })
-        )
-        .subscribe({
-          next: ({ lotes, pdfs }) => {
-            if (lotes.success) {
-              this.lotesUsuario.set(lotes.lotes);
-            }
-
-            const updatedList = (pdfs.pdfs || []).map(p => ({
-              id: p.id,
-              filename: p.filename,
-              pages: (p as any).pages ?? null,
-              size: (p as any).size_bytes ?? 0,
-              status: (p as any).status ?? 'pending',
-              progress: this.calculateProgress(p),
-              used_ocr: (p as any).used_ocr ?? false
-            }));
-
-            this.pdfsList = updatedList;
-          },
-          error: (err) => {
-            console.error('Error en actualización:', err);
+      )
+      .subscribe({
+        next: ({ lotes, pdfs }) => {
+          if (lotes.success) {
+            this.lotesUsuario.set(lotes.lotes);
           }
-        });
+
+          const updatedList = (pdfs.pdfs || []).map(p => ({
+            id: p.id,
+            filename: p.filename,
+            pages: (p as any).pages ?? null,
+            size: (p as any).size_bytes ?? 0,
+            status: (p as any).status ?? 'pending',
+            progress: this.calculateProgress(p),
+            used_ocr: (p as any).used_ocr ?? false
+          }));
+
+          this.pdfsList = updatedList;
+        },
+        error: (err) => {
+          console.error('Error en actualización:', err);
+        }
+      });
   }
 
   // loadPdfsList(): void {
@@ -424,80 +422,62 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   }
 
 
-/*
+  /*
+    downloadSearchablePDF(pdfId: string): void {
+      const pdf = this.pdfsList.find(p => p.id === pdfId);
+      if (pdf?.status !== 'completed') {
+        this.stateService.showToast('El PDF aún no ha terminado de procesarse', 'error');
+        return;
+      }
+  
+      const url = `/docs/${pdf.id}.pdf`;
+  
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${pdf.filename}`;
+      a.click();
+    }
+  */
   downloadSearchablePDF(pdfId: string): void {
     const pdf = this.pdfsList.find(p => p.id === pdfId);
+
     if (pdf?.status !== 'completed') {
       this.stateService.showToast('El PDF aún no ha terminado de procesarse', 'error');
       return;
     }
 
-    const url = `/docs/${pdf.id}.pdf`;
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${pdf.filename}`;
-    a.click();
+    this.pdfService.getSearchablePdf(pdfId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = pdf.filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error(err);
+        this.stateService.showToast('Error al descargar el PDF', 'error');
+      }
+    });
   }
-*/
-  downloadSearchablePDF(pdfId: string): void {
-  const pdf = this.pdfsList.find(p => p.id === pdfId);
-
-  if (pdf?.status !== 'completed') {
-    this.stateService.showToast('El PDF aún no ha terminado de procesarse', 'error');
-    return;
-  }
-
-  this.pdfService.getSearchablePdf(pdfId).subscribe({
-    next: (blob) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = pdf.filename;
-      a.click();
-      window.URL.revokeObjectURL(url);
-    },
-    error: (err) => {
-      console.error(err);
-      this.stateService.showToast('Error al descargar el PDF', 'error');
-    }
-  });
-}
 
   irAlExplorador(pdf: PDFListItem): void {
     const url = this.buildExploradorUrl(pdf.filename);
-    if (!url) {
-      this.stateService.showToast('No se pudo construir la ruta del explorador para este archivo', 'error');
-      return;
-    }
-
-    // obtengo la query para poder forzar la selección incluso si ya estoy en
-    // /admin/explorador con la misma cadena. por defecto la navegación se
-    // ignora en ese caso y el componente no hace nada.
-    const qMatch = url.match(/\?q=(.*)$/);
-    const q = qMatch ? qMatch[1] : null;
-
-    if (!q) {
-      // si no hay parámetro, lo dejo tal cual
-      this.router.navigateByUrl(url);
-      return;
-    }
-
-    const current = this.router.parseUrl(this.router.url);
-    const alreadyHere =
-      current.root.children['primary']?.segments.map(s => s.path).join('/') === 'admin/explorador' &&
-      current.queryParams['q'] === q;
-
-    if (alreadyHere) {
-      // misma carpeta; trigger manualmente porque Angular va a ignorar la
-      // navegación. el servicio se encarga de reintentar si el árbol aún
-      // no está listo, y si no se encuentra, recarga automáticamente.
-      this.stateService.selectNodeByQuery(q, () => {
-        console.log('[DigitalizacionView] Nodo no encontrado en explorador; refrescando...');
-        this.treeService.init();
-      });
+    if (url) {
+      // el builder devuelve algo como "/admin/explorador?q=123_01_.."; nos quedamos sólo
+      // con el valor de la query y utilizamos navigate para que Angular genere
+      // correctamente la UrlTree y dispare la suscripción en el explorador.
+      const qMatch = url.match(/\?q=(.*)$/);
+      const q = qMatch ? qMatch[1] : null;
+      if (q) {
+        this.router.navigate(['/admin/explorador'], { queryParams: { q } });
+      } else {
+        // fallback al comportamiento anterior en caso de que el regex falle
+        this.router.navigateByUrl(url);
+      }
     } else {
-      this.router.navigate(['/admin/explorador'], { queryParams: { q } });
+      this.stateService.showToast('No se pudo construir la ruta del explorador para este archivo', 'error');
     }
   }
   viewText(pdfId: string): void {
@@ -514,6 +494,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
           reader.onload = () => {
             this.pdfTextContent = reader.result as string;
             this.showTextModal = true;
+            this.cdr.markForCheck(); // Fuerza la actualización a la vista
           };
           reader.readAsText(blob);
         },
@@ -763,7 +744,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     // 
     return `/admin/explorador?q=${query}`;
   }
-    estimarTiempoRestante(lote: any): string {
+  estimarTiempoRestante(lote: any): string {
     const progreso = lote?.progresoOCR ?? lote?.porcentaje ?? 0;
 
     if (!progreso || progreso <= 0 || !lote?.ultimoProceso) {
@@ -788,7 +769,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
     return `${minutos}m ${segundos}s restantes`;
   }
-    getProgresoReal(lote: any): number {
+  getProgresoReal(lote: any): number {
 
     // Si ya terminó correctamente
     if (
