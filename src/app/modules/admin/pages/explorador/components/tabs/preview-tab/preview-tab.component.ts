@@ -161,13 +161,9 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       }
 
       const url = new URL(urlString, window.location.origin);
-      const pathname = url.pathname;
-      const fileName = pathname.split('/').pop() || 'documento.pdf';
-
-      const cleanFileName = fileName.split('?')[0];
 
       //console.log('📄 Nombre extraído para mostrar:', cleanFileName);
-      return cleanFileName;
+      return url.toString();
     } catch (error) {
       console.error('❌ Error al extraer nombre de archivo:', error);
       return this.selectedNode?.nombre || 'documento.pdf';
