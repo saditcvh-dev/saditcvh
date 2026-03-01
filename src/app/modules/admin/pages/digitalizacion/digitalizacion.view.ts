@@ -90,7 +90,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   }
 
   processingPdfsCount() {
-    return this.pdfsList.filter(p => p.status === 'processing').length;
+    return this.pdfsList.filter(p => p.status === 'processing' || p.status === 'pending').length;
   }
 
   pendingPdfsCount() {
