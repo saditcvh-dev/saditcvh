@@ -69,7 +69,7 @@ export class ExploradorView implements OnInit {
   // Computed
   tiposAutorizacion = this.tiposAutorizacionSvc.tipos;
   modalidades = this.modalidadSvc.modalidadesOrdenadas;
-  private autorizacionIdCargado = signal<number | null>(null);
+    private autorizacionIdCargado = signal<number | null>(null);
   documentVersions = computed(() => {
     const autorizacionId = this.selectedAutorizacionId();
     const documentos = this.documentoService.documentos();
@@ -107,9 +107,9 @@ export class ExploradorView implements OnInit {
         if (this.autorizacionIdCargado() !== autorizacionId) {
           this.autorizacionIdCargado.set(autorizacionId);
           this.selectedAutorizacionId.set(autorizacionId);
-
+          
           console.log(` Efecto: Cargando documentos para autorización ${autorizacionId}`);
-
+          
           // Usar la versión que retorna Observable para mejor control
           this.documentoService.cargarDocumentosPorAutorizacion(autorizacionId)
             .subscribe({
@@ -140,7 +140,7 @@ export class ExploradorView implements OnInit {
 
     if (!url) return null;
 
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url); 
   });
   ngOnInit() {
     this.treeService.init();
@@ -152,7 +152,13 @@ export class ExploradorView implements OnInit {
     this.route.queryParamMap.subscribe(map => {
       const q = map.get('q');
       if (q) {
-        this.stateService.selectNodeByQuery(q);
+        // si el nodo no se encuentra (ej: municipio 47 cuando solo tenía 11),
+        // intenta recargar los datos del árbol (esto refrescará municipios,
+        // tipos, autorizaciones desde el backend) y luego reintenta la búsqueda.
+        this.stateService.selectNodeByQuery(q, () => {
+          console.log('[ExploradorView] Nodo no encontrado; refrescando árbol...');
+          this.treeService.init();
+        });
       }
     });
   }
