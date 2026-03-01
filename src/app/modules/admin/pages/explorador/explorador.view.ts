@@ -149,24 +149,24 @@ export class ExploradorView implements OnInit, OnDestroy {
     this.subscribeToTree();
 
     // Iniciar auto-refresh cada 5 minutos (300000 ms)
+    console.log('[ExploradorView] ⏳ Programando refresco automático cada 5 minutos.');
+    
     this.refreshInterval = setInterval(() => {
+      const timestamp = new Date().toLocaleTimeString();
+      console.log(`[ExploradorView] 🔄 ${timestamp}: Ejecutando refresco automático del árbol...`);
+      
       this.autorizacionService.refresh();
+      
+      // Opcional: También podrías querer refrescar el árbol visual si es necesario
+      this.treeService.init(); 
     }, 300000);
 
-    // también reaccionamos a cambios en el parámetro "q" para que la
-    // selección se aplique incluso si el usuario viene desde otra ruta.
     this.route.queryParamMap.subscribe(map => {
       const q = map.get('q');
       if (q) {
-        // si el nodo no se encuentra (ej: municipio 47 cuando solo tenía 11),
-        // intenta recargar los datos del árbol buscando el query en el backend
         this.stateService.selectNodeByQuery(q, () => {
-          console.log('[ExploradorView] Nodo no encontrado; filtrando árbol desde backend...');
-
-          // Establecer el filtro para buscar la autorización desde el backend
+          console.log('[ExploradorView] 🔍 Nodo no encontrado; filtrando árbol desde backend...');
           this.autorizacionService.setFiltros({ search: q });
-
-          // Iniciar recarga de otras dependencias
           this.treeService.init();
         });
       }
@@ -175,6 +175,7 @@ export class ExploradorView implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.refreshInterval) {
+      console.log('[ExploradorView] 🛑 Limpiando intervalo de refresco automático.');
       clearInterval(this.refreshInterval);
     }
   }
