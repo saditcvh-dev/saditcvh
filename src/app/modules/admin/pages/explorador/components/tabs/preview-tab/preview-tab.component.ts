@@ -160,7 +160,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
         return this.selectedNode?.nombre || 'documento.pdf';
       }
 
-      const url = new URL(urlString);
+      const url = new URL(urlString, window.location.origin);
       const pathname = url.pathname;
       const fileName = pathname.split('/').pop() || 'documento.pdf';
 
