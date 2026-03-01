@@ -13,6 +13,7 @@ import {
   DocumentMatch
 } from './services/pdf-ocr.service';
 import { ExploradorStateService } from '../explorador/services/explorador-state.service';
+import { AutorizacionTreeService } from '../../../../core/services/explorador-autorizacion-tree.service';
 import { CargaMasivaService, LoteOCR } from '../../../../core/services/digitalizacion-carga-masiva.service';
 // import Swal from 'sweetalert2';
 import { forkJoin, Subject } from 'rxjs';
@@ -50,6 +51,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   }
 
   private stateService = inject(ExploradorStateService);
+  private treeService = inject(AutorizacionTreeService);
   private router = inject(Router);
   toast = this.stateService.toast;
   closeToast(): void {
@@ -464,20 +466,38 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
   irAlExplorador(pdf: PDFListItem): void {
     const url = this.buildExploradorUrl(pdf.filename);
-    if (url) {
-      // el builder devuelve algo como "/admin/explorador?q=123_01_.."; nos quedamos sólo
-      // con el valor de la query y utilizamos navigate para que Angular genere
-      // correctamente la UrlTree y dispare la suscripción en el explorador.
-      const qMatch = url.match(/\?q=(.*)$/);
-      const q = qMatch ? qMatch[1] : null;
-      if (q) {
-        this.router.navigate(['/admin/explorador'], { queryParams: { q } });
-      } else {
-        // fallback al comportamiento anterior en caso de que el regex falle
-        this.router.navigateByUrl(url);
-      }
-    } else {
+    if (!url) {
       this.stateService.showToast('No se pudo construir la ruta del explorador para este archivo', 'error');
+      return;
+    }
+
+    // obtengo la query para poder forzar la selección incluso si ya estoy en
+    // /admin/explorador con la misma cadena. por defecto la navegación se
+    // ignora en ese caso y el componente no hace nada.
+    const qMatch = url.match(/\?q=(.*)$/);
+    const q = qMatch ? qMatch[1] : null;
+
+    if (!q) {
+      // si no hay parámetro, lo dejo tal cual
+      this.router.navigateByUrl(url);
+      return;
+    }
+
+    const current = this.router.parseUrl(this.router.url);
+    const alreadyHere =
+      current.root.children['primary']?.segments.map(s => s.path).join('/') === 'admin/explorador' &&
+      current.queryParams['q'] === q;
+
+    if (alreadyHere) {
+      // misma carpeta; trigger manualmente porque Angular va a ignorar la
+      // navegación. el servicio se encarga de reintentar si el árbol aún
+      // no está listo, y si no se encuentra, recarga automáticamente.
+      this.stateService.selectNodeByQuery(q, () => {
+        console.log('[DigitalizacionView] Nodo no encontrado en explorador; refrescando...');
+        this.treeService.init();
+      });
+    } else {
+      this.router.navigate(['/admin/explorador'], { queryParams: { q } });
     }
   }
   viewText(pdfId: string): void {
