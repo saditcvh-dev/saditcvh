@@ -144,6 +144,11 @@ export class DigitalizacionView implements OnInit, OnDestroy {
       .subscribe(() => this.loadPdfsList());
 
     this.refresh$.next();
+
+    // Actualizar cada 4 minutos (240000 ms)
+    this.pollTimer = setInterval(() => {
+      this.refresh$.next();
+    }, 240000);
   }
 
   // recargar() {
