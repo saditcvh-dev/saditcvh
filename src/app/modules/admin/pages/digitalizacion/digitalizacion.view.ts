@@ -90,7 +90,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   }
 
   processingPdfsCount() {
-    return this.pdfsList.filter(p => p.status === 'processing').length;
+    return this.pdfsList.filter(p => p.status === 'processing' || p.status === 'pending').length;
   }
 
   pendingPdfsCount() {
@@ -144,6 +144,11 @@ export class DigitalizacionView implements OnInit, OnDestroy {
       .subscribe(() => this.loadPdfsList());
 
     this.refresh$.next();
+
+    // Actualizar cada 4 minutos (240000 ms)
+    this.pollTimer = setInterval(() => {
+      this.refresh$.next();
+    }, 240000);
   }
 
   // recargar() {
@@ -276,9 +281,11 @@ export class DigitalizacionView implements OnInit, OnDestroy {
           }));
 
           this.pdfsList = updatedList;
+          this.cdr.markForCheck();
         },
         error: (err) => {
           console.error('Error en actualización:', err);
+          this.cdr.markForCheck();
         }
       });
   }

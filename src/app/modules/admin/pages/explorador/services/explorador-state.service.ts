@@ -30,10 +30,10 @@ export class ExploradorStateService {
     this._tree.set(tree);
   }
 
-  selectNode(node: AutorizacionTreeNode, closeMenu: boolean = true,expand: boolean = false
-): void {
-  // console.log("node")
-  // console.log(node)
+  selectNode(node: AutorizacionTreeNode, closeMenu: boolean = true, expand: boolean = false
+  ): void {
+    // console.log("node")
+    // console.log(node)
     this._selectedNode.set(node);
     this.updateBreadcrumbs(node);
 
@@ -62,7 +62,7 @@ export class ExploradorStateService {
       node
     });
 
-  
+
     this._selectedNode.set(node);
     this.updateBreadcrumbs(node);
   }
@@ -145,8 +145,9 @@ export class ExploradorStateService {
   selectNodeByQuery(query: string, onNotFound?: () => void): void {
     if (!query) return;
 
-    let attempted = false;
-    let retryAfterRefresh = false;
+    let retries = 0;
+    const maxRetries = 50; // 5 segundos maximo (50 * 100ms)
+    let refreshTriggered = false;
 
     const trySelect = (): boolean => {
       const tree = this._tree();
@@ -154,27 +155,22 @@ export class ExploradorStateService {
         return false; // keep waiting for first tree load
       }
 
-      attempted = true;
       const path = this.findNodePathByQuery(tree, query);
 
       if (!path) {
         // el nodo no existe en el árbol actual
-        if (!retryAfterRefresh && onNotFound) {
-          // primera vez que lo intenta sin éxito: solicita un refresh
-          // (típicamente para recargar municipios, tipos, autorizaciones) y
-          // reintenta una sola vez después
+        if (!refreshTriggered && onNotFound) {
           console.log(`[selectNodeByQuery] Nodo '${query}' no encontrado. Recargando datos...`);
-          retryAfterRefresh = true;
+          refreshTriggered = true;
           onNotFound();
-          // da tiempo a que se refresque y emita el árbol nuevamente
-          return false; // seguirá reintentando
-        } else {
-          // ya intentó después del refresh y aún no está: error definitivo
-          console.warn(`[selectNodeByQuery] Nodo '${query}' no existe en el árbol incluso tras refresh`);
+          return false; // Seguir intentando mientras carga
+        } else if (retries >= maxRetries) {
+          console.warn(`[selectNodeByQuery] Nodo '${query}' no existe en el árbol tras 5s de espera.`);
           this.clearSelection();
           this.showToast(`No se encontró el nodo '${query}' en el explorador`, 'error');
-          return true; // stop retrying
+          return true; // Stop retrying
         }
+        return false; // Sigue buscando en el siguiente intervalo
       }
 
       // nodo encontrado
@@ -192,6 +188,7 @@ export class ExploradorStateService {
     }
 
     const interval = setInterval(() => {
+      retries++;
       if (trySelect()) {
         clearInterval(interval);
       }
