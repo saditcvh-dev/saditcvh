@@ -84,7 +84,10 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
     // Si cambia la URL del PDF
     if (changes['pdfUrl'] && this.pdfUrl) {
-      this.pdfUrlString = new URL(this.pdfUrl.toString(), window.location.origin).toString();
+
+      this.pdfUrlString =
+        this.sanitizer.sanitize(SecurityContext.RESOURCE_URL, this.pdfUrl) ?? '';
+
       console.log('📄 pdfUrlString:', this.pdfUrlString);
 
       this.loadPdf();
@@ -102,7 +105,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       this.hasError.set(false);
 
       // Si la pestaña está activa, cargar inmediatamente
-      if ( this.pdfUrl) {
+      if (this.pdfUrl) {
         setTimeout(() => {
           this.loadPdf();
         }, 50);
@@ -119,7 +122,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     this.totalPages.set(total);
   }
   private loadPdf(): void {
-    if (!this.pdfUrl || !this.selectedNode ) {
+    if (!this.pdfUrl || !this.selectedNode) {
       //console.log('⚠️ Condiciones no cumplidas para cargar PDF');
       return;
     }
