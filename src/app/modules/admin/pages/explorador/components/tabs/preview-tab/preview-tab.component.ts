@@ -24,7 +24,6 @@ import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizac
 export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   @Input() selectedNode: AutorizacionTreeNode | null = null;
   @Input() pdfUrl!: SafeResourceUrl | null;
-  @Input() isActive: boolean = false;
 
   @ViewChild('pdfIframe') pdfIframe!: ElementRef;
 
@@ -68,7 +67,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     // Si la pestaña se activa
-    if (changes['isActive'] && this.isActive) {
+    if (changes['isActive']) {
       //console.log('🔄 Pestaña activada');
       if (this.pdfUrl) {
         this.loadPdf();
@@ -84,7 +83,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     // Si cambia la URL del PDF
-    if (changes['pdfUrl'] && this.pdfUrl && this.isActive) {
+    if (changes['pdfUrl'] && this.pdfUrl) {
       this.pdfUrlString =
         this.sanitizer.sanitize(SecurityContext.RESOURCE_URL, this.pdfUrl) ?? '';
 
@@ -105,7 +104,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       this.hasError.set(false);
 
       // Si la pestaña está activa, cargar inmediatamente
-      if (this.isActive && this.pdfUrl) {
+      if ( this.pdfUrl) {
         setTimeout(() => {
           this.loadPdf();
         }, 50);
@@ -122,7 +121,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     this.totalPages.set(total);
   }
   private loadPdf(): void {
-    if (!this.pdfUrl || !this.selectedNode || !this.isActive) {
+    if (!this.pdfUrl || !this.selectedNode ) {
       //console.log('⚠️ Condiciones no cumplidas para cargar PDF');
       return;
     }
@@ -312,7 +311,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
     // Enviar mensaje periódico al iframe
     const pollInterval = setInterval(() => {
-      if (!this.isActive || !this.showCommentsPanel) return;
+      if (!this.showCommentsPanel) return;
 
       this.sendPageRequestToIframe();
 
@@ -693,8 +692,6 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   // ========== NOTIFICACIONES ==========
 
   private showToast(message: string, type: 'success' | 'error' | 'info' | 'warning'): void {
-    if (!this.isActive) return;
-
     const toast = document.createElement('div');
     toast.className = `fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 animate-fade-in ${type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' :
       type === 'error' ? 'bg-red-100 text-red-800 border border-red-200' :

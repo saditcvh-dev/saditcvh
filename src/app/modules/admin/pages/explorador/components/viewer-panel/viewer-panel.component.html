@@ -3,8 +3,10 @@
   <div *ngIf="showMainHeader"
     class="bg-white dark:bg-black border-b border-gray-200 dark:border-neutral-900 transition-all duration-300 ease-in-out shrink-0">
     <!-- Breadcrumb -->
-    <div class="px-6 pt-4 pb-0 text-xs text-gray-400 dark:text-neutral-500 flex items-center gap-2 select-none flex-wrap">
-      <span class="hover:text-[#691831] dark:hover:text-blue-400 cursor-pointer transition-colors truncate max-w-[150px] whitespace-nowrap"
+    <div
+      class="px-6 pt-4 pb-0 text-xs text-gray-400 dark:text-neutral-500 flex items-center gap-2 select-none flex-wrap">
+      <span
+        class="hover:text-[#691831] dark:hover:text-blue-400 cursor-pointer transition-colors truncate max-w-[150px] whitespace-nowrap"
         (click)="onBreadcrumbClick(null)">
         Inicio
       </span>
@@ -64,11 +66,11 @@
   </div>
 
   <!-- NAVEGACIÓN DE PESTAÑAS - SIEMPRE VISIBLE -->
-  <app-tabs-navigation [showMainHeader]="showMainHeader" [showControlPanel]="showControlPanel"
-    *ngIf="shouldShowTabs()" [class.border-t]="!showMainHeader" [class.border-b]="showMainHeader"
-    [selectedNode]="selectedNode" [activeTab]="activeTab" [allowedTabs]="allowedTabs"
-    (tabChange)="onTabChange($event)" (showMainHeaderChange)="onShowMainHeaderChange($event)"
-    (showControlPanelChange)="onShowControlPanelChange($event)" class="shrink-0">
+  <app-tabs-navigation [showMainHeader]="showMainHeader" [showControlPanel]="showControlPanel" *ngIf="shouldShowTabs()"
+    [class.border-t]="!showMainHeader" [class.border-b]="showMainHeader" [selectedNode]="selectedNode"
+    [activeTab]="activeTab" [allowedTabs]="allowedTabs" (tabChange)="onTabChange($event)"
+    (showMainHeaderChange)="onShowMainHeaderChange($event)" (showControlPanelChange)="onShowControlPanelChange($event)"
+    class="shrink-0">
   </app-tabs-navigation>
 
   <!-- Contenido de la pestaña activa -->
@@ -99,8 +101,8 @@
       <div *ngIf="activeTab === 'history' && selectedNode.type === 'autorizacion'" class="h-full">
         <app-history-tab [selectedNode]="selectedNode" [documentVersions]="documentVersions"
           (openUploadModal)="onOpenUploadModal()" (downloadVersion)="onDownloadVersion($event)"
-          (restoreVersion)="onRestoreVersion($event)" [fullScreenMode]="!showMainHeader"   (versionCreated)="reloadVersions()"
->
+          (restoreVersion)="onRestoreVersion($event)" [fullScreenMode]="!showMainHeader"
+          (versionCreated)="reloadVersions()">
         </app-history-tab>
       </div>
 
