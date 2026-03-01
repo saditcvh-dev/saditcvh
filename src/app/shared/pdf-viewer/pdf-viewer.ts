@@ -76,7 +76,6 @@ export class PdfViewerDocument implements OnDestroy {
       if (progress && progress.total) {
         const percent = Math.round((progress.loaded / progress.total) * 100);
         this.loadingProgress.emit(percent);
-        console.log('Progreso PDF:', percent + '%');
       }
     };
     this.pdfDoc = await this.loadingTask.promise;

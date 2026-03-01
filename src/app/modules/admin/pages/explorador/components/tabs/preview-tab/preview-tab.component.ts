@@ -33,9 +33,6 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   showCommentsPanel = false;
   hasError = signal(false);
 
-  // Información del archivo
-  currentFileName: string = '';
-
   // Signals para páginas - REACTIVIDAD AUTOMÁTICA
   pdfUrlString: string = '';
   currentPage = signal(1);
@@ -135,10 +132,6 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       //console.log('⚠️ Ya se está cargando un PDF');
       return;
     }
-
-    // Extraer el nombre del archivo para mostrar en la UI
-    this.currentFileName = this.extractFileNameFromUrl(this.pdfUrl);
-    //console.log('📄 Nombre del archivo:', this.currentFileName);
 
     this.isLoading = true;
     this.hasError.set(false);
@@ -594,7 +587,6 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
 
   resetDocument(): void {
     //console.log('🔄 Reseteando documento...');
-    this.currentFileName = '';
     this.currentPage.set(1);
     this.totalPages.set(0);
     // this.lastDetectedPage = 1;
