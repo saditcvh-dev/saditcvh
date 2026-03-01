@@ -398,9 +398,9 @@
           <div class="flex gap-1 items-center">
             <button
               (click)="prevPage()"
-              [disabled]="pagination().page <= 1"
+              [disabled]="(pagination().page || 1) <= 1"
               class="px-3 py-1 text-sm rounded-lg border transition flex items-center gap-1"
-              [ngClass]="{'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-600 cursor-not-allowed': pagination().page <= 1, 'bg-white dark:bg-gray-700 hover:bg-[#DDC9A3]/20 dark:hover:bg-[#d4a762]/10 border-gray-300 dark:border-gray-600 text-[#691831] dark:text-[#c44569]': pagination().page > 1}"
+              [ngClass]="{'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-600 cursor-not-allowed': (pagination().page || 1) <= 1, 'bg-white dark:bg-gray-700 hover:bg-[#DDC9A3]/20 dark:hover:bg-[#d4a762]/10 border-gray-300 dark:border-gray-600 text-[#691831] dark:text-[#c44569]': (pagination().page || 1) > 1}"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -408,14 +408,14 @@
             </button>
 
             <span class="px-3 py-1 text-sm font-bold text-[#691831] dark:text-[#c44569] bg-[#DDC9A3] dark:bg-[#d4a762]/30 rounded-lg border border-[#BC955B] dark:border-[#d4a762]">
-              {{ pagination().page }} / {{ pagination().totalPages }}
+              {{ pagination().page || 1 }} / {{ pagination().totalPages || 1 }}
             </span>
 
             <button
               (click)="nextPage()"
-              [disabled]="pagination().page >= pagination().totalPages"
+              [disabled]="(pagination().page || 1) >= (pagination().totalPages || 1)"
               class="px-3 py-1 text-sm rounded-lg border transition flex items-center gap-1"
-              [ngClass]="{'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-600 cursor-not-allowed': pagination().page >= pagination().totalPages, 'bg-white dark:bg-gray-700 hover:bg-[#DDC9A3]/20 dark:hover:bg-[#d4a762]/10 border-gray-300 dark:border-gray-600 text-[#691831] dark:text-[#c44569]': pagination().page < pagination().totalPages}"
+              [ngClass]="{'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-600 cursor-not-allowed': (pagination().page || 1) >= (pagination().totalPages || 1), 'bg-white dark:bg-gray-700 hover:bg-[#DDC9A3]/20 dark:hover:bg-[#d4a762]/10 border-gray-300 dark:border-gray-600 text-[#691831] dark:text-[#c44569]': (pagination().page || 1) < (pagination().totalPages || 1)}"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
