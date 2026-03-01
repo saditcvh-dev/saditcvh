@@ -56,10 +56,10 @@ export class PdfViewerDocument implements OnDestroy, AfterViewInit {
 
 
   ngAfterViewInit() {
-  if (this._src) {
-    this.loadPdf();
+    if (this._src) {
+      this.loadPdf();
+    }
   }
-}
   async loadPdf() {
     if (this.observer) {
       this.observer.disconnect();
@@ -100,6 +100,7 @@ export class PdfViewerDocument implements OnDestroy, AfterViewInit {
     this.setupLazyRendering();
   }
   private setupLazyRendering() {
+    if (!this.containerRef?.nativeElement) return;
     const container = this.containerRef.nativeElement;
     container.innerHTML = '';
     this.observer = new IntersectionObserver(
@@ -271,19 +272,34 @@ export class PdfViewerDocument implements OnDestroy, AfterViewInit {
     this.reRenderVisiblePages();
   }
   private async reRenderVisiblePages() {
-    const visiblePages = Array.from(this.renderedPages.keys());
+    // Limpiar estado de páginas ya renderizadas
+    this.renderedPages.forEach((canvas) => canvas.remove());
+    this.renderedPages.clear();
+    this.renderingPages.clear();
 
-    for (const pageNumber of visiblePages) {
-      const canvas = this.renderedPages.get(pageNumber);
-      if (canvas) {
-        canvas.remove();
+    // Restaurar placeholders con texto de carga
+    const container = this.containerRef.nativeElement;
+    const placeholders = container.querySelectorAll('[data-page]');
+
+    placeholders.forEach((placeholder: Element) => {
+      const pageNum = (placeholder as HTMLElement).dataset['page'];
+      placeholder.innerHTML = `<span class="text-gray-400 text-sm">Cargando página ${pageNum}...</span>`;
+    });
+
+    // El IntersectionObserver disparará renderPageIfNeeded automáticamente
+    // para las páginas visibles, pero por si acaso forzamos las visibles:
+    placeholders.forEach((placeholder: Element) => {
+      const pageNumber = Number((placeholder as HTMLElement).dataset['page']);
+      const rect = placeholder.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+
+      const isVisible = rect.top < containerRect.bottom + 300 &&
+        rect.bottom > containerRect.top - 300;
+
+      if (isVisible) {
+        this.renderPageIfNeeded(pageNumber);
       }
-
-      this.renderedPages.delete(pageNumber);
-      this.renderingPages.delete(pageNumber);
-
-      await this.renderPageIfNeeded(pageNumber);
-    }
+    });
   }
   async ngOnDestroy() {
     clearTimeout(this.scrollTimeout);
