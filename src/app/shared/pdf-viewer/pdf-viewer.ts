@@ -13,8 +13,7 @@ import {
 import * as pdfjsLib from 'pdfjs-dist';
 import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/assets/pdfjs-dist/pdf.worker.min.js';
-
+pdfjsLib.GlobalWorkerOptions.workerSrc = `${window.location.protocol}//${window.location.host}/assets/pdfjs-dist/pdf.worker.min.js`;
 @Component({
   selector: 'app-pdf-viewer-document',
   standalone: true,
@@ -66,10 +65,10 @@ export class PdfViewerDocument implements OnChanges, OnDestroy {
     this.loadingTask = pdfjsLib.getDocument({
       url: this.src,
       withCredentials: true,
-      rangeChunkSize: 65536,   // 64 KB más confiable
+      rangeChunkSize: 65536,
       disableStream: false,
       disableAutoFetch: false,
-      disableRange: false      // 👈 fuerza uso de Range
+      disableRange: false
     });
 
     this.pdfDoc = await this.loadingTask.promise;
