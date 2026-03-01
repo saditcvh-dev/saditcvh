@@ -511,27 +511,9 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   }
 
   deletePdf(pdfId: string, filename: string): void {
-    // mostrart alerta de comfirmacion del navegador reemplazar swal.fire por window.confirm
-    const confirmed = window.confirm(`¿Estás seguro de eliminar "${filename}"? Esta acción no se puede deshacer.`);
-    // if (!confirmed) return;
-    if (confirmed) {
-      this.pdfService.deletePdf(pdfId)
-        .subscribe({
-          next: () => {
-            this.loadPdfsList();
-            if (this.selectedPdfId === pdfId) {
-              this.selectedPdfId = '';
-              this.selectedPdfInfo = null;
-              this.searchResults = null;
-            }
-            this.recentUploads = this.recentUploads.filter(u => u.id !== pdfId);
-            this.stateService.showToast('PDF eliminado correctamente', 'success');
-          },
-          error: (error) => {
-            this.stateService.showToast(error.error?.detail || 'Error al eliminar', 'error');
-          }
-        });
-    }
+    // la eliminación de archivos ya no está permitida desde la UI
+    this.stateService.showToast('La función de eliminar PDF está deshabilitada', 'error');
+    // queda el método vacío para evitar errores si se llamara por accidente
   }
 
   // ========== FUNCIONES PARA BÚSQUEDA RÁPIDA ==========
