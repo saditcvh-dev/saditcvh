@@ -95,34 +95,36 @@ export class PdfViewerDocument implements OnDestroy {
 
     this.observer = new IntersectionObserver(
       (entries) => {
+
+        let mostVisiblePage = this.currentPage;
+        let maxRatio = 0;
+
         entries.forEach(entry => {
           const pageNumber = Number(
             (entry.target as HTMLElement).dataset['page']
           );
 
           if (entry.isIntersecting) {
-            this.currentPage = pageNumber;
-            this.pageChanged.emit(pageNumber);
-            this.renderPageIfNeeded(pageNumber);
-          } else {
-            // 🔥 liberar páginas muy lejos
-            if (this.renderedPages.has(pageNumber)) {
-              const canvas = this.renderedPages.get(pageNumber)!;
 
-              const distance = Math.abs(pageNumber - this.currentPage);
-
-              if (distance > 5) { // mantener solo ±5 páginas
-                canvas.remove();
-                this.renderedPages.delete(pageNumber);
-              }
+            // Para determinar la página actual REAL
+            if (entry.intersectionRatio > maxRatio) {
+              maxRatio = entry.intersectionRatio;
+              mostVisiblePage = pageNumber;
             }
+
+            this.renderPageIfNeeded(pageNumber);
           }
         });
+
+        if (mostVisiblePage !== this.currentPage) {
+          this.currentPage = mostVisiblePage;
+          this.pageChanged.emit(mostVisiblePage);
+        }
       },
       {
         root: container,
-        rootMargin: '300px', // precarga antes de que entre
-        threshold: 0.1
+        rootMargin: '300px',
+        threshold: [0.1, 0.5, 0.75, 1]
       }
     );
 
