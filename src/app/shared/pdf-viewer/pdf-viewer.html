@@ -4,15 +4,9 @@
     <div>
       Página {{ currentPage }} / {{ totalPages }}
     </div>
-
-    <div class="space-x-2">
-      <button (click)="prevPage()">Anterior</button>
-      <button (click)="nextPage()">Siguiente</button>
-    </div>
   </div>
 
-  <div class="flex-1 overflow-auto flex justify-center bg-gray-100">
-    <canvas #canvas></canvas>
+  <div #container class="flex-1 overflow-auto bg-gray-100 p-6 space-y-8">
   </div>
 
 </div>

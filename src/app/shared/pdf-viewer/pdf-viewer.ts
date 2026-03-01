@@ -5,8 +5,6 @@ import {
   Input,
   Output,
   EventEmitter,
-  OnChanges,
-  SimpleChanges,
   OnDestroy
 } from '@angular/core';
 
@@ -21,7 +19,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `${window.location.protocol}//${window.
   templateUrl: './pdf-viewer.html',
   styleUrl: './pdf-viewer.css',
 })
-export class PdfViewerDocument implements OnChanges, OnDestroy {
+export class PdfViewerDocument implements OnDestroy {
 
   private _src!: string;
 
@@ -40,9 +38,10 @@ export class PdfViewerDocument implements OnChanges, OnDestroy {
   @Output() pageChanged = new EventEmitter<number>();
   @Output() documentLoaded = new EventEmitter<number>();
 
-  @ViewChild('canvas', { static: true })
-  canvasRef!: ElementRef<HTMLCanvasElement>;
-
+  @ViewChild('container', { static: true })
+  containerRef!: ElementRef<HTMLDivElement>;
+  private observer!: IntersectionObserver;
+  private renderedPages = new Map<number, HTMLCanvasElement>();
   private pdfDoc!: PDFDocumentProxy;
   currentPage = 1;
   totalPages = 0;
@@ -50,17 +49,20 @@ export class PdfViewerDocument implements OnChanges, OnDestroy {
   private loadingTask: any;
   private renderTask: any;
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes['src'] && this.src) {
-      await this.loadPdf();
-    }
-  }
-
   async loadPdf() {
-    console.log('loadPdf llamado con src:', this.src);
+    if (this.observer) {
+      this.observer.disconnect();
+      const container = this.containerRef?.nativeElement;
+      if (container) {
+        container.innerHTML = '';
+      }
+    }
+    this.renderedPages.clear();
+    this.renderingPages.clear();
     if (this.loadingTask) {
       await this.loadingTask.destroy();
     }
+    const currentSrc = this.src;
 
     this.loadingTask = pdfjsLib.getDocument({
       url: this.src,
@@ -72,54 +74,169 @@ export class PdfViewerDocument implements OnChanges, OnDestroy {
     });
 
     this.pdfDoc = await this.loadingTask.promise;
-
+    if (this.src !== currentSrc) {
+      return; // usuario cambió documento mientras cargaba
+    }
     this.totalPages = this.pdfDoc.numPages;
     this.documentLoaded.emit(this.totalPages);
 
-    this.currentPage = 1;
-    this.renderPage(this.currentPage);
+    this.setupLazyRendering();
   }
+  private setupLazyRendering() {
+    const container = this.containerRef.nativeElement;
+    container.innerHTML = '';
 
-  async renderPage(pageNumber: number) {
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          const pageNumber = Number(
+            (entry.target as HTMLElement).dataset['page']
+          );
 
-    if (this.renderTask) {
-      this.renderTask.cancel();
+          if (entry.isIntersecting) {
+            this.currentPage = pageNumber;
+            this.pageChanged.emit(pageNumber);
+            this.renderPageIfNeeded(pageNumber);
+          } else {
+            // 🔥 liberar páginas muy lejos
+            if (this.renderedPages.has(pageNumber)) {
+              const canvas = this.renderedPages.get(pageNumber)!;
+
+              const distance = Math.abs(pageNumber - this.currentPage);
+
+              if (distance > 5) { // mantener solo ±5 páginas
+                canvas.remove();
+                this.renderedPages.delete(pageNumber);
+              }
+            }
+          }
+        });
+      },
+      {
+        root: container,
+        rootMargin: '300px', // precarga antes de que entre
+        threshold: 0.1
+      }
+    );
+
+    for (let i = 1; i <= this.totalPages; i++) {
+      const placeholder = document.createElement('div');
+      placeholder.dataset['page'] = i.toString();
+      placeholder.classList.add(
+        'min-h-[800px]',
+        'flex',
+        'justify-center',
+        'items-center',
+        'bg-white',
+        'shadow'
+      );
+
+      placeholder.innerHTML = `<span class="text-gray-400 text-sm">Cargando página ${i}...</span>`;
+
+      container.appendChild(placeholder);
+      this.observer.observe(placeholder);
     }
+  }
+  private renderingPages = new Set<number>();
+
+  private async renderPageIfNeeded(pageNumber: number) {
+    if (this.renderedPages.has(pageNumber)) return;
+    if (this.renderingPages.has(pageNumber)) return;
+
+    this.renderingPages.add(pageNumber);
 
     const page = await this.pdfDoc.getPage(pageNumber);
     const viewport = page.getViewport({ scale: this.scale });
 
-    const canvas = this.canvasRef.nativeElement;
+    const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d')!;
 
     canvas.height = viewport.height;
     canvas.width = viewport.width;
+    canvas.classList.add('shadow-lg', 'mx-auto', 'bg-white');
 
-    this.renderTask = page.render({
+    await page.render({
       canvasContext: context,
       viewport: viewport
-    });
+    }).promise;
 
-    await this.renderTask.promise;
+    const container = this.containerRef.nativeElement;
+    const placeholder = container.querySelector(
+      `[data-page="${pageNumber}"]`
+    );
 
-    this.currentPage = pageNumber;
-    this.pageChanged.emit(this.currentPage);
+    if (placeholder) {
+      placeholder.innerHTML = '';
+      placeholder.appendChild(canvas);
+    }
+
+    this.renderedPages.set(pageNumber, canvas);
+    this.renderingPages.delete(pageNumber);
+  }
+  async renderAllPages() {
+    const container = this.containerRef.nativeElement;
+    container.innerHTML = '';
+
+    for (let pageNumber = 1; pageNumber <= this.totalPages; pageNumber++) {
+      const page = await this.pdfDoc.getPage(pageNumber);
+      const viewport = page.getViewport({ scale: this.scale });
+
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d')!;
+
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      canvas.classList.add('shadow-lg', 'bg-white', 'mx-auto');
+
+      container.appendChild(canvas);
+
+      await page.render({
+        canvasContext: context,
+        viewport: viewport
+      }).promise;
+    }
   }
 
-  nextPage() {
-    if (this.currentPage >= this.totalPages) return;
-    this.renderPage(this.currentPage + 1);
-  }
+  // async renderPage(pageNumber: number) {
 
-  prevPage() {
-    if (this.currentPage <= 1) return;
-    this.renderPage(this.currentPage - 1);
-  }
+  //   if (this.renderTask) {
+  //     this.renderTask.cancel();
+  //   }
 
-  goToPage(page: number) {
-    if (page < 1 || page > this.totalPages) return;
-    this.renderPage(page);
-  }
+  //   const page = await this.pdfDoc.getPage(pageNumber);
+  //   const viewport = page.getViewport({ scale: this.scale });
+
+  //   const canvas = this.canvasRef.nativeElement;
+  //   const context = canvas.getContext('2d')!;
+
+  //   canvas.height = viewport.height;
+  //   canvas.width = viewport.width;
+
+  //   this.renderTask = page.render({
+  //     canvasContext: context,
+  //     viewport: viewport
+  //   });
+
+  //   await this.renderTask.promise;
+
+  //   this.currentPage = pageNumber;
+  //   this.pageChanged.emit(this.currentPage);
+  // }
+
+  // nextPage() {
+  //   if (this.currentPage >= this.totalPages) return;
+  //   this.renderPage(this.currentPage + 1);
+  // }
+
+  // prevPage() {
+  //   if (this.currentPage <= 1) return;
+  //   this.renderPage(this.currentPage - 1);
+  // }
+
+  // goToPage(page: number) {
+  //   if (page < 1 || page > this.totalPages) return;
+  //   this.renderPage(page);
+  // }
   async ngOnDestroy() {
     if (this.pdfDoc) {
       await this.pdfDoc.destroy();
@@ -127,6 +244,9 @@ export class PdfViewerDocument implements OnChanges, OnDestroy {
 
     if (this.loadingTask) {
       await this.loadingTask.destroy();
+    }
+    if (this.observer) {
+      this.observer.disconnect();
     }
   }
 }
