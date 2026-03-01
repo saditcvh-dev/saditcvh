@@ -71,7 +71,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
     this.currentUser = this.authService.currentUser();
-    this.setupAutoSave();
+    // this.setupAutoSave(); // Auto-guardado deshabilitado por problemas de duplicidad
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -82,9 +82,10 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
-    if (this.autoSaveInterval) {
-      clearInterval(this.autoSaveInterval);
-    }
+    // Si alguna vez se reactiva el auto-guardado
+    // if (this.autoSaveInterval) {
+    //   clearInterval(this.autoSaveInterval);
+    // }
   }
 
   // ========== COMENTARIOS ==========
@@ -122,7 +123,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       this.showToast('Comentario: 1-1000 caracteres', 'warning');
       return false;
     }
-    
+
     return true;
   }
 
@@ -138,7 +139,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       date: new Date(),
       color: this.selectedColor,
       autor: currentUsername,
-      documentId: this.pdfIdentifier??0,
+      documentId: this.pdfIdentifier ?? 0,
       esMio: true,
       usuario_id: currentUserId,
       editable: true
@@ -320,18 +321,18 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
 
   // ========== PERSISTENCIA ==========
 
-  private autoSaveInterval: any;
-  private readonly AUTO_SAVE_INTERVAL = 30000;
+  // private autoSaveInterval: any;
+  // private readonly AUTO_SAVE_INTERVAL = 30000;
 
-  private setupAutoSave(): void {
-    this.autoSaveInterval = setInterval(() => {
-      if (this.comments().length > 0 && !this.isSaving && this.pdfIdentifier) {
-        this.isSaving = true;
-        this.saveCommentsToServer();
-        this.isSaving = false;
-      }
-    }, this.AUTO_SAVE_INTERVAL);
-  }
+  // private setupAutoSave(): void {
+  //   this.autoSaveInterval = setInterval(() => {
+  //     if (this.comments().length > 0 && !this.isSaving && this.pdfIdentifier) {
+  //       this.isSaving = true;
+  //       this.saveCommentsToServer();
+  //       this.isSaving = false;
+  //     }
+  //   }, this.AUTO_SAVE_INTERVAL);
+  // }
 
   private saveCommentsToServer(): void {
 
@@ -349,7 +350,9 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       c.usuario_id === currentUserId
     );
 
-    if (misComentarios.length === 0) return;
+    // Permitir enviar arreglos vacíos para que la base de datos sepa
+    // que borraste el último comentario que te quedaba.
+    // if (misComentarios.length === 0) return; 
 
     this.anotacionesService
       .guardarAnotaciones(this.pdfIdentifier, misComentarios)
@@ -404,6 +407,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     }
 
     const allComments: PdfComment[] = [];
+    const seenIds = new Set<number>(); // Para evitar duplicados en BD sucia
     const user = this.authService.currentUser();
     const currentUserId = user?.id;
     const currentUsername = user?.username || this.autor;
@@ -412,17 +416,25 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     response.data.forEach((anotacion: any) => {
       if (anotacion.comentarios && Array.isArray(anotacion.comentarios)) {
         anotacion.comentarios.forEach((comment: any) => {
+          const commentId = comment.id || (Date.now() + Math.random());
+
+          // Prevenir que se muestren 10 copias del mismo comentario si la BD tiene filas duplicadas maestro
+          if (seenIds.has(commentId)) {
+            return;
+          }
+          seenIds.add(commentId);
+
           const esMio = anotacion.usuario_id === currentUserId;
 
           allComments.push({
-            id: comment.id || Date.now() + Math.random(),
+            id: commentId,
             page: comment.page || 1,
             text: comment.text,
             date: new Date(comment.date || comment.created_at),
             color: comment.color || '#FFEB3B',
             autor: comment.autor || (esMio ? currentUsername : `Usuario-${anotacion.usuario_id}`),
             resolved: comment.resolved || false,
-            documentId: this.pdfIdentifier??0,
+            documentId: this.pdfIdentifier ?? 0,
             esMio: esMio,
             usuario_id: anotacion.usuario_id,
             editable: esMio
