@@ -19,10 +19,11 @@ export class AuditoriaView implements OnInit {
   public roles = signal<Role[]>([]); // Señal para roles
   public pagination: Pagination = { total: 0, page: 1, limit: 15, totalPages: 0 };
   public isLoading = false;
-  
+
   public filters: AuditParams = {
     page: 1,
     limit: 15,
+    cursor: null,
     module: 'ALL',
     search: '',
     startDate: '',
@@ -30,6 +31,8 @@ export class AuditoriaView implements OnInit {
     roleId: 'ALL',
     sort: 'DESC'
   };
+
+  public cursorsHistory: number[] = [];
 
   public selectedLog: AuditLog | null = null;
   public isModalOpen = false;
@@ -64,12 +67,27 @@ export class AuditoriaView implements OnInit {
 
   public onSearch(): void {
     this.filters.page = 1;
+    this.filters.cursor = null;
+    this.cursorsHistory = [];
     this.loadLogs();
   }
 
-  public changePage(newPage: number): void {
-    if (newPage >= 1 && newPage <= this.pagination.totalPages) {
-      this.filters.page = newPage;
+  public nextPage(): void {
+    if (this.pagination.nextCursor) {
+      // Guardamos el cursor actual antes de avanzar
+      this.cursorsHistory.push(this.filters.cursor || 0);
+      this.filters.cursor = this.pagination.nextCursor;
+      this.filters.page = (this.filters.page || 1) + 1;
+      this.loadLogs();
+    }
+  }
+
+  public prevPage(): void {
+    if (this.cursorsHistory.length > 0) {
+      // Volvemos al cursor anterior
+      const prevCursor = this.cursorsHistory.pop();
+      this.filters.cursor = prevCursor === 0 ? null : prevCursor;
+      this.filters.page = (this.filters.page || 1) - 1;
       this.loadLogs();
     }
   }

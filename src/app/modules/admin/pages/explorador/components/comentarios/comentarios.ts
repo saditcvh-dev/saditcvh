@@ -153,14 +153,13 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
     }
 
     if (confirm('¿Eliminar este comentario?')) {
-      // Intentar eliminar del servidor
-      this.eliminarComentarioDelServidor(comment);
-
-      // Eliminar localmente
-      // this.comments = this.comments.filter(c => c.id !== comment.id);
+      // Eliminar localmente PRIMERO
       this.comments.update(list =>
         list.filter(c => c.id !== comment.id)
       );
+
+      // Despues guardar el estado local actualizado al servidor
+      this.eliminarComentarioDelServidor(comment);
 
       this.saveToLocalStorage();
       this.commentDeleted.emit(comment);
@@ -242,7 +241,7 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
               ...c,
               text: this.newCommentText,
               color: this.selectedColor,
-              page: this.currentPage,
+              page: c.page, // Mantener la página original del comentario al editar
               date: new Date()
             }
             : c
@@ -631,7 +630,8 @@ export class Comentarios implements OnInit, OnDestroy, OnChanges {
       this.showToast('No hay comentarios para exportar', 'warning');
       return;
     }
-    this.anotacionesService.descargarExportacionPorArchivo(this.pdfIdentifier);
+    // Llamar al metodo correcto que usa el Documento ID numérico
+    this.anotacionesService.descargarExportacion(this.pdfIdentifier, 'Exportacion');
   }
 
   vaciarComentarios(): void {

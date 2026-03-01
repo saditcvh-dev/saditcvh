@@ -134,11 +134,11 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <button (click)="changePage(pagination.page - 1)" [disabled]="pagination.page === 1"
+        <button (click)="prevPage()" [disabled]="cursorsHistory.length === 0"
                 class="px-3 py-1 rounded-lg border transition flex items-center gap-1 text-sm font-medium"
                 [ngClass]="{
-                  'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed': pagination.page === 1, 
-                  'bg-white dark:bg-gray-800 hover:bg-[#DDC9A3]/20 dark:hover:bg-[#d4a762]/10 border-gray-300 dark:border-neutral-900 text-[#691831] dark:text-[#c44569]': pagination.page > 1
+                  'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed': cursorsHistory.length === 0, 
+                  'bg-white dark:bg-gray-800 hover:bg-[#DDC9A3]/20 dark:hover:bg-[#d4a762]/10 border-gray-300 dark:border-neutral-900 text-[#691831] dark:text-[#c44569]': cursorsHistory.length > 0
                 }">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -147,14 +147,14 @@
         </button>
 
         <span class="px-4 py-1 text-sm font-bold text-[#691831] dark:text-[#c44569] bg-[#DDC9A3] dark:bg-[#d4a762]/30 rounded-lg border border-[#BC955B] dark:border-[#d4a762]">
-          {{ pagination.page }} / {{ pagination.totalPages }}
+          Página {{ filters.page || 1 }}
         </span>
 
-        <button (click)="changePage(pagination.page + 1)" [disabled]="pagination.page === pagination.totalPages"
+        <button (click)="nextPage()" [disabled]="!pagination.nextCursor || logs.length < pagination.limit"
                 class="px-3 py-1 rounded-lg border transition flex items-center gap-1 text-sm font-medium"
                 [ngClass]="{
-                  'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed': pagination.page === pagination.totalPages, 
-                  'bg-white dark:bg-gray-800 hover:bg-[#DDC9A3]/20 dark:hover:bg-[#d4a762]/10 border-gray-300 dark:border-neutral-900 text-[#691831] dark:text-[#c44569]': pagination.page < pagination.totalPages
+                  'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed': !pagination.nextCursor || logs.length < pagination.limit, 
+                  'bg-white dark:bg-gray-800 hover:bg-[#DDC9A3]/20 dark:hover:bg-[#d4a762]/10 border-gray-300 dark:border-neutral-900 text-[#691831] dark:text-[#c44569]': pagination.nextCursor && logs.length >= pagination.limit
                 }">
           Siguiente
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
