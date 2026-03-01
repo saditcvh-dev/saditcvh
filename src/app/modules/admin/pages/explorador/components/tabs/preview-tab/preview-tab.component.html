@@ -89,7 +89,7 @@
 							</div>
 
 							<!-- PDF usando object/iframe -->
-							<div *ngIf="pdfUrl && !isLoading && !hasError()" class="w-full"
+							<div *ngIf="pdfUrl  && !hasError()" class="w-full"
 								style="height: calc(100vh - 160px);">
 								<!-- Usando iframe en lugar de object para mejor compatibilidad -->
 								<!-- <iframe [src]="pdfUrl" class="w-full h-full border-0" frameborder="0" allow="fullscreen"

@@ -88,7 +88,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
       this.pdfUrlString = this.extractFileNameFromUrl(this.pdfUrl);
       console.log('📄 pdfUrlString:', this.pdfUrlString);
 
-      this.loadPdf();
+      // this.loadPdf();
     }
   }
 
