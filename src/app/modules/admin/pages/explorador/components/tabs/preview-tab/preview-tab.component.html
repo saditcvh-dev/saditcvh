@@ -101,10 +101,8 @@
 										</a>
 									</p>
 								</iframe> -->
-								<app-pdf-viewer-document
-									[src]="pdfUrlString"
-									(pageChanged)="onPageChanged($event)"
-									(documentLoaded)="onDocumentLoaded($event)">
+								<app-pdf-viewer-document *ngIf="pdfUrlString" [src]="pdfUrlString"
+									(pageChanged)="onPageChanged($event)" (documentLoaded)="onDocumentLoaded($event)">
 								</app-pdf-viewer-document>
 							</div>
 						</div>
@@ -127,9 +125,7 @@
 
 							<!-- Contenido del panel de comentarios -->
 							<div class="flex-1 " style="height: calc(100vh - 220px); ">
-								<app-comentarios
-									[documentoId]="selectedNode?.data?.id"
-									[currentPage]="currentPage()"
+								<app-comentarios [documentoId]="selectedNode?.data?.id" [currentPage]="currentPage()"
 									[selectedNode]="selectedNode">
 								</app-comentarios>
 							</div>

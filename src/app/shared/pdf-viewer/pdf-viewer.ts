@@ -24,7 +24,20 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = '/assets/pdfjs-dist/pdf.worker.min.js';
 })
 export class PdfViewerDocument implements OnChanges, OnDestroy {
 
-  @Input() src!: string;
+  private _src!: string;
+
+  @Input()
+  set src(value: string) {
+    if (!value) return;
+
+    this._src = value;
+    console.log('loadPdf llamado con src:', value);
+    this.loadPdf();
+  }
+
+  get src(): string {
+    return this._src;
+  }
   @Output() pageChanged = new EventEmitter<number>();
   @Output() documentLoaded = new EventEmitter<number>();
 
@@ -53,9 +66,10 @@ export class PdfViewerDocument implements OnChanges, OnDestroy {
     this.loadingTask = pdfjsLib.getDocument({
       url: this.src,
       withCredentials: true,
-      rangeChunkSize: 262144, // 256 KB (mejor que 64 KB)
+      rangeChunkSize: 65536,   // 64 KB más confiable
       disableStream: false,
-      disableAutoFetch: false
+      disableAutoFetch: false,
+      disableRange: false      // 👈 fuerza uso de Range
     });
 
     this.pdfDoc = await this.loadingTask.promise;
