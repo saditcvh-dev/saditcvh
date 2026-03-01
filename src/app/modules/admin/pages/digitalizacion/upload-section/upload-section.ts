@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PdfService, PDFUploadResponse } from '../services/pdf-ocr.service';
@@ -11,9 +11,8 @@ import { HttpEventType } from '@angular/common/http';
   standalone: false,
   // imports: [CommonModule, FormsModule],
   templateUrl: './upload-section.html',
-
 })
-export class UploadSectionComponent {
+export class UploadSectionComponent implements OnDestroy {
   @Input() recentUploads: Array<{
     id: string;
     filename: string;
@@ -47,6 +46,21 @@ export class UploadSectionComponent {
     private cargaMasivaService: CargaMasivaService, // SIN OCR
     private stateService: ExploradorStateService
   ) { }
+
+  // ========== LIMPIAR AL CAMBIAR DE MÓDULO ==========
+  ngOnDestroy(): void {
+    // Limpia precargados
+    this.selectedFiles = [];
+    this.useZip = false;
+    this.isDragging = false;
+
+    // Detener UI de "subiendo" si te sales
+    this.isUploading.set(false);
+
+    // Limpia recientes (avisa al padre)
+    this.recentUploads = [];
+    this.emitRecentUploads();
+  }
 
   // ========== FUNCIONES PARA SUBIDA ==========
   onFilesSelected(event: any): void {
@@ -147,10 +161,22 @@ export class UploadSectionComponent {
     this.emitRecentUploads();
   }
 
-
   removeSelectedFile(index: number): void {
+    const removed = this.selectedFiles[index];
+    if (!removed) return;
+
+    // 1) Quitar de precargados
     this.selectedFiles.splice(index, 1);
+
+    // 2) Quitar también de recientes el registro "precargado"
+    const pos = this.recentUploads.findIndex(
+      u => u.filename === removed.name && u.status === 'uploading' && u.progress === 0
+    );
+    if (pos !== -1) this.recentUploads.splice(pos, 1);
+
+    this.emitRecentUploads();
   }
+
   uploadFile(): void {
     if (this.selectedFiles.length === 0) return;
 
@@ -172,6 +198,7 @@ export class UploadSectionComponent {
         currentUpload.progress = 30;
         this.emitRecentUploads();
       }
+
       this.cargaMasivaService
         .subirArchivoComprimido(compressedFile, this.useOcr)
         .subscribe({
@@ -191,12 +218,6 @@ export class UploadSectionComponent {
                 currentUpload.progress = 100;
                 this.emitRecentUploads();
               }
-
-
-              // const loteId = event.body?.loteId;
-              // if (loteId) {
-              //   this.monitorearLote(loteId, currentUpload);
-              // }
             }
           },
           error: () => {
@@ -213,9 +234,8 @@ export class UploadSectionComponent {
     }
 
     // 📄 Si son PDFs múltiples (con o sin OCR)
-
     this.cargaMasivaService.subirMultiplesPDFs(filesToUpload, this.useOcr).subscribe({
-      next: (response) => {
+      next: () => {
         // Actualizar todos los uploads como completados
         this.recentUploads.forEach(upload => {
           if (filesToUpload.some(f => f.name === upload.filename)) {
@@ -253,12 +273,7 @@ export class UploadSectionComponent {
         );
       }
     });
-
-
-
-
   }
-
 
   formatBytes(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
@@ -285,12 +300,12 @@ export class UploadSectionComponent {
     const re = /^(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([CP])\b/i;
     return re.test(base);
   }
+
   // eventos
   onDragOver(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
     this.isDragging = true;
-
   }
 
   onDragLeave(event: DragEvent): void {
@@ -306,7 +321,6 @@ export class UploadSectionComponent {
     ) {
       this.isDragging = false;
     }
-
   }
 
   onDrop(event: DragEvent): void {
@@ -319,7 +333,5 @@ export class UploadSectionComponent {
 
     this.onFilesSelected({ target: { files } });
     this.isDragging = false;
-
   }
-
 }
