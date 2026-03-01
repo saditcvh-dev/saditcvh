@@ -6,7 +6,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  OnDestroy
+  OnDestroy,
+  AfterViewInit
 } from '@angular/core';
 
 import * as pdfjsLib from 'pdfjs-dist';
@@ -20,7 +21,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `${window.location.protocol}//${window.
   templateUrl: './pdf-viewer.html',
   styleUrl: './pdf-viewer.css',
 })
-export class PdfViewerDocument implements OnDestroy {
+export class PdfViewerDocument implements OnDestroy, AfterViewInit {
 
   private _src!: string;
 
@@ -29,8 +30,10 @@ export class PdfViewerDocument implements OnDestroy {
     if (!value) return;
 
     this._src = value;
-    console.log('loadPdf llamado con src:', value);
-    this.loadPdf();
+
+    if (this.containerRef) {
+      this.loadPdf();
+    }
   }
 
   get src(): string {
@@ -50,6 +53,13 @@ export class PdfViewerDocument implements OnDestroy {
   private loadingTask: any;
   private renderTask: any;
   private scrollTimeout: any;
+
+
+  ngAfterViewInit() {
+  if (this._src) {
+    this.loadPdf();
+  }
+}
   async loadPdf() {
     if (this.observer) {
       this.observer.disconnect();
@@ -252,29 +262,29 @@ export class PdfViewerDocument implements OnDestroy {
     }
   }
   zoomIn() {
-  this.scale = Math.min(this.scale + 0.2, 3);
-  this.reRenderVisiblePages();
-}
-
-zoomOut() {
-  this.scale = Math.max(this.scale - 0.2, 0.5);
-  this.reRenderVisiblePages();
-}
-private async reRenderVisiblePages() {
-  const visiblePages = Array.from(this.renderedPages.keys());
-
-  for (const pageNumber of visiblePages) {
-    const canvas = this.renderedPages.get(pageNumber);
-    if (canvas) {
-      canvas.remove();
-    }
-
-    this.renderedPages.delete(pageNumber);
-    this.renderingPages.delete(pageNumber);
-
-    await this.renderPageIfNeeded(pageNumber);
+    this.scale = Math.min(this.scale + 0.2, 3);
+    this.reRenderVisiblePages();
   }
-}
+
+  zoomOut() {
+    this.scale = Math.max(this.scale - 0.2, 0.5);
+    this.reRenderVisiblePages();
+  }
+  private async reRenderVisiblePages() {
+    const visiblePages = Array.from(this.renderedPages.keys());
+
+    for (const pageNumber of visiblePages) {
+      const canvas = this.renderedPages.get(pageNumber);
+      if (canvas) {
+        canvas.remove();
+      }
+
+      this.renderedPages.delete(pageNumber);
+      this.renderingPages.delete(pageNumber);
+
+      await this.renderPageIfNeeded(pageNumber);
+    }
+  }
   async ngOnDestroy() {
     clearTimeout(this.scrollTimeout);
 
