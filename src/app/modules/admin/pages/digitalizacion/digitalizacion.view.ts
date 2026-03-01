@@ -705,32 +705,45 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   buildExploradorUrl(nombreArchivo: string): string | null {
     if (!nombreArchivo) return null;
 
-    const regex = /(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([A-Z])/i;
-    const match = nombreArchivo.match(regex);
+    // 1) quitar extensión .pdf
+    const base = nombreArchivo.replace(/\.pdf$/i, '');
 
-    if (!match) return null;
+    // 2) (también soporta con espacios alrededor)
+    const regexUnderscore = /^(\d+)_([0-9]{2})_([0-9]{2})_([0-9]{2})_([0-9]{3})_([A-Z])$/i;
+    const m1 = base.trim().match(regexUnderscore);
+    if (m1) {
+      const [, numeroAutorizacion, municipio, modalidad, consecutivo1, consecutivo2, tipo] = m1;
+      const query = [
+        numeroAutorizacion,
+        municipio,
+        modalidad,
+        consecutivo1,
+        consecutivo2,
+        tipo.toUpperCase()
+      ].join('_');
 
-    const [
-      _,
-      numeroAutorizacion,
-      municipio,
-      modalidad,
-      consecutivo1,
-      consecutivo2,
-      tipo
-    ] = match;
+      return `/admin/explorador?q=${query}`;
+    }
 
-    const query = [
-      numeroAutorizacion,
-      municipio.padStart(2, '0'),
-      modalidad.padStart(2, '0'),
-      consecutivo1.padStart(2, '0'),
-      consecutivo2.padStart(3, '0'),
-      tipo.toUpperCase()
-    ].join('_');
 
-    // 
-    return `/admin/explorador?q=${query}`;
+    const regexLegacy = /(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([A-Z])/i;
+    const m2 = base.match(regexLegacy);
+    if (m2) {
+      const [, numeroAutorizacion, municipio, modalidad, consecutivo1, consecutivo2, tipo] = m2;
+
+      const query = [
+        numeroAutorizacion,
+        municipio.padStart(2, '0'),
+        modalidad.padStart(2, '0'),
+        consecutivo1.padStart(2, '0'),
+        consecutivo2.padStart(3, '0'),
+        tipo.toUpperCase()
+      ].join('_');
+
+      return `/admin/explorador?q=${query}`;
+    }
+
+    return null;
   }
   estimarTiempoRestante(lote: any): string {
     const progreso = lote?.progresoOCR ?? lote?.porcentaje ?? 0;
