@@ -172,6 +172,15 @@ export class UploadSectionComponent {
         currentUpload.progress = 30;
         this.emitRecentUploads();
       }
+
+      console.log('--- ENVIANDO ARCHIVO COMPRIMIDO (ZIP/RAR) ---');
+      console.log('Nombre del archivo:', compressedFile.name);
+      console.log('Tamaño:', this.formatBytes(compressedFile.size));
+      console.log('Tipo MIME:', compressedFile.type);
+      console.log('¿Lleva OCR activo?:', this.useOcr);
+      console.log('Objeto File completo:', compressedFile);
+      console.log('----------------------------------------------');
+
       this.cargaMasivaService
         .subirArchivoComprimido(compressedFile, this.useOcr)
         .subscribe({
