@@ -85,9 +85,7 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
     // Si cambia la URL del PDF
     if (changes['pdfUrl'] && this.pdfUrl) {
 
-      this.pdfUrlString =
-        this.sanitizer.sanitize(SecurityContext.RESOURCE_URL, this.pdfUrl) ?? '';
-
+      this.pdfUrlString = this.extractFileNameFromUrl(this.pdfUrl);
       console.log('📄 pdfUrlString:', this.pdfUrlString);
 
       this.loadPdf();
