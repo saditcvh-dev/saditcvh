@@ -85,26 +85,25 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   isGlobalSearching = signal(false);
   loadingMessage = signal('Procesando...');
 
-  // Computed properties para estadísticas
-  completedPdfsCount = computed(() => {
+  completedPdfsCount() {
     return this.pdfsList.filter(p => p.status === 'completed').length;
-  });
+  }
 
-  processingPdfsCount = computed(() => {
+  processingPdfsCount() {
     return this.pdfsList.filter(p => p.status === 'processing').length;
-  });
+  }
 
-  pendingPdfsCount = computed(() => {
+  pendingPdfsCount() {
     return this.pdfsList.filter(p => p.status === 'pending').length;
-  });
+  }
 
-  withOcrCount = computed(() => {
+  withOcrCount() {
     return this.pdfsList.filter(p => p.used_ocr).length;
-  });
+  }
 
-  withoutOcrCount = computed(() => {
+  withoutOcrCount() {
     return this.pdfsList.filter(p => p.used_ocr === false).length;
-  });
+  }
 
   selectedPdfFilename = computed(() => {
     if (!this.selectedPdfId) return '';
