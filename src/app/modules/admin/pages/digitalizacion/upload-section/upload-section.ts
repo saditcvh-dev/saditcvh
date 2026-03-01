@@ -208,13 +208,17 @@ export class UploadSectionComponent {
               // }
             }
           },
-          error: () => {
+          error: (err) => {
             if (currentUpload) {
               currentUpload.status = 'failed';
               currentUpload.progress = 0;
               this.emitRecentUploads();
             }
             this.isUploading.set(false);
+
+            // 🚨 Mostrar el error de rechazo exacto que manda el backend
+            const errorMsg = err.error?.message || 'Error al enviar el archivo comprimido';
+            this.stateService.showToast(errorMsg, 'error');
           }
         });
 
