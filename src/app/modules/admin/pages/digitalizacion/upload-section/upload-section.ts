@@ -110,11 +110,15 @@ export class UploadSectionComponent {
         return;
       }
 
-      // Añadir válidos reconstruyendo el nombre solo con la nomenclatura deseada
+      // Añadir válidos reconstruyendo el nombre solo con la nomenclatura deseada, reemplazando con guiones bajos
       validPdfs.forEach(file => {
-        // Obtenemos solo la nomenclatura estricta mediante Regex
-        const match = file.name.match(/^(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([CP])/i);
-        const nuevoNombre = match ? `${match[0]}.pdf` : file.name;
+        // Obtenemos solo la nomenclatura estricta mediante Regex flexible
+        const match = file.name.match(/^(\d+)[\s_-]+(\d+)[\s_-]+(\d+)[\s_-]+(\d+)[\s_-]+(\d+)[\s_-]*([CP])/i);
+        let nuevoNombre = file.name;
+        if (match) {
+          // Reconstruir con guiones bajos "7364_47_11_07_001_C.pdf"
+          nuevoNombre = `${match[1]}_${match[2]}_${match[3]}_${match[4]}_${match[5]}_${match[6].toUpperCase()}.pdf`;
+        }
 
         // Recrear el archivo File para que se suba con el nombre limpio
         const cleanFile = new File([file], nuevoNombre, { type: file.type });
@@ -299,17 +303,13 @@ export class UploadSectionComponent {
     this.recentUploadsChange.emit(this.recentUploads);
   }
 
-  // Valida la nomenclatura obligatoria del archivo PDF.
-  // Formato esperado (al inicio del nombre, antes de cualquier texto adicional):
-  // autorizacion municipio-modalidad-consecutivo1-consecutivo2 tipo(C|P)
-  // Ejemplo: "1478 47-10-01-017 C"
   private validateNomenclature(filename: string): boolean {
     if (!filename) return false;
     // quitar extension
     const base = filename.replace(/\.[^/.]+$/, '').trim();
 
-    // Regex anclado al inicio; permite que haya texto adicional después
-    const re = /^(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([CP])\b/i;
+    // Regex anclado al inicio; permite espacios, guiones o guiones bajos
+    const re = /^(\d+)[\s_-]+(\d+)[\s_-]+(\d+)[\s_-]+(\d+)[\s_-]+(\d+)[\s_-]*([CP])\b/i;
     return re.test(base);
   }
   // eventos
