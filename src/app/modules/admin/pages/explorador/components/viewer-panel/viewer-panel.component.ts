@@ -277,7 +277,8 @@ reloadVersions(): void {
 	this.loadingService.show();
 	this.documentoService.cargarDocumentosPorAutorizacion(this.selectedNode.data.id, true) // force reload
 		.subscribe({
-			next: () => {
+			next: (docs) => {
+        this.documentVersions = docs;
 				this.loadingService.hide();
 			},
 			error: () => {
