@@ -113,7 +113,7 @@ export class UploadSectionComponent {
       // Añadir válidos reconstruyendo el nombre solo con la nomenclatura deseada, reemplazando con guiones bajos
       validPdfs.forEach(file => {
         // Obtenemos solo la nomenclatura estricta mediante Regex flexible
-        const match = file.name.match(/^(\d+)[\s_-]+(\d+)[\s_-]+(\d+)[\s_-]+(\d+)[\s_-]+(\d+)[\s_-]*([CP])/i);
+        const match = file.name.match(/^(\d+)[_\s-]+(\d+)[_\s-]+(\d+)[_\s-]+(\d+)[_\s-]+(\d+)[_\s-]*([CP])/i);
         let nuevoNombre = file.name;
         if (match) {
           // Reconstruir con guiones bajos "7364_47_11_07_001_C.pdf"
@@ -309,7 +309,7 @@ export class UploadSectionComponent {
     const base = filename.replace(/\.[^/.]+$/, '').trim();
 
     // Regex anclado al inicio; permite espacios, guiones o guiones bajos
-    const re = /^(\d+)[\s_-]+(\d+)[\s_-]+(\d+)[\s_-]+(\d+)[\s_-]+(\d+)[\s_-]*([CP])\b/i;
+    const re = /^(\d+)[_\s-]+(\d+)[_\s-]+(\d+)[_\s-]+(\d+)[_\s-]+(\d+)[_\s-]*([CP])\b/i;
     return re.test(base);
   }
   // eventos
