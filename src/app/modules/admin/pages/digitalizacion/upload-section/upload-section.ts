@@ -9,9 +9,8 @@ import { HttpEventType } from '@angular/common/http';
 @Component({
   selector: 'app-upload-section',
   standalone: false,
-  // imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],  // Necesario para ngModel y demás
   templateUrl: './upload-section.html',
-
 })
 export class UploadSectionComponent {
   @Input() recentUploads: Array<{
@@ -34,6 +33,7 @@ export class UploadSectionComponent {
   // Variables para subida
   selectedFiles: File[] = [];
   useOcr: boolean = false;
+  allowSinNomenclatura: boolean = false;  // ← Declarada aquí (antes de usarla)
   uploadResult: PDFUploadResponse | null = null;
   useZip = false;
   isDragging = false;
@@ -43,16 +43,16 @@ export class UploadSectionComponent {
   loadingMessage = signal('Procesando...');
 
   constructor(
-    private pdfService: PdfService,                 // SOLO OCR
-    private cargaMasivaService: CargaMasivaService, // SIN OCR
+    private pdfService: PdfService,
+    private cargaMasivaService: CargaMasivaService,
     private stateService: ExploradorStateService
   ) { }
 
   // ========== FUNCIONES PARA SUBIDA ==========
   onFilesSelected(event: any): void {
-    const files: File[] = Array.from(event.target.files);
+    const files: File[] = Array.from(event.target.files || []);
 
-    // Detectar si es archivo comprimido
+    // Detectar si hay un archivo comprimido (ZIP o RAR)
     const compressedFile = files.find(f =>
       f.type === 'application/zip' ||
       f.type === 'application/x-zip-compressed' ||
@@ -60,13 +60,9 @@ export class UploadSectionComponent {
       f.name.toLowerCase().endsWith('.rar')
     );
 
-    // Si hay archivo comprimido, limpiar otros archivos
     if (compressedFile) {
       if (files.length > 1) {
-        this.stateService.showToast(
-          'Solo puedes subir un archivo comprimido a la vez',
-          'error'
-        );
+        this.stateService.showToast('Solo puedes subir un archivo comprimido a la vez', 'error');
         event.target.value = '';
         return;
       }
@@ -84,43 +80,64 @@ export class UploadSectionComponent {
       });
 
       this.stateService.showToast(
-        'Archivo comprimido seleccionado correctamente',
+        this.allowSinNomenclatura
+          ? 'Archivo comprimido seleccionado (modo sin nomenclatura)'
+          : 'Archivo comprimido seleccionado correctamente',
         'success'
       );
+
+      event.target.value = '';
+      this.emitRecentUploads();
+      return;
     }
-    // Si son PDFs individuales
-    else {
-      const candidatePdfs = files.filter(f =>
-        f.type === 'application/pdf' ||
-        f.name.toLowerCase().endsWith('.pdf')
+
+    // PDFs
+    const candidatePdfs = files.filter(f =>
+      f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf')
+    );
+
+    if (candidatePdfs.length === 0) {
+      this.stateService.showToast('Selecciona al menos un PDF o comprimido válido', 'error');
+      event.target.value = '';
+      return;
+    }
+
+    // Bifurcación según modo
+    if (this.allowSinNomenclatura) {
+      // SIN NOMENCLATURA: todo permitido
+      candidatePdfs.forEach(file => {
+        this.selectedFiles.push(file);
+        const uploadId = `upload-${Date.now()}-${file.name}`;
+        this.recentUploads.unshift({
+          id: uploadId,
+          filename: file.name,
+          status: 'uploading',
+          progress: 0,
+          timestamp: new Date()
+        });
+      });
+
+      this.useZip = false;
+      this.stateService.showToast(
+        `${candidatePdfs.length} PDF(s) seleccionados (sin nomenclatura)`,
+        'success'
       );
-
-      if (candidatePdfs.length === 0) {
-        this.stateService.showToast('Selecciona al menos un PDF o archivo comprimido válido', 'error');
-        return;
-      }
-
-      // Validar nomenclatura obligatoria y separar válidos/ inválidos
+    } else {
+      // MODO NORMAL: validar estrictamente
       const validPdfs = candidatePdfs.filter(f => this.validateNomenclature(f.name));
       const invalidPdfs = candidatePdfs.filter(f => !this.validateNomenclature(f.name));
 
       if (validPdfs.length === 0) {
         const names = invalidPdfs.map(f => f.name).join(', ');
-        this.stateService.showToast(`Ningún archivo cumple la nomenclatura obligatoria: ${names}`, 'error');
+        this.stateService.showToast(`Ningún archivo cumple la nomenclatura: ${names}`, 'error');
+        event.target.value = '';
         return;
       }
 
-      // Añadir válidos reconstruyendo el nombre solo con la nomenclatura deseada, reemplazando con guiones bajos
       validPdfs.forEach(file => {
-        // Obtenemos solo la nomenclatura estricta mediante Regex flexible
-        const match = file.name.match(/^(\d+)[_\s-]+(\d+)[_\s-]+(\d+)[_\s-]+(\d+)[_\s-]+(\d+)[_\s-]*([CP])/i);
-        let nuevoNombre = file.name;
-        if (match) {
-          // Reconstruir con guiones bajos "7364_47_11_07_001_C.pdf"
-          nuevoNombre = `${match[1]}_${match[2]}_${match[3]}_${match[4]}_${match[5]}_${match[6].toUpperCase()}.pdf`;
-        }
+        const match = file.name.match(/^(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([CP])/i);
+        const nuevoNombre = match ? `${match[0]}.pdf` : file.name;
 
-        // Recrear el archivo File para que se suba con el nombre limpio
         const cleanFile = new File([file], nuevoNombre, { type: file.type });
         this.selectedFiles.push(cleanFile);
 
@@ -134,10 +151,9 @@ export class UploadSectionComponent {
         });
       });
 
-      // Informar sobre inválidos (si los hay)
       if (invalidPdfs.length > 0) {
         const names = invalidPdfs.map(f => f.name).join(', ');
-        this.stateService.showToast(`Se omitieron archivos que no cumplen la nomenclatura: ${names}`, 'error');
+        this.stateService.showToast(`Se omitieron archivos inválidos: ${names}`, 'error');
       }
 
       this.stateService.showToast(
@@ -151,10 +167,10 @@ export class UploadSectionComponent {
     this.emitRecentUploads();
   }
 
-
   removeSelectedFile(index: number): void {
     this.selectedFiles.splice(index, 1);
   }
+
   uploadFile(): void {
     if (this.selectedFiles.length === 0) return;
 
@@ -164,11 +180,8 @@ export class UploadSectionComponent {
     const filesToUpload = [...this.selectedFiles];
     this.selectedFiles = [];
 
-    // 🗜️ Si es archivo comprimido
     if (this.useZip) {
       const compressedFile = filesToUpload[0];
-
-      // Buscar el upload correspondiente
       const currentUpload = this.recentUploads.find(u => u.filename === compressedFile.name);
 
       if (currentUpload) {
@@ -177,63 +190,60 @@ export class UploadSectionComponent {
         this.emitRecentUploads();
       }
 
-      console.log('--- ENVIANDO ARCHIVO COMPRIMIDO (ZIP/RAR) ---');
-      console.log('Nombre del archivo:', compressedFile.name);
-      console.log('Tamaño:', this.formatBytes(compressedFile.size));
-      console.log('Tipo MIME:', compressedFile.type);
-      console.log('¿Lleva OCR activo?:', this.useOcr);
-      console.log('Objeto File completo:', compressedFile);
-      console.log('----------------------------------------------');
+      // Elegir endpoint según modo
+      const request$ = this.allowSinNomenclatura
+        ? this.cargaMasivaService.subirArchivoComprimidoSinNomenclatura(compressedFile, this.useOcr)
+        : this.cargaMasivaService.subirArchivoComprimido(compressedFile, this.useOcr);
 
-      this.cargaMasivaService
-        .subirArchivoComprimido(compressedFile, this.useOcr)
-        .subscribe({
-          next: (event) => {
-            if (event.type === HttpEventType.UploadProgress && event.total) {
-              const progress = Math.round((event.loaded / event.total) * 100);
-              if (currentUpload) {
-                currentUpload.progress = progress;
-                currentUpload.status = 'uploading';
-                this.emitRecentUploads();
-              }
-            }
-
-            if (event.type === HttpEventType.Response) {
-              if (currentUpload) {
-                // Si el backend es asíncrono con OCR, podríamos dejarlo en processing, pero
-                // al menos la transferencia HTTP cerró. Lo marcamos completado y delegamos actualización.
-                currentUpload.status = 'completed';
-                currentUpload.progress = 100;
-                this.emitRecentUploads();
-              }
-
-              this.isUploading.set(false);
-              this.uploadCompleted.emit();
-              this.stateService.showToast('Archivo comprimido procesado y almacenado correctamente.', 'success');
-            }
-          },
-          error: (err) => {
+      request$.subscribe({
+        next: (event) => {
+          if (event.type === HttpEventType.UploadProgress && event.total) {
+            const progress = Math.round((event.loaded / event.total) * 100);
             if (currentUpload) {
-              currentUpload.status = 'failed';
-              currentUpload.progress = 0;
+              currentUpload.progress = progress;
+              currentUpload.status = 'uploading';
               this.emitRecentUploads();
             }
-            this.isUploading.set(false);
-
-            // 🚨 Mostrar el error de rechazo exacto que manda el backend
-            const errorMsg = err.error?.message || 'Error al enviar el archivo comprimido';
-            this.stateService.showToast(errorMsg, 'error');
           }
-        });
+
+          if (event.type === HttpEventType.Response) {
+            if (currentUpload) {
+              currentUpload.status = 'completed';
+              currentUpload.progress = 100;
+              this.emitRecentUploads();
+            }
+
+            this.isUploading.set(false);
+            this.uploadCompleted.emit();
+            this.stateService.showToast(
+              this.allowSinNomenclatura
+                ? 'Archivo comprimido cargado (sin nomenclatura)'
+                : 'Archivo comprimido procesado correctamente',
+              'success'
+            );
+          }
+        },
+        error: (err) => {
+          if (currentUpload) {
+            currentUpload.status = 'failed';
+            currentUpload.progress = 0;
+            this.emitRecentUploads();
+          }
+          this.isUploading.set(false);
+          this.stateService.showToast(err.error?.message || 'Error al subir comprimido', 'error');
+        }
+      });
 
       return;
     }
 
-    // 📄 Si son PDFs múltiples (con o sin OCR)
+    // PDFs múltiples
+    const request$ = this.allowSinNomenclatura
+      ? this.cargaMasivaService.subirMultiplesPDFsSinNomenclatura(filesToUpload, this.useOcr)
+      : this.cargaMasivaService.subirMultiplesPDFs(filesToUpload, this.useOcr);
 
-    this.cargaMasivaService.subirMultiplesPDFs(filesToUpload, this.useOcr).subscribe({
+    request$.subscribe({
       next: (event) => {
-        // Ignorar eventos que no sean de subida ni el final
         if (event.type === HttpEventType.UploadProgress && event.total) {
           const progress = Math.round((event.loaded / event.total) * 100);
           this.recentUploads.forEach(upload => {
@@ -245,7 +255,6 @@ export class UploadSectionComponent {
           this.emitRecentUploads();
         }
 
-        // Ejecutar éxito SOLAMENTE cuando el servidor responde tras terminar
         if (event.type === HttpEventType.Response) {
           this.recentUploads.forEach(upload => {
             if (filesToUpload.some(f => f.name === upload.filename)) {
@@ -253,43 +262,29 @@ export class UploadSectionComponent {
               upload.progress = 100;
             }
           });
-
           this.emitRecentUploads();
           this.isUploading.set(false);
           this.uploadCompleted.emit();
 
           this.stateService.showToast(
-            `${filesToUpload.length} PDFs cargados correctamente ${this.useOcr ? '(con OCR)' : '(sin OCR)'}`,
+            `${filesToUpload.length} PDF(s) cargados ${this.allowSinNomenclatura ? '(sin nomenclatura)' : ''} ${this.useOcr ? '(con OCR)' : ''}`,
             'success'
           );
         }
       },
-      error: (error) => {
-        console.error('Error subiendo PDFs:', error);
-
-        // Marcar como fallados
+      error: (err) => {
         this.recentUploads.forEach(upload => {
           if (filesToUpload.some(f => f.name === upload.filename)) {
             upload.status = 'failed';
             upload.progress = 0;
           }
         });
-
         this.emitRecentUploads();
         this.isUploading.set(false);
-
-        this.stateService.showToast(
-          error.error?.message || 'Error al subir los PDFs',
-          'error'
-        );
+        this.stateService.showToast(err.error?.message || 'Error al subir PDFs', 'error');
       }
     });
-
-
-
-
   }
-
 
   formatBytes(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
@@ -305,26 +300,23 @@ export class UploadSectionComponent {
 
   private validateNomenclature(filename: string): boolean {
     if (!filename) return false;
-    // quitar extension
     const base = filename.replace(/\.[^/.]+$/, '').trim();
 
-    // Regex anclado al inicio; permite espacios, guiones o guiones bajos
-    const re = /^(\d+)[_\s-]+(\d+)[_\s-]+(\d+)[_\s-]+(\d+)[_\s-]+(\d+)[_\s-]*([CP])\b/i;
+    // Regex anclado al inicio; permite que haya texto adicional después
+    const re = /^(\d+)\s+(\d+)-(\d+)-(\d+)-(\d+)\s+([CP])\b/i;
     return re.test(base);
   }
-  // eventos
+
   onDragOver(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
     this.isDragging = true;
-
   }
 
   onDragLeave(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-
     if (
       event.clientX <= rect.left ||
       event.clientX >= rect.right ||
@@ -333,33 +325,30 @@ export class UploadSectionComponent {
     ) {
       this.isDragging = false;
     }
-
   }
 
   onDrop(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-
     if (!event.dataTransfer?.files.length) return;
 
     const files = Array.from(event.dataTransfer.files);
-
     this.onFilesSelected({ target: { files } });
     this.isDragging = false;
-
   }
+
+  // Limpieza y toast al cambiar modo
   onModoSinNomenclaturaChange(): void {
     this.selectedFiles = [];
     this.useZip = false;
 
     this.stateService.showToast(
       this.allowSinNomenclatura
-        ? 'Modo SIN NOMENCLATURA activado: puedes subir archivos con cualquier nombre'
-        : 'Modo NORMAL activado: usa la nomenclatura obligatoria ',
-      this.allowSinNomenclatura ? 'warning' : 'info'
+        ? 'Modo sin nomenclatura activado — puedes subir cualquier archivo (SP-XXX en municipio 85)'
+        : 'Modo normal activado — usa la nomenclatura obligatoria',
+      'success'
     );
 
     this.emitRecentUploads();
   }
-
 }

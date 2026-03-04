@@ -1,6 +1,6 @@
 // carga-masiva.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpParams, HttpEventType } from '@angular/common/http';
 import { Observable, BehaviorSubject, interval, Subject } from 'rxjs';
 import { switchMap, takeWhile, startWith, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
@@ -247,8 +247,7 @@ export class CargaMasivaService {
     if (nombre.endsWith('.rar')) return 'rar';
     return archivo.type;
   }
-  // ──────────────────────────────────────────────
-  // MÉTODOS PARA MODO SIN NOMENCLATURA (AGREGAR AL FINAL)
+  // Métodos para modo sin nomenclatura
   subirArchivoComprimidoSinNomenclatura(archivo: File, useOcr: boolean = false): Observable<HttpEvent<any>> {
     const formData = new FormData();
     formData.append('archivo', archivo);
