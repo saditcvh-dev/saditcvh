@@ -58,6 +58,7 @@ import { PdfViewerDocument } from '../../shared/pdf-viewer/pdf-viewer';
     Admin,
     AuditoriaView,
     DashboardView,
+    DigitalizacionView,
     PdfViewerView,
     ReportesView,
     RespaldosView,
@@ -84,7 +85,7 @@ import { PdfViewerDocument } from '../../shared/pdf-viewer/pdf-viewer';
     ActionBadgeComponent, ExploradorView, ExplorerPanelComponent,
     ViewerPanelComponent, ToastComponent
     , TabsNavigationComponent, SecurityTabComponent, PreviewTabComponent, MetadataTabComponent, UploadModalComponent, CreateAutorizacionModalComponent, ModalContainerComponent
-    , ContextMenuComponent, HistoryTabComponent, TreeNodeComponent, DeleteConfirmationModalComponent, Busqueda, MergePdfInline, MergePdfInline
+    , ContextMenuComponent, HistoryTabComponent, TreeNodeComponent, UploadSectionComponent, DeleteConfirmationModalComponent, Busqueda, MergePdfInline, MergePdfInline
   ],
   imports: [
     CommonModule,
