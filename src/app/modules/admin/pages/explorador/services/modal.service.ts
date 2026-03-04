@@ -217,7 +217,7 @@ export class ModalService {
       return;
     }
 
-    const ultimoDocumento = documentos[0];
+    const ultimoDocumento = documentos.find(d => !d.deleted_at) || documentos[0];
     const selectedFile = this.selectedFile();
 
     if (!selectedFile) {
