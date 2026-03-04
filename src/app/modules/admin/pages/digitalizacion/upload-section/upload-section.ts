@@ -8,7 +8,7 @@ import { HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-upload-section',
-  standalone: false,
+  standalone: true,
   imports: [CommonModule, FormsModule],  // Necesario para ngModel y demás
   templateUrl: './upload-section.html',
 })
