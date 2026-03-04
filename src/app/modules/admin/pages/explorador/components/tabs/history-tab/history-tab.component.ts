@@ -33,6 +33,10 @@ export class HistoryTabComponent {
   
   isAdmin = computed(() => this.authService.hasRole('administrador'));
 
+  get versionesActivasCount(): number {
+    return this.documentVersions?.filter(v => !v.deleted_at)?.length || 0;
+  }
+
   @Output() openMergePdf = new EventEmitter<void>();
   formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
