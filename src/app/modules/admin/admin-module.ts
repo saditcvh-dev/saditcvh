@@ -82,19 +82,19 @@ import { PdfViewerDocument } from '../../shared/pdf-viewer/pdf-viewer';
     PasswordToggleComponent,
     PermissionMatrixComponent,
     LogDetailModalComponent,
-    ActionBadgeComponent,ExploradorView,ExplorerPanelComponent,
+    ActionBadgeComponent, ExploradorView, ExplorerPanelComponent,
     ViewerPanelComponent, ToastComponent
     , TabsNavigationComponent, SecurityTabComponent, PreviewTabComponent, MetadataTabComponent, UploadModalComponent, CreateAutorizacionModalComponent, ModalContainerComponent
-    , ContextMenuComponent,HistoryTabComponent,TreeNodeComponent, UploadSectionComponent,DeleteConfirmationModalComponent, Busqueda, MergePdfInline,MergePdfInline
+    , ContextMenuComponent, HistoryTabComponent, TreeNodeComponent, DeleteConfirmationModalComponent, Busqueda, MergePdfInline, MergePdfInline
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     AdminRoutingModule,
-    FormsModule,FechaLocalPipe,
+    FormsModule, FechaLocalPipe,
     PdfViewerDocument
-  ],  providers: [AnotacionesService
-    ,ExploradorStateService,PdfLocalSearchService]
-  
+  ], providers: [AnotacionesService
+    , ExploradorStateService, PdfLocalSearchService]
+
 })
 export class AdminModule { }

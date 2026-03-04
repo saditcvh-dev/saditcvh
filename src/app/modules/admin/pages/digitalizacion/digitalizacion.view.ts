@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, signal, computed, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   PdfService,
   PDFUploadResponse,
@@ -18,9 +17,17 @@ import { CargaMasivaService, LoteOCR } from '../../../../core/services/digitaliz
 import { forkJoin, Subject } from 'rxjs';
 import { debounceTime, finalize, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { UploadSectionComponent } from './upload-section/upload-section';
 
 @Component({
-  standalone: false,
+  selector: 'app-digitalizacion',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,           // ← ahora sí lo reconoce
+    UploadSectionComponent,        // ← ahora sí lo reconoce (ruta correcta)
+  ],
   templateUrl: './digitalizacion.view.html',
 })
 export class DigitalizacionView implements OnInit, OnDestroy {
