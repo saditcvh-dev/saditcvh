@@ -102,7 +102,7 @@
         <app-history-tab [selectedNode]="selectedNode" [documentVersions]="documentVersions"
           (openUploadModal)="onOpenUploadModal()" (downloadVersion)="onDownloadVersion($event)"
           (restoreVersion)="onRestoreVersion($event)" [fullScreenMode]="!showMainHeader"
-          (versionCreated)="reloadVersions()">
+          (versionCreated)="reloadVersions()" (versionDeleted)="reloadVersions()">
         </app-history-tab>
       </div>
 

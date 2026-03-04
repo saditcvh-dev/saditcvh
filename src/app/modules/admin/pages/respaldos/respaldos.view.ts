@@ -23,7 +23,8 @@ export class RespaldosView implements OnInit, OnDestroy {
     ramHistory: [] as number[],
     currentCpu: 0,
     currentRam: 0,
-    ramValueGB: '' // Label específico para mostrar GB usados/totales
+    ramValueGB: '', // Label específico para mostrar GB usados/totales
+    freeRamGB: '' // Label para RAM estrictamente libre
   };
 
   private subscriptions = new Subscription();
@@ -84,7 +85,7 @@ export class RespaldosView implements OnInit, OnDestroy {
 
       this.performanceData.ramHistory = ram.data.map((row: any[]) => {
         const usedReal = row[idxUsed];
-        const total = usedReal + row[idxFree];
+        const total = usedReal + row[idxFree] + row[idxCached] + row[idxBuffers];
         return total > 0 ? Math.round((usedReal / total) * 100) : 0;
       });
 
@@ -95,8 +96,14 @@ export class RespaldosView implements OnInit, OnDestroy {
       // Cálculo de GB para el label (usando el dato más reciente de la respuesta original data[0])
       const latestRam = ram.data[0];
       const usedMB = latestRam[idxUsed];
-      const totalMB = usedMB + latestRam[idxFree];
+      const freeMB = latestRam[idxFree];
+      const cachedMB = latestRam[idxCached];
+      const buffersMB = latestRam[idxBuffers];
+
+      const totalMB = usedMB + freeMB + cachedMB + buffersMB;
       this.performanceData.ramValueGB = `${(usedMB / 1024).toFixed(2)} GB de ${(totalMB / 1024).toFixed(2)} GB`;
+      this.performanceData.freeRamGB = `${(freeMB / 1024).toFixed(2)} GB Libres`;
+
       this.cpuMax = Math.max(...this.performanceData.cpuHistory, 10);
       this.ramMax = Math.max(...this.performanceData.ramHistory, 10);
 

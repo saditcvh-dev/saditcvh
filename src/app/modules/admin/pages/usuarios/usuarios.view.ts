@@ -161,14 +161,15 @@ export class UsuariosView implements OnInit {
   }
 
   goToPage(page: number): void {
-    if (page >= 1 && page <= this.pagination().totalPages) {
+    const totalPages = this.pagination().totalPages || 1;
+    if (page >= 1 && page <= totalPages) {
       this.pagination.update(pag => ({ ...pag, page }));
       this.applyFilters();
     }
   }
 
-  nextPage(): void { this.goToPage(this.pagination().page + 1); }
-  prevPage(): void { this.goToPage(this.pagination().page - 1); }
+  nextPage(): void { this.goToPage((this.pagination().page || 1) + 1); }
+  prevPage(): void { this.goToPage((this.pagination().page || 1) - 1); }
 
   openCreateModal(): void {
     this.selectedUser.set(null);
@@ -204,7 +205,7 @@ export class UsuariosView implements OnInit {
 
       if (isNewNonAdmin || needsDowngradeRedirect) {
         if (needsDowngradeRedirect) {
-            console.warn('El usuario ha dejado de ser Administrador. Redirigiendo a matriz territorial.');
+          console.warn('El usuario ha dejado de ser Administrador. Redirigiendo a matriz territorial.');
         }
         this.redirectToMatrix(user.id);
       } else {

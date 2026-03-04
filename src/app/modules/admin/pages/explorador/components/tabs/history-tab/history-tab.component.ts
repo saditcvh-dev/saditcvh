@@ -1,9 +1,10 @@
-import { Component, Input, Output, EventEmitter, signal, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, inject, computed } from '@angular/core';
 import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizacion-tree.model';
 import { MergePdfService } from '../../../services/pdf-merge.service';
 import { DocumentoService } from '../../../../../../../core/services/explorador-documento.service';
 import { LoadingService } from '../../../../../../../core/services/explorador-loading.service';
 import { ExploradorStateService } from '../../../services/explorador-state.service';
+import { AuthService } from '../../../../../../../core/services/auth';
 
 @Component({
   selector: 'app-history-tab',
@@ -20,6 +21,7 @@ export class HistoryTabComponent {
   @Output() downloadVersion = new EventEmitter<any>();
   @Output() restoreVersion = new EventEmitter<any>();
   @Output() versionCreated = new EventEmitter<void>();
+  @Output() versionDeleted = new EventEmitter<void>();
 
   private stateService = inject(ExploradorStateService);
   showUploadMenu = false;
@@ -27,7 +29,10 @@ export class HistoryTabComponent {
   private pdfService = inject(MergePdfService)
   private documentoService = inject(DocumentoService)
   private loadingService = inject(LoadingService)
-  //  documentoService: DocumentoService,
+  private authService = inject(AuthService);
+  
+  isAdmin = computed(() => this.authService.hasRole('administrador'));
+
   @Output() openMergePdf = new EventEmitter<void>();
   formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
@@ -127,8 +132,29 @@ export class HistoryTabComponent {
     });
   }
 
+  onDeleteVersion(version: any): void {
+    if (!this.isAdmin()) return;
+    
+    // Si ha sido marcada como eliminada o solo queda 1 version, no se puede borrar
+    if (version.archivosDigitales?.[0]?.deleted_at || this.documentVersions.length <= 1) return;
 
+    if (confirm('¿Estás seguro de que deseas eliminar lógicamente esta versión? Esta acción revocará el acceso al archivo.')) {
+      this.loadingService.show();
+      const parentId = version.documento_padre_id || version.id;
 
-
+      this.documentoService.eliminarVersion(parentId, version.id).subscribe({
+        next: () => {
+          this.loadingService.hide();
+          this.stateService.showToast('Versión eliminada correctamente', 'success');
+          this.versionDeleted.emit();
+        },
+        error: (err: any) => {
+          this.loadingService.hide();
+          this.stateService.showToast('Error al eliminar la versión', 'error');
+          console.error(err);
+        }
+      });
+    }
+  }
 
 }

@@ -75,9 +75,20 @@ export class ExploradorView implements OnInit, OnDestroy {
     const autorizacionId = this.selectedAutorizacionId();
     const documentos = this.documentoService.documentos();
     if (!autorizacionId) return [];
-    return documentos
-      .filter(d => d.autorizacionId === autorizacionId)
-      .sort((a, b) => b.version - a.version);
+    
+    // Filtramos solo los documentos raíz de esta autorización
+    const rootDocs = documentos.filter(d => d.autorizacionId === autorizacionId);
+    
+    // Extraemos todas las versiones de esos documentos raíz y las aplanamos
+    let todasLasVersiones: any[] = [];
+    rootDocs.forEach(doc => {
+      todasLasVersiones.push(doc); // el documento raíz (v1)
+      if (doc.versiones && Array.isArray(doc.versiones)) {
+        todasLasVersiones.push(...doc.versiones);
+      }
+    });
+
+    return todasLasVersiones.sort((a, b) => b.version - a.version);
   });
   isCollapsed = false;
 
