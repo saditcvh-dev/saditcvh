@@ -705,8 +705,8 @@ export class DigitalizacionView implements OnInit, OnDestroy {
     // 1) quitar extensión .pdf
     const base = nombreArchivo.replace(/\.pdf$/i, '');
 
-    // 2) (también soporta con espacios alrededor)
-    const regexUnderscore = /^(\d+)_([0-9]{2})_([0-9]{2})_([0-9]{2})_([0-9]{3})_([A-Z])$/i;
+    // 2) (también soporta sufijos opcionales de versión o timestamps al final)
+    const regexUnderscore = /^(\d+)_([0-9]{2})_([0-9]{2})_([0-9]{2})_([0-9]{3})_([A-Z])(?:_.*)?$/i;
     const m1 = base.trim().match(regexUnderscore);
     if (m1) {
       const [, numeroAutorizacion, municipio, modalidad, consecutivo1, consecutivo2, tipo] = m1;
