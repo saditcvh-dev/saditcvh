@@ -136,7 +136,7 @@ export class HistoryTabComponent {
     if (!this.isAdmin()) return;
     
     // Si ha sido marcada como eliminada o solo queda 1 version, no se puede borrar
-    if (version.archivosDigitales?.[0]?.deleted_at || this.documentVersions.length <= 1) return;
+    if (version.deleted_at || this.documentVersions.length <= 1) return;
 
     if (confirm('¿Estás seguro de que deseas eliminar lógicamente esta versión? Esta acción revocará el acceso al archivo.')) {
       this.loadingService.show();
