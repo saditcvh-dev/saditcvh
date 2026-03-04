@@ -152,7 +152,7 @@ export class ExploradorView implements OnInit, OnDestroy {
     const todasLasVersiones = this.documentVersions();
     
     // Ignorar las versiones que hayan sido eliminadas lógicamente
-    const versionesActivas = todasLasVersiones.filter(d => !d.archivosDigitales?.[0]?.deleted_at);
+    const versionesActivas = todasLasVersiones.filter(d => !d.deleted_at);
 
     // Seleccionar la más alta
     const ultimoDocumento = versionesActivas.sort((a, b) => b.version - a.version)[0];
