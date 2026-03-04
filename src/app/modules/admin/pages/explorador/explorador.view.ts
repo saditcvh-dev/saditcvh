@@ -76,19 +76,25 @@ export class ExploradorView implements OnInit, OnDestroy {
     const documentos = this.documentoService.documentos();
     if (!autorizacionId) return [];
     
-    // Filtramos solo los documentos raíz de esta autorización
-    const rootDocs = documentos.filter(d => d.autorizacionId === autorizacionId);
-    
     // Extraemos todas las versiones de esos documentos raíz y las aplanamos
     let todasLasVersiones: any[] = [];
-    rootDocs.forEach(doc => {
-      todasLasVersiones.push(doc); // el documento raíz (v1)
+    
+    documentos.filter(d => d.autorizacionId === autorizacionId).forEach(doc => {
+      // Pushear el documento raíz pero sin la propiedad anidada 'versiones' para evitar recursión infinita en UI
+      const rootDoc = { ...doc, versiones: [] };
+      todasLasVersiones.push(rootDoc);
+      
+      // Si el documento raíz trajo hijos (versiones anteriores), añadirlos a la lista plana
       if (doc.versiones && Array.isArray(doc.versiones)) {
         todasLasVersiones.push(...doc.versiones);
       }
     });
 
-    return todasLasVersiones.sort((a, b) => b.version - a.version);
+    // Eliminar duplicados exactos usando un Set sobre los IDs y ordenar DESC 
+    const mapSeguro = new Map(todasLasVersiones.map(item => [item.id, item]));
+    const arrayUnico = Array.from(mapSeguro.values());
+
+    return arrayUnico.sort((a, b) => b.version - a.version);
   });
   isCollapsed = false;
 
