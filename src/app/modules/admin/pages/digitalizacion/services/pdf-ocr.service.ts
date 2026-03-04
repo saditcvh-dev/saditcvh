@@ -170,13 +170,10 @@ export class PdfService {
   ): Observable<GlobalSearchResponse> {
     let params = new HttpParams()
       .set('term', term)
-      .set('case_sensitive', caseSensitive.toString())
-      .set('context_chars', contextChars.toString())
-      .set('max_documents', maxDocuments.toString());
+      .set('limit', maxDocuments.toString());
 
-    return this.http.post<GlobalSearchResponse>(
+    return this.http.get<GlobalSearchResponse>(
       `${this.apiUrl}/global-search`,
-      {},  // body vacío
       { params }
     );
   }
