@@ -58,7 +58,6 @@ import { PdfViewerDocument } from '../../shared/pdf-viewer/pdf-viewer';
     Admin,
     AuditoriaView,
     DashboardView,
-    DigitalizacionView,
     PdfViewerView,
     ReportesView,
     RespaldosView,
