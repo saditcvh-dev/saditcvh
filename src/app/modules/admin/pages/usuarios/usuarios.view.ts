@@ -8,6 +8,7 @@ import { catchError } from 'rxjs/operators';
 import { ApiResponse } from '../../../../core/models/api-response.model';
 import { Pagination, PaginatedResponse } from '../../../../core/models/paginated-response.model';
 import { Router } from "@angular/router";
+import { AuthService } from '../../../../core/services/auth';
 
 type SortColumn = 'name' | 'creator' | 'editor';
 type SortDirection = 'asc' | 'desc';
@@ -23,6 +24,7 @@ export class UsuariosView implements OnInit {
   private roleService = inject(RoleService);
   private cargoService = inject(CargoService);
   private router = inject(Router);
+  public authService = inject(AuthService);
 
   private filterTrigger = new Subject<void>();
 
