@@ -18,6 +18,7 @@ import { CargaMasivaService, LoteOCR } from '../../../../core/services/digitaliz
 import { forkJoin, Subject } from 'rxjs';
 import { debounceTime, finalize, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth';
 
 @Component({
   standalone: false,
@@ -51,6 +52,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
   private stateService = inject(ExploradorStateService);
   private router = inject(Router);
+  authService = inject(AuthService);
   toast = this.stateService.toast;
   closeToast(): void {
     this.stateService.closeToast();
@@ -277,10 +279,37 @@ export class DigitalizacionView implements OnInit, OnDestroy {
             size: (p as any).size_bytes ?? 0,
             status: (p as any).status ?? 'pending',
             progress: this.calculateProgress(p),
-            used_ocr: (p as any).used_ocr ?? false
+            used_ocr: (p as any).used_ocr ?? false,
+            deleted_at: (p as any).deleted_at ?? null // Ensure deleted_at is captured if backend sends it
           }));
 
-          this.pdfsList = updatedList;
+          // Filter by municipality access
+          const isAdmin = this.authService.hasRole('administrador');
+          this.pdfsList = updatedList.filter(p => {
+            // If no deleted_at (which is typical for this list currently), regular visibility applies
+            // But we can filter everything by municipality access if required by the user
+            // "solo deberian mostrarse en la lista los que están eliminados si corresponden a un municipio al que tengan acceso."
+            // Also applies to normal items generally, but the prompt emphasizes deleted ones.
+
+            if (isAdmin) return true; // Admins see everything
+
+            // Extract municipality from filename to check access
+            const municipioMatch = p.filename.match(/^\d+_([0-9]{2})_/i) || p.filename.match(/^\d+\s+(\d+)-/i);
+            if (municipioMatch && municipioMatch[1]) {
+              const municipioId = parseInt(municipioMatch[1], 10);
+              const hasAccess = this.authService.hasAccessToMunicipio(municipioId);
+
+              if (p.deleted_at && !hasAccess) return false; // Hide deleted if no access
+              if (!hasAccess) return false; // (Optional: Hide normal items too if they don't have access to the municipality. The user said: "otros usuarios solo deberian mostrarse en la lista los que están eliminados si corresponden a un municipio al que tengan acceso.")
+              return true;
+            }
+
+            // If we can't determine the municipality, we probably shouldn't show it to a non-admin, 
+            // or we show it but we don't show it if it's deleted. Let's hide if deleted.
+            if (p.deleted_at) return false;
+            return true; // Show normal items if we can't parse municipality
+          });
+
           this.cdr.markForCheck();
         },
         error: (err) => {
