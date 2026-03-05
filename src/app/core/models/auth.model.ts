@@ -19,6 +19,7 @@ export interface User {
   deleted_at?: string | null;
   // backend devuelve roles como array de strings
   roles: string[];
+  municipality_access?: any[]; // Allow partial struct
 }
 
 export interface Cargo {
