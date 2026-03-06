@@ -7,7 +7,7 @@
         </h3>
 
 
-        <div class="relative">
+        <div class="relative" *ngIf="canEdit()">
             <!-- BOTÓN: Subir Nueva Versión -->
             <button *ngIf="!showMergeSection()" (click)="toggleUploadMenu()" class="flex items-center gap-2 bg-[#691831] text-white text-xs px-3 py-2 rounded
          hover:bg-[#501225] transition-colors shadow-sm">
@@ -124,7 +124,7 @@
 					dark:text-green-300 dark:bg-green-900/30"> Versión actual </span>
                             </div>
                             <div class="flex gap-2">
-                                <button *ngIf="!version.deleted_at" (click)="onDownloadVersion(version)" class="flex items-center gap-1 text-xs font-medium px-2 py-1 rounded
+                                <button *ngIf="!version.deleted_at && canDownload()" (click)="onDownloadVersion(version)" class="flex items-center gap-1 text-xs font-medium px-2 py-1 rounded
 								text-blue-600 bg-blue-50 border border-blue-200
 								hover:bg-blue-100
 								dark:text-blue-300 dark:bg-blue-900/30 dark:border-blue-800
