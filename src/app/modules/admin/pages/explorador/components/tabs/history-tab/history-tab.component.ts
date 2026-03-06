@@ -38,18 +38,19 @@ export class HistoryTabComponent {
   }
 
   // --- Permisos de Acceso Territoriales ---
+  // --- Permisos de Acceso Territoriales ---
   canEdit(): boolean {
       if(this.isAdmin()) return true;
-      const municipioId = this.selectedNode?.data?.municipio_id || this.selectedNode?.data?.municipioId;
-      if (!municipioId) return false;
-      return this.authService.hasAccessToMunicipio(municipioId, 'editar');
+      const permisos = this.selectedNode?.data?.permisos;
+      if (!permisos || !Array.isArray(permisos)) return false;
+      return permisos.includes('editar');
   }
 
   canDownload(): boolean {
       if(this.isAdmin()) return true;
-      const municipioId = this.selectedNode?.data?.municipio_id || this.selectedNode?.data?.municipioId;
-      if (!municipioId) return false;
-      return this.authService.hasAccessToMunicipio(municipioId, 'descargar');
+      const permisos = this.selectedNode?.data?.permisos;
+      if (!permisos || !Array.isArray(permisos)) return false;
+      return permisos.includes('descargar');
   }
 
   @Output() openMergePdf = new EventEmitter<void>();
