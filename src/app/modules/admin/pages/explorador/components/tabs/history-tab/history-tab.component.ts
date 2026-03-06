@@ -41,14 +41,18 @@ export class HistoryTabComponent {
   // --- Permisos de Acceso Territoriales ---
   canEdit(): boolean {
       if(this.isAdmin()) return true;
-      const permisos = this.selectedNode?.data?.permisos;
+      const data = this.selectedNode?.data;
+      if (!data) return false;
+      const permisos = this.selectedNode?.type === 'autorizacion' ? data.municipio?.permisos : data.permisos;
       if (!permisos || !Array.isArray(permisos)) return false;
       return permisos.includes('editar');
   }
 
   canDownload(): boolean {
       if(this.isAdmin()) return true;
-      const permisos = this.selectedNode?.data?.permisos;
+      const data = this.selectedNode?.data;
+      if (!data) return false;
+      const permisos = this.selectedNode?.type === 'autorizacion' ? data.municipio?.permisos : data.permisos;
       if (!permisos || !Array.isArray(permisos)) return false;
       return permisos.includes('descargar');
   }
