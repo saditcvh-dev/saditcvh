@@ -7,7 +7,7 @@
         </h3>
 
 
-        <div class="relative" *ngIf="canUpload()">
+        <div class="relative" *ngIf="canEdit()">
             <!-- BOTÓN: Subir Nueva Versión -->
             <button *ngIf="!showMergeSection()" (click)="toggleUploadMenu()" class="flex items-center gap-2 bg-[#691831] text-white text-xs px-3 py-2 rounded
          hover:bg-[#501225] transition-colors shadow-sm">
