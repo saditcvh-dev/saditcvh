@@ -19,6 +19,7 @@ import { forkJoin, Subject } from 'rxjs';
 import { debounceTime, finalize, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth';
+import { MunicipioService } from '../../../../core/services/explorador-municipio.service';
 
 @Component({
   standalone: false,
@@ -131,13 +132,17 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   constructor(
     private pdfService: PdfService,
     private cargaMasivaService: CargaMasivaService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private municipioService: MunicipioService
     // private spinner: NgxSpinnerService
   ) { }
   private refresh$ = new Subject<void>();
   private destroy$ = new Subject<void>();
 
   ngOnInit() {
+    // Asegurar que los territorios esten cargados para los permisos de subida
+    this.municipioService.loadMyTerritories().subscribe();
+    
     this.refresh$
       .pipe(
         debounceTime(500),
