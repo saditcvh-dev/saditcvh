@@ -42,8 +42,10 @@ export class HistoryTabComponent {
   canEdit(): boolean {
       if(this.isAdmin()) return true;
       const data = this.selectedNode?.data;
+      console.log('[DEBUG history-tab] canEdit() - selectedNode:', this.selectedNode);
       if (!data) return false;
       const permisos = this.selectedNode?.type === 'autorizacion' ? data.municipio?.permisos : data.permisos;
+      console.log('[DEBUG history-tab] canEdit() - resolved permisos:', permisos);
       if (!permisos || !Array.isArray(permisos)) return false;
       return permisos.includes('editar');
   }
@@ -51,8 +53,10 @@ export class HistoryTabComponent {
   canDownload(): boolean {
       if(this.isAdmin()) return true;
       const data = this.selectedNode?.data;
+      console.log('[DEBUG history-tab] canDownload() - selectedNode:', this.selectedNode);
       if (!data) return false;
       const permisos = this.selectedNode?.type === 'autorizacion' ? data.municipio?.permisos : data.permisos;
+      console.log('[DEBUG history-tab] canDownload() - resolved permisos:', permisos);
       if (!permisos || !Array.isArray(permisos)) return false;
       return permisos.includes('descargar');
   }
