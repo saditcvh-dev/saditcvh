@@ -6,6 +6,7 @@ import { ExploradorStateService } from '../../explorador/services/explorador-sta
 import { CargaMasivaService } from '../../../../../core/services/digitalizacion-carga-masiva.service';
 import { HttpEventType } from '@angular/common/http';
 import { AuthService } from '../../../../../core/services/auth';
+import { MunicipioService } from '../../../../../core/services/explorador-municipio.service';
 
 @Component({
   selector: 'app-upload-section',
@@ -47,12 +48,16 @@ export class UploadSectionComponent {
     private pdfService: PdfService,
     private cargaMasivaService: CargaMasivaService,
     private stateService: ExploradorStateService,
-    private authService: AuthService
+    private authService: AuthService,
+    private municipioService: MunicipioService
   ) { }
 
   get canSkipNomenclature(): boolean {
     if (this.authService.hasRole('administrador')) return true;
-    return Boolean(this.authService.hasAccessToMunicipio(85));
+    
+    // Verificar en tiempo real contra los territorios cargados desde la API
+    const territorios = this.municipioService.municipios();
+    return territorios.some(m => m.id === 85);
   }
 
   // ========== FUNCIONES PARA SUBIDA ==========
