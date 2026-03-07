@@ -17,6 +17,7 @@ import {
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizacion-tree.model';
 import { AuthService } from '../../../../../../../core/services/auth';
+import { MunicipioService } from '../../../../../../../core/services/explorador-municipio.service';
 
 @Component({
   selector: 'app-preview-tab',
@@ -42,13 +43,22 @@ export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   totalPages = signal(0);
   
   private authService = inject(AuthService);
+  private municipioService = inject(MunicipioService);
   isAdmin = computed(() => this.authService.hasRole('administrador'));
   
   canDownload(): boolean {
       if(this.isAdmin()) return true;
       const data = this.selectedNode?.data;
       if (!data) return false;
-      const permisos = this.selectedNode?.type === 'autorizacion' ? data.municipio?.permisos : data.permisos;
+      
+      const municipioId = this.selectedNode?.type === 'autorizacion' 
+          ? (data.municipioId || data.municipio?.id) 
+          : (this.selectedNode?.type === 'municipio' ? data.id : null);
+          
+      if (!municipioId) return false;
+      const territorio = this.municipioService.municipios().find(m => m.id === municipioId);
+      const permisos = territorio?.permisos;
+      
       if (!permisos || !Array.isArray(permisos)) return false;
       return permisos.includes('descargar');
   }
