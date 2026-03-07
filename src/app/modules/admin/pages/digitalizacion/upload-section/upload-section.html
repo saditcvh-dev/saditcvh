@@ -41,7 +41,7 @@
                 </div>
 
                 <!-- Checkbox modo sin nomenclatura -->
-                <div
+                <div *ngIf="canSkipNomenclature"
                     class="mt-6 p-5 bg-gray-50 dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-neutral-700">
                     <label class="flex items-center space-x-4 cursor-pointer">
                         <div class="relative">
@@ -68,7 +68,7 @@
                 </div>
 
                 <!-- Bloque amarillo aviso -->
-                <div *ngIf="allowSinNomenclatura"
+                <div *ngIf="allowSinNomenclatura && canSkipNomenclature"
                     class="mb-6 p-5 rounded-xl border border-yellow-300 dark:border-yellow-600/40 bg-yellow-50 dark:bg-yellow-900/20">
                     <div class="flex items-start gap-3">
                         <!-- Ícono -->
