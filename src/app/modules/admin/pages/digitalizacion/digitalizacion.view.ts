@@ -27,7 +27,7 @@ import { MunicipioService } from '../../../../core/services/explorador-municipio
 })
 export class DigitalizacionView implements OnInit, OnDestroy {
   // Cambia la definicion del tipo activeTab para incluir 'files':
-  activeTab: 'search' | 'upload' | 'quick' | 'global' | 'files' | 'lotes' = 'upload';
+  activeTab: 'search' | 'upload' | 'quick' | 'files' | 'lotes' = 'upload';
 
   // Agrega estas propiedades:
   viewMode: 'cards' | 'table' = 'cards';
@@ -72,10 +72,6 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   quickSearchResults: SearchResponse | null = null;
   quickUseOcr: boolean = true;
 
-  // Variables para búsqueda global
-  globalSearchTerm: string = '';
-  globalCaseSensitive: boolean = false;
-  globalSearchResults: GlobalSearchResponse | null = null;
 
   // Variables para visualización
   pdfTextContent: string = '';
@@ -85,7 +81,6 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   // isUploading = signal(false);
   isSearching = signal(false);
   isQuickSearching = signal(false);
-  isGlobalSearching = signal(false);
   loadingMessage = signal('Procesando...');
 
   completedPdfsCount() {
@@ -584,58 +579,6 @@ export class DigitalizacionView implements OnInit, OnDestroy {
           this.isQuickSearching.set(false);
         }
       });
-  }
-
-  // ========== FUNCIONALIDAD: BÚSQUEDA GLOBAL ==========
-  performGlobalSearch(): void {
-    if (!this.globalSearchTerm.trim()) {
-      this.stateService.showToast('Escribe un término de búsqueda para la búsqueda global', 'error');
-      return;
-    }
-
-    const completedPdfs = this.pdfsList.filter(p => p.status === 'completed');
-    if (completedPdfs.length === 0) {
-      this.stateService.showToast('No hay PDFs procesados para buscar', 'error');
-      return;
-    }
-
-    this.isGlobalSearching.set(true);
-
-    this.pdfService.globalSearch(
-      this.globalSearchTerm,
-      this.globalCaseSensitive,
-      100,
-      100
-    ).subscribe({
-      next: (response) => {
-        this.globalSearchResults = response;
-        if (response.total_matches === 0) {
-          this.stateService.showToast('No se encontraron coincidencias en la búsqueda global', 'error');
-        }
-        this.isGlobalSearching.set(false);
-      },
-      error: (error) => {
-        this.stateService.showToast(error.error?.detail || 'Error en la búsqueda global', 'error');
-        this.isGlobalSearching.set(false);
-      }
-    });
-  }
-
-  goToDocumentSearch(pdfId: string, filename: string = ''): void {
-    const url = this.buildExploradorUrl(filename);
-
-    if (url) {
-      const qMatch = url.match(/\?q=(.*)$/);
-      const q = qMatch ? qMatch[1] : null;
-
-      if (q) {
-        this.router.navigate(['/admin/explorador'], { queryParams: { q } });
-      } else {
-        this.router.navigateByUrl(url);
-      }
-    } else {
-      this.stateService.showToast('No se pudo construir la URL del explorador para este archivo', 'error');
-    }
   }
 
   // ========== FUNCIONES DE UTILIDAD ==========
