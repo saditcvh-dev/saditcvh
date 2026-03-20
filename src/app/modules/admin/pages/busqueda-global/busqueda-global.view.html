@@ -1,0 +1,153 @@
+<div class="min-h-screen">
+  <header>
+    <div class="mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between py-4 border-b border-gray-100 dark:border-neutral-800">
+        <div class="flex items-center space-x-3">
+          <div>
+            <h1 class="text-xl font-bold text-[#691831] dark:text-[#c44569]">Búsqueda Global</h1>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Buscar a través de todos los documentos indexados</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <section class="space-y-6">
+      <div class="max-w-5xl mx-auto space-y-6">
+        <!-- Search Form -->
+        <div class="bg-white dark:bg-[#1a1a1b] rounded-xl shadow-sm p-8 border border-gray-200 dark:border-neutral-700">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-2">
+              <label class="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-3 uppercase tracking-wide">
+                Termino de busqueda
+              </label>
+              <div class="relative">
+                <input type="text" 
+                  [ngModel]="globalSearchTerm()" 
+                  (ngModelChange)="updateSearchTerm($event)" 
+                  placeholder="Buscar en todos los documentos..."
+                  class="w-full p-4 pl-12 rounded-xl border-2 text-lg bg-white dark:bg-[#131314] border-gray-300 dark:border-neutral-700 !text-gray-900 dark:!text-neutral-100 caret-gray-900 dark:caret-neutral-100 placeholder:text-gray-400 dark:placeholder:text-neutral-400 focus:ring-2 focus:ring-[#BC955B] focus:border-[#BC955B] dark:focus:ring-[#d4a762] dark:focus:border-[#d4a762] transition-colors" 
+                  (keyup.enter)="performGlobalSearch()" />
+                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#691831] dark:text-[#c44569]">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col justify-end space-y-3">
+              <label class="flex items-center space-x-2 cursor-pointer">
+                <div class="relative">
+                  <input type="checkbox" 
+                    [ngModel]="globalCaseSensitive()" 
+                    (ngModelChange)="updateCaseSensitive($event)" 
+                    class="sr-only peer" />
+                  <div class="w-11 h-6 rounded-full transition-colors bg-gray-300 dark:bg-neutral-600 peer-checked:bg-[#691831] dark:peer-checked:bg-[#c44569]">
+                  </div>
+                  <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5">
+                  </div>
+                </div>
+                <span class="text-sm text-gray-700 dark:text-gray-300 font-medium">Coincidir mayúsculas</span>
+              </label>
+
+              <button (click)="performGlobalSearch()" 
+                [disabled]="!globalSearchTerm().trim() || isGlobalSearching()"
+                class="w-full py-3 border-2 bg-[#691831] text-white dark:bg-[#c44569] font-bold rounded-xl hover:border-[#A02142] dark:hover:border-[#d4708a] disabled:border-gray-300 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-colors">
+                
+                @if (!isGlobalSearching()) {
+                  <span>Buscar en todos</span>
+                } @else {
+                  <span class="flex items-center space-x-2">
+                    <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Buscando...</span>
+                  </span>
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        @if (globalSearchResults()) {
+          <div>
+            <div class="p-6 bg-[#691831] text-white dark:bg-[#c44569] rounded-xl mb-6 shadow-sm">
+              <div class="flex justify-between items-center">
+                <h3 class="font-bold text-xl">
+                  "{{ globalSearchResults()!.term }}" - {{ globalSearchResults()!.total_matches }} coincidencias en {{
+                  globalSearchResults()!.total_documents_with_matches }} documentos
+                </h3>
+                <span class="text-sm font-semibold bg-white/20 px-4 py-2 rounded-full">{{
+                  globalSearchResults()!.execution_time | number:'1.3-3' }}s</span>
+              </div>
+            </div>
+
+            @if (globalSearchResults()!.documents.length === 0) {
+              <div class="text-center py-16 bg-white dark:bg-[#1a1a1b] rounded-xl shadow-sm border border-gray-200 dark:border-neutral-800">
+                <div class="w-24 h-24 mx-auto mb-4 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                  <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                  </svg>
+                </div>
+                <p class="text-gray-700 dark:text-gray-300 font-semibold text-lg">No se encontraron coincidencias en ningun documento.</p>
+                <p class="text-sm text-gray-500 mt-2">Intenta con otros terminos de busqueda</p>
+              </div>
+            } @else {
+              <div class="space-y-5">
+                @for (doc of globalSearchResults()!.documents; track doc.pdf_id) {
+                  <div class="bg-white dark:bg-[#1a1a1b] border-2 border-gray-200 dark:border-neutral-700 rounded-xl overflow-hidden hover:shadow-lg transition-all">
+                    <div
+                      class="bg-[#691831] text-white dark:bg-[#c44569] p-6 flex justify-between items-center cursor-pointer hover:bg-[#A02142] transition-colors"
+                      (click)="goToDocumentSearch(doc.pdf_id, doc.filename || doc.pdf_id)">
+                      <div>
+                        <h4 class="font-bold text-xl mb-2">{{ doc.filename || doc.pdf_id }}</h4>
+                        <div class="flex items-center space-x-4">
+                          <span class="inline-flex items-center px-3 py-1 text-xs font-bold bg-white/20 rounded-full">
+                            {{ doc.total_matches }} coincidencias
+                          </span>
+                          <span class="text-sm text-white/70">ID: {{ doc.pdf_id.substring(0, 16) }}...</span>
+                        </div>
+                      </div>
+                      <span class="inline-flex items-center px-5 py-3 bg-white dark:bg-[#1a1a1b] text-blue-500 font-bold rounded-xl hover:bg-gray-50 transition-colors">
+                        <span>Ver documento</span>
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        </svg>
+                      </span>
+                    </div>
+
+                    <div class="p-6 bg-gray-50 dark:bg-[#131314] max-h-72 overflow-y-auto">
+                      <div class="space-y-3">
+                        @for (result of doc.results.slice(0, 5); track result.page + '-' + result.position) {
+                          <div class="p-4 bg-white dark:bg-[#1a1a1b] border-2 border-gray-200 dark:border-neutral-700 rounded-xl hover:border-gray-300 transition-colors">
+                            <span class="inline-flex items-center px-3 py-1 text-xs font-bold border-2 border-[#691831] text-[#691831] dark:border-[#c44569] dark:text-[#c44569] rounded-full mr-3">
+                              Página {{ result.page }}
+                            </span>
+                            <span class="text-gray-800 dark:text-gray-200">
+                              ...<span class="bg-[#BC955B]/30 text-[#691831] dark:bg-[#BC955B]/20 dark:text-[#f1c27d] px-1.5 py-0.5 rounded font-semibold">{{ result.context }}</span>...
+                            </span>
+                          </div>
+                        }
+                        
+                        @if (doc.results.length > 5) {
+                          <div class="text-center text-sm text-gray-600 dark:text-gray-400 pt-3">
+                            <span class="inline-flex items-center px-4 py-2 border-2 border-[#691831] dark:border-[#c44569] text-[#691831] dark:text-[#c44569] rounded-full font-semibold">
+                              ... y {{ doc.results.length - 5 }} coincidencias mas
+                            </span>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </section>
+  </main>
+</div>
