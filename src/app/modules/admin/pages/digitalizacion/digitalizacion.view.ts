@@ -715,7 +715,7 @@ export class DigitalizacionView implements OnInit, OnDestroy {
   //     tipo.toUpperCase()
   //   ].join('_');
 
-  //   return `http://localhost:4200/admin/explorador?q=${query}`;
+  //   return `/admin/explorador?q=${query}`;
   // }
   buildExploradorUrl(nombreArchivo: string): string | null {
     if (!nombreArchivo) return null;

@@ -22,9 +22,9 @@ function downloadBlob(blob: Blob, filename: string): void {
 })
 export class ReportCard {
   // URLs de los endpoints
-  private reporteDocumentosUrl = 'http://localhost:4000/api/reports/reporte-digitalizacion/pdf';
-  private reporteUsuariosUrl = 'http://localhost:4000/api/reports/reporte-usuarios/pdf';
-  private reporteActividadUsuariosUrl = 'http://localhost:4000/api/reports/reporte-actividad/pdf';
+  private reporteDocumentosUrl = '/api/reports/reporte-digitalizacion/pdf';
+  private reporteUsuariosUrl = '/api/reports/reporte-usuarios/pdf';
+  private reporteActividadUsuariosUrl = '/api/reports/reporte-actividad/pdf';
   
   // Estados de carga
   isLoadingDocumentos = false;

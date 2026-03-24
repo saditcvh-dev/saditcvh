@@ -98,7 +98,7 @@ export interface GlobalSearchResponse {
   providedIn: 'root'
 })
 export class PdfService {
-  private apiUrl = 'http://localhost:8000/api/pdf';
+  private apiUrl = '/ocr/api/pdf';
 
   constructor(private http: HttpClient) { }
 

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class MergePdfService {
 
-  // private apiUrl = 'http://localhost:8000/api/pdf';
+  // private apiUrl = '/api/pdf';
   private apiUrl = '/ocr/api/pdf';
   constructor(private http: HttpClient) { }
 
