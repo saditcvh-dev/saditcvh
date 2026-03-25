@@ -42,7 +42,7 @@
             <!-- Badge conteo de documentos -->
             <span *ngIf="selectedNode.type === 'autorizacion' && documentoService.paginacionDocumentos().totalItems > 0"
               class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 dark:bg-neutral-800 text-gray-500 dark:text-neutral-400 border border-gray-200 dark:border-neutral-700">
-              {{ documentVersions.length }} de {{ documentoService.paginacionDocumentos().totalItems }} docs
+              {{ documentoService.documentos().length }} de {{ documentoService.paginacionDocumentos().totalItems }} docs
             </span>
           </div>
 
