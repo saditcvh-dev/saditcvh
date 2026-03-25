@@ -55,8 +55,13 @@ export class ViewerPanelComponent {
 
   private authService = inject(AuthService);
   constructor(private sanitizer: DomSanitizer) { }
-  private documentoService = inject(DocumentoService);
+  documentoService = inject(DocumentoService);
   private stateService = inject(ExploradorStateService);
+
+  cargarMasDocumentos(): void {
+    this.documentoService.cargarMasDocumentos();
+  }
+
 // private stateService: ExploradorStateService
   get nodeTypeLabel(): string {
     if (!this.selectedNode) return '';
