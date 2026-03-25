@@ -87,6 +87,20 @@ export class DocumentoService {
     );
   }
 
+  // Estado de paginación de documentos por carpeta
+  private documentosPaginacion = signal({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10
+  });
+  private currentAutorizacionId = signal<number | null>(null);
+
+  paginacionDocumentos = this.documentosPaginacion.asReadonly();
+  hayMasDocumentos = computed(() => {
+    const p = this.documentosPaginacion();
+    return p.currentPage < p.totalPages;
+  });
 
   verificarDocumentosPorAutorizacion(autorizacionId: number): Observable<boolean> {
     return this.http.get<ApiResponse<Documento[]>>(`${this.apiUrl}/autorizacion/${autorizacionId}`, { withCredentials: true }).pipe(
@@ -94,30 +108,79 @@ export class DocumentoService {
       catchError(() => of(false))
     );
   }
-  cargarDocumentosPorAutorizacion(autorizacionId: number, force = false): Observable < Documento[] > {
+
+  cargarDocumentosPorAutorizacion(autorizacionId: number, force = false): Observable<Documento[]> {
     this.errorState.set(null);
-    // Si no es forzado y existe cache → usarlo
-    if(!force && this.autorizacionesCache.has(autorizacionId)) {
+
+    // Si cambiamos de carpeta o forzamos, resetear estado de paginación
+    if (force || this.currentAutorizacionId() !== autorizacionId) {
+      this.currentAutorizacionId.set(autorizacionId);
+      this.documentosState.set([]);
+      this.documentosPaginacion.set({ currentPage: 1, totalPages: 1, totalItems: 0, itemsPerPage: 10 });
+      // Borrar caché para esta autorización para forzar recarga
+      this.autorizacionesCache.delete(autorizacionId);
+    }
+
+    const page = this.documentosPaginacion().currentPage;
+    const cacheKey = `${autorizacionId}_page_${page}`;
+
+    // Usar caché si existe para esta página
+    if (!force && this.autorizacionesCache.has(autorizacionId) && page === 1) {
       console.log(`Usando caché para autorización ${autorizacionId}`);
-      const docs = this.autorizacionesCache.get(autorizacionId) !;
+      const docs = this.autorizacionesCache.get(autorizacionId)!;
       this.documentosState.set(docs);
       return of(docs);
     }
-    console.log(`Cargando documentos desde API ${autorizacionId}`);
+
+    console.log(`Cargando documentos pág. ${page} para autorización ${autorizacionId}`);
     this.loadingState.set(true);
-    return this.http.get < ApiResponse < Documento[] >> (`${this.apiUrl}/autorizacion/${autorizacionId}`, {
-      withCredentials: true
-    }).pipe(map(response => response.data), tap(docs => {
-      this.autorizacionesCache.set(autorizacionId, docs);
-      docs.forEach(doc => this.documentosCache.set(doc.id, doc));
-      this.documentosState.set(docs);
-      this.loadingState.set(false);
-    }), catchError(error => {
-      this.errorState.set(error.message);
-      this.loadingState.set(false);
-      return throwError(() => error);
-    }));
+
+    return this.http.get<{ success: boolean; data: Documento[]; pagination: any }>(
+      `${this.apiUrl}/autorizacion/${autorizacionId}`,
+      { params: { page: page.toString(), limit: '10' }, withCredentials: true }
+    ).pipe(
+      tap(response => {
+        const nuevosDocs = response.data;
+        const paginacion = response.pagination;
+
+        // Acumular en estado (concat si es página > 1)
+        const actuales = this.documentosState();
+        const acumulados = page === 1 ? nuevosDocs : [...actuales, ...nuevosDocs];
+
+        this.documentosState.set(acumulados);
+        this.documentosPaginacion.set({
+          currentPage: paginacion.currentPage,
+          totalPages: paginacion.totalPages,
+          totalItems: paginacion.totalItems,
+          itemsPerPage: paginacion.itemsPerPage
+        });
+
+        // Guardar en caché solo la primera página como referencia
+        if (page === 1) {
+          this.autorizacionesCache.set(autorizacionId, acumulados);
+        }
+
+        nuevosDocs.forEach((doc: Documento) => this.documentosCache.set(doc.id, doc));
+        this.loadingState.set(false);
+      }),
+      map(response => response.data),
+      catchError(error => {
+        this.errorState.set(error.message);
+        this.loadingState.set(false);
+        return throwError(() => error);
+      })
+    );
   }
+
+  cargarMasDocumentos(): void {
+    const autorizacionId = this.currentAutorizacionId();
+    if (!autorizacionId || !this.hayMasDocumentos()) return;
+
+    // Avanzar a la siguiente página
+    this.documentosPaginacion.update(p => ({ ...p, currentPage: p.currentPage + 1 }));
+    this.cargarDocumentosPorAutorizacion(autorizacionId).subscribe();
+  }
+
   // cargarDocumentosPorAutorizacion(autorizacionId: number): Observable<Documento[]> {
   //   this.errorState.set(null);
 
