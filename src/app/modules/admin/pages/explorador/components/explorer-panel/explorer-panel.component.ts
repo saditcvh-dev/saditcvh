@@ -31,12 +31,16 @@ export class ExplorerPanelComponent {
   ngOnInit(): void {
 
     // cuando el valor `q` cambia en la URL, pedimos al servicio de estado
-    // que seleccione el nodo correspondiente. el servicio ya sabe esperar
-    // a que el árbol esté cargado.
+    // que seleccione el nodo correspondiente. Si el nodo no está en el árbol
+    // cargado (paginación), activamos una búsqueda en backend para cargarlo.
     this.route.queryParams.subscribe(params => {
       const carpeta = params['q'];
       if (carpeta) {
-        this.state.selectNodeByQuery(carpeta);
+        this.state.selectNodeByQuery(carpeta, () => {
+          // Nodo no encontrado en el árbol actual → buscarlo en el backend
+          console.log(`[redirect] Nodo '${carpeta}' no en árbol. Buscando en backend...`);
+          this.autorizacionService.setFiltros({ search: carpeta });
+        });
       }
     });
 
