@@ -76,9 +76,15 @@ export class AutorizacionService {
       tap(() => this.updateState({ loading: true, error: null })),
 
       switchMap(({ page, limit, filtros }: { page: number; limit: number; filtros: BusquedaAutorizacion | null }) => {
-        return filtros
-          ? this.buscarAutorizacionesApi(filtros, page, limit)
-          : this.getAutorizacionesApi(page, limit);
+        if (!filtros) {
+          return this.getAutorizacionesApi(page, limit);
+        }
+        // Si hay texto de búsqueda → POST /buscar
+        if (filtros.search) {
+          return this.buscarAutorizacionesApi(filtros, page, limit);
+        }
+        // Si solo hay filtros de campo (municipioId, activo, etc.) → GET con params
+        return this.getAutorizacionesApi(page, limit, filtros);
       }),
 
       tap((response: PaginatedResponse<Autorizacion>) => {
@@ -148,10 +154,15 @@ export class AutorizacionService {
   }
 
   // Métodos privados de API
-  private getAutorizacionesApi(page: number, limit: number): Observable<PaginatedResponse<Autorizacion>> {
-    const params = new HttpParams()
+  private getAutorizacionesApi(page: number, limit: number, filtros?: BusquedaAutorizacion | null): Observable<PaginatedResponse<Autorizacion>> {
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('limit', limit.toString());
+
+    if (filtros?.municipioId) params = params.set('municipioId', filtros.municipioId.toString());
+    if (filtros?.modalidadId) params = params.set('modalidadId', filtros.modalidadId.toString());
+    if (filtros?.tipoId) params = params.set('tipoId', filtros.tipoId.toString());
+    if (filtros?.activo !== undefined) params = params.set('activo', filtros.activo.toString());
 
     return this.http.get<PaginatedResponse<Autorizacion>>(this.apiUrl, { params, withCredentials: true });
   }
