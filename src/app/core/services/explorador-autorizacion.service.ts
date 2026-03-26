@@ -58,7 +58,7 @@ export class AutorizacionService {
   public filtros$ = toObservable(this.filtros);
 
   private page = signal(1);
-  private limit = signal(5);
+  private limit = signal(50);
   private filtrosSignal = signal<BusquedaAutorizacion | null>(null);
   private refreshTrigger = signal(0);
 
