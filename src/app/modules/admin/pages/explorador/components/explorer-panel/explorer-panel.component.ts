@@ -98,8 +98,24 @@ export class ExplorerPanelComponent {
     this.floatingState.set(null);
   }
 
+  /* =======================
+  * Municipio filter (lazy load)
+  * ======================= */
+  activeMunicipio = signal<AutorizacionTreeNode | null>(null);
+
   onNodeSelected(node: AutorizacionTreeNode): void {
+    if (node.type === 'municipio') {
+      // Lazy load: filter autorizaciones for this specific municipio
+      this.activeMunicipio.set(node);
+      this.autorizacionService.setFiltros({ municipioId: node.data.id } as any);
+    }
     this.nodeSelected.emit(node);
+  }
+
+  clearMunicipioFilter(): void {
+    this.activeMunicipio.set(null);
+    this.autorizacionService.setFiltros(null);
+    this.filterText.set('');
   }
 
   onNodeRightClick(event: { mouseEvent: MouseEvent; node: AutorizacionTreeNode }): void {
