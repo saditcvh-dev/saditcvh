@@ -119,7 +119,7 @@ export class MetadataTabComponent implements OnChanges, OnDestroy {
     });
   }
 
-  procesarMunicipio(): void {
+  procesarMunicipio(limiteStr?: string): void {
     if (!this.selectedNode || this.selectedNode.type !== 'municipio') return;
     const muniNum = this.selectedNode.data?.num;
     if (muniNum === undefined || muniNum === null) return;
@@ -127,7 +127,9 @@ export class MetadataTabComponent implements OnChanges, OnDestroy {
     this.isProcessingThisMuni.set(true);
     this.processingText.set('Iniciando procesamiento de OCR...');
 
-    this.cargaMasivaService.procesarOcrMunicipio(muniNum).subscribe({
+    const limite = limiteStr ? parseInt(limiteStr, 10) : undefined;
+
+    this.cargaMasivaService.procesarOcrMunicipio(muniNum, limite).subscribe({
       next: (res) => {
         if (res.success) {
           this.fetchMunicipalityData();

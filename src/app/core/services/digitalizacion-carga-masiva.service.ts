@@ -328,10 +328,10 @@ export class CargaMasivaService {
     );
   }
 
-  procesarOcrMunicipio(municipioNum: number): Observable<{ success: boolean; total: number; loteId: string }> {
+  procesarOcrMunicipio(municipioNum: number, limite?: number): Observable<{ success: boolean; total: number; loteId: string }> {
     return this.http.post<{ success: boolean; total: number; loteId: string }>(
       `${this.baseUrl}/procesar-municipio`,
-      { municipioNum },
+      { municipioNum, limite },
       { withCredentials: true }
     );
   }

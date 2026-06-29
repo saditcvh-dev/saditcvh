@@ -100,17 +100,29 @@
             </div>
           </div>
 
-          <div>
-            <!-- Botón procesar -->
-            <button *ngIf="!isProcessingThisMuni() && !isLockedByOtherMuni"
-                    (click)="procesarMunicipio()"
-                    [disabled]="pendingCount() === 0"
-                    class="px-4 py-2 bg-[#691831] hover:bg-[#521224] disabled:bg-gray-300 disabled:dark:bg-neutral-800 disabled:text-gray-500 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-2 shadow-sm active:scale-95">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.228 9H18.9" />
-              </svg>
-              Procesar OCR Municipio
-            </button>
+          <div class="flex flex-col items-end gap-3">
+            <div class="flex items-center gap-3">
+              <!-- Input Límite -->
+              <div [class.hidden]="isProcessingThisMuni() || isLockedByOtherMuni || pendingCount() === 0" class="flex items-center gap-1.5 mr-2">
+                <span class="text-xs text-gray-500 dark:text-gray-400">Límite:</span>
+                <input #limiteInput
+                       type="number"
+                       min="1"
+                       placeholder="Todos"
+                       class="w-16 px-2 py-1 text-xs border border-gray-200 dark:border-neutral-800 rounded bg-white dark:bg-[#050505] text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-[#691831]" />
+              </div>
+
+              <!-- Botón procesar -->
+              <button *ngIf="!isProcessingThisMuni() && !isLockedByOtherMuni"
+                      (click)="procesarMunicipio(limiteInput.value)"
+                      [disabled]="pendingCount() === 0"
+                      class="px-4 py-2 bg-[#691831] hover:bg-[#521224] disabled:bg-gray-300 disabled:dark:bg-neutral-800 disabled:text-gray-500 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-2 shadow-sm active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.228 9H18.9" />
+                </svg>
+                Procesar OCR Municipio
+              </button>
+            </div>
 
             <!-- Spinner procesando -->
             <div *ngIf="isProcessingThisMuni()" class="flex items-center gap-3 text-[#691831] dark:text-red-400 text-xs font-bold">
