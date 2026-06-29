@@ -1,6 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, OnDestroy, inject, signal } from '@angular/core';
 import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizacion-tree.model';
-// import { AutorizacionTreeNode } from '../../../../core/models/autorizacion-tree.model';
+import { CargaMasivaService } from '../../../../../../../core/services/digitalizacion-carga-masiva.service';
+import { AuthService } from '../../../../../../../core/services/auth';
+import { Subscription, interval } from 'rxjs';
 
 @Component({
   selector: 'app-metadata-tab',
@@ -8,10 +10,149 @@ import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizac
   templateUrl: './metadata-tab.component.html',
   styleUrls: ['./metadata-tab.component.css']
 })
-export class MetadataTabComponent {
+export class MetadataTabComponent implements OnChanges, OnDestroy {
   @Input() fullScreenMode: boolean = false;
-
   @Input() selectedNode!: AutorizacionTreeNode | null;
+
+  cargaMasivaService = inject(CargaMasivaService);
+  authService = inject(AuthService);
+
+  // States
+  pendingCount = signal<number>(0);
+  failedFiles = signal<any[]>([]);
+  activeLock = signal<any>(null);
+  isProcessingThisMuni = signal<boolean>(false);
+  processingText = signal<string>('Procesando OCR...');
+  
+  // Polling subscription for active locks and counts
+  private pollingSub?: Subscription;
+
+  get esUsuarioAutorizado(): boolean {
+    const user = this.authService.currentUser();
+    return user?.id === 1;
+  }
+
+  get isLockedByOtherMuni(): boolean {
+    const lock = this.activeLock();
+    if (!lock) return false;
+    return lock.municipioNum !== this.selectedNode?.data?.num;
+  }
+
+  get lockMessage(): string {
+    const lock = this.activeLock();
+    if (!lock) return '';
+    return `El municipio ${lock.municipioNombre || lock.municipioNum} se está procesando actualmente.`;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedNode']) {
+      this.stopPolling();
+      this.pendingCount.set(0);
+      this.failedFiles.set([]);
+      this.activeLock.set(null);
+      this.isProcessingThisMuni.set(false);
+
+      if (this.selectedNode && this.selectedNode.type === 'municipio') {
+        this.fetchMunicipalityData();
+        this.startPolling();
+      }
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling();
+  }
+
+  private startPolling(): void {
+    this.pollingSub = interval(5000).subscribe(() => {
+      this.fetchMunicipalityData();
+    });
+  }
+
+  private stopPolling(): void {
+    if (this.pollingSub) {
+      this.pollingSub.unsubscribe();
+      this.pollingSub = undefined;
+    }
+  }
+
+  private fetchMunicipalityData(): void {
+    if (!this.selectedNode || this.selectedNode.type !== 'municipio') return;
+    const muniNum = this.selectedNode.data?.num;
+    if (muniNum === undefined || muniNum === null) return;
+
+    // Conteo de pendientes
+    this.cargaMasivaService.obtenerPendientesMunicipio(muniNum).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.pendingCount.set(res.count);
+        }
+      }
+    });
+
+    // Archivos fallidos
+    this.cargaMasivaService.obtenerFallidosMunicipio(muniNum).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.failedFiles.set(res.fallidos);
+        }
+      }
+    });
+
+    // Bloqueos activos
+    this.cargaMasivaService.obtenerMunicipioProcesando().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.activeLock.set(res.lock);
+          if (res.lock && res.lock.municipioNum === muniNum) {
+            this.isProcessingThisMuni.set(true);
+            const total = res.lock.total || 0;
+            const completed = res.lock.completados || 0;
+            const failed = res.lock.fallados || 0;
+            const processed = completed + failed;
+            this.processingText.set(`Procesando OCR: ${processed}/${total} completados (${failed} fallidos)`);
+          } else {
+            this.isProcessingThisMuni.set(false);
+          }
+        }
+      }
+    });
+  }
+
+  procesarMunicipio(): void {
+    if (!this.selectedNode || this.selectedNode.type !== 'municipio') return;
+    const muniNum = this.selectedNode.data?.num;
+    if (muniNum === undefined || muniNum === null) return;
+
+    this.isProcessingThisMuni.set(true);
+    this.processingText.set('Iniciando procesamiento de OCR...');
+
+    this.cargaMasivaService.procesarOcrMunicipio(muniNum).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.fetchMunicipalityData();
+        }
+      },
+      error: (err) => {
+        this.isProcessingThisMuni.set(false);
+        console.error('Error al procesar municipio:', err);
+      }
+    });
+  }
+
+  reintentarArchivo(archivoId: number, event: MouseEvent): void {
+    event.stopPropagation();
+    this.cargaMasivaService.reintentarArchivo(archivoId).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.fetchMunicipalityData();
+        }
+      },
+      error: (err) => {
+        console.error('Error al reintentar archivo:', err);
+      }
+    });
+  }
 
   get metadata(): any[] {
     // console.log("this.selectedNode")

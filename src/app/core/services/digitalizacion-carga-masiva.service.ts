@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent, HttpParams, HttpEventType } from '@angular/common/http';
 import { Observable, BehaviorSubject, interval, Subject } from 'rxjs';
-import { switchMap, takeWhile, startWith, catchError, tap } from 'rxjs/operators';
+import { switchMap, takeWhile, startWith, catchError, tap, finalize } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 export interface ArchivoProcesado {
@@ -94,16 +94,23 @@ export class CargaMasivaService {
   private loteProcesando = new BehaviorSubject<string | null>(null);
   private estadoLote = new BehaviorSubject<EstadoOCR | null>(null);
   private resultadoLote = new BehaviorSubject<ResultadoOCR | null>(null);
+  private uploading = new BehaviorSubject<boolean>(false);
 
   // Observables públicos
   public loteProcesando$ = this.loteProcesando.asObservable();
   public estadoLote$ = this.estadoLote.asObservable();
   public resultadoLote$ = this.resultadoLote.asObservable();
+  public uploading$ = this.uploading.asObservable();
 
   constructor(private http: HttpClient) { }
 
+  get isUploadingVal(): boolean {
+    return this.uploading.value;
+  }
+
   // Subir archivo comprimido
   subirArchivoComprimido(archivo: File, useOcr: boolean = false): Observable<HttpEvent<any>> {
+    this.uploading.next(true);
     const formData = new FormData();
     formData.append('archivo', archivo);
     formData.append('useOcr', String(useOcr));
@@ -122,12 +129,14 @@ export class CargaMasivaService {
         if (event.type === 4 && event.body && event.body.loteId) {
           this.loteProcesando.next(event.body.loteId);
         }
-      })
+      }),
+      finalize(() => this.uploading.next(false))
     );
   }
 
   // Subir múltiples PDFs
   subirMultiplesPDFs(archivos: File[], useOcr: boolean = false): Observable<HttpEvent<any>> {
+    this.uploading.next(true);
     const formData = new FormData();
     archivos.forEach((archivo: File) => {
       formData.append('archivos', archivo);
@@ -148,7 +157,8 @@ export class CargaMasivaService {
         if (event.type === 4 && event.body && event.body.loteId) {
           this.loteProcesando.next(event.body.loteId);
         }
-      })
+      }),
+      finalize(() => this.uploading.next(false))
     );
   }
 
@@ -249,6 +259,7 @@ export class CargaMasivaService {
   }
   // Métodos para modo sin nomenclatura
   subirArchivoComprimidoSinNomenclatura(archivo: File, useOcr: boolean = false): Observable<HttpEvent<any>> {
+    this.uploading.next(true);
     const formData = new FormData();
     formData.append('archivo', archivo);
     formData.append('useOcr', useOcr.toString());
@@ -266,11 +277,13 @@ export class CargaMasivaService {
         if (event.type === HttpEventType.Response && event.body?.loteId) {
           this.loteProcesando.next(event.body.loteId);
         }
-      })
+      }),
+      finalize(() => this.uploading.next(false))
     );
   }
 
   subirMultiplesPDFsSinNomenclatura(archivos: File[], useOcr: boolean = false): Observable<HttpEvent<any>> {
+    this.uploading.next(true);
     const formData = new FormData();
     archivos.forEach(archivo => formData.append('archivos', archivo));
     formData.append('useOcr', useOcr.toString());
@@ -288,8 +301,46 @@ export class CargaMasivaService {
         if (event.type === HttpEventType.Response && event.body?.loteId) {
           this.loteProcesando.next(event.body.loteId);
         }
-      })
+      }),
+      finalize(() => this.uploading.next(false))
     );
   }
 
+  // ============== Procesamiento por Municipio ==============
+  obtenerMunicipioProcesando(): Observable<{ success: boolean; lock: any }> {
+    return this.http.get<{ success: boolean; lock: any }>(
+      `${this.baseUrl}/municipio-procesando`,
+      { withCredentials: true }
+    );
+  }
+
+  obtenerPendientesMunicipio(municipioNum: number): Observable<{ success: boolean; count: number }> {
+    return this.http.get<{ success: boolean; count: number }>(
+      `${this.baseUrl}/pendientes-municipio/${municipioNum}`,
+      { withCredentials: true }
+    );
+  }
+
+  obtenerFallidosMunicipio(municipioNum: number): Observable<{ success: boolean; fallidos: any[] }> {
+    return this.http.get<{ success: boolean; fallidos: any[] }>(
+      `${this.baseUrl}/fallidos-municipio/${municipioNum}`,
+      { withCredentials: true }
+    );
+  }
+
+  procesarOcrMunicipio(municipioNum: number): Observable<{ success: boolean; total: number; loteId: string }> {
+    return this.http.post<{ success: boolean; total: number; loteId: string }>(
+      `${this.baseUrl}/procesar-municipio`,
+      { municipioNum },
+      { withCredentials: true }
+    );
+  }
+
+  reintentarArchivo(archivoId: number): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(
+      `${this.baseUrl}/reintentar-archivo/${archivoId}`,
+      {},
+      { withCredentials: true }
+    );
+  }
 }

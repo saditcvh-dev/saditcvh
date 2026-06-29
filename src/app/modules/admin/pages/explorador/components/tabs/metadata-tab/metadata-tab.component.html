@@ -82,5 +82,99 @@
         </div>
       </div>
     </div>
+
+    <!-- Procesamiento OCR Masivo por Municipio (Solo para Municipio y Usuario ID 1) -->
+    <div *ngIf="selectedNode && selectedNode.type === 'municipio' && esUsuarioAutorizado" class="border-t border-gray-100 dark:border-neutral-900 pt-6">
+      <h3 class="text-xs font-bold text-[#691831] dark:text-[#c44569] uppercase tracking-widest mb-4 pb-2 border-b border-gray-50 dark:border-neutral-900">
+        Procesamiento OCR Masivo
+      </h3>
+
+      <div class="bg-gray-50 dark:bg-[#080808] p-5 rounded-lg border border-gray-200 dark:border-neutral-900">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div class="text-sm font-semibold text-gray-800 dark:text-gray-200">
+              Archivos en cola pendientes de OCR
+            </div>
+            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {{ pendingCount() }} archivos en espera o con error previo.
+            </div>
+          </div>
+
+          <div>
+            <!-- Botón procesar -->
+            <button *ngIf="!isProcessingThisMuni() && !isLockedByOtherMuni"
+                    (click)="procesarMunicipio()"
+                    [disabled]="pendingCount() === 0"
+                    class="px-4 py-2 bg-[#691831] hover:bg-[#521224] disabled:bg-gray-300 disabled:dark:bg-neutral-800 disabled:text-gray-500 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-2 shadow-sm active:scale-95">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.228 9H18.9" />
+              </svg>
+              Procesar OCR Municipio
+            </button>
+
+            <!-- Spinner procesando -->
+            <div *ngIf="isProcessingThisMuni()" class="flex items-center gap-3 text-[#691831] dark:text-red-400 text-xs font-bold">
+              <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+              <span>{{ processingText() }}</span>
+            </div>
+
+            <!-- Bloqueado por otro municipio -->
+            <div *ngIf="isLockedByOtherMuni" class="text-amber-600 dark:text-amber-500 text-xs font-medium max-w-xs text-right">
+              {{ lockMessage }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de archivos fallidos (Solo si hay fallidos y Usuario ID 1) -->
+    <div *ngIf="selectedNode && selectedNode.type === 'municipio' && esUsuarioAutorizado && failedFiles().length > 0" class="border-t border-gray-100 dark:border-neutral-900 pt-6">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-50 dark:border-neutral-900">
+        <h3 class="text-xs font-bold text-red-700 dark:text-red-400 uppercase tracking-widest">
+          Archivos con conflicto / Fallidos ({{ failedFiles().length }})
+        </h3>
+      </div>
+
+      <div class="border border-red-100 dark:border-red-950/30 rounded-lg overflow-hidden bg-red-50/10 dark:bg-red-950/5">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-100 dark:divide-neutral-900 text-left">
+            <thead class="bg-gray-50/50 dark:bg-neutral-900/50 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <tr>
+                <th class="px-4 py-2">Archivo</th>
+                <th class="px-4 py-2">Error de Conflicto</th>
+                <th class="px-4 py-2">Fecha Fallo</th>
+                <th class="px-4 py-2 text-right">Acción</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 dark:divide-neutral-900 text-xs text-gray-700 dark:text-gray-300">
+              <tr *ngFor="let file of failedFiles()" class="hover:bg-gray-50/40 dark:hover:bg-neutral-900/20">
+                <td class="px-4 py-3 font-medium truncate max-w-[200px]" [title]="file.nombreArchivo">
+                  {{ file.nombreArchivo }}
+                </td>
+                <td class="px-4 py-3 text-red-600 dark:text-red-400 break-words max-w-[300px]">
+                  {{ file.error }}
+                </td>
+                <td class="px-4 py-3 text-gray-400 dark:text-neutral-500 whitespace-nowrap">
+                  {{ formatDate(file.fecha) }}
+                </td>
+                <td class="px-4 py-3 text-right">
+                  <button (click)="reintentarArchivo(file.id, $event)"
+                          [disabled]="isProcessingThisMuni() || isLockedByOtherMuni"
+                          class="px-2.5 py-1 bg-white hover:bg-gray-50 dark:bg-neutral-800 dark:hover:bg-neutral-700 border border-gray-200 dark:border-neutral-700 text-[#691831] dark:text-neutral-300 text-[10px] font-bold uppercase rounded transition-all active:scale-95 inline-flex items-center gap-1 shadow-sm disabled:opacity-50">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.228 9H18.9" />
+                    </svg>
+                    Reintentar
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
