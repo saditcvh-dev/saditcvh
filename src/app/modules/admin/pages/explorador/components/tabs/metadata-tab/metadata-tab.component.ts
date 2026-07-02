@@ -65,7 +65,7 @@ export class MetadataTabComponent implements OnChanges, OnDestroy {
 
   private startPolling(): void {
     this.pollingSub = interval(5000).subscribe(() => {
-      this.fetchMunicipalityData();
+      this.fetchMunicipalityData(false); // Solo polling ligero del lock
     });
   }
 
@@ -76,34 +76,18 @@ export class MetadataTabComponent implements OnChanges, OnDestroy {
     }
   }
 
-  private fetchMunicipalityData(): void {
+  private fetchMunicipalityData(fullRefresh = true): void {
     if (!this.selectedNode || this.selectedNode.type !== 'municipio') return;
     const muniNum = this.selectedNode.data?.num;
     if (muniNum === undefined || muniNum === null) return;
 
-    // Conteo de pendientes
-    this.cargaMasivaService.obtenerPendientesMunicipio(muniNum).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.pendingCount.set(res.count);
-        }
-      }
-    });
-
-    // Archivos fallidos
-    this.cargaMasivaService.obtenerFallidosMunicipio(muniNum).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.failedFiles.set(res.fallidos);
-        }
-      }
-    });
-
-    // Bloqueos activos
+    // Siempre checamos el bloqueo (es rápido y ligero)
     this.cargaMasivaService.obtenerMunicipioProcesando().subscribe({
       next: (res) => {
         if (res.success) {
+          const prevLock = this.activeLock();
           this.activeLock.set(res.lock);
+          
           if (res.lock && Number(res.lock.municipioNum) === Number(muniNum)) {
             this.isProcessingThisMuni.set(true);
             const total = res.lock.total || 0;
@@ -111,10 +95,33 @@ export class MetadataTabComponent implements OnChanges, OnDestroy {
             const failed = res.lock.fallados || 0;
             const processed = completed + failed;
             this.processingText.set(`Procesando OCR: ${processed}/${total} completados (${failed} fallidos)`);
+            
+            // Si está procesando, actualizamos contadores para ver progreso en vivo
+            this.refreshCounters(muniNum);
           } else {
             this.isProcessingThisMuni.set(false);
+            // Si carga inicial o si el procesamiento acaba de terminar (el lock pasó de existir a null)
+            if (fullRefresh || (prevLock && !res.lock)) {
+              this.refreshCounters(muniNum);
+            }
           }
         }
+      }
+    });
+  }
+
+  private refreshCounters(muniNum: number): void {
+    // Conteo de pendientes
+    this.cargaMasivaService.obtenerPendientesMunicipio(muniNum).subscribe({
+      next: (res) => {
+        if (res.success) this.pendingCount.set(res.count);
+      }
+    });
+
+    // Archivos fallidos
+    this.cargaMasivaService.obtenerFallidosMunicipio(muniNum).subscribe({
+      next: (res) => {
+        if (res.success) this.failedFiles.set(res.fallidos);
       }
     });
   }
