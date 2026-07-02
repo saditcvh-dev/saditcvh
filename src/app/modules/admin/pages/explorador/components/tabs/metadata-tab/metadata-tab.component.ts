@@ -35,7 +35,7 @@ export class MetadataTabComponent implements OnChanges, OnDestroy {
   get isLockedByOtherMuni(): boolean {
     const lock = this.activeLock();
     if (!lock) return false;
-    return lock.municipioNum !== this.selectedNode?.data?.num;
+    return Number(lock.municipioNum) !== Number(this.selectedNode?.data?.num);
   }
 
   get lockMessage(): string {
@@ -104,7 +104,7 @@ export class MetadataTabComponent implements OnChanges, OnDestroy {
       next: (res) => {
         if (res.success) {
           this.activeLock.set(res.lock);
-          if (res.lock && res.lock.municipioNum === muniNum) {
+          if (res.lock && Number(res.lock.municipioNum) === Number(muniNum)) {
             this.isProcessingThisMuni.set(true);
             const total = res.lock.total || 0;
             const completed = res.lock.completados || 0;
