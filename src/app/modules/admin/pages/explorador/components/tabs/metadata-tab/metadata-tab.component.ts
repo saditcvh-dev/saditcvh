@@ -167,10 +167,16 @@ export class MetadataTabComponent implements OnChanges, OnDestroy {
     // console.log("this.selectedNode")
     // console.log(this.selectedNode)
     if (!this.selectedNode) return [];
+    
+    const nombre = this.selectedNode.nombre || '';
+    const indexEspacio = nombre.indexOf(' ');
+    const numeroExpediente = indexEspacio !== -1 ? nombre.substring(indexEspacio + 1) : 'No disponible';
+
     const baseMetadata = [
       { label: 'Nombre', value: this.selectedNode.nombre || 'Sin nombre', icon: 'tag' },
       { label: 'ID', value: this.selectedNode.id || 'Sin ID', icon: 'hash' },
-      { label: 'Autorizacion', value: this.selectedNode.data?.numeroAutorizacion, icon: 'type' },
+      { label: 'Número de expediente', value: numeroExpediente, icon: 'folder' },
+      { label: 'Número de autorización', value: this.selectedNode.data?.numeroAutorizacion, icon: 'type', highlight: true },
       // {
       //   label: 'Fecha de creación',
       //   value: this.formatDate(this.selectedNode.data?.fechaCreacion),

@@ -42,14 +42,24 @@
         Información Básica
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div *ngFor="let item of metadata" class="bg-gray-50 dark:bg-[#050505] p-3 rounded-lg border border-gray-200 dark:border-neutral-900">
+        <div *ngFor="let item of metadata" 
+             class="p-3 rounded-lg border"
+             [ngClass]="{'bg-rose-50 dark:bg-[#c44569]/10 border-rose-200 dark:border-[#c44569]/30 shadow-sm ring-1 ring-rose-100 dark:ring-[#c44569]/20': item.highlight, 'bg-gray-50 dark:bg-[#050505] border-gray-200 dark:border-neutral-900': !item.highlight}">
           <div class="flex items-start gap-2">
-            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="mt-0.5 flex-shrink-0" 
+                 [ngClass]="{'w-5 h-5 text-[#691831] dark:text-[#c44569]': item.highlight, 'w-4 h-4 text-gray-500 dark:text-gray-400': !item.highlight}"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getIcon(item.icon)" />
             </svg>
             <div class="flex-1">
-              <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ item.label }}</div>
-              <div class="text-sm text-gray-800 dark:text-gray-200 font-medium">{{ item.value || 'No disponible' }}</div>
+              <div class="mb-1"
+                   [ngClass]="{'text-xs font-bold text-[#691831] dark:text-[#c44569] uppercase tracking-wider': item.highlight, 'text-xs font-medium text-gray-500 dark:text-gray-400': !item.highlight}">
+                {{ item.label }}
+              </div>
+              <div class="font-medium"
+                   [ngClass]="{'text-lg font-black text-[#691831] dark:text-white': item.highlight, 'text-sm text-gray-800 dark:text-gray-200': !item.highlight}">
+                {{ item.value || 'No disponible' }}
+              </div>
             </div>
           </div>
         </div>
