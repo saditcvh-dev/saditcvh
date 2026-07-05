@@ -37,7 +37,7 @@
           <div class="flex items-center gap-3">
             <h1 class="text-xl font-bold text-gray-800 dark:text-neutral-100">{{ selectedNode.nombre }}</h1>
             <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border" [class]="nodeTypeColor">
-              {{ nodeTypeLabel }}
+              Disponible
             </span>
             <!-- Badge conteo de documentos -->
             <span *ngIf="selectedNode.type === 'autorizacion' && documentoService.paginacionDocumentos().totalItems > 0"
@@ -46,7 +46,7 @@
             </span>
           </div>
 
-          <p class="text-xs text-gray-500 dark:text-neutral-500 mt-1 uppercase font-mono">{{ selectedNode.id }}</p>
+          <!-- <p class="text-xs text-gray-500 dark:text-neutral-500 mt-1 uppercase font-mono">{{ selectedNode.id }}</p> -->
 
           <!-- Información adicional -->
           <div *ngIf="selectedNode.data" class="mt-2 text-xs text-gray-600 dark:text-neutral-400 space-y-1">
