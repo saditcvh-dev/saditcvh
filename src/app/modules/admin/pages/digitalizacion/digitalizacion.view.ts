@@ -156,13 +156,16 @@ export class DigitalizacionView implements OnInit, OnDestroy {
         debounceTime(500),
         takeUntil(this.destroy$)
       )
-      .subscribe(() => this.loadPdfsList());
+      .subscribe(() => {
+        this.loadPdfsList();
+        this.loadLotesUsuario();
+      });
 
     this.refresh$.next();
 
-    // Actualizar cada 4 minutos (240000 ms)
+    // Actualizar lotes cada 4 minutos (240000 ms), sin recargar PDFs
     this.pollTimer = setInterval(() => {
-      this.refresh$.next();
+      this.loadLotesUsuario();
     }, 240000);
   }
 
@@ -237,64 +240,16 @@ export class DigitalizacionView implements OnInit, OnDestroy {
 
   // ========== FUNCIONES PARA BÚSQUEDA INDIVIDUAL ==========
   loadPdfsList(): void {
+    this.isRefreshing.set(true);
 
-
-    // if (this.isRefreshing()) return;    
-    // this.isRefreshing.set(true);    // Ejecutar ambos en paralelo
-    this.isLoadingLotes.set(true);
-    // forkJoin({
-    //   lotes: this.cargaMasivaService.listarLotesUsuario(20, 0),
-    //   pdfs: this.pdfService.listPdfs()
-    // }).subscribe({
-    //   next: ({ lotes, pdfs }) => {
-
-    //     // Actualizar lotes
-    //     if (lotes.success) {
-    //       this.lotesUsuario.set(lotes.lotes);
-    //     }
-
-    //     // Actualizar PDFs
-    //     const updatedList = (pdfs.pdfs || []).map(p => ({
-    //       id: p.id,
-    //       filename: p.filename,
-    //       pages: (p as any).pages ?? null,
-    //       size: (p as any).size_bytes ?? 0,
-    //       status: (p as any).status ?? 'pending',
-    //       progress: this.calculateProgress(p),
-    //       used_ocr: (p as any).used_ocr ?? false
-    //     }));
-
-    //     this.pdfsList = updatedList;
-    //   },
-    //   error: (err) => {
-    //     console.error('Error en actualización:', err);
-    //   },
-    //   complete: () => {
-    //      this.isLoadingLotes.set(true);
-    //     this.isRefreshing.set(false);
-    //   }
-    // });
-    const limitParams = this.lotesPageSize();
-    const offsetParams = (this.lotesCurrentPage() - 1) * limitParams;
-
-    forkJoin({
-      lotes: this.cargaMasivaService.listarLotesUsuario(limitParams, offsetParams),
-      pdfs: this.pdfService.listPdfs(this.currentPage(), this.pageSize())
-    })
+    this.pdfService.listPdfs(this.currentPage(), this.pageSize())
       .pipe(
         finalize(() => {
-          this.isLoadingLotes.set(false);
           this.isRefreshing.set(false);
         })
       )
       .subscribe({
-        next: ({ lotes, pdfs }) => {
-          if (lotes.success) {
-            this.lotesUsuario.set(lotes.lotes);
-            this.lotesTotalRecords.set(lotes.total || 0);
-            this.lotesTotalPages.set(lotes.totalPages || 1);
-          }
-
+        next: (pdfs) => {
           if (pdfs) {
             this.totalRecords.set(pdfs.total || 0);
             this.totalPages.set(pdfs.total_pages || 1);
@@ -322,11 +277,6 @@ export class DigitalizacionView implements OnInit, OnDestroy {
           // Filter by municipality access
           const isAdmin = this.authService.hasRole('administrador');
           this.pdfsList = updatedList.filter(p => {
-            // If no deleted_at (which is typical for this list currently), regular visibility applies
-            // But we can filter everything by municipality access if required by the user
-            // "solo deberian mostrarse en la lista los que están eliminados si corresponden a un municipio al que tengan acceso."
-            // Also applies to normal items generally, but the prompt emphasizes deleted ones.
-
             if (isAdmin) return true; // Admins see everything
 
             // Extract municipality from filename to check access
@@ -336,20 +286,18 @@ export class DigitalizacionView implements OnInit, OnDestroy {
               const hasAccess = this.authService.hasAccessToMunicipio(municipioId);
 
               if (p.deleted_at && !hasAccess) return false; // Hide deleted if no access
-              if (!hasAccess) return false; // (Optional: Hide normal items too if they don't have access to the municipality. The user said: "otros usuarios solo deberian mostrarse en la lista los que están eliminados si corresponden a un municipio al que tengan acceso.")
+              if (!hasAccess) return false; 
               return true;
             }
 
-            // If we can't determine the municipality, we probably shouldn't show it to a non-admin, 
-            // or we show it but we don't show it if it's deleted. Let's hide if deleted.
             if (p.deleted_at) return false;
-            return true; // Show normal items if we can't parse municipality
+            return true; 
           });
 
           this.cdr.markForCheck();
         },
         error: (err) => {
-          console.error('Error en actualización:', err);
+          console.error('Error en actualización de PDFs:', err);
           this.cdr.markForCheck();
         }
       });
