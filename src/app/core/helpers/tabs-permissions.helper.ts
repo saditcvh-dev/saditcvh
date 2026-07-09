@@ -1,8 +1,8 @@
-export type ViewerTab = 'preview' | 'metadata' | 'security' | 'notes' | 'history';
+export type ViewerTab = 'preview-png' | 'preview-pdf' | 'metadata' | 'security' | 'notes' | 'history';
 const TABS_BY_ROLE: Record<string, ViewerTab[]> = {
-  administrador: ['preview', 'metadata', 'security', 'history', 'notes'],
-  operador: ['preview', 'metadata', 'history', 'notes'],
-  consulta: ['preview', 'metadata', 'history'],
+  administrador: ['preview-png', 'preview-pdf', 'metadata', 'security', 'history', 'notes'],
+  operador: ['preview-png', 'preview-pdf', 'metadata', 'history', 'notes'],
+  consulta: ['preview-png', 'preview-pdf', 'metadata', 'history'],
 };
 
 export function getAllowedTabsByRoles(roles: string[]): ViewerTab[] {

@@ -28,6 +28,7 @@ import { MunicipioService } from '../../../../../../../core/services/explorador-
 export class PreviewTabComponent implements OnInit, OnDestroy, OnChanges {
   @Input() selectedNode: AutorizacionTreeNode | null = null;
   @Input() pdfUrl!: SafeResourceUrl | null;
+  @Input() mode: string = 'preview-png';
 
   @ViewChild('pdfIframe') pdfIframe!: ElementRef;
 

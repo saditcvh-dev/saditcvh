@@ -82,14 +82,14 @@
   <div class="flex-1 min-h-0 bg-gray-50 dark:bg-black overflow-hidden transition-all duration-300 ease-in-out"
     [class]="showMainHeader ? 'mt-0' : ''">
     <!-- Vista Previa -->
-    <div *ngIf="activeTab === 'preview'" class="h-full flex flex-col">
-      <app-preview-tab [selectedNode]="selectedNode" [pdfUrl]="pdfUrl" 
+    <div *ngIf="activeTab === 'preview-png' || activeTab === 'preview-pdf'" class="h-full flex flex-col">
+      <app-preview-tab [selectedNode]="selectedNode" [pdfUrl]="pdfUrl" [mode]="activeTab"
         class="flex-1 min-h-0">
       </app-preview-tab>
     </div>
 
     <!-- Los demás tabs permanecen igual -->
-    <ng-container *ngIf="activeTab !== 'preview'">
+    <ng-container *ngIf="activeTab !== 'preview-png' && activeTab !== 'preview-pdf'">
       <!-- Metadatos -->
       <div *ngIf="activeTab === 'metadata'" class="h-full">
         <app-metadata-tab [selectedNode]="selectedNode" [fullScreenMode]="!showMainHeader">

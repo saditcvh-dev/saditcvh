@@ -105,6 +105,7 @@
 									(pageChanged)="onPageChanged($event)" (documentLoaded)="onDocumentLoaded($event)"
 									(loadingProgress)="onPdfProgress($event)"
                                     [canDownload]="canDownload()"
+                                    [renderText]="mode === 'preview-pdf'"
 									class="block h-full">
 								</app-pdf-viewer-document>
 							</div>

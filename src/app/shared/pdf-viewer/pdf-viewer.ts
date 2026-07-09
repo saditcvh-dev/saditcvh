@@ -177,6 +177,7 @@ export class PdfViewerDocument implements OnDestroy, AfterViewInit {
       this.updateCurrentPageByCenter();
     }, 50); // 50ms es perfecto
   }
+  @Input() renderText: boolean = false;
   private renderingPages = new Set<number>();
 
   private async renderPageIfNeeded(pageNumber: number) {
@@ -193,12 +194,42 @@ export class PdfViewerDocument implements OnDestroy, AfterViewInit {
 
     canvas.height = viewport.height;
     canvas.width = viewport.width;
-    canvas.classList.add('shadow-lg', 'mx-auto', 'bg-white');
+    canvas.classList.add('shadow-lg', 'bg-white', 'block');
 
-    await page.render({
+    const renderContext = {
       canvasContext: context,
       viewport: viewport
-    }).promise;
+    };
+
+    await page.render(renderContext).promise;
+
+    const pageWrapper = document.createElement('div');
+    pageWrapper.style.position = 'relative';
+    pageWrapper.style.margin = '0 auto';
+    pageWrapper.style.width = `${viewport.width}px`;
+    pageWrapper.style.height = `${viewport.height}px`;
+    pageWrapper.appendChild(canvas);
+
+    if (this.renderText) {
+      try {
+        const textContent = await page.getTextContent();
+        const textLayerDiv = document.createElement('div');
+        textLayerDiv.setAttribute('class', 'textLayer');
+        pageWrapper.appendChild(textLayerDiv);
+        
+        if ((pdfjsLib as any).renderTextLayer) {
+           (pdfjsLib as any).renderTextLayer({
+            textContent: textContent,
+            textContentSource: textContent,
+            container: textLayerDiv,
+            viewport: viewport,
+            textDivs: []
+          });
+        }
+      } catch (err) {
+        console.error('Error rendering text layer', err);
+      }
+    }
 
     const container = this.containerRef.nativeElement;
     const placeholder = container.querySelector(
@@ -207,7 +238,7 @@ export class PdfViewerDocument implements OnDestroy, AfterViewInit {
 
     if (placeholder) {
       placeholder.innerHTML = '';
-      placeholder.appendChild(canvas);
+      placeholder.appendChild(pageWrapper);
     }
 
     this.renderedPages.set(pageNumber, canvas);

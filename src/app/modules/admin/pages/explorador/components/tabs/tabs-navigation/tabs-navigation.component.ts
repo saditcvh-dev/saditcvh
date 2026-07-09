@@ -24,7 +24,8 @@ export class TabsNavigationComponent {
   @Output() tabChange = new EventEmitter<ViewerTab>();
 
   tabs = [
-    { id: 'preview', label: 'Vista Previa', icon: 'eye', showFor: ['autorizacion'] },
+    { id: 'preview-png', label: 'Vista PNG', icon: 'image', showFor: ['autorizacion'] },
+    { id: 'preview-pdf', label: 'Vista PDF', icon: 'pdf', showFor: ['autorizacion'] },
     { id: 'metadata', label: 'Metadatos', icon: 'info', showFor: ['autorizacion'] },
     { id: 'security', label: 'Seguridad', icon: 'shield', showFor: ['autorizacion'] },
     { id: 'notes', label: 'Notas', icon: 'chat', showFor: ['autorizacion'] },
