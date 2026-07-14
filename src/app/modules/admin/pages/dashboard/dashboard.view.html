@@ -50,7 +50,7 @@
             </button>
             
             <!-- Acción 2 - Subir documentos -->
-             @if(isUserConsulta()){
+             @if(!isUserConsulta()){
                 <button (click)="abrirModalSubida($event)" 
                         class="bg-white dark:bg-[#050505] rounded-lg border border-gray-200 dark:border-neutral-900 p-4 flex items-start space-x-4 hover:shadow-md transition-all duration-200 hover:border-[#691831] group relative overflow-hidden">
                     <div class="absolute inset-0 bg-[#691831] opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
