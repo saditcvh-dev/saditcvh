@@ -30,8 +30,10 @@ const routes: Routes = [
       {
         path: 'digitalizacion',
         component: DigitalizacionView,
+        canActivate: [roleGuard],
         canDeactivate: [pendingUploadGuard],
         data: {
+          deniedRole: 'consulta',
           title: 'digitalizacion',
           breadcrumb: [{ label: 'digitalizacion', path: '/admin/digitalizacion' }],
         },
@@ -66,7 +68,9 @@ const routes: Routes = [
       {
         path: 'reportes',
         component: ReportesView,
+        canActivate: [roleGuard],
         data: {
+          deniedRole: 'consulta',
           title: 'reportes',
           breadcrumb: [{ label: 'reportes', path: '/admin/reportes' }],
         },
@@ -74,7 +78,9 @@ const routes: Routes = [
       {
         path: 'respaldos',
         component: RespaldosView,
+        canActivate: [roleGuard],
         data: {
+          role: 'administrador',
           title: 'respaldos',
           breadcrumb: [{ label: 'respaldos', path: '/admin/respaldos' }],
         },

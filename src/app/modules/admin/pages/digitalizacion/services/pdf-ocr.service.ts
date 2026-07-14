@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
+import { AuthService } from '../../../core/services/auth';
 
 export interface PDFUploadResponse {
   id: string;
@@ -99,6 +100,7 @@ export interface GlobalSearchResponse {
 })
 export class PdfService {
   private apiUrl = '/ocr/api/pdf';
+  private authService = inject(AuthService);
 
   constructor(private http: HttpClient) { }
 
@@ -178,6 +180,10 @@ export class PdfService {
     let params = new HttpParams()
       .set('term', term)
       .set('limit', maxDocuments.toString());
+      
+    if (this.authService.userId) {
+      params = params.set('user_id', this.authService.userId);
+    }
 
     return this.http.get<GlobalSearchResponse>(
       `${this.apiUrl}/global-search`,

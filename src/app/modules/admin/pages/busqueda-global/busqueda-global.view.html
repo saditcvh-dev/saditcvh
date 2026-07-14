@@ -126,8 +126,8 @@
                             <span class="inline-flex items-center px-3 py-1 text-xs font-bold border-2 border-[#691831] text-[#691831] dark:border-[#c44569] dark:text-[#c44569] rounded-full mr-3">
                               Página {{ result.page }}
                             </span>
-                            <span class="text-gray-800 dark:text-gray-200">
-                              ...<span class="bg-[#BC955B]/30 text-[#691831] dark:bg-[#BC955B]/20 dark:text-[#f1c27d] px-1.5 py-0.5 rounded font-semibold">{{ result.context }}</span>...
+                            <span class="text-gray-800 dark:text-gray-200 [&_mark]:bg-[#BC955B]/30 [&_mark]:text-[#691831] dark:[&_mark]:bg-[#BC955B]/20 dark:[&_mark]:text-[#f1c27d] [&_mark]:px-1.5 [&_mark]:py-0.5 [&_mark]:rounded [&_mark]:font-semibold">
+                              ...<span [innerHTML]="result.context"></span>...
                             </span>
                           </div>
                         }

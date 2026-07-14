@@ -50,38 +50,42 @@
             </button>
             
             <!-- Acción 2 - Subir documentos -->
-            <button (click)="abrirModalSubida($event)" 
-                    class="bg-white dark:bg-[#050505] rounded-lg border border-gray-200 dark:border-neutral-900 p-4 flex items-start space-x-4 hover:shadow-md transition-all duration-200 hover:border-[#691831] group relative overflow-hidden">
-                <div class="absolute inset-0 bg-[#691831] opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
-                <div class="w-12 h-12 rounded-lg bg-[#691831]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#691831]/20 transition-colors z-10">
-                    <i class="fas fa-upload text-[#691831] text-lg"></i>
-                </div>
-                <div class="text-left flex-1 min-w-0 z-10">
-                    <p class="font-medium text-gray-800 text-sm mb-1 group-hover:text-[#691831]">Subir Documentos</p>
-                    <p class="text-xs text-gray-500 leading-relaxed">Agregar nuevos expedientes al sistema</p>
-                    <div class="mt-2 flex items-center text-xs text-[#691831] font-medium">
-                        <span>Comenzar subida</span>
-                        <i class="fas fa-plus ml-1 text-xs"></i>
+             @if(isUserConsulta()){
+                <button (click)="abrirModalSubida($event)" 
+                        class="bg-white dark:bg-[#050505] rounded-lg border border-gray-200 dark:border-neutral-900 p-4 flex items-start space-x-4 hover:shadow-md transition-all duration-200 hover:border-[#691831] group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-[#691831] opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
+                    <div class="w-12 h-12 rounded-lg bg-[#691831]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#691831]/20 transition-colors z-10">
+                        <i class="fas fa-upload text-[#691831] text-lg"></i>
                     </div>
-                </div>
-            </button>
+                    <div class="text-left flex-1 min-w-0 z-10">
+                        <p class="font-medium text-gray-800 text-sm mb-1 group-hover:text-[#691831]">Subir Documentos</p>
+                        <p class="text-xs text-gray-500 leading-relaxed">Agregar nuevos expedientes al sistema</p>
+                        <div class="mt-2 flex items-center text-xs text-[#691831] font-medium">
+                            <span>Comenzar subida</span>
+                            <i class="fas fa-plus ml-1 text-xs"></i>
+                        </div>
+                    </div>
+                </button>
+            }
             
             <!-- Acción 3 - Generar reporte -->
-            <button (click)="generarReporte($event)" 
-                    class="bg-white dark:bg-[#050505] rounded-lg border border-gray-200 dark:border-neutral-900 p-4 flex items-start space-x-4 hover:shadow-md transition-all duration-200 hover:border-[#691831] group relative overflow-hidden">
-                <div class="absolute inset-0 bg-[#691831] opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
-                <div class="w-12 h-12 rounded-lg bg-[#691831]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#691831]/20 transition-colors z-10">
-                    <i class="fas fa-file-export text-[#691831] text-lg"></i>
-                </div>
-                <div class="text-left flex-1 min-w-0 z-10">
-                    <p class="font-medium text-gray-800 text-sm mb-1 group-hover:text-[#691831]">Generar Reporte</p>
-                    <p class="text-xs text-gray-500 leading-relaxed">Reportes de estadísticas y métricas</p>
-                    <div class="mt-2 flex items-center text-xs text-[#691831] font-medium">
-                        <span>Descargar PDF</span>
-                        <i class="fas fa-download ml-1 text-xs"></i>
+             @if(isAdmin()){
+                <button (click)="generarReporte($event)" 
+                        class="bg-white dark:bg-[#050505] rounded-lg border border-gray-200 dark:border-neutral-900 p-4 flex items-start space-x-4 hover:shadow-md transition-all duration-200 hover:border-[#691831] group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-[#691831] opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
+                    <div class="w-12 h-12 rounded-lg bg-[#691831]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#691831]/20 transition-colors z-10">
+                        <i class="fas fa-file-export text-[#691831] text-lg"></i>
                     </div>
-                </div>
-            </button>
+                    <div class="text-left flex-1 min-w-0 z-10">
+                        <p class="font-medium text-gray-800 text-sm mb-1 group-hover:text-[#691831]">Generar Reporte</p>
+                        <p class="text-xs text-gray-500 leading-relaxed">Reportes de estadísticas y métricas</p>
+                        <div class="mt-2 flex items-center text-xs text-[#691831] font-medium">
+                            <span>Descargar PDF</span>
+                            <i class="fas fa-download ml-1 text-xs"></i>
+                        </div>
+                    </div>
+                </button>
+            }
         </div>
     </div>
 </div>
