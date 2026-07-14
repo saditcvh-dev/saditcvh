@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
-import { AuthService } from '../../../core/services/auth';
+import { AuthService } from '../../../../../core/services/auth';
 
 export interface PDFUploadResponse {
   id: string;
