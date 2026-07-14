@@ -148,31 +148,31 @@
             </div>
           </a>
         </li>
+        @if(!isUserConsulta()){
+          <li>
+            <a routerLink="/admin/digitalizacion" (click)="onNavLinkClick()"
+              [routerLinkActive]="['bg-blue-400/30', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
+              class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-900 dark:text-neutral-400 hover:bg-gray-400/20 dark:hover:bg-neutral-900 transition duration-200 relative group">
+              <!-- replaced check icon with printer/scanner icon to represent physical-to-digital -->
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M7 21H5a2 2 0 01-2-2v-2M21 17v2a2 2 0 01-2 2h-2" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V17M16 7V17M8 7h8" />
+                <path stroke-linecap="round" d="M2 12h20" stroke-width="2" />
+              </svg>
 
-        <li>
-          <a routerLink="/admin/digitalizacion" (click)="onNavLinkClick()"
-            [routerLinkActive]="['bg-blue-400/30', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-900 dark:text-neutral-400 hover:bg-gray-400/20 dark:hover:bg-neutral-900 transition duration-200 relative group">
-            <!-- replaced check icon with printer/scanner icon to represent physical-to-digital -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M7 21H5a2 2 0 01-2-2v-2M21 17v2a2 2 0 01-2 2h-2" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V17M16 7V17M8 7h8" />
-              <path stroke-linecap="round" d="M2 12h20" stroke-width="2" />
-            </svg>
+              <span *ngIf="sidebarOpen || isMobile" class="whitespace-nowrap text-sm">
+                Digitalización
+              </span>
 
-            <span *ngIf="sidebarOpen || isMobile" class="whitespace-nowrap text-sm">
-              Digitalización
-            </span>
-
-            <!-- Tooltip para sidebar cerrado en desktop -->
-            <div *ngIf="!sidebarOpen && !isMobile" 
-                 class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-[60] shadow-lg">
-              Digitalización
-              <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-0 border-r-4 border-r-gray-900 dark:border-r-gray-700 border-transparent"></div>
-            </div>
-          </a>
-        </li>
-        
+              <!-- Tooltip para sidebar cerrado en desktop -->
+              <div *ngIf="!sidebarOpen && !isMobile" 
+                  class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-[60] shadow-lg">
+                Digitalización
+                <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-0 border-r-4 border-r-gray-900 dark:border-r-gray-700 border-transparent"></div>
+              </div>
+            </a>
+          </li>
+        }
         <li>
           <a routerLink="/admin/busqueda-global" (click)="onNavLinkClick()"
             [routerLinkActive]="['bg-blue-400/30', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
@@ -191,27 +191,28 @@
             </div>
           </a>
         </li>
+        @if(!isUserConsulta()){
+          <li>
+            <a routerLink="/admin/reportes" (click)="onNavLinkClick()"
+              [routerLinkActive]="['bg-blue-400/30', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
+              class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-900 dark:text-neutral-400 hover:bg-gray-400/20 dark:hover:bg-neutral-900 transition duration-200 relative group">
+              <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span *ngIf="sidebarOpen || isMobile" class="whitespace-nowrap text-sm">
+                Reportes
+              </span>
 
-        <li>
-          <a routerLink="/admin/reportes" (click)="onNavLinkClick()"
-            [routerLinkActive]="['bg-blue-400/30', 'dark:bg-gray-800', 'font-medium', '!text-gray-600', 'dark:!text-neutral-200']"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-900 dark:text-neutral-400 hover:bg-gray-400/20 dark:hover:bg-neutral-900 transition duration-200 relative group">
-            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-            <span *ngIf="sidebarOpen || isMobile" class="whitespace-nowrap text-sm">
-              Reportes
-            </span>
-
-            <!-- Tooltip para sidebar cerrado en desktop -->
-            <div *ngIf="!sidebarOpen && !isMobile" 
-                 class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-[60] shadow-lg">
-              Reportes
-              <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-0 border-r-4 border-r-gray-900 dark:border-r-gray-700 border-transparent"></div>
-            </div>
-          </a>
-        </li>
+              <!-- Tooltip para sidebar cerrado en desktop -->
+              <div *ngIf="!sidebarOpen && !isMobile" 
+                  class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-[60] shadow-lg">
+                Reportes
+                <div class="absolute -left-1 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-0 border-r-4 border-r-gray-900 dark:border-r-gray-700 border-transparent"></div>
+              </div>
+            </a>
+          </li>
+        }
       </ul>
     </div>
 

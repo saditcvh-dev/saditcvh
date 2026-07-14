@@ -228,6 +228,9 @@ export class Sidebar {
   isAdmin(): boolean {
     return this.authService.hasRole('administrador');
   }
+  isUserConsulta(): boolean {
+    return this.authService.hasRole('consulta');
+  }
 
   // Método para manejar clics en enlaces (cierra sidebar en móvil)
   onNavLinkClick(): void {
