@@ -174,8 +174,12 @@ export class Header implements OnInit {
     return this.authService.hasRole('administrador');
   }
   get role_user(): string {
-    //  operador ternario de ver si es admin o operador isAdmin
-    return this.isAdmin() ? 'Administrador' : 'Operador';
+    const roles = this.authService.roles;
+    if (roles && roles.length > 0) {
+      const role = roles[0];
+      return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+    }
+    return 'Usuario';
   }
 
   onNavLinkClick(): void {
