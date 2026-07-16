@@ -163,26 +163,34 @@ export class MetadataTabComponent implements OnChanges, OnDestroy {
     });
   }
 
+  getFormattedName(node: any): string {
+    if (!node || !node.nombre) return '';
+    const nombre = node.nombre;
+    const isMuni85 = (node.data?.municipioId === 85 || node.data?.municipio_id === 85 || node.data?.municipio?.id === 85 || node.data?.municipio?.num === 85);
+    if (isMuni85 && nombre.length > 15) {
+      return nombre.substring(0, nombre.length - 15).trim();
+    }
+    return nombre;
+  }
+
   get metadata(): any[] {
-    // console.log("this.selectedNode")
-    // console.log(this.selectedNode)
     if (!this.selectedNode) return [];
     
-    const nombre = this.selectedNode.nombre || '';
+    const nombre = this.getFormattedName(this.selectedNode);
     const indexEspacio = nombre.indexOf(' ');
     const numeroExpediente = indexEspacio !== -1 ? nombre.substring(indexEspacio + 1) : 'No disponible';
+    const isMuni85 = (this.selectedNode.data?.municipioId === 85 || this.selectedNode.data?.municipio_id === 85 || this.selectedNode.data?.municipio?.id === 85 || this.selectedNode.data?.municipio?.num === 85);
 
-    const baseMetadata = [
-      { label: 'Nombre', value: this.selectedNode.nombre || 'Sin nombre', icon: 'tag' },
-      { label: 'ID', value: this.selectedNode.id || 'Sin ID', icon: 'hash' },
-      { label: 'Número de expediente', value: numeroExpediente, icon: 'folder' },
-      { label: 'Número de autorización', value: this.selectedNode.data?.numeroAutorizacion, icon: 'type', highlight: true },
-      // {
-      //   label: 'Fecha de creación',
-      //   value: this.formatDate(this.selectedNode.data?.fechaCreacion),
-      //   icon: 'calendar'
-      // }
+    const baseMetadata: any[] = [
+      { label: 'Nombre', value: nombre || 'Sin nombre', icon: 'tag' },
+      { label: 'ID', value: this.selectedNode.id || 'Sin ID', icon: 'hash' }
     ];
+
+    if (!isMuni85) {
+      baseMetadata.push({ label: 'Número de expediente', value: numeroExpediente, icon: 'folder' });
+    }
+
+    baseMetadata.push({ label: 'Número de autorización', value: this.selectedNode.data?.numeroAutorizacion, icon: 'type', highlight: true });
 
     if (this.selectedNode.type === 'autorizacion') {
       return [

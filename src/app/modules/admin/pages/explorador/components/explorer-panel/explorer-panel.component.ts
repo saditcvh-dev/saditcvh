@@ -192,4 +192,13 @@ export class ExplorerPanelComponent {
     this.searchTriggered.set(false);
   }
 
+  getFormattedName(node: any): string {
+    if (!node || !node.nombre) return '';
+    const nombre = node.nombre;
+    const isMuni85 = (node.data?.municipioId === 85 || node.data?.municipio_id === 85 || node.data?.municipio?.id === 85 || node.data?.municipio?.num === 85);
+    if (isMuni85 && nombre.length > 15) {
+      return nombre.substring(0, nombre.length - 15).trim();
+    }
+    return nombre;
+  }
 }

@@ -13,7 +13,7 @@
 
       (click)="onNodeClick($event, node)"
       (contextmenu)="onRightClick($event, node)"
-      [attr.title]="collapsed ? node.nombre : null"
+      [attr.title]="collapsed ? getFormattedName(node) : null"
     >
 
 
@@ -22,7 +22,7 @@
      (click)="onIconClick($event, node)" />
 
     <span *ngIf="!collapsed" class="truncate cursor-pointer text-gray-700 dark:text-neutral-400" (click)="nodeSelected.emit(node)">
-      {{ node.nombre }}
+      {{ getFormattedName(node) }}
     </span>
     <!-- Icono de abrir en otra ventana -->
 <!-- Icono SVG para abrir en nueva ventana -->

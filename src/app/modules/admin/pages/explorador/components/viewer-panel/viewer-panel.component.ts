@@ -162,12 +162,22 @@ export class ViewerPanelComponent {
     this.restoreVersion.emit(version);
   }
 
+  getFormattedName(node: any): string {
+    if (!node || !node.nombre) return '';
+    const nombre = node.nombre;
+    const isMuni85 = (node.data?.municipioId === 85 || node.data?.municipio_id === 85 || node.data?.municipio?.id === 85 || node.data?.municipio?.num === 85);
+    if (isMuni85 && nombre.length > 15) {
+      return nombre.substring(0, nombre.length - 15).trim();
+    }
+    return nombre;
+  }
+
   getNodeMetadata(): any {
     if (!this.selectedNode) return null;
 
     return {
       id: this.selectedNode.id,
-      nombre: this.selectedNode.nombre,
+      nombre: this.getFormattedName(this.selectedNode),
       tipo: this.nodeTypeLabel,
       fechaCreacion: this.formatDate(this.selectedNode.data?.fecha_creacion),
       solicitante: this.selectedNode.data?.solicitante,
@@ -206,14 +216,14 @@ export class ViewerPanelComponent {
         icon: 'category'
       },
       'autorizacion': {
-        title: this.selectedNode.nombre || 'Autorización',
+        title: this.getFormattedName(this.selectedNode) || 'Autorización',
         description: this.selectedNode.data?.descripcion || 'Documento de autorización',
         icon: 'document'
       }
     };
 
     return detailsMap[this.selectedNode.type] || {
-      title: this.selectedNode.nombre || 'Elemento',
+      title: this.getFormattedName(this.selectedNode) || 'Elemento',
       description: 'Sin descripción disponible',
       icon: 'file'
     };

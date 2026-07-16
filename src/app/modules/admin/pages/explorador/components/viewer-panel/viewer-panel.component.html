@@ -35,7 +35,7 @@
         <!-- Título y tipo -->
         <div>
           <div class="flex items-center gap-3">
-            <h1 class="text-xl font-bold text-gray-800 dark:text-neutral-100">{{ selectedNode.nombre }}</h1>
+            <h1 class="text-xl font-bold text-gray-800 dark:text-neutral-100">{{ getFormattedName(selectedNode) }}</h1>
             <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border" [class]="nodeTypeColor">
               Disponible
             </span>

@@ -118,22 +118,25 @@ onClickOutside(event: MouseEvent) {
     if (target.closest('.floating-node') || target.closest('[data-tree-node]')) {
       return;
     }
-
     this.floatingChange.emit(null);
     this.floatingPosition = null;
   }
 }
 
+  getFormattedName(node: any): string {
+    if (!node || !node.nombre) return '';
+    const nombre = node.nombre;
+    const isMuni85 = (node.data?.municipioId === 85 || node.data?.municipio_id === 85 || node.data?.municipio?.id === 85 || node.data?.municipio?.num === 85);
+    if (isMuni85 && nombre.length > 15) {
+      return nombre.substring(0, nombre.length - 15).trim();
+    }
+    return nombre;
+  }
 
-openInNewWindow(node: AutorizacionTreeNode) {
-  console.log(node);
-
-  const sanitized = node.nombre.replace(/[\s-]/g, '_');
-
-  const url = `/admin/explorador?q=${sanitized}`;
-  window.open(url, '_blank');
-}
-
-
-
+  openInNewWindow(node: AutorizacionTreeNode) {
+    console.log(node);
+    const sanitized = node.nombre.replace(/[\s-]/g, '_');
+    const url = `/admin/explorador?q=${sanitized}`;
+    window.open(url, '_blank');
+  }
 }

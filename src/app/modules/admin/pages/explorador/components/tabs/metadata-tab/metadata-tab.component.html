@@ -10,7 +10,7 @@
       </div>
       <div class="flex-1">
         <div class="flex items-center gap-2 mb-1">
-          <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">{{ selectedNode.nombre }}</h3>
+          <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">{{ getFormattedName(selectedNode) }}</h3>
           <span class="px-2 py-0.5 rounded text-xs font-bold uppercase bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800">
             {{ selectedNode.data?.estado || 'ACTIVO' }}
           </span>
