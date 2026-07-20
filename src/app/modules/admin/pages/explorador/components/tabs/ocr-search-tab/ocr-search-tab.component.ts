@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, inject, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizacion-tree.model';
 import { AuthService } from '../../../../../../../core/services/auth';
 import { DocumentoService } from '../../../../../../../core/services/explorador-documento.service';
@@ -15,6 +15,7 @@ export class OcrSearchTabComponent implements OnInit {
 
   private authService = inject(AuthService);
   private documentoService = inject(DocumentoService);
+  private cdr = inject(ChangeDetectorRef);
 
   searchTerm: string = '';
   isSearching: boolean = false;
@@ -62,17 +63,20 @@ export class OcrSearchTabComponent implements OnInit {
     
     this.isSearching = true;
     this.hasSearched = true;
+    this.cdr.markForCheck();
 
     this.documentoService.searchOcrEnArchivo(this.archivoDigital.id, this.searchTerm).subscribe({
       next: (response) => {
         this.isSearching = false;
         // Asumiendo que el backend devuelve { success: true, data: { results: [...] } } o { results: [...] }
         this.searchResults = response.data?.results || response.results || [];
+        this.cdr.markForCheck();
       },
       error: (error) => {
         console.error('Error en búsqueda OCR:', error);
         this.isSearching = false;
         this.searchResults = [];
+        this.cdr.markForCheck();
       }
     });
   }
