@@ -32,6 +32,8 @@ import { TabsNavigationComponent } from './pages/explorador/components/tabs/tabs
 import { SecurityTabComponent } from './pages/explorador/components/tabs/security-tab/security-tab.component';
 import { PreviewTabComponent } from './pages/explorador/components/tabs/preview-tab/preview-tab.component';
 import { MetadataTabComponent } from './pages/explorador/components/tabs/metadata-tab/metadata-tab.component';
+import { OcrSearchTabComponent } from './pages/explorador/components/tabs/ocr-search-tab/ocr-search-tab.component';
+import { AdditionalActionsTabComponent } from './pages/explorador/components/tabs/additional-actions-tab/additional-actions-tab.component';
 import { UploadModalComponent } from './pages/explorador/components/modals/upload-modal/upload-modal.component';
 import { CreateAutorizacionModalComponent } from './pages/explorador/components/modals/create-autorizacion-modal/create-autorizacion-modal.component';
 import { ContextMenuComponent } from './pages/explorador/components/context-menu/context-menu.component';
@@ -85,7 +87,7 @@ import { PdfViewerDocument } from '../../shared/pdf-viewer/pdf-viewer';
     ActionBadgeComponent, ExploradorView, ExplorerPanelComponent,
     ViewerPanelComponent, ToastComponent
     , TabsNavigationComponent, SecurityTabComponent, PreviewTabComponent, MetadataTabComponent, UploadModalComponent, CreateAutorizacionModalComponent, ModalContainerComponent
-    , ContextMenuComponent, HistoryTabComponent, TreeNodeComponent, UploadSectionComponent, DeleteConfirmationModalComponent, Busqueda, MergePdfInline, MergePdfInline
+    , ContextMenuComponent, HistoryTabComponent, OcrSearchTabComponent, AdditionalActionsTabComponent, TreeNodeComponent, UploadSectionComponent, DeleteConfirmationModalComponent, Busqueda, MergePdfInline, MergePdfInline
   ],
   imports: [
     CommonModule,

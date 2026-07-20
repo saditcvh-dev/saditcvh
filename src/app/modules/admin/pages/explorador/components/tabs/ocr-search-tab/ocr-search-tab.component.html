@@ -1,0 +1,87 @@
+<div class="h-full flex flex-col bg-white dark:bg-neutral-900 overflow-hidden">
+  
+  <!-- Estado: OCR Completado (Búsqueda) -->
+  <ng-container *ngIf="estadoOcr === 'completado'">
+    <div class="p-6 border-b border-gray-200 dark:border-neutral-800">
+      <h3 class="text-lg font-bold text-gray-800 dark:text-neutral-200 mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-[#691831]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+        Búsqueda en el documento
+      </h3>
+      
+      <div class="flex gap-3">
+        <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="onSearch()"
+          placeholder="Término a buscar..."
+          class="flex-1 px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-gray-50 dark:bg-neutral-800 text-gray-800 dark:text-neutral-200 focus:ring-2 focus:ring-[#691831] focus:border-transparent outline-none">
+        
+        <button (click)="onSearch()" [disabled]="isSearching || !searchTerm.trim()"
+          class="px-6 py-2 bg-[#691831] text-white rounded-lg hover:bg-[#8a1f40] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+          <svg *ngIf="isSearching" class="animate-spin w-4 h-4" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+          </svg>
+          {{ isSearching ? 'Buscando...' : 'Buscar' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    <div class="flex-1 p-6 overflow-y-auto">
+      <div *ngIf="!hasSearched" class="text-center text-gray-400 dark:text-neutral-500 mt-10">
+        <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <p>Ingresa un término para buscar en el documento actual.</p>
+      </div>
+
+      <div *ngIf="hasSearched && searchResults.length === 0 && !isSearching" 
+        class="text-center text-gray-500 dark:text-neutral-400 mt-10 bg-gray-50 dark:bg-neutral-800/50 py-8 rounded-xl border border-gray-100 dark:border-neutral-800">
+        <p class="font-medium text-gray-600 dark:text-neutral-300">No se encontraron resultados para "{{ searchTerm }}"</p>
+      </div>
+
+      <div *ngIf="searchResults.length > 0" class="space-y-4">
+        <!-- Mock de resultados -->
+        <div *ngFor="let res of searchResults" class="p-4 bg-gray-50 dark:bg-neutral-800 rounded-lg border border-gray-200 dark:border-neutral-700">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-bold text-[#691831] uppercase tracking-wider">Página {{ res.page }}</span>
+          </div>
+          <p class="text-sm text-gray-700 dark:text-neutral-300">{{ res.context }}</p>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Estado: Procesando -->
+  <div *ngIf="estadoOcr === 'en_proceso'" class="flex flex-col items-center justify-center h-full text-gray-500 dark:text-neutral-400 p-6">
+    <svg class="animate-spin w-12 h-12 mb-4 text-[#691831]" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+    <p class="text-lg font-medium text-gray-700 dark:text-neutral-200">Procesando documento...</p>
+    <p class="text-sm text-center mt-2 max-w-md">El documento se está analizando. La búsqueda estará disponible pronto.</p>
+  </div>
+
+  <!-- Estado: No Procesado o Error -->
+  <div *ngIf="estadoOcr === 'pendiente' || estadoOcr === 'fallido'" class="flex flex-col items-center justify-center h-full p-6 text-center">
+    
+    <div class="w-20 h-20 bg-gray-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-4">
+      <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+    </div>
+    
+    <h3 class="text-xl font-bold text-gray-800 dark:text-neutral-200 mb-2">Documento no analizado</h3>
+    <p class="text-sm text-gray-500 dark:text-neutral-400 max-w-md mb-8">
+      El documento actual no ha sido procesado por el sistema OCR, por lo que la búsqueda interna no está disponible.
+    </p>
+
+    <button *ngIf="canProcessOcr" (click)="procesarOcrManual()"
+      class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-[#691831] dark:text-blue-400 font-medium rounded-lg transition-colors flex items-center gap-2 border border-gray-200 dark:border-neutral-700">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+      Procesar documento (Próximamente)
+    </button>
+  </div>
+</div>

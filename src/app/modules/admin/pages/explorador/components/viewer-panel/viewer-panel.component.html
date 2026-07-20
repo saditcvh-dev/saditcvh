@@ -132,6 +132,18 @@
         </div>
       </div>
 
+      <!-- Búsqueda OCR -->
+      <div *ngIf="activeTab === 'ocr-search' && selectedNode.type === 'autorizacion'" class="h-full">
+        <app-ocr-search-tab [selectedNode]="selectedNode">
+        </app-ocr-search-tab>
+      </div>
+
+      <!-- Acciones Adicionales -->
+      <div *ngIf="activeTab === 'additional-actions' && selectedNode.type === 'autorizacion'" class="h-full">
+        <app-additional-actions-tab [selectedNode]="selectedNode">
+        </app-additional-actions-tab>
+      </div>
+
       <!-- Notas -->
       <div *ngIf="activeTab === 'notes'" class="h-full overflow-y-auto p-6 bg-white dark:bg-neutral-900">
         <div class="flex flex-col items-center justify-center h-full text-gray-400 dark:text-neutral-500">

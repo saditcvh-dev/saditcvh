@@ -1,0 +1,43 @@
+<div class="h-full overflow-y-auto p-6 bg-white dark:bg-neutral-900">
+  <div class="max-w-2xl mx-auto">
+    
+    <h3 class="text-lg font-bold text-gray-800 dark:text-neutral-200 mb-6 flex items-center gap-2">
+      <svg class="w-5 h-5 text-[#691831]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+      </svg>
+      Gestión del Documento
+    </h3>
+
+    <!-- Opción: Eliminar página -->
+    <div class="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-xl p-5 mb-6">
+      <div class="flex items-start gap-4">
+        <div class="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h4 class="text-base font-semibold text-gray-800 dark:text-neutral-200 mb-1">Eliminar página específica</h4>
+          <p class="text-sm text-gray-500 dark:text-neutral-400 mb-4">
+            Elimina una hoja del PDF actual. Se creará una nueva versión del documento para no perder el historial original.
+          </p>
+          
+          <div class="flex items-center gap-3">
+            <input type="number" min="1" [(ngModel)]="pageToDelete" placeholder="Ej. 3"
+              class="w-24 px-3 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 text-gray-800 dark:text-neutral-200 focus:ring-2 focus:ring-[#691831] focus:border-transparent outline-none">
+            
+            <button (click)="eliminarPagina()" [disabled]="isDeleting || !pageToDelete || pageToDelete <= 0"
+              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-medium">
+              <svg *ngIf="isDeleting" class="animate-spin w-4 h-4" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+              {{ isDeleting ? 'Eliminando...' : 'Eliminar página' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

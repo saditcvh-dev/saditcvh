@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
 import { AuthService } from '../../../../../core/services/auth';
+import { environment } from '../../../../../../environments/environment';
 
 export interface PDFUploadResponse {
   id: string;
@@ -161,7 +162,8 @@ export class PdfService {
       .set('page', page.toString())
       .set('limit', limit.toString());
       
-    return this.http.get<PDFListResponse>(`${this.apiUrl}/list`, { params });
+    // Usar la ruta del backend de Node.js en lugar de Python
+    return this.http.get<PDFListResponse>(`${environment.apiUrl}/pdf/list`, { params });
   }
 
   deletePdf(pdfId: string): Observable<any> {

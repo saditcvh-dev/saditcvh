@@ -1,6 +1,8 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizacion-tree.model';
 import { ViewerTab } from '../../../../../../../core/helpers/tabs-permissions.helper';
+import { AuthService } from '../../../../../../../core/services/auth';
+import { environment } from '../../../../../../../../environments/environment';
 
 @Component({
   selector: 'app-tabs-navigation',
@@ -9,6 +11,7 @@ import { ViewerTab } from '../../../../../../../core/helpers/tabs-permissions.he
   styleUrls: ['./tabs-navigation.component.css']
 })
 export class TabsNavigationComponent {
+  private authService = inject(AuthService);
   // input para showControlPanel
 
 
@@ -29,14 +32,25 @@ export class TabsNavigationComponent {
     { id: 'metadata', label: 'Metadatos', icon: 'info', showFor: ['autorizacion'] },
     { id: 'security', label: 'Seguridad', icon: 'shield', showFor: ['autorizacion'] },
     { id: 'notes', label: 'Notas', icon: 'chat', showFor: ['autorizacion'] },
-    { id: 'history', label: 'Historial', icon: 'clock', showFor: ['autorizacion'] }
+    { id: 'history', label: 'Historial', icon: 'clock', showFor: ['autorizacion'] },
+    { id: 'ocr-search', label: 'Búsqueda', icon: 'search', showFor: ['autorizacion'] },
+    { id: 'additional-actions', label: 'Acciones adicionales', icon: 'dots', showFor: ['autorizacion'] }
   ];
   shouldShowTab(tabId: ViewerTab): boolean {
     if (!this.selectedNode) return false;
     const tab = this.tabs.find(t => t.id === tabId);
     if (!tab) return false;
     if (!tab.showFor.includes(this.selectedNode.type)) return false;
-    return this.allowedTabs.includes(tabId);
+    if (!this.allowedTabs.includes(tabId)) return false;
+
+    if (tabId === 'ocr-search') {
+      return environment.featureFlags?.enableOcrSearchTab || this.authService.userId === '1';
+    }
+    if (tabId === 'additional-actions') {
+      return environment.featureFlags?.enableAdditionalActionsTab || this.authService.userId === '1';
+    }
+
+    return true;
   }
 
   onTabClick(tabId: ViewerTab): void {

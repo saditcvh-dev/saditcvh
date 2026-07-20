@@ -487,6 +487,22 @@ export class DocumentoService {
       });
   }
 
+  // Método para buscar dentro del OCR del archivo
+  searchOcrEnArchivo(archivoId: number, term: string, caseSensitive: boolean = false): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/archivo/${archivoId}/search`, { term, caseSensitive }, { withCredentials: true })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // Método para eliminar una página de un documento
+  eliminarPagina(archivoId: number, pagina: number): Observable<ApiResponse<Documento>> {
+    return this.http.post<ApiResponse<Documento>>(`${this.apiUrl}/archivo/${archivoId}/eliminar-pagina`, { pagina }, { withCredentials: true })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
 
   // Método para obtener estadísticas
   obtenerEstadisticas(): Observable<ApiResponse<any>> {
