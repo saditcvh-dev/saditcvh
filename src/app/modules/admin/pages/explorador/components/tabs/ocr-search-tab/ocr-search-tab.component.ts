@@ -25,8 +25,26 @@ export class OcrSearchTabComponent implements OnInit {
   }
 
   get archivoDigital() {
-    if (this.selectedNode?.type === 'autorizacion' && this.selectedNode.data?.archivosDigitales?.length > 0) {
-      return this.selectedNode.data.archivosDigitales[0];
+    if (this.selectedNode?.type === 'autorizacion') {
+      const autorizacionId = this.selectedNode.data?.id;
+      if (!autorizacionId) return null;
+
+      const documentos = this.documentoService.documentos();
+      let todasLasVersiones: any[] = [];
+
+      documentos.filter(d => d.autorizacionId === autorizacionId).forEach(doc => {
+        todasLasVersiones.push({ ...doc, versiones: [] });
+        if (doc.versiones && Array.isArray(doc.versiones)) {
+          todasLasVersiones.push(...doc.versiones);
+        }
+      });
+
+      const versionesActivas = todasLasVersiones.filter(d => !d.deleted_at);
+      const ultimoDocumento = versionesActivas.sort((a, b) => b.version - a.version)[0];
+
+      if (ultimoDocumento?.archivosDigitales?.length > 0) {
+        return ultimoDocumento.archivosDigitales[0];
+      }
     }
     return null;
   }
