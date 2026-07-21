@@ -1,7 +1,8 @@
-import { Component, Input, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizacion-tree.model';
 import { DocumentoService } from '../../../../../../../core/services/explorador-documento.service';
 import { CargaMasivaService } from '../../../../../../../core/services/digitalizacion-carga-masiva.service';
+import { Subscription, interval } from 'rxjs';
 
 @Component({
   selector: 'app-additional-actions-tab',
@@ -9,11 +10,12 @@ import { CargaMasivaService } from '../../../../../../../core/services/digitaliz
   templateUrl: './additional-actions-tab.component.html',
   styleUrls: ['./additional-actions-tab.component.css']
 })
-export class AdditionalActionsTabComponent {
+export class AdditionalActionsTabComponent implements OnDestroy {
   @Input() selectedNode!: AutorizacionTreeNode | null;
   private documentoService = inject(DocumentoService);
   private cargaMasivaService = inject(CargaMasivaService);
   private cdr = inject(ChangeDetectorRef);
+  private pollingSubscription?: Subscription;
 
   pageToDelete: number | null = null;
   isDeleting: boolean = false;
@@ -61,6 +63,10 @@ export class AdditionalActionsTabComponent {
             alert('Página eliminada correctamente. Se ha creado una nueva versión del documento.');
             this.pageToDelete = null;
             // Emitir evento para recargar si es necesario
+            if (this.selectedNode?.type === 'autorizacion' && this.selectedNode.data?.id) {
+              this.documentoService.cargarDocumentosPorAutorizacion(this.selectedNode.data.id, true).subscribe();
+              this.cdr.markForCheck();
+            }
           }
         },
         error: (error) => {
@@ -84,6 +90,7 @@ export class AdditionalActionsTabComponent {
         console.log('Procesamiento iniciado:', response.message);
         this.isProcessing = false;
         this.cdr.markForCheck();
+        this.iniciarPolling();
       },
       error: (error) => {
         console.error('Error iniciando procesamiento OCR:', error);
@@ -92,5 +99,34 @@ export class AdditionalActionsTabComponent {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  private iniciarPolling(): void {
+    this.detenerPolling();
+    const autorizacionId = this.selectedNode?.data?.id;
+    if (!autorizacionId) return;
+
+    this.pollingSubscription = interval(5000).subscribe(() => {
+      this.documentoService.cargarDocumentosPorAutorizacion(autorizacionId, true).subscribe({
+        next: () => {
+          this.cdr.markForCheck();
+          if (this.archivoDigital && this.archivoDigital.estado_ocr !== 'procesando') {
+             this.detenerPolling();
+          }
+        },
+        error: () => this.detenerPolling()
+      });
+    });
+  }
+
+  private detenerPolling(): void {
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+      this.pollingSubscription = undefined;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.detenerPolling();
   }
 }

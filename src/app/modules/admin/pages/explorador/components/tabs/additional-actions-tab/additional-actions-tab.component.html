@@ -19,7 +19,7 @@
         <div class="flex-1">
           <h4 class="text-base font-semibold text-gray-800 dark:text-neutral-200 mb-1">Eliminar página específica</h4>
           <p class="text-sm text-gray-500 dark:text-neutral-400 mb-4">
-            Elimina una hoja del PDF actual. Se creará una nueva versión del documento para no perder el historial original.
+            Elimina una hoja del PDF actual. Se creará una nueva versión del documento.
           </p>
           
           <div class="flex items-center gap-3">
@@ -52,7 +52,7 @@
             {{ estadoOcr === 'completado' ? 'Reprocesar OCR del documento' : 'Procesar OCR del documento' }}
           </h4>
           <p class="text-sm text-gray-500 dark:text-neutral-400 mb-4">
-            Extrae el texto del PDF para habilitar la búsqueda. Si ya fue procesado, puedes reprocesarlo (ideal tras eliminar páginas).
+            Extrae el texto del PDF para habilitar la búsqueda. Se recomienda reprocesar el documento tras eliminar páginas del mismo para mantener el contenido actualizado.
           </p>
           
           <div class="flex items-center gap-3">
