@@ -1,4 +1,4 @@
-.textLayer {
+::ng-deep .textLayer {
   position: absolute;
   left: 0;
   top: 0;
@@ -9,7 +9,7 @@
   line-height: 1;
 }
 
-.textLayer > span {
+::ng-deep .textLayer > span {
   color: transparent;
   position: absolute;
   white-space: pre;
@@ -17,7 +17,7 @@
   transform-origin: 0% 0%;
 }
 
-.textLayer ::selection {
+::ng-deep .textLayer ::selection {
   background: rgba(0,0,255, 0.3);
   color: transparent;
 }

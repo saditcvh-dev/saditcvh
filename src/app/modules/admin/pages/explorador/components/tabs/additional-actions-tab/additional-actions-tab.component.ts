@@ -1,6 +1,7 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, inject, ChangeDetectorRef } from '@angular/core';
 import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizacion-tree.model';
 import { DocumentoService } from '../../../../../../../core/services/explorador-documento.service';
+import { CargaMasivaService } from '../../../../../../../core/services/digitalizacion-carga-masiva.service';
 
 @Component({
   selector: 'app-additional-actions-tab',
@@ -11,15 +12,40 @@ import { DocumentoService } from '../../../../../../../core/services/explorador-
 export class AdditionalActionsTabComponent {
   @Input() selectedNode!: AutorizacionTreeNode | null;
   private documentoService = inject(DocumentoService);
+  private cargaMasivaService = inject(CargaMasivaService);
+  private cdr = inject(ChangeDetectorRef);
 
   pageToDelete: number | null = null;
   isDeleting: boolean = false;
+  isProcessing: boolean = false;
 
   get archivoDigital() {
-    if (this.selectedNode?.type === 'autorizacion' && this.selectedNode.data?.archivosDigitales?.length > 0) {
-      return this.selectedNode.data.archivosDigitales[0];
+    if (this.selectedNode?.type === 'autorizacion') {
+      const autorizacionId = this.selectedNode.data?.id;
+      if (!autorizacionId) return null;
+
+      const documentos = this.documentoService.documentos();
+      let todasLasVersiones: any[] = [];
+
+      documentos.filter(d => d.autorizacionId === autorizacionId).forEach(doc => {
+        todasLasVersiones.push({ ...doc, versiones: [] });
+        if (doc.versiones && Array.isArray(doc.versiones)) {
+          todasLasVersiones.push(...doc.versiones);
+        }
+      });
+
+      const versionesActivas = todasLasVersiones.filter(d => !d.deleted_at);
+      const ultimoDocumento = versionesActivas.sort((a, b) => b.version - a.version)[0];
+
+      if (ultimoDocumento?.archivosDigitales?.length > 0) {
+        return ultimoDocumento.archivosDigitales[0];
+      }
     }
     return null;
+  }
+
+  get estadoOcr(): string {
+    return this.archivoDigital?.estado_ocr || 'pendiente';
   }
 
   eliminarPagina(): void {
@@ -44,5 +70,27 @@ export class AdditionalActionsTabComponent {
         }
       });
     }
+  }
+
+  procesarDocumento(): void {
+    if (!this.archivoDigital) return;
+
+    this.isProcessing = true;
+    this.archivoDigital.estado_ocr = 'procesando';
+    this.cdr.markForCheck();
+
+    this.cargaMasivaService.procesarDocumentoOcr(this.archivoDigital.id).subscribe({
+      next: (response) => {
+        console.log('Procesamiento iniciado:', response.message);
+        this.isProcessing = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        console.error('Error iniciando procesamiento OCR:', error);
+        this.archivoDigital.estado_ocr = 'fallido';
+        this.isProcessing = false;
+        this.cdr.markForCheck();
+      }
+    });
   }
 }

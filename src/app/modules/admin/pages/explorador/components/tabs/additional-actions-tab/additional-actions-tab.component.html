@@ -39,5 +39,35 @@
       </div>
     </div>
 
+    <!-- Opción: Procesar / Reprocesar OCR -->
+    <div class="bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-xl p-5 mb-6">
+      <div class="flex items-start gap-4">
+        <div class="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h4 class="text-base font-semibold text-gray-800 dark:text-neutral-200 mb-1">
+            {{ estadoOcr === 'completado' ? 'Reprocesar OCR del documento' : 'Procesar OCR del documento' }}
+          </h4>
+          <p class="text-sm text-gray-500 dark:text-neutral-400 mb-4">
+            Extrae el texto del PDF para habilitar la búsqueda. Si ya fue procesado, puedes reprocesarlo (ideal tras eliminar páginas).
+          </p>
+          
+          <div class="flex items-center gap-3">
+            <button (click)="procesarDocumento()" [disabled]="isProcessing || estadoOcr === 'procesando'"
+              class="px-4 py-2 bg-[#691831] text-white rounded-lg hover:bg-[#8a1f40] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-medium">
+              <svg *ngIf="isProcessing || estadoOcr === 'procesando'" class="animate-spin w-4 h-4" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+              {{ isProcessing || estadoOcr === 'procesando' ? 'Procesando...' : (estadoOcr === 'completado' ? 'Reprocesar documento' : 'Procesar documento') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

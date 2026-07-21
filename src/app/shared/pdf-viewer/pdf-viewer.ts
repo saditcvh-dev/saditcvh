@@ -215,6 +215,7 @@ export class PdfViewerDocument implements OnDestroy, AfterViewInit {
         const textContent = await page.getTextContent();
         const textLayerDiv = document.createElement('div');
         textLayerDiv.setAttribute('class', 'textLayer');
+        textLayerDiv.style.setProperty('--scale-factor', viewport.scale.toString());
         pageWrapper.appendChild(textLayerDiv);
         
         if ((pdfjsLib as any).renderTextLayer) {

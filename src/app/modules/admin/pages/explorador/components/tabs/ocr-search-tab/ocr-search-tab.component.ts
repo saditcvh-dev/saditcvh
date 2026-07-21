@@ -2,6 +2,7 @@ import { Component, Input, OnInit, inject, Output, EventEmitter, ChangeDetectorR
 import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizacion-tree.model';
 import { AuthService } from '../../../../../../../core/services/auth';
 import { DocumentoService } from '../../../../../../../core/services/explorador-documento.service';
+import { CargaMasivaService } from '../../../../../../../core/services/digitalizacion-carga-masiva.service';
 
 @Component({
   selector: 'app-ocr-search-tab',
@@ -15,12 +16,13 @@ export class OcrSearchTabComponent implements OnInit {
 
   private authService = inject(AuthService);
   private documentoService = inject(DocumentoService);
+  private cargaMasivaService = inject(CargaMasivaService);
   private cdr = inject(ChangeDetectorRef);
 
   searchTerm: string = '';
   isSearching: boolean = false;
   hasSearched: boolean = false;
-  searchResults: any[] = []; // Se adaptará a la respuesta del futuro endpoint
+  searchResults: any[] = []; 
 
   ngOnInit(): void {
   }
@@ -68,7 +70,6 @@ export class OcrSearchTabComponent implements OnInit {
     this.documentoService.searchOcrEnArchivo(this.archivoDigital.id, this.searchTerm).subscribe({
       next: (response) => {
         this.isSearching = false;
-        // Asumiendo que el backend devuelve { success: true, data: { results: [...] } } o { results: [...] }
         this.searchResults = response.data?.results || response.results || [];
         this.cdr.markForCheck();
       },
@@ -84,7 +85,18 @@ export class OcrSearchTabComponent implements OnInit {
   procesarOcrManual(): void {
     if (!this.canProcessOcr || !this.archivoDigital) return;
 
-    console.log('Procesando OCR manualmente para:', this.archivoDigital.id);
-    alert('Mock: Acción para procesar OCR (Se conectará al futuro endpoint en Node)');
+    this.archivoDigital.estado_ocr = 'procesando';
+    this.cdr.markForCheck();
+
+    this.cargaMasivaService.procesarDocumentoOcr(this.archivoDigital.id).subscribe({
+      next: (response) => {
+        console.log('Procesamiento iniciado:', response.message);
+      },
+      error: (error) => {
+        console.error('Error iniciando procesamiento OCR:', error);
+        this.archivoDigital.estado_ocr = 'fallido';
+        this.cdr.markForCheck();
+      }
+    });
   }
 }

@@ -132,7 +132,7 @@ export class PdfService {
 
   getPdfText(pdfId: string): Observable<Blob> {
     return this.http.get(
-      `${this.apiUrl}/${pdfId}/text`,
+      `${environment.apiUrl}/pdf/${pdfId}/text`,
       { responseType: 'blob' }
     );
   }

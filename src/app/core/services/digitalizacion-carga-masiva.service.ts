@@ -343,4 +343,12 @@ export class CargaMasivaService {
       { withCredentials: true }
     );
   }
+
+  procesarDocumentoOcr(archivoId: number): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(
+      `${this.baseUrl}/procesar-documento/${archivoId}`,
+      {},
+      { withCredentials: true }
+    );
+  }
 }
