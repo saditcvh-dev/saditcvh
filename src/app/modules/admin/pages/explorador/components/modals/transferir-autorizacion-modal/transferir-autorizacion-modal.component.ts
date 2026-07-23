@@ -78,4 +78,16 @@ export class TransferirAutorizacionModalComponent implements OnInit {
     const m = this.modalidades?.find(m => m.id === this.modalData.originalModalidadId);
     return m ? m.nombre : 'Desconocido';
   }
+
+  get selectedMunicipioName(): string {
+    if (!this.modalData.municipioId) return 'Seleccione...';
+    const m = this.municipios?.find(m => m.id == this.modalData.municipioId);
+    return m ? `${m.num} - ${m.nombre}` : 'Seleccione...';
+  }
+
+  get selectedModalidadName(): string {
+    if (!this.modalData.modalidadId) return 'Seleccione...';
+    const m = this.modalidades?.find(m => m.id == this.modalData.modalidadId);
+    return m ? `${m.num} - ${m.nombre}` : 'Seleccione...';
+  }
 }

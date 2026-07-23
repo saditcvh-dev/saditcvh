@@ -36,12 +36,11 @@
       
       <div class="mb-2">
         <span class="block text-[10px] text-[#691831]/70 dark:text-rose-400/70 uppercase font-semibold">Municipio</span>
-        <span class="block text-sm font-medium text-[#691831] dark:text-rose-300 truncate">{{ modalData.municipioId ? (municipios | slice:0:0) : 'Seleccione...' }}</span>
-        <!-- Hack temporal en UI, se actualizará mejor abajo -->
+        <span class="block text-sm font-medium text-[#691831] dark:text-rose-300 truncate">{{ selectedMunicipioName }}</span>
       </div>
       <div>
         <span class="block text-[10px] text-[#691831]/70 dark:text-rose-400/70 uppercase font-semibold">Modalidad</span>
-        <span class="block text-sm font-medium text-[#691831] dark:text-rose-300 truncate">Seleccione...</span>
+        <span class="block text-sm font-medium text-[#691831] dark:text-rose-300 truncate">{{ selectedModalidadName }}</span>
       </div>
     </div>
   </div>

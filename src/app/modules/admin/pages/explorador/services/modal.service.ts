@@ -68,13 +68,13 @@ export class ModalService {
         id: node.data.id,
         // Original fields to display
         originalMunicipioId: node.data.municipioId,
-        originalMunicipioNum: node.data.municipio_num, // Ensure we pass this from node
+        originalMunicipioNum: node.data.municipio?.num, // Fix nested access
         originalModalidadId: node.data.modalidadId,
         originalNombreCarpeta: node.data.nombreCarpeta,
         originalNumeroAutorizacion: node.data.numeroAutorizacion,
         originalConsecutivo1: node.data.consecutivo1,
         originalConsecutivo2: node.data.consecutivo2,
-        originalTipoAbreviatura: node.data.tipoAbreviatura,
+        originalTipoAbreviatura: node.data.tipoAutorizacion?.abreviatura, // Fix nested access
         // Target fields
         municipioId: '',
         modalidadId: '',
