@@ -36,6 +36,7 @@ import { OcrSearchTabComponent } from './pages/explorador/components/tabs/ocr-se
 import { AdditionalActionsTabComponent } from './pages/explorador/components/tabs/additional-actions-tab/additional-actions-tab.component';
 import { UploadModalComponent } from './pages/explorador/components/modals/upload-modal/upload-modal.component';
 import { CreateAutorizacionModalComponent } from './pages/explorador/components/modals/create-autorizacion-modal/create-autorizacion-modal.component';
+import { TransferirAutorizacionModalComponent } from './pages/explorador/components/modals/transferir-autorizacion-modal/transferir-autorizacion-modal.component';
 import { ContextMenuComponent } from './pages/explorador/components/context-menu/context-menu.component';
 import { HistoryTabComponent } from './pages/explorador/components/tabs/history-tab/history-tab.component';
 import { TreeNodeComponent } from './pages/explorador/components/tree-node/tree-node';
@@ -86,7 +87,7 @@ import { PdfViewerDocument } from '../../shared/pdf-viewer/pdf-viewer';
     LogDetailModalComponent,
     ActionBadgeComponent, ExploradorView, ExplorerPanelComponent,
     ViewerPanelComponent, ToastComponent
-    , TabsNavigationComponent, SecurityTabComponent, PreviewTabComponent, MetadataTabComponent, UploadModalComponent, CreateAutorizacionModalComponent, ModalContainerComponent
+    , TabsNavigationComponent, SecurityTabComponent, PreviewTabComponent, MetadataTabComponent, UploadModalComponent, CreateAutorizacionModalComponent, TransferirAutorizacionModalComponent, ModalContainerComponent
     , ContextMenuComponent, HistoryTabComponent, OcrSearchTabComponent, AdditionalActionsTabComponent, TreeNodeComponent, UploadSectionComponent, DeleteConfirmationModalComponent, Busqueda, MergePdfInline, MergePdfInline
   ],
   imports: [

@@ -2,6 +2,7 @@ import { Component, Input, inject, ChangeDetectorRef, OnDestroy } from '@angular
 import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizacion-tree.model';
 import { DocumentoService } from '../../../../../../../core/services/explorador-documento.service';
 import { CargaMasivaService } from '../../../../../../../core/services/digitalizacion-carga-masiva.service';
+import { ModalService } from '../../../services/modal.service';
 import { Subscription, interval } from 'rxjs';
 
 @Component({
@@ -15,6 +16,7 @@ export class AdditionalActionsTabComponent implements OnDestroy {
   private documentoService = inject(DocumentoService);
   private cargaMasivaService = inject(CargaMasivaService);
   private cdr = inject(ChangeDetectorRef);
+  private modalService = inject(ModalService);
   private pollingSubscription?: Subscription;
 
   pageToDelete: number | null = null;
@@ -75,6 +77,12 @@ export class AdditionalActionsTabComponent implements OnDestroy {
           alert('Error al eliminar la página: ' + (error.error?.message || error.message));
         }
       });
+    }
+  }
+
+  abrirModalTransferencia(): void {
+    if (this.selectedNode?.type === 'autorizacion') {
+      this.modalService.openTransferirAutorizacionModal(this.selectedNode);
     }
   }
 

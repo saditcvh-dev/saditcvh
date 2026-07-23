@@ -57,6 +57,37 @@ export class ModalService {
   }
 
 
+  openTransferirAutorizacionModal(node: AutorizacionTreeNode): void {
+    if (node.type !== 'autorizacion' || !node.data) return;
+
+    this.modalState.set({
+      visible: true,
+      type: 'transferir_autorizacion',
+      title: 'Transferir / Reclasificar Expediente',
+      data: {
+        id: node.data.id,
+        // Original fields to display
+        originalMunicipioId: node.data.municipioId,
+        originalMunicipioNum: node.data.municipio_num, // Ensure we pass this from node
+        originalModalidadId: node.data.modalidadId,
+        originalNombreCarpeta: node.data.nombreCarpeta,
+        originalNumeroAutorizacion: node.data.numeroAutorizacion,
+        originalConsecutivo1: node.data.consecutivo1,
+        originalConsecutivo2: node.data.consecutivo2,
+        originalTipoAbreviatura: node.data.tipoAbreviatura,
+        // Target fields
+        municipioId: '',
+        modalidadId: '',
+        tipoId: node.data.tipoId, // Default to same
+        repararNomenclatura: false,
+        numeroAutorizacion: node.data.numeroAutorizacion,
+        consecutivo1: node.data.consecutivo1,
+        consecutivo2: node.data.consecutivo2,
+        colisionConfirmada: false
+      }
+    });
+  }
+
   openDeleteModal(node: AutorizacionTreeNode): void {
     //console.log("node----")
     //console.log(node)
@@ -165,6 +196,10 @@ export class ModalService {
 
       case 'create_documento':
         this.createDocumento(modal.data);
+        break;
+
+      case 'transferir_autorizacion':
+        this.transferirAutorizacion(modal.data, stateService);
         break;
 
       default:
@@ -312,6 +347,53 @@ export class ModalService {
         this.loadingService.hide()
         stateService.showToast('Error al crear autorización', 'error');
         console.error('Error:', error);
+      }
+    });
+  }
+
+  private transferirAutorizacion(data: any, stateService: any): void {
+    this.loadingService.show();
+    if (!data.id || !data.municipioId || !data.modalidadId) {
+      this.loadingService.hide();
+      stateService.showToast('Debes seleccionar el municipio y la modalidad de destino', 'error');
+      return;
+    }
+
+    const payload: any = {
+      municipioId: data.municipioId,
+      modalidadId: data.modalidadId,
+      colisionConfirmada: data.colisionConfirmada || false
+    };
+
+    if (data.originalMunicipioNum === 85 && data.repararNomenclatura) {
+      payload.tipoId = data.tipoId;
+      payload.numeroAutorizacion = data.numeroAutorizacion;
+      payload.consecutivo1 = data.consecutivo1;
+      payload.consecutivo2 = data.consecutivo2;
+    }
+
+    this.autorizacionService.transferirAutorizacion(data.id, payload).subscribe({
+      next: (res) => {
+        this.loadingService.hide();
+        stateService.showToast('Expediente transferido correctamente', 'success');
+        this.closeModal();
+      },
+      error: (error) => {
+        this.loadingService.hide();
+        if (error.error?.code === 'MIGRATION_CONFLICT') {
+          // If collision detected, we show the warning instead of closing
+          const modal = this.modalState();
+          this.modalState.set({
+            ...modal,
+            data: {
+              ...modal.data,
+              colisionConfirmada: true
+            }
+          });
+        } else {
+          stateService.showToast(error.error?.message || 'Error al transferir autorización', 'error');
+          console.error('Error:', error);
+        }
       }
     });
   }

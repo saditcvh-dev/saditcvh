@@ -269,6 +269,22 @@ export class AutorizacionService {
     );
   }
 
+  // Migrar/Transferir autorización
+  transferirAutorizacion(id: number, datos: any): Observable<{ success: boolean; message: string; data: any }> {
+    this.updateState({ loading: true, error: null });
+
+    return this.http.post<{ success: boolean; message: string; data: any }>(`${this.apiUrl}/${id}/migrar`, datos).pipe(
+      tap(response => {
+        this.updateState({ loading: false });
+        if (response.success) {
+          this.refresh(); // Refrescar la lista
+        } else {
+          this.updateState({ error: response.message });
+        }
+      })
+    );
+  }
+
   // Cambiar estado (activo/inactivo) (con refresh automático)
   cambiarEstado(id: number, activo: boolean): Observable<{ success: boolean; message: string; data: Autorizacion }> {
     this.updateState({ loading: true, error: null });

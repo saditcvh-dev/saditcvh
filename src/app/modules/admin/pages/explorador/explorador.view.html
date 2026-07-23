@@ -27,7 +27,7 @@
 	<!-- Modales -->
 	<app-modal-container [modalState]="modalState()" [uploadModalState]="uploadModalState()" [isDragging]="isDragging()"
 		[selectedFile]="selectedFile()" [isUploading]="isUploading()" [modalidades]="modalidades()"
-		[tiposAutorizacion]="tiposAutorizacion()" (modalAction)="handleModalAction($event)" (closeModal)="closeModal()"
+		[tiposAutorizacion]="tiposAutorizacion()" [municipios]="municipios()" (modalAction)="handleModalAction($event)" (closeModal)="closeModal()"
 		(closeUploadModal)="closeUploadModal()" (fileSelected)="onFileSelected($event)"
 		(fileDropped)="onFileDrop($event)" (dragOver)="onDragOver($event)" (dragLeave)="onDragLeave($event)"
 		(clearFile)="clearSelectedFile($event)" (uploadFile)="uploadFile()"

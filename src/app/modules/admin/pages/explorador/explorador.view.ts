@@ -13,6 +13,7 @@ import { LoadingService } from '../../../../core/services/explorador-loading.ser
 import { ViewerTab } from '../../../../core/helpers/tabs-permissions.helper';
 import { ArchivoUrlService } from './services/archivo-url.service';
 import { AuthService } from '../../../../core/services/auth';
+import { MunicipioService } from '../../../../core/services/explorador-municipio.service';
 
 @Component({
   selector: 'app-explorador', standalone: false,
@@ -34,6 +35,7 @@ export class ExploradorView implements OnInit, OnDestroy {
   private sanitizer = inject(DomSanitizer);
   private archivoUrlService = inject(ArchivoUrlService);
   private loading = inject(LoadingService);
+  private municipioSvc = inject(MunicipioService);
   tree = this.stateService.tree;
   selectedNode = this.stateService.selectedNode;
   breadcrumbs = this.stateService.breadcrumbs;
@@ -71,6 +73,7 @@ export class ExploradorView implements OnInit, OnDestroy {
   // Computed
   tiposAutorizacion = this.tiposAutorizacionSvc.tipos;
   modalidades = this.modalidadSvc.modalidadesOrdenadas;
+  municipios = this.municipioSvc.municipios;
   private autorizacionIdCargado = signal<number | null>(null);
 
   // Inject AuthService to check permissions
@@ -228,6 +231,7 @@ export class ExploradorView implements OnInit, OnDestroy {
   private initializeServices(): void {
     this.tiposAutorizacionSvc.getAll();
     this.modalidadSvc.loadModalidades();
+    this.municipioSvc.loadMyTerritories().subscribe();
     this.autorizacionService.autorizacionesPaginadas();
 
     // this.autorizacionService.autorizacionesPaginadas;

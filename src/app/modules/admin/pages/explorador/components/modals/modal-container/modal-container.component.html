@@ -44,6 +44,11 @@
 				<app-create-autorizacion-modal [modalState]="modalState" [modalidades]="modalidades" [tiposAutorizacion]="tiposAutorizacion" (dataChange)="onModalDataChange($event)">
 				</app-create-autorizacion-modal>
 			</div>
+			<!-- Modal de Transferir Autorización -->
+			<div *ngIf="activeModalType === 'transferir_autorizacion'">
+				<app-transferir-autorizacion-modal [modalState]="modalState" [modalidades]="modalidades" [tiposAutorizacion]="tiposAutorizacion" [municipios]="municipios" (dataChange)="onModalDataChange($event)">
+				</app-transferir-autorizacion-modal>
+			</div>
 			<!-- Modal de Confirmación de Eliminación -->
 			<div *ngIf="activeModalType === 'delete'">
 			<app-delete-confirmation-modal

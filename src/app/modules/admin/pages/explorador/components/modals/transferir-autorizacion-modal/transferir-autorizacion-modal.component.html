@@ -1,0 +1,116 @@
+<div class="transfer-container text-gray-800 dark:text-neutral-200">
+  
+  <div class="mb-4">
+    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400 mb-2">Archivo Actual</label>
+    <div class="p-3 bg-gray-50 dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg flex items-center gap-3">
+      <div class="p-2 bg-rose-100 dark:bg-rose-900/30 text-[#691831] dark:text-rose-400 rounded">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+      </div>
+      <span class="font-mono text-sm break-all font-medium">{{ currentFileName }}</span>
+    </div>
+  </div>
+
+  <div class="flex flex-col sm:flex-row gap-4 mb-6 items-center">
+    <!-- Origen -->
+    <div class="flex-1 w-full p-4 border border-gray-200 dark:border-neutral-700 rounded-lg bg-gray-50/50 dark:bg-neutral-800/50 relative">
+      <span class="absolute -top-2.5 left-4 px-1 bg-white dark:bg-neutral-900 text-xs font-bold text-gray-500">ORIGEN</span>
+      
+      <div class="mb-2">
+        <span class="block text-[10px] text-gray-500 uppercase font-semibold">Municipio</span>
+        <span class="block text-sm font-medium truncate">{{ currentMunicipioName }}</span>
+      </div>
+      <div>
+        <span class="block text-[10px] text-gray-500 uppercase font-semibold">Modalidad</span>
+        <span class="block text-sm font-medium truncate">{{ currentModalidadName }}</span>
+      </div>
+    </div>
+
+    <!-- Arrow icon -->
+    <div class="hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 shrink-0">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+    </div>
+
+    <!-- Destino (Solo UI preview) -->
+    <div class="flex-1 w-full p-4 border border-[#691831]/20 dark:border-rose-800/30 rounded-lg bg-rose-50/30 dark:bg-rose-900/10 relative">
+      <span class="absolute -top-2.5 left-4 px-1 bg-white dark:bg-neutral-900 text-xs font-bold text-[#691831] dark:text-rose-400">DESTINO</span>
+      
+      <div class="mb-2">
+        <span class="block text-[10px] text-[#691831]/70 dark:text-rose-400/70 uppercase font-semibold">Municipio</span>
+        <span class="block text-sm font-medium text-[#691831] dark:text-rose-300 truncate">{{ modalData.municipioId ? (municipios | slice:0:0) : 'Seleccione...' }}</span>
+        <!-- Hack temporal en UI, se actualizará mejor abajo -->
+      </div>
+      <div>
+        <span class="block text-[10px] text-[#691831]/70 dark:text-rose-400/70 uppercase font-semibold">Modalidad</span>
+        <span class="block text-sm font-medium text-[#691831] dark:text-rose-300 truncate">Seleccione...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+    <div>
+      <label class="block text-xs font-medium text-gray-700 dark:text-neutral-300 mb-1 flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+        Municipio Destino
+      </label>
+      <select [value]="modalData.municipioId || ''" (change)="onFieldChange('municipioId', $event)" class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-sm focus:ring-2 focus:ring-[#691831] outline-none">
+        <option value="" disabled>Seleccione un municipio</option>
+        <option *ngFor="let m of filteredMunicipios" [value]="m.id">{{ m.num }} - {{ m.nombre }}</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-xs font-medium text-gray-700 dark:text-neutral-300 mb-1 flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        Modalidad Destino
+      </label>
+      <select [value]="modalData.modalidadId || ''" (change)="onFieldChange('modalidadId', $event)" class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-sm focus:ring-2 focus:ring-[#691831] outline-none">
+        <option value="" disabled>Seleccione una modalidad</option>
+        <option *ngFor="let m of modalidades" [value]="m.id">{{ m.num }} - {{ m.nombre }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="isM85" class="mb-6 p-4 border border-amber-200 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-900/10 rounded-lg">
+    <label class="flex items-center gap-2 cursor-pointer mb-3">
+      <input type="checkbox" [checked]="modalData.repararNomenclatura" (change)="onFieldChange('repararNomenclatura', $event)" class="w-4 h-4 text-[#691831] rounded border-gray-300 focus:ring-[#691831]">
+      <span class="text-sm font-semibold text-amber-800 dark:text-amber-500">Reparar Nomenclatura M85</span>
+    </label>
+    
+    <div *ngIf="modalData.repararNomenclatura" class="grid grid-cols-2 gap-3 mt-3">
+      <div class="col-span-2">
+        <label class="block text-xs font-medium mb-1">Número Real Autorización</label>
+        <input type="text" [value]="modalData.numeroAutorizacion || ''" (input)="onFieldChange('numeroAutorizacion', $event)" class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-sm outline-none focus:border-[#691831]">
+      </div>
+      <div>
+        <label class="block text-xs font-medium mb-1">Consecutivo 1</label>
+        <input type="text" [value]="modalData.consecutivo1 || ''" (input)="onFieldChange('consecutivo1', $event)" placeholder="Ej. 01" class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-sm outline-none focus:border-[#691831]">
+      </div>
+      <div>
+        <label class="block text-xs font-medium mb-1">Consecutivo 2</label>
+        <input type="text" [value]="modalData.consecutivo2 || ''" (input)="onFieldChange('consecutivo2', $event)" placeholder="Ej. 001" class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-sm outline-none focus:border-[#691831]">
+      </div>
+      <div class="col-span-2">
+        <label class="block text-xs font-medium mb-1">Tipo de Autorización</label>
+        <select [value]="modalData.tipoId || ''" (change)="onFieldChange('tipoId', $event)" class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-sm outline-none focus:border-[#691831]">
+          <option value="" disabled>Seleccione...</option>
+          <option *ngFor="let t of tiposAutorizacion" [value]="t.id">{{ t.nombre }} ({{ t.abreviatura }})</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4 border-2 border-dashed border-[#691831]/30 dark:border-rose-800/40 rounded-lg bg-rose-50/20 dark:bg-rose-900/5 relative">
+    <span class="absolute -top-2.5 left-4 px-1 bg-white dark:bg-neutral-900 text-xs font-bold text-[#691831] dark:text-rose-400 flex items-center gap-1">
+      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+      NUEVO NOMBRE DE CARPETA/ARCHIVO
+    </span>
+    <p class="font-mono text-sm text-center font-bold tracking-wide mt-2 text-[#691831] dark:text-rose-300 break-all">
+      {{ newFileName }}
+    </p>
+  </div>
+
+  <div *ngIf="modalData.colisionConfirmada" class="mt-4 p-3 bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300 rounded-lg text-sm border border-rose-200 dark:border-rose-800 font-medium">
+    ⚠️ Ya existe un registro con estos valores. Al confirmar, este documento se fusionará como una versión nueva en la carpeta existente.
+  </div>
+
+</div>

@@ -15,6 +15,7 @@ export class ModalContainerComponent {
   @Input() isUploading!: boolean;
   @Input() modalidades: any[] = [];
   @Input() tiposAutorizacion: any[] = [];
+  @Input() municipios: any[] = [];
   @Input() selectedNode: any = null;
 
   @Output() modalAction = new EventEmitter<any>();
