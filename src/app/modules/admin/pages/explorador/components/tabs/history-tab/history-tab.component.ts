@@ -28,12 +28,28 @@ export class HistoryTabComponent {
   showUploadMenu = false;
   showMergeSection = signal(false);
   private pdfService = inject(MergePdfService)
-  private documentoService = inject(DocumentoService)
+  public documentoService = inject(DocumentoService)
   private loadingService = inject(LoadingService)
   private authService = inject(AuthService);
   private municipioService = inject(MunicipioService);
   
   isAdmin = computed(() => this.authService.hasRole('administrador'));
+
+  get paginacion() {
+    return this.documentoService.paginacionDocumentos();
+  }
+
+  get hayMasDocumentos(): boolean {
+    return this.documentoService.hayMasDocumentos();
+  }
+
+  get isLoading(): boolean {
+    return this.documentoService.loading();
+  }
+
+  onLoadMore(): void {
+    this.documentoService.cargarMasDocumentos();
+  }
 
   get versionesActivasCount(): number {
     return this.documentVersions?.filter(v => !v.deleted_at)?.length || 0;

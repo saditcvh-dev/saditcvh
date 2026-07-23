@@ -1,11 +1,10 @@
-<div class="h-full bg-white dark:bg-black p-6">
-    <div class="flex justify-between items-center mb-6 sticky top-0 bg-white dark:bg-black z-10 pb-4">
+<div class="h-full bg-white dark:bg-black p-6 flex flex-col">
+    <div class="flex justify-between items-center mb-4 sticky top-0 bg-white dark:bg-black z-10 pb-4 border-b border-gray-100 dark:border-neutral-800 shrink-0">
         <h3 class="text-sm font-bold text-gray-900 dark:text-neutral-100 uppercase tracking-wide border-l-4 border-[#BC955B] pl-2">
             {{ showMergeSection()
             ? 'Unir PDF a versión existente '
             : ' Control de Versiones' }}
         </h3>
-
 
         <div class="relative" *ngIf="canEdit()">
             <!-- BOTÓN: Subir Nueva Versión -->
@@ -63,14 +62,12 @@
     </div>
     <p 
     *ngIf="showMergeSection()" 
-    class="mt-1 text-xs text-gray-600 dark:text-neutral-500">
+    class="mt-1 mb-3 text-xs text-gray-600 dark:text-neutral-500 shrink-0">
     Selecciona la versión donde deseas integrar el nuevo PDF.
     </p>
 
-    <!-- <div class="max-h-[60vh] overflow-y-auto pr-2 pt-12 pb-12"> -->
-    <div class="max-h-[60vh] overflow-y-auto pr-2 pt-8 pb-12 scrollbar-hide">
+    <div class="flex-1 min-h-0 overflow-y-auto pr-2 pt-4 pb-8 scrollbar-hide">
         
-        <!-- <div class="max-h-[60vh] overflow-y-auto pr-2"> -->
         <div *ngIf="!showMergeSection()">
 
             <div *ngIf="documentVersions && documentVersions.length > 0" class="relative pl-4 border-l border-gray-200 dark:border-neutral-700 space-y-8 ml-2">
@@ -142,17 +139,29 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg> Eliminar 
                                 </button>
-                                <!-- <button *ngIf="!first" (click)="onRestoreVersion(version)" class="flex items-center gap-1 text-xs font-medium px-2 py-1 rounded
-									text-orange-600 bg-orange-50 border border-orange-200
-									hover:bg-orange-100
-									dark:text-orange-300 dark:bg-orange-900/30 dark:border-orange-800
-									dark:hover:bg-orange-900/50 transition-colors">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                    </svg> Restaurar </button> -->
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Botón Cargar Más dentro de la lista de Historial -->
+                <div *ngIf="hayMasDocumentos" class="pt-6 pb-4 flex flex-col items-center justify-center gap-2 border-t border-dashed border-gray-200 dark:border-neutral-700">
+                    <p class="text-xs text-gray-500 dark:text-neutral-400">
+                        Mostrando {{ documentVersions.length }} de {{ paginacion.totalItems }} documentos
+                    </p>
+                    <button (click)="onLoadMore()"
+                        [disabled]="isLoading"
+                        class="px-4 py-2 bg-[#691831] hover:bg-[#501225] text-white text-xs font-semibold rounded-lg
+                               shadow-sm flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50">
+                        <svg *ngIf="isLoading" class="animate-spin h-3.5 w-3.5 text-white" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
+                        <svg *ngIf="!isLoading" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                        {{ isLoading ? 'Cargando más...' : 'Cargar más historial' }}
+                    </button>
                 </div>
             </div>
         </div>
