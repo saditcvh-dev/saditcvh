@@ -91,8 +91,8 @@
       <div class="col-span-2">
         <label class="block text-xs font-medium mb-1">Tipo de Autorización</label>
         <select [value]="modalData.tipoId || ''" (change)="onFieldChange('tipoId', $event)" class="w-full px-3 py-2 border border-gray-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-sm outline-none focus:border-[#691831]">
-          <option value="" disabled>Seleccione...</option>
-          <option *ngFor="let t of tiposAutorizacion" [value]="t.id">{{ t.nombre }} ({{ t.abreviatura }})</option>
+          <option value="" disabled [selected]="!modalData.tipoId">Seleccione...</option>
+          <option *ngFor="let t of tiposAutorizacion" [value]="t.id" [selected]="t.id == modalData.tipoId">{{ t.nombre }} ({{ t.abreviatura }})</option>
         </select>
       </div>
     </div>
