@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal, inject, computed } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, inject, computed, OnChanges, SimpleChanges } from '@angular/core';
 import { AutorizacionTreeNode } from '../../../../../../../core/models/autorizacion-tree.model';
 import { MergePdfService } from '../../../services/pdf-merge.service';
 import { DocumentoService } from '../../../../../../../core/services/explorador-documento.service';
@@ -13,7 +13,7 @@ import { MunicipioService } from '../../../../../../../core/services/explorador-
   templateUrl: './history-tab.component.html',
   styleUrls: ['./history-tab.component.css']
 })
-export class HistoryTabComponent {
+export class HistoryTabComponent implements OnChanges {
   @Input() fullScreenMode: boolean = false;
   @Input() selectedNode!: AutorizacionTreeNode | null;
   @Input() documentVersions: any[] = [];
@@ -35,12 +35,31 @@ export class HistoryTabComponent {
   
   isAdmin = computed(() => this.authService.hasRole('administrador'));
 
-  get paginacion() {
-    return this.documentoService.paginacionDocumentos();
+  // Paginación local de versiones
+  versionsPageSize = signal<number>(5);
+  displayedVersionsLimit = signal<number>(5);
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['documentVersions'] || changes['selectedNode']) {
+      this.displayedVersionsLimit.set(this.versionsPageSize());
+    }
   }
 
-  get hayMasDocumentos(): boolean {
-    return this.documentoService.hayMasDocumentos();
+  get visibleVersions(): any[] {
+    const limit = this.displayedVersionsLimit();
+    return this.documentVersions ? this.documentVersions.slice(0, limit) : [];
+  }
+
+  get hasMoreLocalVersions(): boolean {
+    return this.documentVersions ? this.documentVersions.length > this.displayedVersionsLimit() : false;
+  }
+
+  get hasMoreVersions(): boolean {
+    return this.hasMoreLocalVersions || this.documentoService.hayMasDocumentos();
+  }
+
+  get paginacion() {
+    return this.documentoService.paginacionDocumentos();
   }
 
   get isLoading(): boolean {
@@ -48,7 +67,11 @@ export class HistoryTabComponent {
   }
 
   onLoadMore(): void {
-    this.documentoService.cargarMasDocumentos();
+    if (this.hasMoreLocalVersions) {
+      this.displayedVersionsLimit.update(current => current + this.versionsPageSize());
+    } else if (this.documentoService.hayMasDocumentos()) {
+      this.documentoService.cargarMasDocumentos();
+    }
   }
 
   get versionesActivasCount(): number {
