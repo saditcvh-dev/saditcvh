@@ -92,7 +92,7 @@ export class DocumentoService {
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
-    itemsPerPage: 10
+    itemsPerPage: 5
   });
   private currentAutorizacionId = signal<number | null>(null);
 
@@ -109,20 +109,20 @@ export class DocumentoService {
     );
   }
 
-  cargarDocumentosPorAutorizacion(autorizacionId: number, force = false): Observable<Documento[]> {
+  cargarDocumentosPorAutorizacion(autorizacionId: number, force = false, limit = 5): Observable<Documento[]> {
     this.errorState.set(null);
 
     // Si cambiamos de carpeta o forzamos, resetear estado de paginación
     if (force || this.currentAutorizacionId() !== autorizacionId) {
       this.currentAutorizacionId.set(autorizacionId);
       this.documentosState.set([]);
-      this.documentosPaginacion.set({ currentPage: 1, totalPages: 1, totalItems: 0, itemsPerPage: 10 });
+      this.documentosPaginacion.set({ currentPage: 1, totalPages: 1, totalItems: 0, itemsPerPage: limit });
       // Borrar caché para esta autorización para forzar recarga
       this.autorizacionesCache.delete(autorizacionId);
     }
 
     const page = this.documentosPaginacion().currentPage;
-    const cacheKey = `${autorizacionId}_page_${page}`;
+    const itemsPerPage = this.documentosPaginacion().itemsPerPage || limit;
 
     // Usar caché si existe para esta página
     if (!force && this.autorizacionesCache.has(autorizacionId) && page === 1) {
@@ -137,7 +137,7 @@ export class DocumentoService {
 
     return this.http.get<{ success: boolean; data: Documento[]; pagination: any }>(
       `${this.apiUrl}/autorizacion/${autorizacionId}`,
-      { params: { page: page.toString(), limit: '10' }, withCredentials: true }
+      { params: { page: page.toString(), limit: itemsPerPage.toString() }, withCredentials: true }
     ).pipe(
       tap(response => {
         const nuevosDocs = response.data;
