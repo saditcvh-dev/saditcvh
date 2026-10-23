@@ -1,4 +1,4 @@
-// src/app/core/services/graphic-municipio.service.ts
+﻿// src/app/core/services/graphic-municipio.service.ts
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
@@ -50,6 +50,7 @@ export interface Region {
   id: string;
   nombre: string;
   municipios: number[];
+  displayName: string;
 }
 
 export type ViewType = 'list';
@@ -67,6 +68,7 @@ export class GraphicMunicipioService {
     {
       id: 'centro',
       nombre: 'Región Centro',
+      displayName: 'Centro',
       municipios: [
         3, 5, 9, 19, 22, 23, 40, 41, 47, 49,
         51, 54, 55, 66, 69, 77, 83
@@ -75,6 +77,7 @@ export class GraphicMunicipioService {
     {
       id: 'norte',
       nombre: 'Región Norte',
+      displayName: 'Norte',
       municipios: [
         10, 20, 25, 26, 28, 31, 32, 33, 34, 35,
         42, 43, 52, 53, 62, 67, 72, 78, 79, 80, 81
@@ -83,6 +86,7 @@ export class GraphicMunicipioService {
     {
       id: 'sur',
       nombre: 'Región Sur',
+      displayName: 'Sur',
       municipios: [
         1, 4, 7, 13, 14, 17, 18, 21, 27, 48,
         50, 57, 60, 70
@@ -91,6 +95,7 @@ export class GraphicMunicipioService {
     {
       id: 'este',
       nombre: 'Región Este',
+      displayName: 'Este',
       municipios: [
         2, 11, 15, 24, 36, 37, 38, 39, 56, 61,
         68, 71, 74, 76
@@ -99,6 +104,7 @@ export class GraphicMunicipioService {
     {
       id: 'oeste',
       nombre: 'Región Oeste',
+      displayName: 'Oeste',
       municipios: [
         6, 8, 12, 16, 29, 30, 44, 45, 46, 58,
         59, 63, 64, 65, 73, 75, 82, 84
@@ -107,6 +113,7 @@ export class GraphicMunicipioService {
     {
       id: 'sin_region',
       nombre: 'Sin región',
+      displayName: 'Sin región',
       municipios: [85]
     }
   ];

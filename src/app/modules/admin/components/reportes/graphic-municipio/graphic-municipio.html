@@ -1,4 +1,4 @@
-<!-- Gráfica de Documentos por Municipio -->
+﻿<!-- Gráfica de Documentos por Municipio -->
 <div class="bg-white dark:bg-[#050505] rounded-xl border border-[#99999A]/20 dark:border-gray-800 p-6 shadow-sm dark:shadow-gray-900/50">
     
     <!-- Encabezado -->
@@ -94,7 +94,7 @@
                        text-gray-800 dark:text-gray-200"
                 [title]="'Municipios: ' + getRegionMunicipiosCount(region.id) + ' | Documentos: ' + getRegionTotalDocuments(region.id)"
             >
-                {{ region.nombre.includes(' ') ? region.nombre.split(' ')[1] : region.nombre }} ({{ getRegionMunicipiosCount(region.id) }})
+                {{ region.displayName || region.nombre }} ({{ getRegionMunicipiosCount(region.id) }})
             </button>
         </div>
     </div>
@@ -169,7 +169,7 @@
                          [class.text-[#6F7271]]="selectedRegionId() !== region.id"
                          [class.dark:text-gray-400]="selectedRegionId() !== region.id"
                          [class.text-white]="selectedRegionId() === region.id">
-                        {{ region.nombre.includes(' ') ? region.nombre.split(' ')[1] : region.nombre }}
+                        {{ region.displayName || region.nombre }}
                     </div>
                     <div class="text-xs mt-1 opacity-75">
                         {{ getRegionMunicipiosCount(region.id) }} municipio(s)
