@@ -94,7 +94,7 @@
                        text-gray-800 dark:text-gray-200"
                 [title]="'Municipios: ' + getRegionMunicipiosCount(region.id) + ' | Documentos: ' + getRegionTotalDocuments(region.id)"
             >
-                {{ region.nombre.split(' ')[1] }} ({{ getRegionMunicipiosCount(region.id) }})
+                {{ region.nombre.includes(' ') ? region.nombre.split(' ')[1] : region.nombre }} ({{ getRegionMunicipiosCount(region.id) }})
             </button>
         </div>
     </div>
@@ -149,7 +149,7 @@
     <div *ngIf="!isLoading() && hasData()" class="pt-6 border-t border-[#99999A]/20 dark:border-gray-800 mt-6">
         <h4 class="font-medium text-[#691B31] dark:text-[#c44569] mb-4">Distribución por Región</h4>
         
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div *ngFor="let region of regiones" 
                  (click)="selectRegion(region.id)"
                  [class.bg-[#691B31]]="selectedRegionId() === region.id"
@@ -169,7 +169,7 @@
                          [class.text-[#6F7271]]="selectedRegionId() !== region.id"
                          [class.dark:text-gray-400]="selectedRegionId() !== region.id"
                          [class.text-white]="selectedRegionId() === region.id">
-                        {{ region.nombre.split(' ')[1] }}
+                        {{ region.nombre.includes(' ') ? region.nombre.split(' ')[1] : region.nombre }}
                     </div>
                     <div class="text-xs mt-1 opacity-75">
                         {{ getRegionMunicipiosCount(region.id) }} municipio(s)

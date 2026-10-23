@@ -103,6 +103,11 @@ export class GraphicMunicipioService {
         6, 8, 12, 16, 29, 30, 44, 45, 46, 58,
         59, 63, 64, 65, 73, 75, 82, 84
       ]
+    },
+    {
+      id: 'sin_region',
+      nombre: 'Sin región',
+      municipios: [85]
     }
   ];
   
